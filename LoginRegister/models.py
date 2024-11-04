@@ -14,7 +14,6 @@ class Account(AbstractUser):
     last_name = None
 
     account_type = models.CharField(max_length=20, choices=[('Employee', 'Employee'), ('Customer', 'Customer')], default='Customer')
-
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
@@ -29,7 +28,6 @@ class Department(models.Model):
     
     def __str__(self):
         return self.name
-    
 class EmployeeAccount(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE)
 
@@ -52,3 +50,21 @@ class CustomerAccount(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class OTP(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    revoked = models.BooleanField(default=False)
+    expired_at = models.DateTimeField()
+    class Meta:
+        unique_together = ['account', 'otp', 'expired_at']
+
+class ResetPasswordToken(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)
+    revoked = models.BooleanField(default=False)
+    expired_at = models.DateTimeField()
+    class Meta:
+        unique_together = ['account', 'token', 'expired_at']
+

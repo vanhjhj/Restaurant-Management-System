@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .models import Account, CustomerAccount, EmployeeAccount, Department
+from .models import *
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.serializerfields import PhoneNumberField
+from django.utils import timezone
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
@@ -12,16 +13,16 @@ class AccountSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Account
-        fields = ('id', 'username', 'password', 'account_type')
+        fields = ('id', 'username', 'password', 'email', 'account_type')
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
     def create(self, validated_data):
-        print('create')
         account_data = {
             'username': validated_data.pop('username'),
             'password': make_password(validated_data.pop('password')),
+            'email': validated_data.pop('email'),
             'account_type': validated_data.pop('account_type')
         }
 
@@ -35,6 +36,9 @@ class AccountSerializer(serializers.ModelSerializer):
             except serializers.ValidationError as e:
                 raise serializers.ValidationError({'password': list(e.messages)})
         
+        if attrs.get('email'):
+            if Account.objects.filter(email=attrs.get('email')).exists():
+                raise serializers.ValidationError({'email': 'Email already exists'})
         return attrs
     
 
@@ -113,3 +117,49 @@ class CustomerAccountSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+        # Kiểm tra xem email có tồn tại trong hệ thống không
+        if not Account.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is not registered.")
+        return value
+    
+class VerifyOTPSerializer(serializers.Serializer):
+    otp = serializers.CharField(max_length=6, required=True)
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        if not Account.objects.filter(email=attrs.get('email')).exists():
+            raise serializers.ValidationError("This email is not registered.")
+        
+        account = Account.objects.get(email=attrs.get('email'))
+        if not OTP.objects.filter(account=account, otp=attrs.get('otp'), revoked=False).exists():
+            raise serializers.ValidationError("Invalid OTP")
+        
+        otp = OTP.objects.get(account=account, otp=attrs.get('otp'), revoked=False)
+        if otp.expired_at < timezone.now():
+            raise serializers.ValidationError("OTP has expired")
+        
+        return attrs
+        
+    
+class ResetPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    token = serializers.CharField(required=True, max_length=100)
+
+    def validate(self, attrs):
+        if not Account.objects.filter(email=attrs.get('email')).exists():
+            raise serializers.ValidationError("This email is not registered.")
+        
+        account = Account.objects.get(email=attrs.get('email'))
+        if not ResetPasswordToken.objects.filter(account=account, token=attrs.get('token'), revoked= False).exists():
+            raise serializers.ValidationError("Invalid token")
+        
+        token = ResetPasswordToken.objects.get(account=account, token=attrs.get('token'), revoked=False)
+        if token.expired_at < timezone.now():
+            raise serializers.ValidationError("Token has expired")
+        
+        return attrs

@@ -137,3 +137,11 @@ REST_FRAMEWORK = {
 }
 
 PHONENUMBER_DEFAULT_REGION = 'VN'
+
+#send email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dangtricoding@gmail.com'
+EMAIL_HOST_PASSWORD = 'gxxr hhxw ukil lmoo'
+EMAIL_USE_TLS = True

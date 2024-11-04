@@ -1,17 +1,35 @@
 from django.shortcuts import render
-from .models import Account, CustomerAccount, EmployeeAccount, Department
-from .serializers import EmployeeAccountSerializer, AccountSerializer, CustomerAccountSerializer
-from rest_framework import generics, permissions, authentication
+from .models import *
+from .serializers import *
+from .permissions import *
+from rest_framework import generics, permissions, authentication, decorators
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+import random
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
+from django.utils.crypto import get_random_string
 
 # Create your views here.
+
+def generate_otp(length=6):
+    """Generate a random OTP of specified length."""
+    digits = "0123456789"
+    otp = ''.join(random.choice(digits) for _ in range(length))
+    return otp
 
 class AccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.AllowAny()]
+
+        return super().get_permissions()
 
     def post(self, request, *args, **kwargs):
         user_data = request.data
@@ -31,6 +49,8 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     lookup_field = 'pk'
+    permission_classes = [IsOwnerOrAdmin]
+
 
     def get(self, request, *args, **kwargs):
         account = self.get_object()
@@ -84,7 +104,7 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 class EmployeeAccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = EmployeeAccount.objects.all()
     serializer_class = EmployeeAccountSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
     def post(self, request, *args, **kwargs):
         employee_data = request.data
@@ -104,6 +124,7 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = EmployeeAccount.objects.all()
     serializer_class = EmployeeAccountSerializer
     lookup_field = 'pk'
+    permission_classes = [IsOwnerOrAdmin]
 
     def get(self, request, *args, **kwargs):
         employee = self.get_object()
@@ -141,6 +162,13 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.AllowAny()]
+
+        return super().get_permissions()
 
     def post(self, request, *args, **kwargs):
         customer_data = request.data
@@ -160,6 +188,7 @@ class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
     lookup_field = 'pk'
+    permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
         employee = self.get_object()
@@ -190,7 +219,6 @@ class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
 
-
 class AccountLogoutAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -214,4 +242,78 @@ class AccountLogoutAPIView(generics.GenericAPIView):
         except Exception as e:
             return Response({'message': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
         
+class ForgotPasswordAPIView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ForgotPasswordSerializer
     
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data.get('email')
+            account = Account.objects.get(email=email)
+
+            #generate OTP
+            otp = generate_otp()
+            if OTP.objects.filter(account=account, revoked=False).exists():
+                #revoke all previous OTPs
+                OTP.objects.filter(account=account, revoked=False).update(revoked=True)
+                
+            OTP.objects.create(account=account, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+
+            send_mail(
+                'Your OTP Code',
+                f'Your OTP code is {otp}',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+            response = {
+                'status': 'success',
+                'message': 'OTP sent successfully'
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class VerifyOTPAPIView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = VerifyOTPSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            token = get_random_string(length=32)
+            email = serializer.validated_data.get('email')
+            account = Account.objects.get(email=email)
+            OTP.objects.filter(account=account, revoked=False).update(revoked=True)
+
+            ResetPasswordToken.objects.create(account=account, token=token, revoked=False, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+
+            response = {
+                'status': 'success',
+                'message': 'OTP verified successfully',
+                'token': token
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ResetPasswordAPIView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            account = Account.objects.get(email=serializer.validated_data.get('email'))
+            account.set_password(serializer.validated_data.get('password'))
+            account.save()
+            
+            response = {
+                'status': 'success',
+                'message': 'Password reset successfully'
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
