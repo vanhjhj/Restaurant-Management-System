@@ -44,6 +44,17 @@
     font-size: 16px;
     background-color: #f7f7f7;
 }
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #fff;
+}
+
+.password-toggle-icon:hover {
+    color: #333;
+}
 
 .login-btn {
     width: 100%;

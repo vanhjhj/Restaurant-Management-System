@@ -5,7 +5,7 @@ import axios from 'axios';
 export const register = async (userData) => {
     try {
         const response = await axios.post('http://127.0.0.1:8000/api/auth/accounts/', userData);
-        console.log(response); // Trả về dữ liệu từ API nếu thành công
+        console.log(response.message); // Trả về dữ liệu từ API nếu thành công
     } catch (error) {
         console.log("User Data:", userData);
         console.error('Lỗi khi đăng ký:', error.response ? error.response.data : error.message);
@@ -42,6 +42,18 @@ export const logout = async (refreshToken) => {
         await axios.post('http://127.0.0.1:8000/api/logout/', { refresh: refreshToken });
     } catch (error) {
         console.error('Lỗi khi đăng xuất:', error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
+
+//Hàm lấy lại mất khẩu
+export const forgotPassword = async (email) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/api/auth/forgot-password/', { email });
+        console.log('Yêu cầu quên mật khẩu thành công:', response.data.message);
+        return response.data;
+    } catch (error) {
+        console.error('Lỗi khi gửi yêu cầu quên mật khẩu:', error.response ? error.response.data : error.message);
         throw error;
     }
 };

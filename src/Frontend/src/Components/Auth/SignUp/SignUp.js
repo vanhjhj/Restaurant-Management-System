@@ -1,39 +1,41 @@
-// src/Components/Auth/SignUp/SignUp.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 import { register } from '../../../API/authAPI';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function SignUp() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null); // Biến lưu trữ lỗi nếu có
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Để điều khiển hiển thị mật khẩu
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Điều khiển confirm password
+    const [error, setError] = useState(null);
 
     const navigate = useNavigate();
 
-    const account_type= "Customer";
+    const account_type = "Customer";
 
     const handleSignUpSubmit = async (event) => {
         event.preventDefault();
-        
+
         if (password !== confirmPassword) {
-            setError(<h1 className="erorr">Mật khẩu xác nhận không khớp</h1>);
+            setError("Mật khẩu xác nhận không khớp.");
             return;
         }
 
         const userData = {
-            username:username,
-            email:email,
-            password:password,
-            account_type:account_type,
+            username,
+            email,
+            password,
+            account_type,
         };
 
         try {
             await register(userData);
             alert("Đăng ký thành công!");
-            navigate('/')
+            navigate('/');
         } catch (err) {
             setError(err.response ? err.response.data.message : 'Đăng ký thất bại. Vui lòng thử lại.');
         }
@@ -44,8 +46,8 @@ function SignUp() {
             <div className="signup-box">
                 <h2>Đăng ký</h2>
                 <form onSubmit={handleSignUpSubmit}>
-                    {error && <p className="error-message">{error}</p>} {/* Hiển thị lỗi nếu có */}
-                    
+                    {error && <p className="error-message">{error}</p>}
+
                     <label htmlFor="username">Tài khoản</label>
                     <input
                         type="text"
@@ -69,26 +71,42 @@ function SignUp() {
                     />
 
                     <label htmlFor="password">Mật khẩu</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Nhập mật khẩu"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <div className="password-input-container">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            id="password"
+                            name="password"
+                            placeholder="Nhập mật khẩu"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <span
+                            className="password-toggle-icon"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                        </span>
+                    </div>
 
                     <label htmlFor="confirm-password">Xác nhận mật khẩu</label>
-                    <input
-                        type="password"
-                        id="confirm-password"
-                        name="confirm-password"
-                        placeholder="Xác nhận mật khẩu"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
+                    <div className="password-input-container">
+                        <input
+                            type={showConfirmPassword ? "text" : "password"}
+                            id="confirm-password"
+                            name="confirm-password"
+                            placeholder="Xác nhận mật khẩu"
+                            required
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                        <span
+                            className="password-toggle-icon"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                           <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                        </span>
+                    </div>
 
                     <button type="submit" className="signup-btn">Đăng ký</button>
                 </form>

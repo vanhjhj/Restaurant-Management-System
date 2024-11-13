@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../../API/authAPI';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Login({ onLogin }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Để điều khiển hiển thị mật khẩu
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
@@ -60,6 +62,12 @@ function Login({ onLogin }) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    <span
+                        className="password-toggle-icon"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                     </span>
 
                     <button type="submit" className="login-btn">Đăng nhập</button>
 
