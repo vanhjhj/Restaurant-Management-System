@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
 djangorestframework = "*"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
 django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
+django = "*"
 
 [dev-packages]
 

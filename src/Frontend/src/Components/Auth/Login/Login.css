@@ -1,0 +1,114 @@
+.error{
+    color:#eb0b0b;
+    font:bold ;
+    font-size:14px;
+}
+.login-container {
+    display: flex;
+    width: 800px;
+    height: 500px;
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: auto; /* Đảm bảo căn giữa */
+}
+
+.login-box {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box h2 {
+    font-size: 24px;
+    color: #35737d;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-box label {
+    font-size: 14px;
+    color: #666;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin: 5x 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f7f7f7;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #35737d;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    margin: auto;
+}
+
+.login-btn:hover {
+    background-color: #2c5e64;
+}
+
+.forgot-password {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #35737d;
+    text-decoration: none;
+    font-size: 14px;
+    text-align: center;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.register-box {
+    flex: 1;
+    background: linear-gradient(135deg, #9fdbe4, #2c5e64);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.register-box p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+/* Định dạng thẻ <a> như một nút */
+.register-btn {
+    padding: 10px 20px;
+    background-color: #2c5e64;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none; /* Xóa gạch chân của thẻ <a> */
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.register-btn:hover {
+    background-color: #244b4f;
+}
