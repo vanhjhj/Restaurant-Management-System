@@ -6,7 +6,7 @@ from django.contrib.auth.models import UserManager
 class CustomUserManager(UserManager):
     def create_superuser(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault('account_type', 'Admin')
-        return super().create_superuser(username=username, password=password, **extra_fields)
+        return super().create_superuser(username=username, password=password, email=email, **extra_fields)
 
 # Create your models here.
 class Account(AbstractUser):
@@ -15,7 +15,7 @@ class Account(AbstractUser):
 
     account_type = models.CharField(max_length=20, choices=[('Employee', 'Employee'), ('Customer', 'Customer')], default='Customer')
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     objects = CustomUserManager()
 
@@ -53,18 +53,18 @@ class CustomerAccount(models.Model):
 
 
 class OTP(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    email = models.EmailField()
     otp = models.CharField(max_length=6)
     revoked = models.BooleanField(default=False)
     expired_at = models.DateTimeField()
     class Meta:
-        unique_together = ['account', 'otp', 'expired_at']
+        unique_together = ['email', 'otp', 'expired_at']
 
-class ResetPasswordToken(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+class Token(models.Model):
+    email = models.EmailField()
     token = models.CharField(max_length=100)
     revoked = models.BooleanField(default=False)
     expired_at = models.DateTimeField()
     class Meta:
-        unique_together = ['account', 'token', 'expired_at']
+        unique_together = ['email', 'token', 'expired_at']
 

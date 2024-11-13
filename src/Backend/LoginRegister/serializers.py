@@ -4,6 +4,22 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.utils import timezone
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Thêm account_type vào token payload
+        token['account_type'] = user.account_type
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Trả thêm account_type trong phần phản hồi
+        data['account_type'] = self.user.account_type
+        return data
+
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
@@ -126,40 +142,29 @@ class ForgotPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("This email is not registered.")
         return value
     
+class RegisterRequestOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    
 class VerifyOTPSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=6, required=True)
     email = serializers.EmailField(required=True)
 
-    def validate(self, attrs):
-        if not Account.objects.filter(email=attrs.get('email')).exists():
-            raise serializers.ValidationError("This email is not registered.")
-        
-        account = Account.objects.get(email=attrs.get('email'))
-        if not OTP.objects.filter(account=account, otp=attrs.get('otp'), revoked=False).exists():
+    def validate(self, attrs): 
+        if not OTP.objects.filter(email=attrs.get('email'), otp=attrs.get('otp'), revoked=False).exists():
             raise serializers.ValidationError("Invalid OTP")
-        
-        otp = OTP.objects.get(account=account, otp=attrs.get('otp'), revoked=False)
+        otp = OTP.objects.get(email=attrs.get('email'), otp=attrs.get('otp'), revoked=False)
         if otp.expired_at < timezone.now():
             raise serializers.ValidationError("OTP has expired")
-        
         return attrs
-        
     
 class ResetPasswordSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    token = serializers.CharField(required=True, max_length=100)
 
-    def validate(self, attrs):
-        if not Account.objects.filter(email=attrs.get('email')).exists():
-            raise serializers.ValidationError("This email is not registered.")
-        
-        account = Account.objects.get(email=attrs.get('email'))
-        if not ResetPasswordToken.objects.filter(account=account, token=attrs.get('token'), revoked= False).exists():
-            raise serializers.ValidationError("Invalid token")
-        
-        token = ResetPasswordToken.objects.get(account=account, token=attrs.get('token'), revoked=False)
-        if token.expired_at < timezone.now():
-            raise serializers.ValidationError("Token has expired")
+    def validate(self, attrs):        
+        try:
+            validate_password(attrs.get('password'))
+        except serializers.ValidationError as e:
+            raise serializers.ValidationError({'password': list(e.messages)})
         
         return attrs
