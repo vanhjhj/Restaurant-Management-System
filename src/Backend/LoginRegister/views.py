@@ -58,14 +58,16 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
-        return Response({"detail": "Method 'PUT' not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response({"detail": "Method 'PUT' not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     def patch(self, request, *args, **kwargs):
         if 'id' in request.data.keys():
             return Response({'id': 'You cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
         if 'username' in request.data.keys():
             return Response({'username': 'You cannot update username field'}, status=status.HTTP_400_BAD_REQUEST)
-        
+        if 'account_type' in request.data.keys():
+            return Response({'account_type': 'You cannot update account_type field'}, status=status.HTTP_400_BAD_REQUEST)
+    
         account = self.get_object()
         serializer = self.serializer_class(account, data=request.data, partial=True)
 
@@ -93,7 +95,7 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         try:
             account.delete()
         except IntegrityError:
-            return Response({'message': 'Cannot delete this account due to integrity constraints.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Cannot delete this account due to integrity constraints'}, status=status.HTTP_400_BAD_REQUEST)
 
         response = {
             'status': 'success',
@@ -132,7 +134,7 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
-        return Response({"detail": "Method 'PUT' not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response({"detail": "Method 'PUT' not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     def patch(self, request, *args, **kwargs):
         if 'id' in request.data.keys():
