@@ -50,14 +50,14 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
             for key, value in request.data.items():
                 setattr(category, key, value)
 
-                serializer.save()
+            serializer.save()
 
-                response = {
-                    'data': serializer.data,
-                    'status': 'success',
-                    'message': 'Category updated successfully'
-                }
-                return Response(response, status=status.HTTP_200_OK)
+            response = {
+                'data': serializer.data,
+                'status': 'success',
+                'message': 'Category updated successfully'
+            }
+            return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
