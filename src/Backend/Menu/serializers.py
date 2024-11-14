@@ -6,8 +6,8 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-class MenuSerializer(serializers.ModelSerializer):
+class MenuItemSerializer(serializers.ModelSerializer):
     category=serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     class Meta:
-        model = Menu
+        model = MenuItem
         fields = ['id','name','price','description','image','category']

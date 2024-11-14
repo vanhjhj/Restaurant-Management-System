@@ -4,6 +4,6 @@ from django.urls import path
 urlpatterns = [
     path('category/', views.CategoryListCreateAPIView.as_view(), name='category'),
     path('category/<int:pk>/', views.CategoryRetrieveUpdateDestroyAPIView.as_view(), name='category'),
-    path('menu/', views.MenuListCreateAPIView.as_view(), name='menu'),
-    path('menu/<int:pk>/', views.MenuRetrieveUpdateDestroyAPIView.as_view(), name='menu'),
+    path('menuitem/', views.MenuItemListCreateAPIView.as_view(), name='menuitem'),
+    path('menuitem/<int:pk>/', views.MenuItemRetrieveUpdateDestroyAPIView.as_view(), name='menuitem'),
 ]
