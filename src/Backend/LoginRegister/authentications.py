@@ -16,9 +16,11 @@ class CustomTokenAuthentication(BaseAuthentication):
         try:
             # Kiểm tra token trong cơ sở dữ liệu
             email = request.data.get('email')
-            token_obj = Token.objects.get(email=email, token=token, expired_at__gt=timezone.now(), revoked=False)
+            token_obj = Token.objects.get(email=email, token=token, revoked=False)
         except Token.DoesNotExist:
             raise exceptions.AuthenticationFailed('Invalid or expired token. Check your email and token again.')
 
+        #save token_obj to request
+        request.token_obj = token_obj
         # Nếu token hợp lệ, trả về thông tin người dùng (ở đây là email)
         return (token_obj.email, None)  # Trả về email làm user (hoặc bạn có thể trả về user object)

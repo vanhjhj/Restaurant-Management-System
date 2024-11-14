@@ -64,7 +64,4 @@ class Token(models.Model):
     email = models.EmailField()
     token = models.CharField(max_length=100)
     revoked = models.BooleanField(default=False)
-    expired_at = models.DateTimeField()
-    class Meta:
-        unique_together = ['email', 'token', 'expired_at']
 

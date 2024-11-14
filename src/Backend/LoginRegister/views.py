@@ -58,6 +58,12 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
+
+            #revoke token afterr creating account
+            token_obj = request.token_obj
+            token_obj.revoked = True 
+            token_obj.save()
+
             response = {
                 'data': serializer.data,
                 'status': 'success',
@@ -346,7 +352,7 @@ class VerifyOTPAPIView(generics.CreateAPIView):
                 #revoke all previous tokens
                 Token.objects.filter(email=email, revoked=False).update(revoked=True)
             
-            Token.objects.create(email=email, token=token, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+            Token.objects.create(email=email, token=token)
 
             # Trả về token
             response = {
@@ -371,6 +377,11 @@ class ResetPasswordAPIView(generics.CreateAPIView):
             account.set_password(serializer.validated_data.get('password'))
             account.save()
             
+            #revoke token after reset password
+            token_obj = request.token_obj
+            token_obj.revoked = True
+            token_obj.save()
+
             response = {
                 'status': 'success',
                 'message': 'Password reset successfully'
