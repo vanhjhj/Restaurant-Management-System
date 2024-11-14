@@ -11,3 +11,6 @@ class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
         fields = ['id','name','price','description','image','category']
+        extra_kwargs = {
+            'price': {'read_only': True}
+        }
