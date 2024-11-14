@@ -6,7 +6,7 @@ import { forgotPassword } from '../../../API/authAPI';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
-    const [error, setError] = useState(null); // Trạng thái để hiển thị lỗi
+    const [error, setError] = useState({});
     const [success, setSuccess] = useState(false); // Trạng thái khi gửi thành công
     const navigate = useNavigate();
 
@@ -17,9 +17,10 @@ function ForgotPassword() {
             await forgotPassword(email); // Gọi API quên mật khẩu
             setSuccess(true); // Hiển thị thông báo thành công
             alert("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn!");
-            navigate('/login'); // Điều hướng về trang đăng nhập
+            navigate('/verify-otp', { state: { mode: 'forgotPassword', email } });
         } catch (err) {
-            setError(err.response?.data?.email || "Đã xảy ra lỗi. Vui lòng thử lại!"); // Hiển thị lỗi từ backend
+            const errorMessage = err.response?.data?.email || 'Email chưa được đăng ký.';
+            setError(errorMessage);
         }
     };
 
@@ -38,7 +39,7 @@ function ForgotPassword() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-
+                    {error.email && <p className="error-message">{error.email}</p>}
                     <button type="submit" className="reset-btn">Đặt lại mật khẩu</button>
                 </form>
                 <button

@@ -16,23 +16,16 @@ function Login({ onLogin }) {
         event.preventDefault();
 
         try {
-            const credentials = { username, password };
-            const data = await login(credentials); // Gọi API
-
-            // // Kiểm tra phản hồi và lấy account_type từ server
-            // if (data && data.account_type) {
-            //     localStorage.setItem('account_type', data.account_type); // Lưu account_type vào localStorage để sử dụng trong ứng dụng
-            //     onLogin(data); // Gọi callback với dữ liệu đăng nhập (nếu cần)
-            //     navigate('/'); // Chuyển hướng sau khi đăng nhập thành công
-            // } else {
-            //     setError('Không tìm thấy account_type trong phản hồi.');
-            // }
-            onLogin(data); // Gọi callback với dữ liệu đăng nhập (nếu cần)
+            const response = await login({ username, password });
+        
+            // Gọi hàm onLogin được truyền từ App.js
+            onLogin(response.account_type);
             navigate('/');
-        } catch (err) {
-            setError(<h1 className="error">Tên đăng nhập hoặc tài khoản sai!</h1>);
-        }
+          } catch (error) {
+            setError(error.message); // Hiển thị lỗi nếu có
+          }
     };
+
 
     return (
         <div className="login-container">
@@ -53,22 +46,23 @@ function Login({ onLogin }) {
                     />
 
                     <label htmlFor="password">Mật khẩu</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Nhập mật khẩu"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <span
-                        className="password-toggle-icon"
-                        onClick={() => setShowPassword(!showPassword)}
-                    >
-                        <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
-                     </span>
-
+                    <div className="password-input-container">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            id="password"
+                            name="password"
+                            placeholder="Nhập mật khẩu"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <span
+                            className="password-toggle-icon"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                        </span>
+                    </div>
                     <button type="submit" className="login-btn">Đăng nhập</button>
 
                     <button

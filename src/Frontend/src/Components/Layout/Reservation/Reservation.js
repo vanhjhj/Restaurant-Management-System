@@ -17,7 +17,8 @@ function Reservation({ isLoggedIn }) {
   useEffect(() => {
     if (!isLoggedIn && !alertShown) {
       setAlertShown(true); // Đặt trạng thái để cảnh báo chỉ xuất hiện một lần
-      if (window.confirm('Bạn cần đăng nhập trước khi đặt bàn. Bạn có muốn đăng nhập ngay bây giờ không?')) {
+      const userConfirmed = window.confirm('Bạn cần đăng nhập trước khi đặt bàn. Bạn có muốn đăng nhập ngay bây giờ không?');
+      if (userConfirmed) {
         navigate('/login');
       } else {
         navigate('/'); // Chuyển hướng về trang chủ nếu người dùng chọn không

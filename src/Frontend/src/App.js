@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './Components/Layout/Header/Header'
 import Footer from './Components/Layout/Footer/Footer';
@@ -8,7 +8,10 @@ import Menu from './Components/Layout/Menu/Menu';
 import Reservation from './Components/Layout/Reservation/Reservation';
 import Login from './Components/Auth/Login/Login';
 import SignUp from './Components/Auth/SignUp/SignUp';
+import VerifyOTP from './Components/Auth/VerifyOTP/VerifyOTP'
 import ForgotPassword from './Components/Auth/ForgotPassword/ForgotPassword';
+import ResetPassword from './Components/Auth/ResetPassword/ResetPassword';
+import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 import Profile from './Components/Customer/Profile/Profile';
 import ManageEmployees from './Components/Admin/ManageEmployee/ManageEmployees';
 import ManageMenu from './Components/Admin/ManageMenu/ManageMenu';
@@ -18,46 +21,56 @@ import ViewSalesReports from './Components/Admin/ViewSalesReports/ViewSalesRepor
 import ManageRestaurantInfo from './Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo';
 import PurchaseHistory from './Components/Customer/Purchase History/PurchaseHistory';
 import AdminDashboard from './Components/Admin/AdminDashboard/AdminDashboard';
-// import EmployeeDashboard from './Components/EmployeeDashboard';
+import EmployeeDashboard from './Components/Employee/EmployeeDashboard/EmployeeDashboard';
 import './App.css';
+import { logout, refreshToken } from './API/authAPI';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faEye, faEyeSlash);
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [userRole, setUserRole] = useState('khach hang');
-  
-  // Gọi API để lấy vai trò người dùng khi đăng nhập
-  const fetchUserRole = async () => {
-    try {
-      const response = await fetch('/api/user-role', {
-        method: 'GET',
-        credentials: 'include', // Đảm bảo cookie được gửi nếu cần
-      });
-      const data = await response.json();
-      setUserRole(data.role); // Ví dụ: { role: 'admin' } hoặc { role: 'nhan vien' } hoặc { role: 'khach hang' }
-    } catch (error) {
-      console.error('Error fetching user role:', error);
-    }
-  };
+  const [userRole, setUserRole] = useState('Customer');
 
-
-   // Hàm cập nhật trạng thái khi đăng nhập thành công
-  const handleLogin = async() => {
+   // Hàm được gọi khi đăng nhập thành công từ Login.js
+  const handleLogin = (accountType) => {
     setIsLoggedIn(true);
-    await fetchUserRole();
+    setUserRole(accountType);
+    localStorage.setItem('isLoggedIn', true);
+    localStorage.setItem('userRole', accountType);
   };
 
-   // Hàm đăng xuất
-   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserRole('guest'); 
-  };
+  const handleLogout = async () => {
+    let refreshToken = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchUserRole(); // Lấy vai trò nếu người dùng đã đăng nhập
+    if (!refreshToken) {
+        console.error('Không tìm thấy refresh token. Đăng xuất thủ công.');
+        setIsLoggedIn(false);
+        setUserRole('Customer');
+        localStorage.clear();
+        return;
     }
-  }, [isLoggedIn]);
+
+    try {
+        // Làm mới token nếu cần thiết
+        const newTokens = await refreshToken(refreshToken);
+        refreshToken = newTokens.refresh; // Cập nhật refresh token mới nếu có
+        localStorage.setItem('refreshToken', refreshToken);
+
+        // Gọi API logout
+        await logout(refreshToken);
+
+        // Xóa trạng thái đăng nhập
+        setIsLoggedIn(false);
+        setUserRole('Customer');
+        localStorage.clear();
+    } catch (error) {
+        console.error('Đăng xuất thất bại:', error.message);
+        alert('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại.');
+    }
+};
 
 
   return (
@@ -67,36 +80,53 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/menu" element={<Menu />} />
-        <Route path="/reservation" element={<Reservation isLoggedIn={isLoggedIn}/>}
-        />
+        <Route path="/reservation" element={<Reservation isLoggedIn={isLoggedIn}/>}/>
 
-        {/* Phân quyền cho admin */}
-        {userRole === 'admin' && (
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        )}
+        <Route>
+          {/* Trang chỉ dành cho Admin */}
+          <Route
+              path="/admin-dashboard"
+              element={
+                  <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin']} userRole={userRole}>
+                      <AdminDashboard />
+                      <ManageRestaurantInfo/>
+                      <ManageEmployees/>
+                      <ManagePromotions/>
+                      <ManageMenu/>
+                      <ViewSalesReports/>
+                      <RegisterEmployeeAccount/>
+                  </ProtectedRoute>
+              }
+          />
 
-        {/* Phân quyền cho nhân viên */}
-        {userRole === 'nhan vien' && (
-          <Route path="/" element={<AdminDashboard />} />
-        )}
+              {/* Trang chỉ dành cho Nhân viên */}
+          <Route
+              path="/employee-dashboard"
+              element={
+                  <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Employee']} userRole={userRole}>
+                      <EmployeeDashboard />
+                  </ProtectedRoute>
+              }
+          />
 
-        {/* Phân quyền cho khách hàng */}
-        {userRole === 'khach hang' && (
-          <Route path="/" element={<HomePage />} />
-        )}
+              {/* Trang chỉ dành cho Khách hàng */}
+          <Route
+              path="/purchase-history"
+              element={
+                  <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Customer']} userRole={userRole}>
+                      <PurchaseHistory />
+                  </ProtectedRoute>
+              }
+          />
+        </Route>;
 
         {/* Đăng nhập và đăng ký */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/verify-otp" element={<VerifyOTP/>}/>
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword/>}/>
         <Route path="/profile" element={<Profile />} />
-        <Route path="/purchasehistory" element={<PurchaseHistory/>}/>
-        <Route path="/manage-restaurant-info" element={<ManageRestaurantInfo />} />
-        <Route path="/manage-promotions" element={<ManagePromotions />} />
-        <Route path="/manage-menu" element={<ManageMenu />} />
-        <Route path="/view-sales-reports" element={<ViewSalesReports />} />
-        <Route path="/register-employee-account" element={<RegisterEmployeeAccount />} />
-        <Route path="/manage-employees" element={<ManageEmployees />} />
       </Routes>
       <Footer />
     </Router>

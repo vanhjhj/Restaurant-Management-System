@@ -20,8 +20,5 @@ class CustomTokenAuthentication(BaseAuthentication):
         except Token.DoesNotExist:
             raise exceptions.AuthenticationFailed('Invalid or expired token. Check your email and token again.')
 
-        token_obj.revoked = True
-        token_obj.save()
-
         # Nếu token hợp lệ, trả về thông tin người dùng (ở đây là email)
         return (token_obj.email, None)  # Trả về email làm user (hoặc bạn có thể trả về user object)

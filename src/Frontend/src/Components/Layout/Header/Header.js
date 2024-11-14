@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
-function Header({ isLoggedIn, onLogout, account_type }) {
+function Header({ isLoggedIn, onLogout, userRole }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null); // Tham chiếu đến dropdown menu
 
@@ -25,6 +25,7 @@ function Header({ isLoggedIn, onLogout, account_type }) {
         };
     }, []);
 
+    
     return (
         <header className="site-header">
             <div className="container">
@@ -37,17 +38,16 @@ function Header({ isLoggedIn, onLogout, account_type }) {
                         <li><Link to="/menu">Thực Đơn</Link></li>
                         <li><Link to="/reservation">Đặt Bàn</Link></li>
 
-                        {/* Điều kiện hiển thị các trang dựa trên account_type */}
-                        {account_type === 'Admin' && (
+                        {/* Điều kiện hiển thị các trang dựa trên userRole */}
+                        {userRole === 'Admin' && (
                             <li><Link to="/admin-dashboard">Quản Trị</Link></li>
                         )}
-                        {account_type === 'Employee' && (
+                        {userRole === 'Employee' && (
                             <>
                                 <li><Link to="/employee-dashboard">Trang Nhân Viên</Link></li>
-                                <li><Link to="/order-food">Đặt Món</Link></li> {/* Nút Đặt Món cho nhân viên */}
                             </>
                         )}
-                        {account_type === 'Customer' && (
+                        {userRole === 'Customer' && (
                             <li><Link to="/"></Link></li>
                         )}
 
@@ -59,11 +59,17 @@ function Header({ isLoggedIn, onLogout, account_type }) {
                                 {isMenuOpen && (
                                     <div className="user-dropdown">
                                         {/* Show only the Logout option for admin */}
-                                        {account_type === 'admin' ? (
+                                        {userRole === 'admin' ? (
                                             <button onClick={onLogout}>Đăng xuất</button>
+                                        ) : userRole === 'Employee' ? (
+                                            <>
+                                                {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
+                                                <Link to="/profile">Thông tin cá nhân</Link>
+                                                <button onClick={onLogout}>Đăng xuất</button>
+                                            </>
                                         ) : (
                                             <>
-                                                <Link to="/profile">Cập nhật thông tin cá nhân</Link>
+                                                <Link to="/profile">Thông tin cá nhân</Link>
                                                 <Link to="/purchasehistory">Tra cứu lịch sử mua hàng</Link>
                                                 <button onClick={onLogout}>Đăng xuất</button>
                                             </>

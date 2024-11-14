@@ -1,25 +1,39 @@
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* Toàn bộ container */
 .signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
 }
 
+/* Hộp chứa form */
 .signup-box {
-    background: #fff;
-    padding: 20px 30px;
+    padding: 20px 70px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 350px;
     text-align: center;
+    margin-bottom: 70px;
 }
 
+/* Tiêu đề */
 .signup-box h2 {
     margin-bottom: 20px;
     color: #333;
+    font-size: 24px;
+    font-weight: bold;
 }
 
+/* Label */
 .signup-box label {
     display: block;
     margin-bottom: 8px;
@@ -28,6 +42,7 @@
     font-size: 14px;
 }
 
+/* Input chung */
 .signup-box input {
     width: 100%;
     padding: 10px;
@@ -35,37 +50,31 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    box-sizing: border-box;
 }
 
+/* Vùng chứa input và icon */
 .password-input-container {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.password-input-container input {
-    width: 100%;
-    padding-right: 40px; /* Chừa chỗ cho biểu tượng */
-}
-
+/* Icon "mắt" */
 .password-toggle-icon {
     position: absolute;
     right: 10px;
     cursor: pointer;
     font-size: 18px;
-    color: #fff;
+    color: #666;
+    transition: color 0.3s ease;
 }
 
 .password-toggle-icon:hover {
-    color: #333;
+    color: #007bff;
 }
 
-.error-message {
-    color: red;
-    font-size: 12px;
-    margin-bottom: 10px;
-}
-
+/* Nút đăng ký */
 .signup-btn {
     width: 100%;
     padding: 10px;
@@ -74,33 +83,33 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 .signup-btn:hover {
     background: #0056b3;
 }
 
-.login-btn {
-    background: none;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    font-size: 14
-}
-
-.signup-btn:hover {
-    background: #0056b3;
-}
-
+/* Nút chuyển sang đăng nhập */
 .login-btn {
     background: none;
     border: none;
     color: #007bff;
     cursor: pointer;
     font-size: 14px;
+    margin-top: 10px;
+    text-decoration: underline;
 }
 
 .login-btn:hover {
-    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* Lỗi */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
 }

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
-import { register } from '../../../API/authAPI';
+import { account_check, sendOrResendOTP } from '../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 function SignUp() {
     const [username, setUsername] = useState('');
@@ -11,7 +12,7 @@ function SignUp() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Để điều khiển hiển thị mật khẩu
     const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Điều khiển confirm password
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
 
     const navigate = useNavigate();
 
@@ -21,11 +22,11 @@ function SignUp() {
         event.preventDefault();
 
         if (password !== confirmPassword) {
-            setError("Mật khẩu xác nhận không khớp.");
+            setErrors("Mật khẩu xác nhận không khớp.");
             return;
         }
 
-        const userData = {
+        const signupData = {
             username,
             email,
             password,
@@ -33,11 +34,17 @@ function SignUp() {
         };
 
         try {
-            await register(userData);
-            alert("Đăng ký thành công!");
-            navigate('/');
+            await account_check(signupData);
+            alert('Thông tin hợp lệ!')
         } catch (err) {
-            setError(err.response ? err.response.data.message : 'Đăng ký thất bại. Vui lòng thử lại.');
+            setErrors(err,"lỗi khi check account");
+        }
+        try{
+            await sendOrResendOTP({email: signupData.email});
+            localStorage.setItem('signupData', JSON.stringify(signupData));
+            navigate('/verify-otp', { state: { mode: 'register', signupData, email: signupData.email } });
+        }  catch (err) {
+            setErrors(err,"lỗi khi gửi otp");
         }
     };
 
@@ -46,7 +53,7 @@ function SignUp() {
             <div className="signup-box">
                 <h2>Đăng ký</h2>
                 <form onSubmit={handleSignUpSubmit}>
-                    {error && <p className="error-message">{error}</p>}
+                    {errors && <p className="error-message">{errors.message}</p>}
 
                     <label htmlFor="username">Tài khoản</label>
                     <input
@@ -58,6 +65,7 @@ function SignUp() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
+                     {errors.username && <p className="error-message">{errors.username}</p>}
 
                     <label htmlFor="email">Email</label>
                     <input
@@ -69,6 +77,8 @@ function SignUp() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
+                    {errors.email && <p className="error-message">{errors.email}</p>}
+
 
                     <label htmlFor="password">Mật khẩu</label>
                     <div className="password-input-container">
@@ -87,6 +97,7 @@ function SignUp() {
                         >
                             <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
                         </span>
+                        {errors.password && <p className="error-message">{errors.password}</p>}
                     </div>
 
                     <label htmlFor="confirm-password">Xác nhận mật khẩu</label>
@@ -104,8 +115,9 @@ function SignUp() {
                             className="password-toggle-icon"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                           <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                            <FontAwesomeIcon icon={showConfirmPassword ? "eye-slash" : "eye"} />
                         </span>
+                        {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
                     </div>
 
                     <button type="submit" className="signup-btn">Đăng ký</button>
