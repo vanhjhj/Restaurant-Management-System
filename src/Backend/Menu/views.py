@@ -1,8 +1,11 @@
 from django.shortcuts import render
+import django_filters
 from .models import *
 from .serializers import *
 from rest_framework import generics,permissions, status
 from rest_framework.response import Response
+from .filters import MenuItemFilter
+from django_filters.rest_framework import DjangoFilterBackend
 # Create your views here.
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -73,12 +76,22 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         }
         return Response(response, status=status.HTTP_200_OK)
 
+class MenuItemFilter(django_filters.FilterSet):
+    category_search = django_filters.CharFilter(field_name="category__name", lookup_expr='icontains')  
+    menuitem_search = django_filters.CharFilter(field_name="name", lookup_expr='icontains')  
+
+    class Meta:
+        model = MenuItem
+        fields = ['category_search', 'menuitem_search']
+
 class MenuItemListCreateAPIView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     permission_classes = [permissions.IsAdminUser]
-    search_fields=['category__name']
-    ordering_fields=['price','category__name','name']
+    filter_backends = (DjangoFilterBackend,)  
+    filterset_class = MenuItemFilter  
+    search_fields = ['name', 'category__name']
+    ordering_fields = ['price', 'category__name', 'name'] 
 
     def get_permissions(self):
         if self.request.method == 'GET':
