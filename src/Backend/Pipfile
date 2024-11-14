@@ -9,6 +9,8 @@ djangorestframework = "*"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
 django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
+django-filter = "*"
+pillow = "*"
 
 [dev-packages]
 
