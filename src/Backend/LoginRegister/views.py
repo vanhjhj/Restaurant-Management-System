@@ -37,6 +37,13 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
 
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
+
+            account_type = account.account_type
+            if account_type == 'Customer':
+                CustomerAccount.objects.create(account=account)
+            elif account_type == 'Employee':
+                EmployeeAccount.objects.create(account=account)
+                
             response = {
                 'data': serializer.data,
                 'status': 'success',
