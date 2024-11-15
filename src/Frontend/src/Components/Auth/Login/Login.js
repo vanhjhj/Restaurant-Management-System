@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Login.css';
+import style from './Login.module.css';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,11 +28,11 @@ function Login({ onLogin }) {
 
 
     return (
-        <div className="login-container">
-            <div className="login-box">
+        <div className={style["login-container"]}>
+            <div className={style["login-box"]}>
                 <h2>Đăng nhập</h2>
                 <form onSubmit={handleLoginSubmit}>
-                    {error && <p className="error-message">{error}</p>} {/* Hiển thị lỗi nếu có */}
+                    {error && <p className={style["error-message"]}>{error}</p>} {/* Hiển thị lỗi nếu có */}
                     
                     <label htmlFor="username">Tài khoản</label>
                     <input
@@ -46,7 +46,7 @@ function Login({ onLogin }) {
                     />
 
                     <label htmlFor="password">Mật khẩu</label>
-                    <div className="password-input-container">
+                    <div className={style['password-input-container']}>
                         <input
                             type={showPassword ? "text" : "password"}
                             id="password"
@@ -57,30 +57,30 @@ function Login({ onLogin }) {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <span
-                            className="password-toggle-icon"
+                            className={style["password-toggle-icon"]}
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
                         </span>
                     </div>
-                    <button type="submit" className="login-btn">Đăng nhập</button>
+                    <button type="submit" className={style["login-btn"]}>Đăng nhập</button>
 
                     <button
                         type="button"
                         onClick={() => navigate('/ForgotPassword')}
-                        className="forgot-password"
+                        className={style["forgot-password"]}
                     >
                         Quên mật khẩu?
                     </button>
                 </form>
             </div>
 
-            <div className="register-box">
+            <div className={style["register-box"]}>
                 <p>Bạn chưa có tài khoản? <br /> Ấn vào nút bên dưới để đăng ký ngay!</p>
                 <button
                     type="button"
                     onClick={() => navigate('/SignUp')}
-                    className="register-btn"
+                    className={style["register-btn"]}
                 >
                     Đăng ký
                 </button>

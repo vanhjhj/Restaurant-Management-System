@@ -1,7 +1,7 @@
 // src/Components/forgotPassword.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ForgotPassword.css';
+import style from'./ForgotPassword.module.css';
 import { forgotPassword } from '../../../API/authAPI';
 
 function ForgotPassword() {
@@ -25,32 +25,34 @@ function ForgotPassword() {
     };
 
     return (
-        <div className="forgot-password-container">
-            <div className="forgot-password-box">
-                <h2>Quên mật khẩu</h2>
-                <form onSubmit={handleResetSubmit}>
-                    <label htmlFor="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Nhập email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    {error.email && <p className="error-message">{error.email}</p>}
-                    <button type="submit" className="reset-btn">Đặt lại mật khẩu</button>
-                </form>
-                <button
-                    type="button"
-                    onClick={() => navigate('/login')}
-                    className="login-btn"
-                >
-                    Trở lại Đăng nhập
+        <div className={style["forgot-password-container"]}>
+        <div className={style["forgot-password-box"]}>
+            <h2>Quên mật khẩu</h2>
+                <form class={style["forgot-form"]} onSubmit={handleResetSubmit}>
+                <label htmlFor="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Nhập email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                {error.email && <p className={style["error-message"]}>{error.email}</p>}
+                <button type="submit" className={style["reset-btn"]}>
+                    Đặt lại mật khẩu
+                    </button>
+            </form>
+            <button
+                type="button"
+                onClick={() => navigate('/login')}
+                className={style["login-btn"]}
+            >
+                Trở lại Đăng nhập
                 </button>
-            </div>
         </div>
+    </div>
     );
 }
 
