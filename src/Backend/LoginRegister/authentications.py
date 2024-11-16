@@ -27,7 +27,7 @@ class CustomTokenAuthentication(BaseAuthentication):
     
         return (email, None)
     
-    def decode_custom_token(token):
+    def decode_custom_token(self, token):
         # save original settings
         original_user_id_field = api_settings.USER_ID_FIELD
         original_user_id_claim = api_settings.USER_ID_CLAIM
