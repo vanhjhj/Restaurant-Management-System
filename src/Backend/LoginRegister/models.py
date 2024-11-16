@@ -35,7 +35,7 @@ class EmployeeAccount(models.Model):
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=10, choices=[('Nam', 'Nam'), ('Nữ', 'Nữ')])
     start_working_date = models.DateField()
-    address = models.CharField(max_length=200)
+    address = models.CharField(max_length=200, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
@@ -59,9 +59,4 @@ class OTP(models.Model):
     expired_at = models.DateTimeField()
     class Meta:
         unique_together = ['email', 'otp', 'expired_at']
-
-class Token(models.Model):
-    email = models.EmailField()
-    token = models.CharField(max_length=100)
-    revoked = models.BooleanField(default=False)
 

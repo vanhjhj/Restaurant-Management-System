@@ -12,12 +12,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         # Thêm account_type vào token payload
         token['account_type'] = user.account_type
+        token['email'] = user.email
         return token
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        # Trả thêm account_type trong phần phản hồi
-        data['account_type'] = self.user.account_type
         return data
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -67,6 +66,10 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeAccount
         fields = ('account_id', 'id', 'full_name', 'date_of_birth', 'gender', 'start_working_date', 'address', 'department')
+        extra_kwargs = {
+            'address': {'required': False},
+        }
+
 
     def create(self, validated_data):
         account_id = validated_data.pop('account_id')
@@ -137,7 +140,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
     def validate_email(self, value):
-        # Kiểm tra xem email có tồn tại trong hệ thống không
+        # check if email exists
         if not Account.objects.filter(email=value).exists():
             raise serializers.ValidationError("This email is not registered.")
         return value
