@@ -381,7 +381,7 @@ class ResetPasswordAPIView(generics.CreateAPIView):
             account = Account.objects.get(email=serializer.validated_data.get('email'))
             account.set_password(serializer.validated_data.get('password'))
             account.save()
-
+            
             response = {
                 'status': 'success',
                 'message': 'Password reset successfully'
@@ -389,6 +389,3 @@ class ResetPasswordAPIView(generics.CreateAPIView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-#nguyen dang tri
-        
