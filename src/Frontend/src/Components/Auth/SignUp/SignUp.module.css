@@ -75,10 +75,10 @@
 }
 
 /* Nút đăng ký */
-.signup-btn {
+.signup-box .signup-btn {
     width: 100%;
     padding: 10px;
-    background: #007bff;
+    background: #35737d;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -88,15 +88,15 @@
     transition: background-color 0.3s ease;
 }
 
-.signup-btn:hover {
-    background: #0056b3;
+.signup-box .signup-btn:hover {
+    background:  #2c5e64;
 }
 
 /* Nút chuyển sang đăng nhập */
 .login-btn {
     background: none;
     border: none;
-    color: #007bff;
+    color: black;
     cursor: pointer;
     font-size: 14px;
     margin-top: 10px;
@@ -104,7 +104,7 @@
 }
 
 .login-btn:hover {
-    color: #0056b3;
+    color: #76abe3;
 }
 
 /* Lỗi */

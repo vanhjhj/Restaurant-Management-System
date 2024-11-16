@@ -77,9 +77,12 @@
 
 .forgot-password {
     display: block;
+    border:none;
+    background: none;
     text-align: center;
     margin-top: 10px;
     color: #35737d;
+    cursor: pointer;
     text-decoration: none;
     font-size: 14px;
     text-align: center;

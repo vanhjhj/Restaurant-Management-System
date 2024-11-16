@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SignUp.css';
+import style from './SignUp.module.css';
 import { account_check, sendOrResendOTP } from '../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -49,11 +49,11 @@ function SignUp() {
     };
 
     return (
-        <div className="signup-container">
-            <div className="signup-box">
+        <div className={style["signup-container"]}>
+            <div className={style["signup-box"]}>
                 <h2>Đăng ký</h2>
                 <form onSubmit={handleSignUpSubmit}>
-                    {errors && <p className="error-message">{errors.message}</p>}
+                    {errors && <p className={style["error-message"]}>{errors.message}</p>}
 
                     <label htmlFor="username">Tài khoản</label>
                     <input
@@ -65,7 +65,7 @@ function SignUp() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
-                     {errors.username && <p className="error-message">{errors.username}</p>}
+                    {errors.username && <p className={style["error-message"]}>{errors.username}</p>}
 
                     <label htmlFor="email">Email</label>
                     <input
@@ -77,11 +77,10 @@ function SignUp() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    {errors.email && <p className="error-message">{errors.email}</p>}
-
+                    {errors.email && <p className={style["error-message"]}>{errors.email}</p>}
 
                     <label htmlFor="password">Mật khẩu</label>
-                    <div className="password-input-container">
+                    <div className={style["password-input-container"]}>
                         <input
                             type={showPassword ? "text" : "password"}
                             id="password"
@@ -92,16 +91,16 @@ function SignUp() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <span
-                            className="password-toggle-icon"
+                            className={style["password-toggle-icon"]}
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
                         </span>
-                        {errors.password && <p className="error-message">{errors.password}</p>}
+                        {errors.password && <p className={style["error-message"]}>{errors.password}</p>}
                     </div>
 
                     <label htmlFor="confirm-password">Xác nhận mật khẩu</label>
-                    <div className="password-input-container">
+                    <div className={style["password-input-container"]}>
                         <input
                             type={showConfirmPassword ? "text" : "password"}
                             id="confirm-password"
@@ -112,20 +111,20 @@ function SignUp() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                         <span
-                            className="password-toggle-icon"
+                            className={style["password-toggle-icon"]}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                             <FontAwesomeIcon icon={showConfirmPassword ? "eye-slash" : "eye"} />
                         </span>
-                        {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
+                        {errors.confirmPassword && <p className={style["error-message"]}>{errors.confirmPassword}</p>}
                     </div>
 
-                    <button type="submit" className="signup-btn">Đăng ký</button>
+                    <button type="submit" className={style["signup-btn"]}>Đăng ký</button>
                 </form>
                 <button
                     type="button"
+                    className={style["login-btn"]}
                     onClick={() => navigate('/login')}
-                    className="login-btn"
                 >
                     Đã có tài khoản? Đăng nhập
                 </button>

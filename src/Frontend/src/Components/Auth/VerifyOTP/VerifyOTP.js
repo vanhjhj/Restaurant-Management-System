@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './VerifyOTP.css';
+import style from './VerifyOTP.module.css';
 import { verifyOTP, register, sendOrResendOTP,forgotPassword } from '../../../API/authAPI';
 
 function VerifyOTP() {

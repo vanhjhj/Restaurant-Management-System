@@ -1,7 +1,7 @@
 // src/components/Reservation.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Reservation.css';
+import style from './Reservation.module.css';
 
 function Reservation({ isLoggedIn }) {
   const [name, setName] = useState('');

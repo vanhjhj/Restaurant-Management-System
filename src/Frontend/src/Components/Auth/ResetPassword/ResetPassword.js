@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './ResetPassword.css';
-import { refreshToken,forgotPassword, resetPassword } from '../../../API/authAPI';
+import style from './ResetPassword.module.css'; // CSS module import
+import { refreshToken, forgotPassword, resetPassword } from '../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -12,7 +12,7 @@ function ResetPassword() {
     const [successMessage, setSuccessMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false); 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -31,7 +31,7 @@ function ResetPassword() {
     const handleResetPassword = async () => {
         if (isSubmitting) return;
 
-        // Validation cơ bản
+        // Basic validation
         if (!email || !token) {
             setError({ message: 'Thông tin không hợp lệ. Vui lòng thử lại.' });
             navigate('/forgot-password');
@@ -59,10 +59,10 @@ function ResetPassword() {
         } catch (err) {
             const serverError = err.response.data;
 
-            console.log('HTTP Status:', err.response.status); 
-            console.log('Server Error:', serverError); 
+            console.log('HTTP Status:', err.response.status);
+            console.log('Server Error:', serverError);
 
-            // Xử lý lỗi mật khẩu
+            // Handle password errors
             if (serverError.non_field_errors) {
                 const passwordErrors = serverError.non_field_errors.join(' ');
                 console.log('Password Errors:', passwordErrors);
@@ -70,14 +70,14 @@ function ResetPassword() {
                 return;
             }
 
-            // Xử lý lỗi khác
-            if(serverError.detail){
+            // Handle other errors
+            if (serverError.detail) {
                 try {
                     console.log('Token hết hạn. Đang refresh token...');
-                    const refreshedToken = await refreshToken(token); // Gọi API refresh token
+                    const refreshedToken = await refreshToken(token); // Refresh token
                     console.log('Token mới:', refreshedToken);
                     const resetData = { email, password };
-                    await resetPassword(resetData, refreshedToken.access); // Thử lại resetPassword với token mới
+                    await resetPassword(resetData, refreshedToken.access); // Retry resetPassword with new token
                 } catch (refreshError) {
                     console.error('Lỗi khi refresh token:', refreshError);
                     setError({ message: 'Không thể làm mới token. Vui lòng thử lại.' });
@@ -91,22 +91,22 @@ function ResetPassword() {
     };
 
     return (
-        <div className="reset-password-container">
+        <div className={style['reset-password-container']}>
             <h2>Đặt Lại Mật Khẩu</h2>
 
-            {error && <p className="error-message">{error.message}</p>}
+            {error && <p className={style['error-message']}>{error.message}</p>}
 
             <label htmlFor="new-password">Mật khẩu mới</label>
-            <div className="password-input-container">
+            <div className={style['password-input-container']}>
                 <input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Nhập mật khẩu mới"
                     value={password}
                     onChange={handlePasswordChange}
-                    className="password-input"
+                    className={style['password-input']}
                 />
                 <span
-                    className="password-toggle-icon"
+                    className={style['password-toggle-icon']}
                     onClick={() => setShowPassword(!showPassword)}
                 >
                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
@@ -114,28 +114,28 @@ function ResetPassword() {
             </div>
 
             <label htmlFor="confirm-new-password">Xác nhận mật khẩu mới</label>
-            <div className="password-input-container">
+            <div className={style['password-input-container']}>
                 <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Xác nhận mật khẩu mới"
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
-                    className="password-input"
+                    className={style['password-input']}
                 />
                 <span
-                    className="password-toggle-icon"
+                    className={style['password-toggle-icon']}
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                     <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
                 </span>
             </div>
 
-            {successMessage && <p className="success-message">{successMessage}</p>}
+            {successMessage && <p className={style['success-message']}>{successMessage}</p>}
 
             <button
                 type="button"
                 onClick={handleResetPassword}
-                className="reset-password-button"
+                className={style['reset-password-button']}
                 disabled={isSubmitting}
             >
                 {isSubmitting ? 'Đang xử lý...' : 'Đặt Lại Mật Khẩu'}
