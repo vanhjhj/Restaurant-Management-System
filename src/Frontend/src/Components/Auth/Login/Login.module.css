@@ -12,12 +12,20 @@
     overflow: hidden;
     margin: auto; /* Đảm bảo căn giữa */
 }
+.password-input-container {
+    position: relative; /* Đặt relative để định vị icon */
+    display: flex;
+    align-items: center; /* Căn giữa dọc */
+}
 .password-toggle-icon {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #fff;
+    position: absolute; /* Định vị tuyệt đối */
+    right: 10px; /* Cách lề phải 10px */
+    top: 50%; /* Đặt giữa theo chiều dọc */
+    transform: translateY(-50%); /* Điều chỉnh để icon nằm chính giữa */
+    cursor: pointer; /* Thêm hiệu ứng chuột */
+    font-size: 18px; /* Kích thước icon */
+    color: #666; /* Màu sắc icon */
+    z-index: 2; /* Đảm bảo nằm trên input */
 }
 
 .password-toggle-icon:hover {

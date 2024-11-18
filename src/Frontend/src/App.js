@@ -11,6 +11,7 @@ import SignUp from './Components/Auth/SignUp/SignUp';
 import VerifyOTP from './Components/Auth/VerifyOTP/VerifyOTP'
 import ForgotPassword from './Components/Auth/ForgotPassword/ForgotPassword';
 import ResetPassword from './Components/Auth/ResetPassword/ResetPassword';
+import FillFormInfo from './Components/Auth/FillFormInfo/FillFormInfo';
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 import Profile from './Components/Customer/Profile/Profile';
 import ManageEmployees from './Components/Admin/ManageEmployee/ManageEmployees';
@@ -24,6 +25,7 @@ import AdminDashboard from './Components/Admin/AdminDashboard/AdminDashboard';
 import EmployeeDashboard from './Components/Employee/EmployeeDashboard/EmployeeDashboard';
 import './App.css';
 import { logout, refreshToken } from './API/authAPI';
+import { isTokenExpired } from './utils/tokenHelper.mjs';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -43,9 +45,10 @@ function App() {
   };
 
   const handleLogout = async () => {
-    let refreshToken = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
+    let refreshTokenValue = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
+    let token = localStorage.getItem('accessToken');
 
-    if (!refreshToken) {
+    if (!refreshTokenValue) {
         console.error('Không tìm thấy refresh token. Đăng xuất thủ công.');
         setIsLoggedIn(false);
         setUserRole('Customer');
@@ -54,13 +57,15 @@ function App() {
     }
 
     try {
-        // Làm mới token nếu cần thiết
-        const newTokens = await refreshToken(refreshToken);
-        refreshToken = newTokens.refresh; // Cập nhật refresh token mới nếu có
-        localStorage.setItem('refreshToken', refreshToken);
+        if(isTokenExpired(token))
+        {
+            const newTokens = await refreshToken(refreshTokenValue, token);
+                token = newTokens.access; // Cập nhật access token mới
+                localStorage.setItem('accessToken', token);
 
+        }
         // Gọi API logout
-        await logout(refreshToken);
+        await logout(refreshTokenValue, token);
 
         // Xóa trạng thái đăng nhập
         setIsLoggedIn(false);
@@ -68,7 +73,6 @@ function App() {
         localStorage.clear();
     } catch (error) {
         console.error('Đăng xuất thất bại:', error.message);
-        alert('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại.');
     }
 };
 
@@ -123,9 +127,11 @@ function App() {
         {/* Đăng nhập và đăng ký */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/signup" element={<SignUp />} />
+        
         <Route path="/verify-otp" element={<VerifyOTP/>}/>
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword/>}/>
+        <Route path ='/FillFormInfo' element={<FillFormInfo/>}/>
         <Route path="/profile" element={<Profile />} />
       </Routes>
       <Footer />
