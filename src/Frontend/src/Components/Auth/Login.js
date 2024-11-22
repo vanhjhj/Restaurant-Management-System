@@ -3,6 +3,7 @@ import style from '../../Style/AuthStyle/Login.module.css';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { decodeToken } from '../../../utils/tokenHelper.mjs';
 
 function Login({ onLogin }) {
     const [username, setUsername] = useState('');
@@ -17,10 +18,23 @@ function Login({ onLogin }) {
 
         try {
             const response = await login({ username, password });
-        
-            // Gọi hàm onLogin được truyền từ App.js
-            onLogin(response.account_type);
-            navigate('/');
+            localStorage.setItem('accessToken',response.access);
+            localStorage.setItem('refreshToken',response.refresh);
+
+            // Decode token và lấy thông tin người dùng
+            const userInfo = decodeToken(response.access);
+            if (userInfo) {
+                localStorage.setItem('userId', userInfo.user_id);
+                localStorage.setItem('accountType', userInfo.account_type);
+
+                // Gọi hàm onLogin được truyền từ App.js
+                onLogin(userInfo.account_type);
+
+                // Điều hướng đến trang chính
+                navigate('/');
+            } else {
+                throw new Error('Không thể giải mã token!');
+            }
           } catch (error) {
             setError(error.message); // Hiển thị lỗi nếu có
           }

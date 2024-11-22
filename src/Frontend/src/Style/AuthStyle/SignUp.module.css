@@ -68,6 +68,7 @@
     font-size: 18px;
     color: #666;
     transition: color 0.3s ease;
+    top:20%;
 }
 
 .password-toggle-icon:hover {

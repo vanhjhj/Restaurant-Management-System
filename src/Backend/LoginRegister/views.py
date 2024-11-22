@@ -10,10 +10,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import random
 from django.core.mail import send_mail
 from django.conf import settings
-from django.utils import timezone
-from django.utils.crypto import get_random_string
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from rest_framework_simplejwt.settings import api_settings
+import jwt
 
 # Create your views here.
 
@@ -58,11 +57,6 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
-
-            #revoke token afterr creating account
-            token_obj = request.token_obj
-            token_obj.revoked = True 
-            token_obj.save()
 
             response = {
                 'data': serializer.data,
@@ -196,6 +190,11 @@ class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
             return [permissions.AllowAny()]
 
         return super().get_permissions()
+    
+    # def get_authenticators(self):
+    #     if self.request.method == 'POST':
+    #         return [CustomTokenAuthentication()]
+    #     return super().get_authenticators()
 
     def post(self, request, *args, **kwargs):
         customer_data = request.data
@@ -256,12 +255,12 @@ class AccountLogoutAPIView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.data.get('refresh')
         
-        # Kiểm tra xem refresh token có tồn tại không
+        # check if refresh token is provided
         if not refresh_token:
             return Response({'message': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Tạo đối tượng RefreshToken và blacklist
+            # blacklist refresh token
             token = RefreshToken(refresh_token)
             token.blacklist()
 
@@ -273,6 +272,23 @@ class AccountLogoutAPIView(generics.GenericAPIView):
         except Exception as e:
             return Response({'message': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
         
+def gernerate_otp_and_send_email(email):
+    #generate OTP
+    otp = generate_otp()
+    if OTP.objects.filter(email=email, revoked=False).exists():
+        #revoke all previous OTPs
+        OTP.objects.filter(email=email, revoked=False).update(revoked=True)
+        
+    OTP.objects.create(email=email, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+
+    send_mail(
+        'Your OTP Code',
+        f'Your OTP code is {otp}',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+    return True
 class ForgotPasswordAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ForgotPasswordSerializer
@@ -282,21 +298,9 @@ class ForgotPasswordAPIView(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
 
-            #generate OTP
-            otp = generate_otp()
-            if OTP.objects.filter(email=email, revoked=False).exists():
-                #revoke all previous OTPs
-                OTP.objects.filter(email=email, revoked=False).update(revoked=True)
-                
-            OTP.objects.create(email=email, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+            #generate OTP and send email
+            gernerate_otp_and_send_email(email)
 
-            send_mail(
-                'Your OTP Code',
-                f'Your OTP code is {otp}',
-                settings.EMAIL_HOST_USER,
-                [email],
-                fail_silently=False,
-            )
             response = {
                 'status': 'success',
                 'message': 'OTP sent successfully'
@@ -314,21 +318,9 @@ class RegisterOTPAPIView(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
 
-            #generate OTP
-            otp = generate_otp()
-            if OTP.objects.filter(email=email, revoked=False).exists():
-                #revoke all previous OTPs
-                OTP.objects.filter(email=email, revoked=False).update(revoked=True)
-                
-            OTP.objects.create(email=email, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+            #generate OTP and send email
+            gernerate_otp_and_send_email(email)
 
-            send_mail(
-                'Your OTP Code',
-                f'Your OTP code is {otp}',
-                settings.EMAIL_HOST_USER,
-                [email],
-                fail_silently=False,
-            )
             response = {
                 'status': 'success',
                 'message': 'OTP sent successfully'
@@ -336,6 +328,28 @@ class RegisterOTPAPIView(generics.CreateAPIView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+def generate_custom_token(email):
+    # save original user id field and claim
+    original_user_id_field = api_settings.USER_ID_FIELD
+    original_user_id_claim = api_settings.USER_ID_CLAIM
+
+    # override user id field and claim
+    api_settings.USER_ID_FIELD = 'email'
+    api_settings.USER_ID_CLAIM = 'email'
+
+    try:
+        token = RefreshToken()
+        token['email'] = email
+        access_token = str(token.access_token)
+        refresh_token = str(token)
+    except TokenError as e:
+        raise exceptions.AuthenticationFailed('Invalid token')
+    finally:
+        # restore original user id field and claim
+        api_settings.USER_ID_FIELD = original_user_id_field
+        api_settings.USER_ID_CLAIM = original_user_id_claim
+    return access_token, refresh_token
         
 class VerifyOTPAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
@@ -346,19 +360,15 @@ class VerifyOTPAPIView(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
 
-            #create token
-            token = get_random_string(length=32)
-            if Token.objects.filter(email=email, revoked=False).exists():
-                #revoke all previous tokens
-                Token.objects.filter(email=email, revoked=False).update(revoked=True)
-            
-            Token.objects.create(email=email, token=token)
+            # generate token
+            access_token, refresh_token = generate_custom_token(email)
 
-            # Trả về token
+            # return access token and refresh token
             response = {
                 'status': 'success',
                 'message': 'OTP verified successfully',
-                'token': token
+                'access_token': access_token,
+                'refresh_token': refresh_token,
             }
             return Response(response, status=status.HTTP_200_OK)
 
@@ -367,7 +377,7 @@ class VerifyOTPAPIView(generics.CreateAPIView):
 class ResetPasswordAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ResetPasswordSerializer
-    authentication_classes = [CustomTokenAuthentication]
+    authentication_classes = [CustomTokenAuthentication] # use custom token authentication
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -377,11 +387,6 @@ class ResetPasswordAPIView(generics.CreateAPIView):
             account.set_password(serializer.validated_data.get('password'))
             account.save()
             
-            #revoke token after reset password
-            token_obj = request.token_obj
-            token_obj.revoked = True
-            token_obj.save()
-
             response = {
                 'status': 'success',
                 'message': 'Password reset successfully'
@@ -389,4 +394,3 @@ class ResetPasswordAPIView(generics.CreateAPIView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        

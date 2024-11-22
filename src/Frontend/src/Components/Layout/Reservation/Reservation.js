@@ -11,20 +11,7 @@ function Reservation({ isLoggedIn }) {
   const [time, setTime] = useState('');
   const [guests, setGuests] = useState(1);
   const [note, setNote] = useState('');
-  const [alertShown, setAlertShown] = useState(false); // Trạng thái để kiểm tra nếu cảnh báo đã hiển thị
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLoggedIn && !alertShown) {
-      setAlertShown(true); // Đặt trạng thái để cảnh báo chỉ xuất hiện một lần
-      const userConfirmed = window.confirm('Bạn cần đăng nhập trước khi đặt bàn. Bạn có muốn đăng nhập ngay bây giờ không?');
-      if (userConfirmed) {
-        navigate('/login');
-      } else {
-        navigate('/'); // Chuyển hướng về trang chủ nếu người dùng chọn không
-      }
-    }
-  }, [isLoggedIn, alertShown, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,7 +20,7 @@ function Reservation({ isLoggedIn }) {
   };
 
   return (
-    <div className="reservation-container">
+    <div className={style["reservation-container"]}>
       <h2>Đặt Bàn</h2>
       <form onSubmit={handleSubmit}>
         <label>

@@ -1,26 +1,51 @@
 from rest_framework.authentication import BaseAuthentication
-from .models import Token
 from rest_framework import exceptions
-from django.utils import timezone
+from rest_framework_simplejwt.tokens import TokenError
+import jwt
+from django.conf import settings
+from rest_framework_simplejwt.settings import api_settings
 
 class CustomTokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        # Lấy token từ header Authorization
-        token = request.headers.get('Authorization')
-        if not token:
+        header = request.headers.get('Authorization')
+        if not header:
             raise exceptions.AuthenticationFailed('Authentication credentials were not provided.')
+        
+        token = header.split(' ')[1] if ' ' in header else header
+    
+        try:
+            decoded = self.decode_custom_token(token)
+            email = decoded.get('email')
 
-        # Tách 'Bearer ' khỏi token nếu có
-        token = token.split(' ')[1] if ' ' in token else token
+            email_from_request = request.data.get('email')  # get email from request data
+
+            if email != email_from_request:
+                raise exceptions.AuthenticationFailed('Email does not match the OTP token.')
+        except TokenError as e:
+            # Token is invalid or expired
+            raise exceptions.AuthenticationFailed(str(e))
+    
+        return (email, None)
+    
+    def decode_custom_token(self, token):
+        # save original settings
+        original_user_id_field = api_settings.USER_ID_FIELD
+        original_user_id_claim = api_settings.USER_ID_CLAIM
+
+        # override settings
+        api_settings.USER_ID_FIELD = 'email'
+        api_settings.USER_ID_CLAIM = 'email'
 
         try:
-            # Kiểm tra token trong cơ sở dữ liệu
-            email = request.data.get('email')
-            token_obj = Token.objects.get(email=email, token=token, revoked=False)
-        except Token.DoesNotExist:
-            raise exceptions.AuthenticationFailed('Invalid or expired token. Check your email and token again.')
-
-        #save token_obj to request
-        request.token_obj = token_obj
-        # Nếu token hợp lệ, trả về thông tin người dùng (ở đây là email)
-        return (token_obj.email, None)  # Trả về email làm user (hoặc bạn có thể trả về user object)
+            # decode token
+            decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            return decoded
+        except jwt.ExpiredSignatureError:
+            raise TokenError('Token is expired')
+        except jwt.DecodeError:
+            raise TokenError('Token is invalid')
+        finally:
+            # restore original settings
+            api_settings.USER_ID_FIELD = original_user_id_field
+            api_settings.USER_ID_CLAIM = original_user_id_claim
+    
