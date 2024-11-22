@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import *
 from .serializers import *
 from .permissions import *
+from .authentications import *
 from rest_framework import generics, permissions, authentication, decorators
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,8 +10,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import random
 from django.core.mail import send_mail
 from django.conf import settings
-from django.utils import timezone
-from django.utils.crypto import get_random_string
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.settings import api_settings
+import jwt
 
 # Create your views here.
 
@@ -20,6 +22,21 @@ def generate_otp(length=6):
     otp = ''.join(random.choice(digits) for _ in range(length))
     return otp
 
+class AccountCheckAPIView(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = AccountSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            response = {
+                'status': 'success',
+                'message': 'Account is available'
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        #response the account is not available
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class AccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
@@ -28,22 +45,19 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [permissions.AllowAny()]
-
         return super().get_permissions()
+    
+    def get_authenticators(self):
+        if self.request.method == 'POST':
+            return [CustomTokenAuthentication()]
+        return super().get_authenticators()
 
     def post(self, request, *args, **kwargs):
-        user_data = request.data
-        serializer = self.serializer_class(data=user_data)
-
+        #create account
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
 
-            account_type = account.account_type
-            if account_type == 'Customer':
-                CustomerAccount.objects.create(account=account)
-            elif account_type == 'Employee':
-                EmployeeAccount.objects.create(account=account)
-                
             response = {
                 'data': serializer.data,
                 'status': 'success',
@@ -178,6 +192,11 @@ class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
             return [permissions.AllowAny()]
 
         return super().get_permissions()
+    
+    # def get_authenticators(self):
+    #     if self.request.method == 'POST':
+    #         return [CustomTokenAuthentication()]
+    #     return super().get_authenticators()
 
     def post(self, request, *args, **kwargs):
         customer_data = request.data
@@ -228,18 +247,22 @@ class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
 
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
 class AccountLogoutAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         refresh_token = request.data.get('refresh')
         
-        # Kiểm tra xem refresh token có tồn tại không
+        # check if refresh token is provided
         if not refresh_token:
             return Response({'message': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Tạo đối tượng RefreshToken và blacklist
+            # blacklist refresh token
             token = RefreshToken(refresh_token)
             token.blacklist()
 
@@ -251,6 +274,23 @@ class AccountLogoutAPIView(generics.GenericAPIView):
         except Exception as e:
             return Response({'message': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
         
+def gernerate_otp_and_send_email(email):
+    #generate OTP
+    otp = generate_otp()
+    if OTP.objects.filter(email=email, revoked=False).exists():
+        #revoke all previous OTPs
+        OTP.objects.filter(email=email, revoked=False).update(revoked=True)
+        
+    OTP.objects.create(email=email, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+
+    send_mail(
+        'Your OTP Code',
+        f'Your OTP code is {otp}',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+    return True
 class ForgotPasswordAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ForgotPasswordSerializer
@@ -259,23 +299,10 @@ class ForgotPasswordAPIView(generics.CreateAPIView):
         serializer = self.serializer_class(data = request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.validated_data.get('email')
-            account = Account.objects.get(email=email)
 
-            #generate OTP
-            otp = generate_otp()
-            if OTP.objects.filter(account=account, revoked=False).exists():
-                #revoke all previous OTPs
-                OTP.objects.filter(account=account, revoked=False).update(revoked=True)
-                
-            OTP.objects.create(account=account, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+            #generate OTP and send email
+            gernerate_otp_and_send_email(email)
 
-            send_mail(
-                'Your OTP Code',
-                f'Your OTP code is {otp}',
-                settings.EMAIL_HOST_USER,
-                [email],
-                fail_silently=False,
-            )
             response = {
                 'status': 'success',
                 'message': 'OTP sent successfully'
@@ -284,36 +311,80 @@ class ForgotPasswordAPIView(generics.CreateAPIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class VerifyOTPAPIView(generics.CreateAPIView):
+class RegisterOTPAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = VerifyOTPSerializer
+    serializer_class = RegisterRequestOTPSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data = request.data)
         if serializer.is_valid(raise_exception=True):
-            token = get_random_string(length=32)
             email = serializer.validated_data.get('email')
-            account = Account.objects.get(email=email)
-            OTP.objects.filter(account=account, revoked=False).update(revoked=True)
 
-            ResetPasswordToken.objects.create(account=account, token=token, revoked=False, expired_at=timezone.now() + timezone.timedelta(minutes=5))
+            #generate OTP and send email
+            gernerate_otp_and_send_email(email)
 
             response = {
                 'status': 'success',
-                'message': 'OTP verified successfully',
-                'token': token
+                'message': 'OTP sent successfully'
             }
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+def generate_custom_token(email):
+    # save original user id field and claim
+    original_user_id_field = api_settings.USER_ID_FIELD
+    original_user_id_claim = api_settings.USER_ID_CLAIM
+
+    # override user id field and claim
+    api_settings.USER_ID_FIELD = 'email'
+    api_settings.USER_ID_CLAIM = 'email'
+
+    try:
+        token = RefreshToken()
+        token['email'] = email
+        access_token = str(token.access_token)
+        refresh_token = str(token)
+    except TokenError as e:
+        raise exceptions.AuthenticationFailed('Invalid token')
+    finally:
+        # restore original user id field and claim
+        api_settings.USER_ID_FIELD = original_user_id_field
+        api_settings.USER_ID_CLAIM = original_user_id_claim
+    return access_token, refresh_token
+        
+class VerifyOTPAPIView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = VerifyOTPSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data.get('email')
+
+            # generate token
+            access_token, refresh_token = generate_custom_token(email)
+
+            # return access token and refresh token
+            response = {
+                'status': 'success',
+                'message': 'OTP verified successfully',
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+            }
+            return Response(response, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class ResetPasswordAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ResetPasswordSerializer
+    authentication_classes = [CustomTokenAuthentication] # use custom token authentication
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data = request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            #get account and reset password
             account = Account.objects.get(email=serializer.validated_data.get('email'))
             account.set_password(serializer.validated_data.get('password'))
             account.save()
