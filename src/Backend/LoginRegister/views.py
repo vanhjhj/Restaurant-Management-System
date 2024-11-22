@@ -191,10 +191,10 @@ class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
 
         return super().get_permissions()
     
-    def get_authenticators(self):
-        if self.request.method == 'POST':
-            return [CustomTokenAuthentication()]
-        return super().get_authenticators()
+    # def get_authenticators(self):
+    #     if self.request.method == 'POST':
+    #         return [CustomTokenAuthentication()]
+    #     return super().get_authenticators()
 
     def post(self, request, *args, **kwargs):
         customer_data = request.data
