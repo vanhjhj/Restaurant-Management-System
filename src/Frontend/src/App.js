@@ -6,11 +6,11 @@ import HomePage from './Components/Layout/HomePage/HomePage';
 import About from './Components/Layout/About/About';
 import Menu from './Components/Layout/Menu/Menu';
 import Reservation from './Components/Layout/Reservation/Reservation';
-import Login from './Components/Auth/Login/Login';
-import SignUp from './Components/Auth/SignUp/SignUp';
-import VerifyOTP from './Components/Auth/VerifyOTP/VerifyOTP'
-import ForgotPassword from './Components/Auth/ForgotPassword/ForgotPassword';
-import ResetPassword from './Components/Auth/ResetPassword/ResetPassword';
+import Login from './Components/Auth/Login';
+import SignUp from './Components/Auth/SignUp';
+import VerifyOTP from './Components/Auth/VerifyOTP'
+import ForgotPassword from './Components/Auth/ForgotPassword';
+import ResetPassword from './Components/Auth/ResetPassword';
 import FillFormInfo from './Components/Auth/FillFormInfo/FillFormInfo';
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 import Profile from './Components/Customer/Profile/Profile';

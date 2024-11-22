@@ -3,7 +3,7 @@ import style from '../../Style/AuthStyle/Login.module.css';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { decodeToken } from '../../../utils/tokenHelper.mjs';
+import { decodeToken } from '../../utils/tokenHelper.mjs';
 
 function Login({ onLogin }) {
     const [username, setUsername] = useState('');

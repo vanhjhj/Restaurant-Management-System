@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import style from './VerifyOTP.module.css';
-import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../../API/authAPI';
-import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
+import style from '../../Style/AuthStyle/VerifyOTP.module.css';
+import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../API/authAPI';
+import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 
 function VerifyOTP() {
   const [otp, setOtp] = useState('');
