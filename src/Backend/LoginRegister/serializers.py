@@ -5,6 +5,8 @@ from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.utils import timezone
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -48,7 +50,7 @@ class AccountSerializer(serializers.ModelSerializer):
         if attrs.get('password'):
             try:
                 validate_password(attrs.get('password'))
-            except serializers.ValidationError as e:
+            except ValidationError as e:
                 raise serializers.ValidationError({'password': list(e.messages)})
         
         if attrs.get('email'):
@@ -74,7 +76,12 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         account_id = validated_data.pop('account_id')
         account = Account.objects.get(pk=account_id)
-        employee = EmployeeAccount.objects.create(account=account, **validated_data)
+        try:
+            employee = EmployeeAccount.objects.create(account=account, **validated_data)
+        except IntegrityError:
+            raise serializers.ValidationError({'account_id': 'Account already has an employee account'})
+        except Exception as e:
+            raise serializers.ValidationError({'error': str(e)})
         return employee
     
     def validate(self, attrs):
@@ -121,7 +128,13 @@ class CustomerAccountSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         account_id = validated_data.pop('account_id')
         account = Account.objects.get(pk=account_id)
-        customer = CustomerAccount.objects.create(account=account, **validated_data)
+        try:
+            customer = CustomerAccount.objects.create(account=account, **validated_data)
+        #except IntegrityError as e:
+        except IntegrityError:
+            raise serializers.ValidationError({'account_id': 'Account already has a customer account'})
+        except Exception as e:
+            raise serializers.ValidationError({'error': str(e)})
         return customer
     
     def validate(self, attrs):
