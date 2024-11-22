@@ -1,11 +1,11 @@
 // src/API/authAPI.js
 import axios from 'axios';
-
+import { API_BASE_URL } from '../Config/apiConfig';
 // Hàm đăng ký tài khoản mới
 //kiểm tra username, password, email, account_type hợp lệ
 export const account_check=async(userData)=>{
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/account-check/', userData);
+        const response = await axios.post(`${API_BASE_URL}/auth/account-check/`, userData);
         console.log(response.message); // Trả về dữ liệu từ API nếu thành công
     } catch (error) {
         console.log("User Data:", userData);
@@ -17,7 +17,7 @@ export const account_check=async(userData)=>{
 // Hàm đăng nhập
 export const login = async (credentials) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/token/', credentials);
+        const response = await axios.post(`${API_BASE_URL}/auth/token/`, credentials);
         console.log(response);
         return response.data; // Trả về access và refresh tokens nếu thành công
     } catch (error) {
@@ -30,7 +30,7 @@ export const login = async (credentials) => {
 //xác minh OTP
 export const verifyOTP = async (data) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/verify-otp/', data);
+        const response = await axios.post(`${API_BASE_URL}/auth/verify-otp/`, data);
         return response.data; // Trả về dữ liệu thành công
     } catch (error) {
         console.error(
@@ -44,7 +44,7 @@ export const verifyOTP = async (data) => {
 // Gửi OTP
 export const sendOrResendOTP = async (emailData) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/register-otp/', emailData);
+        const response = await axios.post(`${API_BASE_URL}/auth/register-otp/`, emailData);
         console.log("sendOrResendOTP try");
         return response.data; // Trả về kết quả nếu thành công
     } catch (error) {
@@ -61,7 +61,7 @@ export const sendOrResendOTP = async (emailData) => {
 export const register = async (userData, token) => {
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/auth/accounts/',
+        `${API_BASE_URL}/auth/accounts/`,
         userData,
         {
           headers: {
@@ -84,7 +84,7 @@ export const register = async (userData, token) => {
   //Hàm lấy mã otp khi quên mật khẩu
 export const forgotPassword = async (email) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/forgot-password/', { email });
+        const response = await axios.post(`${API_BASE_URL}/auth/forgot-password/`, { email });
         console.log('Yêu cầu quên mật khẩu thành công:', response.data.message);
         return response.data;
     } catch (error) {
@@ -96,7 +96,7 @@ export const forgotPassword = async (email) => {
 export const resetPassword = async (resetData, token) => {
     try {
         const response = await axios.post(
-            'http://127.0.0.1:8000/api/auth/reset-password/',
+            `${API_BASE_URL}/auth/reset-password/`,
             resetData,
             {
                 headers: {
@@ -126,7 +126,7 @@ export const resetPassword = async (resetData, token) => {
 export const refreshToken = async (refreshToken,accessToken) => {
     try {
         const response = await axios.post(
-            'http://127.0.0.1:8000/api/auth/token/refresh/',
+            `${API_BASE_URL}/auth/token/refresh/`,
             {refresh: refreshToken},
             {
                 headers: {
@@ -155,7 +155,7 @@ export const refreshToken = async (refreshToken,accessToken) => {
 export const logout = async (refreshToken,token) => {
     try {
         const response = await axios.post(
-            'http://127.0.0.1:8000/api/auth/logout/',
+            `${API_BASE_URL}/auth/logout/`,
             {refresh: refreshToken},
             {
                 headers: {

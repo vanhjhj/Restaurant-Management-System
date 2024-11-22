@@ -1,11 +1,12 @@
 import axios from "axios";
 import {refreshToken} from './authAPI'
+import { API_BASE_URL } from '../Config/apiConfig';
 
 // Hàm GetInfoCus
 export const GetInfoCus = async (CusId, token) => {
     try {
         const response = await axios.get(
-            `http://127.0.0.1:8000/api/auth/customers/${CusId}/`,
+            `${API_BASE_URL}/auth/customers/${CusId}/`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`, // Đính kèm token
@@ -39,7 +40,7 @@ export const GetInfoCus = async (CusId, token) => {
 export const ChangeInfoCus = async (CusId, InfoChange, token) => {
     try {
         const response = await axios.patch(
-            `http://127.0.0.1:8000/api/auth/customers/${CusId}/`,
+            `${API_BASE_URL}/auth/customers/${CusId}/`,
             InfoChange,
             {
                 headers: {
@@ -60,11 +61,18 @@ export const ChangeInfoCus = async (CusId, InfoChange, token) => {
 };
 
 
-export const PostInfoCus= async(FormData) =>{
+export const PostInfoCus= async(FormData,token) =>{
     try {
         const response = await axios.post(
-            'http://127.0.0.1:8000/api/auth/customers/',
-            FormData
+            `${API_BASE_URL}/auth/customers/`,
+            FormData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Đính kèm token
+                    "Content-Type": "application/json",
+                },
+            }
+
         );
         console.log(response.data.message); // Thông báo từ API nếu thành công
         return response.data;
