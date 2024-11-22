@@ -1,53 +1,44 @@
-.error{
-    color:#eb0b0b;
-    font:bold ;
-    font-size:14px;
-}
 .login-container {
     display: flex;
-    width: 800px;
-    height: 500px;
+    width: 1000px;
+    height: 600px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 50px;
     overflow: hidden;
     margin: auto; /* Đảm bảo căn giữa */
+    margin-top: 100px;
 }
-.password-toggle-icon {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #fff;
-}
-
-.password-toggle-icon:hover {
-    color: #333;
-}
-
 
 .login-box {
     flex: 1;
-    padding: 40px;
     display: flex;
+    padding: 40px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.login-box h2 {
-    font-size: 24px;
+.title{
+    font-size: 40px;
     color: #35737d;
-    text-align: center;
     margin-bottom: 20px;
 }
 
-.login-box label {
+.login-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
+}
+
+.login-form-label{
     font-size: 14px;
     color: #666;
 }
 
-.login-box input {
+.login-form-input{
     width: 100%;
+    box-sizing: border-box;
     padding: 10px;
     margin: 5x 0 5px;
     border: 1px solid #ccc;
@@ -56,8 +47,23 @@
     background-color: #f7f7f7;
 }
 
-.login-btn {
-    width: 100%;
+.password-input-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.password-toggle-icon{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #777;
+    font-size: 1.2rem;
+}
+
+.button{
     padding: 10px;
     background-color: #35737d;
     color: white;
@@ -65,27 +71,24 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     justify-content: center;
-    margin: auto;
 }
 
-.login-btn:hover {
-    background-color: #2c5e64;
+.button:hover {
+    background-color: #244b4f;
 }
 
-.forgot-password {
-    display: block;
+.forgot-password{
+    width: 50%;
     border:none;
     background: none;
     text-align: center;
     margin-top: 10px;
     color: #35737d;
     cursor: pointer;
-    text-decoration: none;
     font-size: 14px;
-    text-align: center;
+    margin:auto;
 }
 
 .forgot-password:hover {
@@ -94,7 +97,6 @@
 
 .register-box {
     flex: 1;
-    background: linear-gradient(135deg, #9fdbe4, #2c5e64);
     color: white;
     display: flex;
     flex-direction: column;
@@ -102,27 +104,31 @@
     align-items: center;
     padding: 40px;
     text-align: center;
+    background-image: url('login-background.jpg');
+    background-size: cover; /* Scales the image to cover the entire element */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
 }
 
-.register-box p {
-    font-size: 18px;
+.text-register{
+    font-size: 30px;
+    font-family: "Playfair Display", Sans-serif;
+    font-weight: bold;
     margin-bottom: 20px;
     line-height: 1;
 }
 
-/* Định dạng thẻ <a> như một nút */
-.register-btn {
-    padding: 10px 20px;
-    background-color: #2c5e64;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none; /* Xóa gạch chân của thẻ <a> */
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.error{
+    color:#eb0b0b;
+    font:bold ;
+    font-size:14px;
 }
 
-.register-btn:hover {
-    background-color: #244b4f;
+.login-box .button{
+    width: 50%;
+    margin:auto;
+}
+
+.register-box .button{
+    width:50%;
 }

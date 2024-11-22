@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import style from './SignUp.module.css';
-import { account_check, sendOrResendOTP } from '../../../API/authAPI';
+import style from '../../Style/AuthStyle/SignUp.module.css';
+import { account_check, sendOrResendOTP } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -51,11 +51,11 @@ function SignUp() {
     return (
         <div className={style["signup-container"]}>
             <div className={style["signup-box"]}>
-                <h2>Đăng ký</h2>
-                <form onSubmit={handleSignUpSubmit}>
+                <h2 className={style["title"]}>Đăng ký</h2>
+                <form onSubmit={handleSignUpSubmit} className={style["signup-form"]}>
                     {errors && <p className={style["error-message"]}>{errors.message}</p>}
 
-                    <label htmlFor="username">Tài khoản</label>
+                    <label htmlFor="username" className={style["form-title"]}>Tài khoản</label>
                     <input
                         type="text"
                         id="username"
@@ -67,7 +67,7 @@ function SignUp() {
                     />
                     {errors.username && <p className={style["error-message"]}>{errors.username}</p>}
 
-                    <label htmlFor="email">Email</label>
+                    <label htmlFor="email" className={style["form-title"]}>Email</label>
                     <input
                         type="email"
                         id="email"
@@ -79,7 +79,7 @@ function SignUp() {
                     />
                     {errors.email && <p className={style["error-message"]}>{errors.email}</p>}
 
-                    <label htmlFor="password">Mật khẩu</label>
+                    <label htmlFor="password" className={style["form-title"]}>Mật khẩu</label>
                     <div className={style["password-input-container"]}>
                         <input
                             type={showPassword ? "text" : "password"}
@@ -99,7 +99,7 @@ function SignUp() {
                         {errors.password && <p className={style["error-message"]}>{errors.password}</p>}
                     </div>
 
-                    <label htmlFor="confirm-password">Xác nhận mật khẩu</label>
+                    <label htmlFor="confirm-password" className={style["form-title"]}>Xác nhận mật khẩu</label>
                     <div className={style["password-input-container"]}>
                         <input
                             type={showConfirmPassword ? "text" : "password"}

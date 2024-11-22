@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import style from './Login.module.css';
+import style from '../../Style/AuthStyle/Login.module.css';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../../API/authAPI';
+import { login } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Login({ onLogin }) {
@@ -30,27 +30,29 @@ function Login({ onLogin }) {
     return (
         <div className={style["login-container"]}>
             <div className={style["login-box"]}>
-                <h2>Đăng nhập</h2>
-                <form onSubmit={handleLoginSubmit}>
+                <h2 className={style['title']}>Đăng nhập</h2>
+                <form onSubmit={handleLoginSubmit} className={style["login-form"]}>
                     {error && <p className={style["error-message"]}>{error}</p>} {/* Hiển thị lỗi nếu có */}
-                    
-                    <label htmlFor="username">Tài khoản</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder="Nhập tài khoản"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-
-                    <label htmlFor="password">Mật khẩu</label>
+                    <label htmlFor="username" className={style['login-form-label']}>Tài khoản</label>
+                    <div>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            className={style['login-form-input']}
+                            placeholder="Nhập tài khoản"
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
+                    <label htmlFor="password" className={style['login-form-label']}>Mật khẩu</label>
                     <div className={style['password-input-container']}>
                         <input
                             type={showPassword ? "text" : "password"}
                             id="password"
                             name="password"
+                            className={style['login-form-input']}
                             placeholder="Nhập mật khẩu"
                             required
                             value={password}
@@ -63,7 +65,7 @@ function Login({ onLogin }) {
                             <FontAwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
                         </span>
                     </div>
-                    <button type="submit" className={style["login-btn"]}>Đăng nhập</button>
+                    <button type="submit" className={style["button"]}>Đăng nhập</button>
 
                     <button
                         type="button"
@@ -76,11 +78,11 @@ function Login({ onLogin }) {
             </div>
 
             <div className={style["register-box"]}>
-                <p>Bạn chưa có tài khoản? <br /> Ấn vào nút bên dưới để đăng ký ngay!</p>
+                <p className={style["text-register"]}>Bạn chưa có tài khoản? <br /> Ấn vào nút bên dưới để đăng ký ngay!</p>
                 <button
                     type="button"
                     onClick={() => navigate('/SignUp')}
-                    className={style["register-btn"]}
+                    className={style["button"]}
                 >
                     Đăng ký
                 </button>

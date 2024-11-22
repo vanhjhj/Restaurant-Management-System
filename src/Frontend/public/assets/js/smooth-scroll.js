@@ -84,6 +84,9 @@ function onResize() {
     }
 }
 
+
+
+
 jQuery(".filters").on("click", function() {
     setTimeout(function() {
         onScroll();

@@ -1,4 +1,4 @@
-.reservation-container {
+/* .reservation-container {
     width: 60%;
     margin: 0 auto;
     padding: 40px;
@@ -14,13 +14,13 @@
     font-size: 30px;
   }
   
-  form {
+  /* form {
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
-  
-  label {
+   */
+  /* label {
     font-size: 16px;
     color: #666;
   }
@@ -44,6 +44,6 @@
   textarea {
     height: 80px;
   }
-  
+   */
 
-  
+   

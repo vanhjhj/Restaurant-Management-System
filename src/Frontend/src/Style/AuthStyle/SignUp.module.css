@@ -1,11 +1,3 @@
-.error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    text-align: left;
-}
-
 /* Toàn bộ container */
 .signup-container {
     display: flex;
@@ -25,8 +17,15 @@
     margin-bottom: 70px;
 }
 
+.signup-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+}
+
 /* Tiêu đề */
-.signup-box h2 {
+.signup-form .title {
     margin-bottom: 20px;
     color: #333;
     font-size: 24px;
@@ -34,7 +33,7 @@
 }
 
 /* Label */
-.signup-box label {
+.signup-form .form-title {
     display: block;
     margin-bottom: 8px;
     text-align: left;
@@ -43,7 +42,7 @@
 }
 
 /* Input chung */
-.signup-box input {
+.signup-form input {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -57,13 +56,14 @@
 .password-input-container {
     position: relative;
     display: flex;
-    align-items: center;
+    flex-direction: column;
 }
 
 /* Icon "mắt" */
 .password-toggle-icon {
     position: absolute;
     right: 10px;
+    top: 10px;
     cursor: pointer;
     font-size: 18px;
     color: #666;
@@ -75,9 +75,10 @@
 }
 
 /* Nút đăng ký */
-.signup-box .signup-btn {
-    width: 100%;
+.signup-form .signup-btn {
+    width: 60%;
     padding: 10px;
+    margin:auto;
     background: #35737d;
     color: #fff;
     border: none;

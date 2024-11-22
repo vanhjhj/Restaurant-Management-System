@@ -1,4 +1,4 @@
-.manage-restaurant-info {
+/* .manage-restaurant-info {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -11,11 +11,11 @@ h2 {
     color: #2c3e50;
     font-size: 24px;
     margin-bottom: 20px;
-}
-form {
+} */
+/* form {
     width: 90%;
-}
-.form-group {
+} */
+/* .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 15px;
@@ -25,17 +25,17 @@ label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
-}
+} */
 
-input, textarea {
+/*input, textarea {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     outline: none;
     font-size: 16px;
-}
+}*/
 
-textarea {
+/* textarea {
     resize: vertical;
     min-height: 80px;
 }
@@ -56,4 +56,4 @@ textarea {
 
 .save-button:hover {
     background-color: #2980b9;
-}
+} */

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import style from './ResetPassword.module.css'; // CSS module import
-import { refreshToken, forgotPassword, resetPassword } from '../../../API/authAPI';
+import style from '../../Style/AuthStyle/ResetPassword.module.css'; // CSS module import
+import { refreshToken, forgotPassword, resetPassword } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 

@@ -1,8 +1,8 @@
 // src/Components/forgotPassword.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import style from'./ForgotPassword.module.css';
-import { forgotPassword } from '../../../API/authAPI';
+import style from'../../Style/AuthStyle/ForgotPassword.module.css';
+import { forgotPassword } from '../../API/authAPI';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
