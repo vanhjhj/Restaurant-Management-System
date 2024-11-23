@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useRef, useEffect, useState} from 'react'
+import { useRef, useEffect, useState } from 'react'
+import style from './HomePage.css'
 
 function HomePage() {
   const navigate = useNavigate(); // Khởi tạo hook useNavigate
@@ -8,11 +9,9 @@ function HomePage() {
   const handleNavigate = () => {
     navigate('/menu'); // Điều hướng đến trang menu
   };
-  const scrollContent = useRef(null);
-
   return (
-    <div id="viewport">
-      <div id="js-scroll-content" ref={scrollContent}>
+    /*<div id="viewport">
+      <div id="js-scroll-content">
         <section className="main-banner" id="home">
           <div className="js-parallax-scene">
             <div className="banner-shape-1 w-100" data-depth="0.30">
@@ -31,9 +30,9 @@ function HomePage() {
                       Welcome to <span>Citrus Royale</span> restaurant.
                     </h1>
                     <div className="banner-btn mt-4">
-                      <a href="#menu" className="sec-btn">
+                      <button onClick={handleNavigate} className="sec-btn">
                         Check our Menu
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -55,6 +54,15 @@ function HomePage() {
             </div>
           </div>
         </section>
+      </div>
+    </div>*/
+    <div className="home-container">
+      <div className="text-section">
+        <h1>Welcome To <span>Citrus Royale</span> Restaurant.</h1>
+        <button onClick={handleNavigate} className="cta-button">Check Our Menu</button>
+      </div>
+      <div className="image-section">
+        <img src="/assets/images/main-b.jpg" alt="Sushi" />
       </div>
     </div>
   );

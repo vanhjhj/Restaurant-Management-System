@@ -1,0 +1,94 @@
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 100px;
+}
+
+.text-section {
+  max-width: 50%;
+  padding-right: 20x;
+}
+
+.text-section h1 {
+  font-size: 90px;
+  line-height: 1.2;
+  color: #1a1a1a;
+  font-family: 'Playfair Display', serif;
+}
+
+.text-section h1 span {
+  display: block; /* Đưa phần span xuống dòng */
+    font-family: 'Lobster', cursive; /* Áp dụng font chữ khác */
+    font-size: 100px; /* Thay đổi kích thước chữ */
+    background: linear-gradient(45deg, #ff8243, #ffa947);
+    -webkit-background-clip: text;
+    color: transparent;
+    background-size: 200%;
+    animation: gradientAnimation 5s infinite;
+    margin-top: 10px; /* Khoảng cách trên cho span */
+}
+
+@keyframes gradientAnimation {
+  0% {
+      background-position: 0% 50%;
+  }
+  100% {
+      background-position: 100% 50%;
+  }
+}
+
+.cta-button {
+  padding: 15px 30px;
+  background-color: #7799b4;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+  background-color: #ff8243;
+  color: #fff;
+  transform: translateY(-3px); /* Di chuyển lên một chút */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.image-section {
+  padding: 15px;
+  max-width: 45%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-section img {
+  max-width: 80%;
+  border-radius: 50px; /* Tạo khung ảnh bầu dục */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Tạo đổ bóng */
+  animation: floatImage 3s ease-in-out infinite; /* Hiệu ứng nổi nhẹ */
+  transition: transform 0.3s ease;
+}
+
+/* Hiệu ứng nổi nhẹ cho hình ảnh */
+@keyframes floatImage {
+  0% {
+      transform: translateY(0px);
+  }
+  50% {
+      transform: translateY(-10px); /* Nổi lên nhẹ */
+  }
+  100% {
+      transform: translateY(0px);
+  }
+}
+
+.image-section img:hover {
+  transform: scale(1.02); /* Phóng to nhẹ khi hover */
+}
