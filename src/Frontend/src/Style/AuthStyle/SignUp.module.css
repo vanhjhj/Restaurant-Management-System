@@ -1,0 +1,117 @@
+/* Toàn bộ container */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* Hộp chứa form */
+.signup-box {
+    padding: 20px 70px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.signup-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+}
+
+/* Tiêu đề */
+.signup-form .title {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Label */
+.signup-form .form-title {
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Input chung */
+.signup-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Vùng chứa input và icon */
+.password-input-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Icon "mắt" */
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    transition: color 0.3s ease;
+    top:20%;
+}
+
+.password-toggle-icon:hover {
+    color: #007bff;
+}
+
+/* Nút đăng ký */
+.signup-form .signup-btn {
+    width: 60%;
+    padding: 10px;
+    margin:auto;
+    background: #35737d;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.signup-box .signup-btn:hover {
+    background:  #2c5e64;
+}
+
+/* Nút chuyển sang đăng nhập */
+.login-btn {
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-decoration: underline;
+}
+
+.login-btn:hover {
+    color: #76abe3;
+}
+
+/* Lỗi */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}

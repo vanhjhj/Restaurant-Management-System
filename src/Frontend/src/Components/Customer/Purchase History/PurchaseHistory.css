@@ -1,0 +1,54 @@
+/* src/Components/PurchaseHistory.css */
+
+.history-container {
+    padding: 50px;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-container h2 {
+    font-size: 32px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 18px;
+    color: #333;
+}
+
+.history-table th, .history-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.history-table th {
+    background-color: #eee;
+    font-weight: bold;
+}
+
+.history-table tbody tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.details-button {
+    padding: 8px 16px;
+    background-color: #2f7d88;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.details-button:hover {
+    background-color: #255e6b;
+}
