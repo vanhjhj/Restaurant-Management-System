@@ -58,6 +58,12 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
 
+            #create employee or customer account base on account type
+            if account.account_type == 'Employee':
+                EmployeeAccount.objects.create(account=account)
+            elif account.account_type == 'Customer':
+                CustomerAccount.objects.create(account=account)
+
             response = {
                 'data': serializer.data,
                 'status': 'success',
@@ -124,29 +130,15 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         }
         return Response(response, status=status.HTTP_200_OK)
 
-class EmployeeAccountListCreateAPIView(generics.ListCreateAPIView):
+class EmployeeAccountListAPIView(generics.ListAPIView):
     queryset = EmployeeAccount.objects.all()
     serializer_class = EmployeeAccountSerializer
     permission_classes = [permissions.IsAdminUser]
-
-    def post(self, request, *args, **kwargs):
-        employee_data = request.data
-        serializer = self.serializer_class(data=employee_data)
-
-        if serializer.is_valid(raise_exception=True):
-            employee = serializer.save()
-            response = {
-                'data': serializer.data,
-                'status': 'success',
-                'message': 'Employee created successfully'
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = EmployeeAccount.objects.all()
     serializer_class = EmployeeAccountSerializer
-    lookup_field = 'pk'
+    lookup_field = 'account_id'
     permission_classes = [IsOwnerOrAdmin]
 
     def get(self, request, *args, **kwargs):
@@ -158,8 +150,6 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         return Response({"detail": "Method 'PUT' not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     def patch(self, request, *args, **kwargs):
-        if 'id' in request.data.keys():
-            return Response({'id': 'You cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
         if 'account_id' in request.data.keys():
             return Response({'account_id': 'You cannot update account_id field'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -182,40 +172,15 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
 
-class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
+class CustomerAccountListAPIView(generics.ListAPIView):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
     permission_classes = [permissions.IsAdminUser]
-
-    def get_permissions(self):
-        if self.request.method == 'POST':
-            return [permissions.AllowAny()]
-
-        return super().get_permissions()
-    
-    # def get_authenticators(self):
-    #     if self.request.method == 'POST':
-    #         return [CustomTokenAuthentication()]
-    #     return super().get_authenticators()
-
-    def post(self, request, *args, **kwargs):
-        customer_data = request.data
-        serializer = self.serializer_class(data=customer_data)
-
-        if serializer.is_valid(raise_exception=True):
-            customer = serializer.save()
-            response = {
-                'data': serializer.data,
-                'status': 'success',
-                'message': 'Customer created successfully'
-            }
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
-    lookup_field = 'pk'
+    lookup_field = 'account_id'
     permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
@@ -227,8 +192,6 @@ class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         return Response({"detail": "Method 'PUT' not allowed."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     def patch(self, request, *args, **kwargs):
-        if 'id' in request.data.keys():
-            return Response({'id': 'You cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
         if 'account_id' in request.data.keys():
             return Response({'account_id': 'You cannot update account_id field'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -246,7 +209,6 @@ class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
                 'message': 'Employee updated successfully'
             }
             return Response(response, status=status.HTTP_200_OK)
-
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -291,6 +253,7 @@ def gernerate_otp_and_send_email(email):
         fail_silently=False,
     )
     return True
+
 class ForgotPasswordAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ForgotPasswordSerializer

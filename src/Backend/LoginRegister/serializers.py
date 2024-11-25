@@ -62,36 +62,13 @@ class AccountSerializer(serializers.ModelSerializer):
 class EmployeeAccountSerializer(serializers.ModelSerializer):
 
     account_id = serializers.IntegerField()
-    id = serializers.IntegerField(read_only=True)
     department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all())
 
     class Meta:
         model = EmployeeAccount
-        fields = ('account_id', 'id', 'full_name', 'date_of_birth', 'gender', 'start_working_date', 'address', 'department')
-        extra_kwargs = {
-            'address': {'required': False},
-        }
-
-
-    def create(self, validated_data):
-        account_id = validated_data.pop('account_id')
-        account = Account.objects.get(pk=account_id)
-        try:
-            employee = EmployeeAccount.objects.create(account=account, **validated_data)
-        except IntegrityError:
-            raise serializers.ValidationError({'account_id': 'Account already has an employee account'})
-        except Exception as e:
-            raise serializers.ValidationError({'error': str(e)})
-        return employee
+        fields = ('account_id', 'full_name', 'date_of_birth', 'gender', 'start_working_date', 'address', 'department')
     
     def validate(self, attrs):
-        #checking if account_id exists and is an employee account
-        if attrs.get('account_id'):
-            if not Account.objects.filter(pk= attrs.get('account_id')).exists():
-                raise serializers.ValidationError({'account_id': 'Account does not exist'})
-        
-            if Account.objects.get(pk=attrs.get('account_id')).account_type != 'Employee':
-                raise serializers.ValidationError({'account_type': 'Account is not an employee account'})
 
         #checking if start_working_date is after date_of_birth
         if attrs.get('start_working_date') and attrs.get('date_of_birth'):
@@ -104,7 +81,7 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
             date_of_birth = attrs['date_of_birth']
             start_working_date = self.instance.start_working_date
 
-        if start_working_date < date_of_birth:
+        if start_working_date and date_of_birth and start_working_date < date_of_birth:
             raise serializers.ValidationError({'start_working_date': 'Start working date must be after date of birth'})
 
         return attrs
@@ -112,10 +89,9 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
 
 class CustomerAccountSerializer(serializers.ModelSerializer):
     account_id = serializers.IntegerField()
-    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = CustomerAccount
-        fields = ('account_id', 'id', 'full_name', 'phone_number', 'gender')
+        fields = ('account_id', 'full_name', 'phone_number', 'gender')
     
     def to_representation(self, instance):
         # Trả về số điện thoại không có mã quốc gia
@@ -124,29 +100,6 @@ class CustomerAccountSerializer(serializers.ModelSerializer):
         if phone_number.startswith('+84'):
             representation['phone_number'] = '0' + phone_number[3:]  # Bỏ mã +84 và thêm số 0
         return representation
-    
-    def create(self, validated_data):
-        account_id = validated_data.pop('account_id')
-        account = Account.objects.get(pk=account_id)
-        try:
-            customer = CustomerAccount.objects.create(account=account, **validated_data)
-        #except IntegrityError as e:
-        except IntegrityError:
-            raise serializers.ValidationError({'account_id': 'Account already has a customer account'})
-        except Exception as e:
-            raise serializers.ValidationError({'error': str(e)})
-        return customer
-    
-    def validate(self, attrs):
-        #checking if account_id exists and is a customer account
-        if attrs.get('account_id'):
-            if not Account.objects.filter(pk= attrs.get('account_id')).exists():
-                raise serializers.ValidationError({'account_id': 'Account does not exist'})
-        
-            if Account.objects.get(pk=attrs.get('account_id')).account_type != 'Customer':
-                raise serializers.ValidationError({'account_type': 'Account is not a customer account'})
-            
-        return attrs
 
 
 class ForgotPasswordSerializer(serializers.Serializer):
