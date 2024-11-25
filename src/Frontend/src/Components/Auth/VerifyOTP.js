@@ -64,13 +64,9 @@ function VerifyOTP() {
 
         // Đăng ký tài khoản
         const responseRegister=await register(userData, token);
-        
-        console.log(responseRegister.id);
         alert('dang ki thanh cong');
-        localStorage.setItem('Register_id',responseRegister.id);
-        localStorage.setItem('refresh_Register',refresh);
-        localStorage.setItem('token_Register',token);
-        navigate('/FillFormInfo');
+
+        navigate('/');
       } else if (mode === 'forgotPassword') {
 
         // Nếu ở chế độ quên mật khẩu, điều hướng đến trang đặt lại mật khẩu
