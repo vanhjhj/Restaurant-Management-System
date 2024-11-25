@@ -4,6 +4,7 @@ import style from '../../Style/AuthStyle/ResetPassword.module.css'; // CSS modul
 import { refreshToken, forgotPassword, resetPassword } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { checkPasswordRequirements } from '../../utils/checkPasswordRequirements';
 
 function ResetPassword() {
     const [password, setPassword] = useState('');
@@ -13,6 +14,7 @@ function ResetPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [requirement, setRequirement] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -21,6 +23,18 @@ function ResetPassword() {
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
         setError(null);
+        const inputPassword = e.target.value;
+        setPassword(inputPassword);
+
+        if(inputPassword==="")
+        {
+            setRequirement(null); 
+            return; 
+        }
+        // Lấy yêu cầu đầu tiên chưa đạt
+        const firstUnmetRequirement = checkPasswordRequirements(inputPassword);
+        setRequirement(firstUnmetRequirement);
+
     };
 
     const handleConfirmPasswordChange = (e) => {
@@ -41,10 +55,6 @@ function ResetPassword() {
             setError({ message: 'Mật khẩu không được để trống.' });
             return;
         }
-        if (password.length < 8) {
-            setError({ message: 'Mật khẩu phải có ít nhất 8 ký tự.' });
-            return;
-        }
         if (password !== confirmPassword) {
             setError({ message: 'Mật khẩu và mật khẩu xác nhận không khớp.' });
             return;
@@ -55,7 +65,7 @@ function ResetPassword() {
             const resetData = { email, password };
             await resetPassword(resetData, token);
             setSuccessMessage('Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập.');
-            setTimeout(() => navigate('/login'), 3000);
+            setTimeout(() => navigate('/login'), 1000);
         } catch (err) {
             const serverError = err.response.data;
 
@@ -112,6 +122,15 @@ function ResetPassword() {
                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                 </span>
             </div>
+
+            {/* Hiển thị yêu cầu đầu tiên chưa đạt */}
+            {requirement && (
+            <div className={style["password-requirement"]}>
+                <p style={{ color: "red" }}>
+                • {requirement.text}
+                </p>
+            </div>
+            )}
 
             <label htmlFor="confirm-new-password">Xác nhận mật khẩu mới</label>
             <div className={style['password-input-container']}>
