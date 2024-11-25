@@ -32,9 +32,9 @@ class EmployeeAccount(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE)
 
     full_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(default=None, blank=True, null=True)
     gender = models.CharField(max_length=10, choices=[('Nam', 'Nam'), ('Nữ', 'Nữ')])
-    start_working_date = models.DateField()
+    start_working_date = models.DateField(default=None, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
 
