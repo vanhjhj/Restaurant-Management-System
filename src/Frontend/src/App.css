@@ -12,30 +12,6 @@ body {
 }
 
 /* Định dạng cho header và footer */
-header {
-  background-color: #b2d3d8;
-  color: white;
-  padding: 10px 12px;
-}
 
-footer {
-  background-color: #b2d3d8;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-  left:0;
-  z-index:1;
-}
 
 /* Định dạng cho các link trong app */
-a {
-  color: #61dafb;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}

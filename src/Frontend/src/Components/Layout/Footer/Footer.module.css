@@ -1,0 +1,105 @@
+/* src/Components/Footer.css */
+
+.site-footer{
+    font-size: 18px;
+}
+
+.top-footer, .bottom-footer {
+    border-top: 1px solid rgb(204 204 204 / 40%);
+    position: relative;
+}
+
+.section {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    position: relative;
+}
+
+.sec-wp {
+    position: relative;
+    z-index: 4;
+}
+
+.container{
+    composes: container from '../../../Style/bootstrap.min.css';
+}
+
+.row{
+    composes: row from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-4{
+    composes: col-lg-4 from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-8{
+    composes: col-lg-8 from '../../../Style/bootstrap.min.css';
+}
+
+.footer-info .social-icon {
+    margin-top: 20px;
+}
+
+.footer-logo {
+    margin-bottom: 30px;
+}
+
+.footer-flex-box {
+    display: flex;
+    margin: 0 -10px;
+}
+
+.footer-flex-box>div {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.footer-flex-box .h3-title {
+    text-transform: capitalize;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 40px;
+    margin-bottom: 23px;
+}
+
+.footer-table-info ul li {
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+.footer-menu ul li a {
+    color: #0d0d25;
+    transition: 0.3s;
+    text-transform: capitalize;
+}
+
+.footer-menu ul li a:hover, .footer-menu ul li .footer-active-menu {
+    color: #ff8243;
+}
+
+.footer-menu ul li {
+    margin-bottom: 8px;
+}
+
+.col-lg-12{
+    composes: col-lg-12 from '../../../Style/bootstrap.min.css';
+}
+
+.text-center {
+    text-align: center !important
+}
+
+.copyright-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    padding: 20px 0;
+}
+
+.copyright-text p {
+    margin: 0;
+}
+
+.name {
+    color: #ff8243;
+    font-weight: bold;
+}
