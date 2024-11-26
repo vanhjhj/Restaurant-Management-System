@@ -17,10 +17,13 @@ Including another URLconf
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('LoginRegister.urls')),
     path('api/menu/', include('Menu.urls')),
+    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ]
 

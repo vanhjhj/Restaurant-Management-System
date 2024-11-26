@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import django_filters
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from .models import *
 from .serializers import *
 from rest_framework import generics,permissions, status
@@ -77,19 +77,11 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         }
         return Response(response, status=status.HTTP_200_OK)
 
-class MenuItemFilter(django_filters.FilterSet):
-    category_search = django_filters.CharFilter(field_name="category__name", lookup_expr='icontains')  
-    menuitem_search = django_filters.CharFilter(field_name="name", lookup_expr='icontains')  
-
-    class Meta:
-        model = MenuItem
-        fields = ['category_search', 'menuitem_search']
-
 class MenuItemListCreateAPIView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     permission_classes = [permissions.IsAdminUser]
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = MenuItemFilter
     search_fields = ['name', 'category__name']
     ordering_fields = ['price', 'category__name', 'name']
