@@ -1,129 +1,127 @@
 import React, { useState, useEffect } from 'react';
-import { GetEmailCus, GetInfoCus, ChangeInfoCus } from '../../API/FixInfoAPI';
 import { useNavigate } from 'react-router-dom';
+import { GetEmailCus, GetInfoCus, ChangeInfoCus, CheckPassword, ChangeInfoLogCus } from '../../API/FixInfoAPI';
 import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../API/authAPI';
+import Modal from './Modal'; // Import Modal component
 import style from '../../Style/CustomerStyle/Profile.module.css';
 
 function Profile() {
-    const [showModal, setShowModal] = useState(false); // Quản lý trạng thái hiển thị modal
-    const [modalType, setModalType] = useState(""); // Xác định loại modal ("email" hoặc "password")
-
-    const handleOpenModal = (type) => {
-        setModalType(type);
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
-
+    const [personalInfo, setPersonalInfo] = useState({ full_name: "", gender: "", phone_number: "" });
+    const [originalInfo, setOriginalInfo] = useState({ full_name: "", gender: "", phone_number: "" });
+    const [loginInfo, setLoginInfo] = useState({ email: "", password: "********" });
+    const [formData, setFormData] = useState({ oldPassword: "", newPassword: "", confirmNewPassword: "", newEmail: "", confirmNewEmail: "" });
+    const [showPassword, setShowPassword] = useState({ oldPassword: false, newPassword: false, confirmNewPassword: false });
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState("");
+    const [error, setError] = useState(null);
+    const [Modalerror, setModalError] = useState(null);
+    const [requirement, setRequirement] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [personalInfo, setPersonalInfo] = useState({
-        full_name: "",
-        gender: "",
-        phone_number: "",
-    });
-
-    const [originalInfo, setOriginalInfo] = useState({
-        full_name: "",
-        gender: "",
-        phone_number: "",
-    });
-
-    const [loginInfo, setLoginInfo] = useState({
-        email: "",
-        password: "********", // Hiển thị mặc định
-    });
-
-    const [error, setError] = useState(null);
     const navigate = useNavigate();
-
     const token = localStorage.getItem('accessToken');
     const refresh = localStorage.getItem('refreshToken');
     const CusID = localStorage.getItem('userId');
 
-    if (!token || !refresh || !CusID) {
-        navigate('/login'); // Điều hướng nếu thiếu token hoặc userId
-    }
+    useEffect(() => {
+        if (!token || !refresh || !CusID) {
+            navigate('/login');
+        } else {
+            fetchProfileData();
+        }
+    }, []);
 
-    // Hàm tải dữ liệu
+    const ensureActiveToken = async () => {
+        let activeToken = token;
+        if (isTokenExpired(token)) {
+            const refreshed = await refreshToken(refresh);
+            activeToken = refreshed.access;
+            localStorage.setItem('accessToken', activeToken);
+        }
+        return activeToken;
+    };
+
     const fetchProfileData = async () => {
-        setError('');
         try {
-            let activeToken = token;
-
-            if (isTokenExpired(token)) {
-                activeToken = await refreshToken(refresh);
-                activeToken=activeToken.access;
-                localStorage.setItem('accessToken', activeToken);
-                
-            }
-
-            const responseCus = await GetInfoCus(CusID, activeToken);
-            const responseEmail = await GetEmailCus(CusID,activeToken);
-
-            const fetchedPersonalInfo = {
+            const activeToken = await ensureActiveToken();
+            const [responseCus, responseEmail] = await Promise.all([
+                GetInfoCus(CusID, activeToken),
+                GetEmailCus(CusID, activeToken),
+            ]);
+            setPersonalInfo({
                 full_name: responseCus.full_name || "",
                 gender: responseCus.gender || "",
                 phone_number: responseCus.phone_number || "",
-            };
-
-            setPersonalInfo(fetchedPersonalInfo);
-            setOriginalInfo(fetchedPersonalInfo);
-
-            setLoginInfo({
-                email: responseEmail.email || "",
-                password: "********", // Không hiển thị mật khẩu thật
             });
+            setOriginalInfo({
+                full_name: responseCus.full_name || "",
+                gender: responseCus.gender || "",
+                phone_number: responseCus.phone_number || "",
+            });
+            setLoginInfo({ email: responseEmail.email || "", password: "********" });
         } catch (error) {
-            setError(error.message || "Failed to fetch profile data.");
             console.error("Error fetching profile data:", error);
-
-            // Điều hướng đến trang login nếu token hết hạn
-            if (error.response?.status === 401) {
-                navigate('/login');
-            }
+            setError("Không thể tải thông tin.");
+            if (error.response?.status === 401) navigate('/login');
         }
     };
-    useEffect(() => {
-        fetchProfileData();
-    }, []); // Chỉ gọi một lần khi component được render
-    
-    // Hàm xử lý lưu thay đổi
+
     const handleSaveChanges = async () => {
         setIsSubmitting(true);
-        setError('');
         try {
-            let activeToken = token;
-
-            if (isTokenExpired(token)) {
-                activeToken = await refreshToken(refresh);
-                activeToken=activeToken.access;
-                localStorage.setItem('accessToken', activeToken);
-            }
-
-            if (personalInfo.phone_number&&!personalInfo.phone_number.match(/^\d{10}$/)) {
-                setError("Phone number must be 10 digits");
-                return;
-            }            
-
-            await ChangeInfoCus( CusID, personalInfo, activeToken );
-            setOriginalInfo(personalInfo); // Cập nhật trạng thái gốc
-            alert("Profile updated successfully!");
+            const activeToken = await ensureActiveToken();
+            await ChangeInfoCus(CusID, personalInfo, activeToken);
+            setOriginalInfo(personalInfo);
+            alert("Cập nhật thông tin thành công!");
         } catch (error) {
-            setError(error.message || "Failed to update profile.");
             console.error("Error updating profile:", error);
-        }
-        finally {
-            setIsSubmitting(false); // Dù thành công hay thất bại, nút Save có thể bấm lại
+            setError("Không thể cập nhật thông tin.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
-
     // Hàm xử lý hủy thay đổi
     const handleCancelChanges = () => {
         setPersonalInfo(originalInfo); // Khôi phục trạng thái gốc
+    };
+
+    const handlePasswordChange = async () => {
+        setError(null);
+        try {
+            const activeToken = await ensureActiveToken();
+            if (formData.newPassword !== formData.confirmNewPassword) {
+                setError("Mật khẩu xác nhận không khớp.");
+                return;
+            }
+            let InfoChange={password: formData.newPassword}
+            await CheckPassword(CusID,formData.oldPassword, activeToken);
+            await ChangeInfoLogCus(CusID,InfoChange , activeToken);
+            alert("Đổi mật khẩu thành công!");
+            setShowModal(false);
+        } catch (error) {
+            console.error("Error changing password:", error);
+            setError("Đổi mật khẩu thất bại.");
+        }
+    };
+
+    const handleEmailChange = async () => {
+        setError(null);
+        try {
+            const activeToken = await ensureActiveToken();
+            if (formData.newEmail !== formData.confirmNewEmail) {
+                setError("Email xác nhận không khớp.");
+                return;
+            }
+            let InfoChange={email: formData.newEmail};
+            await CheckPassword(CusID,formData.oldPassword, activeToken);
+            await ChangeInfoLogCus(CusID,InfoChange , activeToken);
+            alert("Đổi email thành công!");
+            setShowModal(false);
+        } catch (error) {
+            console.error("Error changing email:", error);
+            setError("Đổi email thất bại.");
+        }
     };
 
     return (
@@ -131,7 +129,7 @@ function Profile() {
             <h1 className={style["title"]}>Thông Tin Của Bạn</h1>
             <h2>Thông tin cá nhân</h2>
             {error && <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}
-        
+    
             <div className={style["form-container"]}>
                 {/* Hàng đầu tiên: Họ và Tên, Giới tính */}
                 <div className={style["form-row"]}>
@@ -202,8 +200,11 @@ function Profile() {
                     <p className={style["login-label"]}>Email:</p>
                     <p className={style["login-value"]}>{loginInfo.email}</p>
                     <button
-                        onClick={() => handleOpenModal("email")}
                         className={style["button"]}
+                        onClick={() => {
+                            setModalType("email");
+                            setShowModal(true);
+                        }}
                     >
                         Thay đổi Email
                     </button>
@@ -212,92 +213,32 @@ function Profile() {
                     <p className={style["login-label"]}>Mật khẩu:</p>
                     <p className={style["login-value"]}>{loginInfo.password}</p>
                     <button
-                        onClick={() => handleOpenModal("password")}
+                        onClick={() => {
+                            setModalType("password");
+                            setShowModal(true);
+                        }}
                         className={style["button"]}
                     >
                         Thay đổi mật khẩu
                     </button>
                 </div>
             </div>
+
             {/* Modal */}
             {showModal && (
-                <div className={style["modal-overlay"]}>
-                    <div className={style["modal"]}>
-                        <button
-                            className={style["close-modal"]}
-                            onClick={handleCloseModal}
-                        >
-                            &times;
-                        </button>
-                        <h3>
-                            {modalType === "email"
-                                ? "Thay Đổi Email"
-                                : "Thay ĐỔi Mật Khẩu"}
-                        </h3>
-                        {modalType === "email" ? (
-                            <form>
-                                <label>Email Mới:</label>
-                                <input type="email" placeholder="Enter new email" required/>
-                                <label>Xác Nhận Email:</label>
-                                <input
-                                    type="email"
-                                    placeholder="Confirm new email"
-                                    required
-                                />
-                                <label>Mật Khẩu:</label>
-                                <input
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/ForgotPassword')}
-                                    className={style["forgot-password"]}
-                                >
-                                    Quên mật khẩu?
-                                </button>
-                                
-                                <button className={style["modal-button"]}>
-                                    Thay Đổi Email
-                                </button>
-                            </form>
-                        ) : (
-                            <form>
-                                <label>Mật Khẩu Cũ:</label>
-                                <input
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    required
-                                />
-                                <label>Mật Khẩu Mới:</label>
-                                <input
-                                    type="password"
-                                    placeholder="Enter new password"
-                                    required
-                                />
-                                <label>Xác Nhận Mật Khẩu Mới:</label>
-                                <input
-                                    type="password"
-                                    placeholder="Confirm new password"
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/ForgotPassword')}
-                                    className={style["forgot-password"]}
-                                >
-                                    Quên mật khẩu?
-                                </button>
-                                <button className={style["modal-button"]}>
-                                    Thay Đổi Mật Khẩu
-                                </button>
-                            </form>
-                        )}
-                    </div>
-                </div>
+                <Modal
+                    modalType={modalType}
+                    showModal={showModal}
+                    onClose={() => setShowModal(false)}
+                    formData={formData}
+                    setFormData={setFormData}
+                    showPassword={showPassword}
+                    setShowPassword={setShowPassword}
+                    handleSubmit={modalType === "email" ? handleEmailChange : handlePasswordChange}
+                    Modalerror={Modalerror}
+                    requirement={requirement}
+                />
             )}
-
         </div>
     );
 }

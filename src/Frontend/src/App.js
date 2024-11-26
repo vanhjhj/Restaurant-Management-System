@@ -34,13 +34,41 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userRole, setUserRole] = useState('Customer');
+  let logoutTimer;
 
-  useEffect(() => {
-    const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Chuyển từ chuỗi về boolean
-    const storedUserRole = localStorage.getItem('userRole') || 'Customer';
-    setIsLoggedIn(storedIsLoggedIn);
-    setUserRole(storedUserRole);
-  }, []);
+  // useEffect(() => {
+  //   const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  //   const storedUserRole = localStorage.getItem('userRole') || 'Customer';
+  //   setIsLoggedIn(storedIsLoggedIn);
+  //   setUserRole(storedUserRole);
+
+  //   // Xử lý sự kiện rời khỏi hoặc quay lại trang
+  //   const handleVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       // Khi tab bị ẩn -> bắt đầu đếm ngược
+  //       logoutTimer = setTimeout(() => {
+  //         localStorage.removeItem('isLoggedIn');
+  //         localStorage.removeItem('userRole');
+  //         setIsLoggedIn(false);
+  //         setUserRole('Customer');
+  //         alert('Bạn đã bị logout do không hoạt động trong 5 phút!');
+  //       }, 5 * 60 * 1000); // 5 phút
+  //     } else {
+  //       // Khi tab quay lại -> xóa bộ đếm
+  //       clearTimeout(logoutTimer);
+  //     }
+  //   };
+
+  //   // Thêm sự kiện
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  //   return () => {
+  //     // Xóa sự kiện khi component unmount
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //     clearTimeout(logoutTimer);
+  //   };
+  // }, []);
+
 
    // Hàm được gọi khi đăng nhập thành công từ Login.js
   const handleLogin = (accountType) => {
