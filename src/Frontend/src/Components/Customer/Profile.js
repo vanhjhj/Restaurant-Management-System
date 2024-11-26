@@ -6,6 +6,18 @@ import { refreshToken } from '../../API/authAPI';
 import style from '../../Style/CustomerStyle/Profile.module.css';
 
 function Profile() {
+    const [showModal, setShowModal] = useState(false); // Quản lý trạng thái hiển thị modal
+    const [modalType, setModalType] = useState(""); // Xác định loại modal ("email" hoặc "password")
+
+    const handleOpenModal = (type) => {
+        setModalType(type);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [personalInfo, setPersonalInfo] = useState({
@@ -116,40 +128,48 @@ function Profile() {
 
     return (
         <div className={style["profile-container"]}>
-            <h1 className ={style["title"]}>Thông Tin Của Bạn</h1>
+            <h1 className={style["title"]}>Thông Tin Của Bạn</h1>
             <h2>Thông tin cá nhân</h2>
-            <p>Hãy cập nhật thông tin cá nhân của bạn!</p>
             {error && <p className={style["error-message"]}>{error}</p>}
-            <div>
-                <label>
-                    Họ và Tên:
-                    <input
-                        type="text"
-                        value={personalInfo.full_name}
-                        onChange={(e) => {
-                            setPersonalInfo({ ...personalInfo, full_name: e.target.value });
-                            if (error) setError("");
-                        }}
-                    />
-                </label>
-                <label>
-                    Giới tính:
-                    <select
-                        value={personalInfo.gender}
-                        onChange={(e) => {
-                            setPersonalInfo({ ...personalInfo, gender: e.target.value });
-                            if (error) setError("");
-                        }}
-                    >
-                        <option value=""></option>
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                    </select>
-                </label>
+        
+            <div className={style["form-container"]}>
+                {/* Hàng đầu tiên: Họ và Tên, Giới tính */}
+                <div className={style["form-row"]}>
+                    <div>
+                        <label htmlFor="full-name">Họ và Tên:</label>
+                        <input
+                            id="full-name"
+                            type="text"
+                            value={personalInfo.full_name}
+                            onChange={(e) => {
+                                setPersonalInfo({ ...personalInfo, full_name: e.target.value });
+                                if (error) setError("");
+                            }}
+                        />
+                    </div>
 
-                <label>
-                    Số Điện Thoại:
+                    <div>
+                        <label htmlFor="gender">Giới tính:</label>
+                        <select
+                            id="gender"
+                            value={personalInfo.gender}
+                            onChange={(e) => {
+                                setPersonalInfo({ ...personalInfo, gender: e.target.value });
+                                if (error) setError("");
+                            }}
+                        >
+                            <option value=""></option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* Hàng thứ hai: Số điện thoại */}
+                <div>
+                    <label htmlFor="phone-number">Số Điện Thoại:</label>
                     <input
+                        id="phone-number"
                         type="text"
                         value={personalInfo.phone_number}
                         onChange={(e) => {
@@ -157,36 +177,100 @@ function Profile() {
                             if (error) setError("");
                         }}
                     />
-                </label>
-            </div>
-            <button className={style["btn-cancel"]} onClick={handleCancelChanges}>
-                Hủy
-            </button>
-            <button className={style["btn-save"]} onClick={handleSaveChanges} disabled={isSubmitting}>
-                Lưu Thay Đổi
-            </button>
+                </div>
 
+                {/* Hàng thứ ba: Các nút hành động */}
+                <div className={style["button-group"]}>
+                    <button className={style["btn-cancel"]} onClick={handleCancelChanges}>
+                        Hủy
+                    </button>
+                    <button
+                        className={style["btn-save"]}
+                        onClick={handleSaveChanges}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Đang lưu..." : "Lưu Thay Đổi"}
+                    </button>
+                </div>
+            </div>
 
             <h2>Thông tin đăng nhập</h2>
-            <p></p>
-            <div>
-                <p>Email đăng nhập: {loginInfo.email}</p>
-                <button
-                    type="button"
-                    onClick={() => navigate('/Chang-email')}
-                    className={style["button"]}
-                >
-                    Thay đổi Email
-                </button>
-                <p>Mật khẩu: {loginInfo.password}</p>
-                <button
-                    type="button"
-                    onClick={() => navigate('/Change-password')}
-                    className={style["button"]}
-                >
-                    Thay đổi mật khẩu
-                </button>
+            <div className={style["login-info"]}>
+                <div className={style["login-item"]}>
+                    <p className={style["login-label"]}>Email:</p>
+                    <p className={style["login-value"]}>{loginInfo.email}</p>
+                    <button
+                        onClick={() => handleOpenModal("email")}
+                        className={style["button"]}
+                    >
+                        Thay đổi Email
+                    </button>
+                </div>
+                <div className={style["login-item"]}>
+                    <p className={style["login-label"]}>Mật khẩu:</p>
+                    <p className={style["login-value"]}>{loginInfo.password}</p>
+                    <button
+                        onClick={() => handleOpenModal("password")}
+                        className={style["button"]}
+                    >
+                        Thay đổi mật khẩu
+                    </button>
+                </div>
             </div>
+            {/* Modal */}
+            {showModal && (
+                <div className={style["modal-overlay"]}>
+                    <div className={style["modal"]}>
+                        <button
+                            className={style["close-modal"]}
+                            onClick={handleCloseModal}
+                        >
+                            &times;
+                        </button>
+                        <h3>
+                            {modalType === "email"
+                                ? "Change login email"
+                                : "Change password"}
+                        </h3>
+                        {modalType === "email" ? (
+                            <form>
+                                <label>New Email:</label>
+                                <input type="email" placeholder="Enter new email" />
+                                <label>Confirm New Email:</label>
+                                <input
+                                    type="email"
+                                    placeholder="Confirm new email"
+                                />
+                                <label>Your Password:</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter your password"
+                                />
+                                <button className={style["modal-button"]}>
+                                    Change Email
+                                </button>
+                            </form>
+                        ) : (
+                            <form>
+                                <label>New Password:</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter new password"
+                                />
+                                <label>Confirm New Password:</label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm new password"
+                                />
+                                <button className={style["modal-button"]}>
+                                    Change Password
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

@@ -11,7 +11,6 @@ import SignUp from './Components/Auth/SignUp';
 import VerifyOTP from './Components/Auth/VerifyOTP'
 import ForgotPassword from './Components/Auth/ForgotPassword';
 import ResetPassword from './Components/Auth/ResetPassword';
-import FillFormInfo from './Components/Auth/FillFormInfo/FillFormInfo';
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 import Profile from './Components/Customer/Profile';
 import ManageEmployees from './Components/Admin/ManageEmployee/ManageEmployees';
@@ -138,7 +137,6 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOTP/>}/>
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword/>}/>
-        <Route path ='/FillFormInfo' element={<FillFormInfo/>}/>
         <Route path='/Profile' isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} element ={<Profile/>}/>
         <Route path="/profile" element={<Profile />} />
       </Routes>

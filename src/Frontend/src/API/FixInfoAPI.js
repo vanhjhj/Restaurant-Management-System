@@ -79,28 +79,26 @@ export const ChangeInfoCus = async (CusId, InfoChange, token) => {
         }
 };
 
-
-export const PostInfoCus= async(FormData,token) =>{
+//Change Info Login
+export const ChangeInfoLogCus = async (CusId, InfoChange, token) => {
     try {
-        const response = await axios.post(
-            `${API_BASE_URL}/auth/customers/`,
-            FormData,
+        const response = await axios.patch(
+            `${API_BASE_URL}/auth/accounts/${CusId}/`,
+            InfoChange,
             {
                 headers: {
                     Authorization: `Bearer ${token}`, // Đính kèm token
                     "Content-Type": "application/json",
                 },
             }
-
         );
         console.log(response.data.message); // Thông báo từ API nếu thành công
         return response.data;
     } catch (error) {
-        
-        console.error(
-            "Lỗi khi cập nhật thông tin khách hàng:",
-            error.response ? error.response.data : error.message
-        );
+            console.error(
+                "Lỗi khi đổi email/password:",
+                error.response ? error.response.data : error.message
+            );
             throw error;
         }
 };
