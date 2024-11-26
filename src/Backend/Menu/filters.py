@@ -9,4 +9,4 @@ class MenuItemFilter(django_filters.FilterSet):
 
     class Meta:
         model = MenuItem
-        fields = ['category_search', 'menuitem_search', 'price_min', 'price_max']
+        fields = ['category_search', 'menuitem_search', 'price']
