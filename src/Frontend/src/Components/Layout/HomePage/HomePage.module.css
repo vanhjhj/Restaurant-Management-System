@@ -115,10 +115,8 @@
   border: none;
   cursor: pointer;
   outline: none !important;
-  transition: 0.8s cubic-bezier(0.22, 0.78, 0.45, 1.02);
   overflow: hidden;
   position: relative;
-  z-index: 2;
   padding: 6px 30px;
 }
 

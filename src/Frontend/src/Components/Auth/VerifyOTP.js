@@ -97,24 +97,27 @@ function VerifyOTP() {
   };
 
   return (
-    <div className={style["verify-otp-container"]}>
-      <h2>Xác Minh OTP</h2>
-      <input
-        type="text"
-        placeholder="Nhập mã OTP"
-        value={otp}
-        onChange={handleInputChange}
-        className="otp-input"
-      />
-      {error && <p className={style["error-message"]}>{error}</p>}
-      {successMessage && <p className="success-message">{successMessage}</p>}
-      <button onClick={handleVerify} className={style["verify-button"]}>
-        Xác Minh
-      </button>
-      <button onClick={handleReSendOTP} className={style["re-verify-button"]}>
-        Gửi lại mã xác minh
-      </button>
+    <div className={style['OTP-container']}>
+        <div className={style["verify-otp-container"]}>
+          <h2>Xác Minh OTP</h2>
+          <input
+            type="text"
+            placeholder="Nhập mã OTP"
+            value={otp}
+            onChange={handleInputChange}
+            className="otp-input"
+          />
+          {error && <p className={style["error-message"]}>{error}</p>}
+          {successMessage && <p className="success-message">{successMessage}</p>}
+          <button onClick={handleVerify} className={style["verify-button"]}>
+            Xác Minh
+          </button>
+          <button onClick={handleReSendOTP} className={style["re-verify-button"]}>
+            Gửi lại mã xác minh
+          </button>
+        </div>
     </div>
+    
   );
 }
 
