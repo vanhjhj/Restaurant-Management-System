@@ -13,9 +13,13 @@ class IsCustomer(BasePermission):
     
 class IsOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        print(obj.account.id)
-        print(request.user.id)
-        return request.user.id == obj.account.id and request.user.is_authenticated
+        if not request.user.is_authenticated:
+            return False
+        if isinstance(obj, Account):
+            return request.user.id == obj.id
+        elif isinstance(obj, EmployeeAccount) or isinstance(obj, CustomerAccount):
+            return request.user.id == obj.account.id
+        return False
 
 
 class IsOwnerOrAdmin(BasePermission):
