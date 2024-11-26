@@ -25,8 +25,8 @@ function Login({ onLogin }) {
             const userInfo = decodeToken(response.access);
             if (userInfo) {
                 localStorage.setItem('userId', userInfo.user_id);
+                console.log(userInfo.user_id);
                 localStorage.setItem('accountType', userInfo.account_type);
-
                 // Gọi hàm onLogin được truyền từ App.js
                 onLogin(userInfo.account_type);
 
