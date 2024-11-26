@@ -173,6 +173,8 @@ input[type="text"], select {
     margin-bottom: 20px;
     font-size: 1.2rem;
     text-align: center;
+    font-family: Arial, sans-serif;
+
 }
 
 /* Form fields */
@@ -204,6 +206,22 @@ input[type="text"], select {
 }
 
 .modal-button:hover {
-    background: #6b8e23;
+    background: #829132;
     opacity: 0.9;
+}
+
+.forgot-password{
+    border:none;
+    background: none;
+    margin-top: 10px;
+    color: #b9a94e;
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-top: 0px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
 }

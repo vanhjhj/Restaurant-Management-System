@@ -130,7 +130,7 @@ function Profile() {
         <div className={style["profile-container"]}>
             <h1 className={style["title"]}>Thông Tin Của Bạn</h1>
             <h2>Thông tin cá nhân</h2>
-            {error && <p className={style["error-message"]}>{error}</p>}
+            {error && <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}
         
             <div className={style["form-container"]}>
                 {/* Hàng đầu tiên: Họ và Tên, Giới tính */}
@@ -145,6 +145,7 @@ function Profile() {
                                 setPersonalInfo({ ...personalInfo, full_name: e.target.value });
                                 if (error) setError("");
                             }}
+                            required
                         />
                     </div>
 
@@ -176,6 +177,7 @@ function Profile() {
                             setPersonalInfo({ ...personalInfo, phone_number: e.target.value });
                             if (error) setError("");
                         }}
+                        required
                     />
                 </div>
 
@@ -229,41 +231,66 @@ function Profile() {
                         </button>
                         <h3>
                             {modalType === "email"
-                                ? "Change login email"
-                                : "Change password"}
+                                ? "Thay Đổi Email"
+                                : "Thay ĐỔi Mật Khẩu"}
                         </h3>
                         {modalType === "email" ? (
                             <form>
-                                <label>New Email:</label>
-                                <input type="email" placeholder="Enter new email" />
-                                <label>Confirm New Email:</label>
+                                <label>Email Mới:</label>
+                                <input type="email" placeholder="Enter new email" required/>
+                                <label>Xác Nhận Email:</label>
                                 <input
                                     type="email"
                                     placeholder="Confirm new email"
+                                    required
                                 />
-                                <label>Your Password:</label>
+                                <label>Mật Khẩu:</label>
                                 <input
                                     type="password"
                                     placeholder="Enter your password"
+                                    required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/ForgotPassword')}
+                                    className={style["forgot-password"]}
+                                >
+                                    Quên mật khẩu?
+                                </button>
+                                
                                 <button className={style["modal-button"]}>
-                                    Change Email
+                                    Thay Đổi Email
                                 </button>
                             </form>
                         ) : (
                             <form>
-                                <label>New Password:</label>
+                                <label>Mật Khẩu Cũ:</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    required
+                                />
+                                <label>Mật Khẩu Mới:</label>
                                 <input
                                     type="password"
                                     placeholder="Enter new password"
+                                    required
                                 />
-                                <label>Confirm New Password:</label>
+                                <label>Xác Nhận Mật Khẩu Mới:</label>
                                 <input
                                     type="password"
                                     placeholder="Confirm new password"
+                                    required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/ForgotPassword')}
+                                    className={style["forgot-password"]}
+                                >
+                                    Quên mật khẩu?
+                                </button>
                                 <button className={style["modal-button"]}>
-                                    Change Password
+                                    Thay Đổi Mật Khẩu
                                 </button>
                             </form>
                         )}
