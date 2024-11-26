@@ -77,14 +77,6 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
         }
         return Response(response, status=status.HTTP_200_OK)
 
-class MenuItemFilter(django_filters.FilterSet):
-    category_search = django_filters.CharFilter(field_name="category__name", lookup_expr='icontains')  
-    menuitem_search = django_filters.CharFilter(field_name="name", lookup_expr='icontains')  
-
-    class Meta:
-        model = MenuItem
-        fields = ['category_search', 'menuitem_search']
-
 class MenuItemListCreateAPIView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
