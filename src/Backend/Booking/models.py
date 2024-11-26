@@ -7,9 +7,9 @@ from Menu.models import MenuItem
 # Create your models here.
 class Table(models.Model):
     number_of_seats = models.IntegerField(validators=[MinValueValidator(1)])
-    status = models.CharField(max_length=20, choices=[('Available', 'Available'), ('Reserved', 'Reserved'), ('Order Placed', 'Order Placed'), ('Order Fully Served', 'Order Fully Served')], default='Available')
+    status = models.CharField(max_length=20, choices=[('A', 'Available'), ('R', 'Reserved'), ('OP', 'Order Placed'), ('OFS', 'Order Fully Served')], default='A')
     def __str__(self):
-        return str(self.pk) + ' - ' + str(self.number_of_Seats) + ' - ' + self.status
+        return str(self.pk) + ' - ' + str(self.number_of_seats) + ' - ' + self.status
 
 
 class Reservation(models.Model):

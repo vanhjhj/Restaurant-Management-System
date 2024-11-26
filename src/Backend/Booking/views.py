@@ -5,11 +5,16 @@ from .permissions import *
 from rest_framework.response import Response
 from rest_framework import generics, permissions, authentication
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import TableFilterSet
+from rest_framework.filters import OrderingFilter
 
 # Create your views here.
 class TableListCreateView(generics.ListCreateAPIView):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
+    ordering_fields = ['number_of_seats', 'status']
+    filterset_class = TableFilterSet
 
     def get_permissions(self):
         if self.request.method == 'GET':
@@ -63,3 +68,5 @@ class TableRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
