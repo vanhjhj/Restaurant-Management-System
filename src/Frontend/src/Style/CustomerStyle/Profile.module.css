@@ -1,0 +1,82 @@
+.profile-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.title {
+    font-size: 5em;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-save {
+    background-color: #4caf50;
+    color: white;
+}
+
+.error-message {
+    color: #d9534f;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+div {
+    margin-bottom: 20px;
+}
+
+button + p {
+    margin-top: 10px;
+}
