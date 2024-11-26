@@ -3,7 +3,7 @@ from .models import *
 from .serializers import *
 from .permissions import *
 from .authentications import *
-from rest_framework import generics, permissions, authentication, decorators
+from rest_framework import generics, permissions, authentication
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken

@@ -6,17 +6,17 @@ from Menu.models import MenuItem
 
 # Create your models here.
 class Table(models.Model):
-    number_of_Seats = models.IntegerField(validators=MinValueValidator(1))
-    status = models.CharField(max_length=20, choices=[('Available', 'Available'), ('Reserved', 'Reserved'), ('Order Placed', 'Order Placed') ('Order Fully Served', 'Order Fully Served')], default='Available')
+    number_of_seats = models.IntegerField(validators=[MinValueValidator(1)])
+    status = models.CharField(max_length=20, choices=[('Available', 'Available'), ('Reserved', 'Reserved'), ('Order Placed', 'Order Placed'), ('Order Fully Served', 'Order Fully Served')], default='Available')
     def __str__(self):
         return str(self.pk) + ' - ' + str(self.number_of_Seats) + ' - ' + self.status
 
 
 class Reservation(models.Model):
-    guest_name = models.CharField(max_length=100, required=True)
-    phone_number = PhoneNumberField(required=True)
-    date = models.DateField(required=True)
-    time = models.TimeField(required=True)
+    guest_name = models.CharField(max_length=100, blank=False, null=False)
+    phone_number = PhoneNumberField()
+    date = models.DateField()
+    time = models.TimeField()
     note = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -25,9 +25,9 @@ class Reservation(models.Model):
 
 class Order(models.Model):
     date = models.DateField(default=datetime.date.today)
-    total_price = models.DecimalField(decimal_places=2, validators=MinValueValidator(0), default=0)
-    total_discount = models.DecimalField(decimal_places=2, validators=MinValueValidator(0), default=0)
-    final_price = models.DecimalField(decimal_places=2, validators=MinValueValidator(0), default=0)
+    total_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
+    total_discount = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
+    final_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
 
     def __str__(self):
         return f"Order {self.pk} - {self.date} - {self.final_price}"
@@ -80,11 +80,11 @@ class Order(models.Model):
     
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE, required=True)
-    menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.DO_NOTHING, required=True)
-    quantity = models.IntegerField(validators=MinValueValidator(1), required=True)
-    price = models.DecimalField(decimal_places=2, validators=MinValueValidator(0))
-    total = models.DecimalField(decimal_places=2, validators=MinValueValidator(0))
+    order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE, )
+    menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.DO_NOTHING)
+    quantity = models.IntegerField(validators=[MinValueValidator(1)])
+    price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
+    total = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     note = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -99,8 +99,8 @@ class OrderItem(models.Model):
         self.total = self.price * self.quantity
         super().save(*args, **kwargs)
 
-class Feedback(models.Models):
-    order = models.ForeignKey(Order, related_name='feedback', on_delete=models.CASCADE, required=True)
+class Feedback(models.Model):
+    order = models.ForeignKey(Order, related_name='feedback', on_delete=models.CASCADE)
     server_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)
     food_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)
     price_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)

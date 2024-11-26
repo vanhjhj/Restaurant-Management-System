@@ -1,7 +1,4 @@
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import AuthenticationFailed
-from django.conf import settings
-import jwt
 from .models import Account, EmployeeAccount, CustomerAccount
 class IsEmployee(BasePermission):
     def has_permission(self, request, view):
@@ -13,8 +10,6 @@ class IsCustomer(BasePermission):
     
 class IsOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        print(obj.account.id)
-        print(request.user.id)
         return request.user.id == obj.account.id and request.user.is_authenticated
 
 
