@@ -14,7 +14,7 @@ class MenuItem(models.Model):
         validators=[MinValueValidator(0)]  
     )
     description = models.TextField()
-    image = models.ImageField(upload_to='')
+    image = models.ImageField(upload_to='menu_img/')
     category = models.ForeignKey(Category, related_name='menu_items', on_delete=models.PROTECT)
 
     def __str__(self):

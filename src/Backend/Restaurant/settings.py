@@ -159,5 +159,5 @@ EMAIL_HOST_USER = 'dangtricoding@gmail.com'
 EMAIL_HOST_PASSWORD = 'gxxr hhxw ukil lmoo'
 EMAIL_USE_TLS = True
 
-MEDIA_URL = '/assets/menu_img/' 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'assets/menu_img') 
+MEDIA_URL = '/media/' 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
