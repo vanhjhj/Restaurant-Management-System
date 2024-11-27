@@ -22,6 +22,8 @@ function Profile() {
     const token = localStorage.getItem('accessToken');
     const refresh = localStorage.getItem('refreshToken');
     const CusID = localStorage.getItem('userId');
+    
+    let email;
 
     useEffect(() => {
         if (!token || !refresh || !CusID) {
@@ -59,6 +61,7 @@ function Profile() {
                 phone_number: responseCus.phone_number || "",
             });
             setLoginInfo({ email: responseEmail.email || "", password: "********" });
+            email=responseEmail.email;
         } catch (error) {
             console.error("Error fetching profile data:", error);
             setError("Không thể tải thông tin.");
@@ -96,7 +99,11 @@ function Profile() {
             return;
         }
         try {
-           
+            if(formData.newPassword===formData.oldPassword)
+            {
+                setModalerror("Mật khẩu mới trùng với mật khẩu cũ.");
+                return;
+            }
             if (formData.newPassword !== formData.confirmNewPassword) {
                 setModalerror("Mật khẩu xác nhận không khớp.");
                 return;
@@ -135,7 +142,6 @@ function Profile() {
             setModalerror('Mật Khẩu Không đúng!');
             return;
         }
-
         try {
             if (formData.newEmail !== formData.confirmNewEmail) {
                 setModalerror("Email xác nhận không khớp.");
