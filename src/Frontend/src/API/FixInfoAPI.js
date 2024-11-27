@@ -93,6 +93,7 @@ export const ChangeInfoLogCus = async (CusId, InfoChange, token) => {
             }
         );
         console.log(response.data.message); // Thông báo từ API nếu thành công
+        console.log("Pass moi",InfoChange);
         return response.data;
     } catch (error) {
             console.error(

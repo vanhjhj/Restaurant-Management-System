@@ -6,11 +6,11 @@ import { forgotPassword } from '../../API/authAPI';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
-    const [error, setError] = useState({});
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleChangeEmail=(e)=>{
-        setError(null);
+        setError('');
         setEmail(e.target.value)
     }
 
