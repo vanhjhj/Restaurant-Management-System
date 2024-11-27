@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect}from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import style from '../../Style/CustomerStyle/Modal.module.css';
@@ -12,15 +12,28 @@ const Modal = ({
     showPassword, // Trạng thái hiển thị/ẩn mật khẩu
     setShowPassword, // Hàm thay đổi trạng thái hiển thị mật khẩu
     handleSubmit, // Hàm xử lý khi nhấn nút xác nhận
-    error, // Lỗi cần hiển thị
-    requirement, // Yêu cầu mật khẩu (nếu có)
+    Modalerror, // Lỗi cần hiển thị
+    setModalerror,
+    navigate,
 }) => {
-    if (!showModal) return null; // Không hiển thị modal nếu không được mở
     
-
+    useEffect(() => {
+        if (!showModal) {
+            setFormData({
+                oldPassword: "",
+                newPassword: "",
+                confirmNewPassword: "",
+                newEmail: "",
+                confirmNewEmail: "",
+            });
+            setModalerror(null); // Xóa lỗi khi modal đóng
+        }
+    }, [showModal]);
+    
     // Hàm xử lý thay đổi dữ liệu input
     const handleInputChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+        if (Modalerror) setModalerror(null); // Xóa lỗi khi nhập lại
     };
 
     // Hàm thay đổi trạng thái hiển thị/ẩn mật khẩu
@@ -59,6 +72,10 @@ const Modal = ({
                     &times;
                 </button>
                 <h3>{modalType === "email" ? "Thay Đổi Email" : "Thay Đổi Mật Khẩu"}</h3>
+                
+                {/* Hiển thị lỗi nếu có */}
+                {Modalerror && <p className={style["error-message"]}>{Modalerror}</p>}
+                
                 <form
                     onSubmit={(e) => {
                         e.preventDefault(); // Ngăn reload trang khi submit form
@@ -69,17 +86,12 @@ const Modal = ({
                         <>
                             {renderInputField("Email Mới", "email", formData.newEmail, "newEmail")}
                             {renderInputField("Xác Nhận Email", "email", formData.confirmNewEmail, "confirmNewEmail")}
-                            {renderInputField("Mật khẩu cũ", "password", formData.oldPassword, "oldPassword", true)}
+                            {renderInputField("Mật khẩu", "password", formData.oldPassword, "oldPassword", true)}
                         </>
                     ) : (
                         <>
                             {renderInputField("Mật khẩu cũ", "password", formData.oldPassword, "oldPassword", true)}
                             {renderInputField("Mật khẩu mới", "password", formData.newPassword, "newPassword", true)}
-                            {requirement && (
-                                <p className={style["password-requirement"]} style={{ color: "red" }}>
-                                    • {requirement.text}
-                                </p>
-                            )}
                             {renderInputField(
                                 "Xác nhận mật khẩu mới",
                                 "password",
@@ -89,7 +101,14 @@ const Modal = ({
                             )}
                         </>
                     )}
-                    {error && <p className={style["error-message"]}>{error}</p>}
+                    <button
+                        type="button"
+                        onClick={() => navigate('/ForgotPassword')}
+                        className={style["forgot-password"]}
+                    >
+                        Quên mật khẩu?
+                    </button>
+                    
                     <button className={style["modal-button"]} type="submit">
                         {modalType === "email" ? "Thay Đổi Email" : "Thay Đổi Mật Khẩu"}
                     </button>

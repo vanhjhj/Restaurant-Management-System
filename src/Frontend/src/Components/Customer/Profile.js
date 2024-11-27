@@ -15,8 +15,7 @@ function Profile() {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState("");
     const [error, setError] = useState(null);
-    const [Modalerror, setModalError] = useState(null);
-    const [requirement, setRequirement] = useState(null);
+    const [Modalerror, setModalerror] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
@@ -88,39 +87,75 @@ function Profile() {
 
     const handlePasswordChange = async () => {
         setError(null);
+        setModalerror(null);
+        const activeToken = await ensureActiveToken();
+        try{
+            await CheckPassword(CusID,formData.oldPassword, activeToken);
+        }catch(error){
+            setModalerror('Mật Khẩu Không đúng!');
+            return;
+        }
         try {
-            const activeToken = await ensureActiveToken();
+           
             if (formData.newPassword !== formData.confirmNewPassword) {
-                setError("Mật khẩu xác nhận không khớp.");
+                setModalerror("Mật khẩu xác nhận không khớp.");
+                return;
+            }
+            if(formData.newPassword.length<8){
+                setModalerror("Mật khẩu phải có ít nhất 8 kí tự");
                 return;
             }
             let InfoChange={password: formData.newPassword}
-            await CheckPassword(CusID,formData.oldPassword, activeToken);
             await ChangeInfoLogCus(CusID,InfoChange , activeToken);
-            alert("Đổi mật khẩu thành công!");
             setShowModal(false);
+            setModalerror(null); // Xóa lỗi
+            setFormData({ // Reset nội dung form
+                oldPassword: "",
+                newPassword: "",
+                confirmNewPassword: "",
+                newEmail: "",
+                confirmNewEmail: "",
+            });
+            alert("Đổi mật khẩu thành công!");
+            await fetchProfileData();
         } catch (error) {
             console.error("Error changing password:", error);
-            setError("Đổi mật khẩu thất bại.");
+            setModalerror("Đổi mật khẩu thất bại",
+                error.response ? error.response.data : error.message);
         }
     };
 
     const handleEmailChange = async () => {
         setError(null);
+        setModalerror(null);
+        const activeToken = await ensureActiveToken();
+        try{
+            await CheckPassword(CusID,formData.oldPassword, activeToken);
+        }catch(error){
+            setModalerror('Mật Khẩu Không đúng!');
+            return;
+        }
+
         try {
-            const activeToken = await ensureActiveToken();
             if (formData.newEmail !== formData.confirmNewEmail) {
-                setError("Email xác nhận không khớp.");
+                setModalerror("Email xác nhận không khớp.");
                 return;
             }
             let InfoChange={email: formData.newEmail};
-            await CheckPassword(CusID,formData.oldPassword, activeToken);
             await ChangeInfoLogCus(CusID,InfoChange , activeToken);
-            alert("Đổi email thành công!");
             setShowModal(false);
+            setModalerror(null); // Xóa lỗi
+            setFormData({ // Reset nội dung form
+                oldPassword: "",
+                newPassword: "",
+                confirmNewPassword: "",
+                newEmail: "",
+                confirmNewEmail: "",
+            });
+            alert("Đổi email thành công!");
+            await fetchProfileData();
         } catch (error) {
-            console.error("Error changing email:", error);
-            setError("Đổi email thất bại.");
+            setModalerror('Email đã tồn tại ');
         }
     };
 
@@ -128,7 +163,7 @@ function Profile() {
         <div className={style["profile-container"]}>
             <h1 className={style["title"]}>Thông Tin Của Bạn</h1>
             <h2>Thông tin cá nhân</h2>
-            {error && <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}
+            {error&& <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}
     
             <div className={style["form-container"]}>
                 {/* Hàng đầu tiên: Họ và Tên, Giới tính */}
@@ -229,14 +264,25 @@ function Profile() {
                 <Modal
                     modalType={modalType}
                     showModal={showModal}
-                    onClose={() => setShowModal(false)}
+                    onClose={() => {
+                        setShowModal(false); // Đóng modal
+                        setModalerror(null); // Xóa lỗi
+                        setFormData({ // Reset nội dung form
+                            oldPassword: "",
+                            newPassword: "",
+                            confirmNewPassword: "",
+                            newEmail: "",
+                            confirmNewEmail: "",
+                        });
+                    }}
                     formData={formData}
                     setFormData={setFormData}
                     showPassword={showPassword}
                     setShowPassword={setShowPassword}
                     handleSubmit={modalType === "email" ? handleEmailChange : handlePasswordChange}
                     Modalerror={Modalerror}
-                    requirement={requirement}
+                    setModalerror={setModalerror} 
+                    navigate={navigate}
                 />
             )}
         </div>
