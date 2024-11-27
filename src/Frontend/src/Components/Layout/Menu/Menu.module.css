@@ -14,6 +14,9 @@
     composes: col-lg-3 from '../../../Style/bootstrap.min.css';
 }
 
+.col-lg-9{
+    composes: col-lg-9 from '../../../Style/bootstrap.min.css';
+}
 
 .section-title{
     text-align: center;
@@ -47,6 +50,16 @@
     margin: 20px 0;
     gap: 10px;
 }
+
+.menu-tab ul{
+    list-style: none;
+    display: flex;
+    gap: 15px; /* Giảm khoảng cách giữa các mục menu */
+    margin: 0;
+    padding: 0;
+}
+
+
 
 .menu-tab-btn{
     padding: 12px 24px;
@@ -117,26 +130,74 @@
 }
 
 .menu-item button{
-  font-size: 20px;  
-  background: #f3f3f5;
-  box-shadow: 9px 9px 12px #b2b2b3, -9px -9px 12px #ffffff;
-  display: inline-flex;
-  justify-content: center;
-  border-radius: 30px;
-  color: #0d0d25;
-  text-transform: capitalize;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  outline: none !important;
-  overflow: hidden;
-  position: relative;
-  padding: 6px 30px;
-  transition: all 0.3s ease;
+    font-size: 20px;  
+    background: #f3f3f5;
+    box-shadow: 9px 9px 12px #b2b2b3, -9px -9px 12px #ffffff;
+    display: inline-flex;
+    justify-content: center;
+    border-radius: 30px;
+    color: #0d0d25;
+    text-transform: capitalize;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    outline: none !important;
+    overflow: hidden;
+    position: relative;
+    padding: 6px 30px;
+    transition: all 0.3s ease;
 }
 
 .menu-item button:hover{
     border-color: #0d0d25;
-  box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
-  color: #ff8243;
+    box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
+    color: #ff8243;
+}
+
+.search-row{
+    display:flex;
+    margin-top: 100px;
+    padding-top: 20px;
+    border-top: 3px solid rgba(0, 0, 0, 0.4);
+}
+
+.search-menuitem{
+    position: relative;
+    align-items: center;
+}
+
+.input-search-menuitem {
+    width: 100%;
+    padding-right: 2.5rem;
+    padding-left: 1rem;
+    box-sizing: border-box;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+}
+
+.input-search-btn{
+    position: absolute;
+    right: 0.5rem; /* Position the button slightly from the right edge */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the button */
+    background: none; /* Remove default background */
+    border: none; /* Remove default border */
+    padding: 0.5rem; /* Add padding for aesthetics */
+    cursor: pointer; /* Make the button clickable */
+}
+
+.search-price{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-priceMin input{
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+}
+
+.input-priceMax input{
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
 }

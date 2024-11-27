@@ -9,6 +9,11 @@ function Header({ isLoggedIn, onLogout, userRole }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null); // Tham chiếu đến dropdown menu
 
+    const handleLogoutBtn = () => {
+        setIsMenuOpen(false);
+        onLogout();
+    }
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -65,18 +70,18 @@ function Header({ isLoggedIn, onLogout, userRole }) {
                                                 <div className={style["user-dropdown"]}>
                                                     {/* Show only the Logout option for admin */}
                                                     {userRole === 'admin' ? (
-                                                        <button onClick={onLogout}>Đăng xuất</button>
+                                                        <button onClick={handleLogoutBtn}>Đăng xuất</button>
                                                     ) : userRole === 'Employee' ? (
                                                         <>
                                                             {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
                                                             <Link to="/profile">Thông tin cá nhân</Link>
-                                                            <button onClick={onLogout}>Đăng xuất</button>
+                                                            <button onClick={handleLogoutBtn}>Đăng xuất</button>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <Link to="/profile">Thông tin cá nhân</Link>
                                                             <Link to="/purchasehistory">Tra cứu lịch sử mua hàng</Link>
-                                                            <button onClick={onLogout}>Đăng xuất</button>
+                                                            <button onClick={handleLogoutBtn}>Đăng xuất</button>
                                                         </>
                                                     )}
                                                 </div>
