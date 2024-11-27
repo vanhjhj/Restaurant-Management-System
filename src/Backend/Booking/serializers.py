@@ -15,7 +15,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ('id', 'guest_name', 'phone_number', 'date', 'time', 'note')
+        fields = ('id', 'guest_name', 'phone_number', 'date', 'time', 'number_of_guests', 'note')
     
     def to_representation(self, instance):
         # Trả về số điện thoại không có mã quốc gia

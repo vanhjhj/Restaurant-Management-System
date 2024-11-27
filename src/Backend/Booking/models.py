@@ -17,6 +17,7 @@ class Reservation(models.Model):
     phone_number = PhoneNumberField()
     date = models.DateField()
     time = models.TimeField()
+    number_of_guests = models.IntegerField(validators=[MinValueValidator(1)])
     note = models.TextField(blank=True, null=True)
 
     def __str__(self):
