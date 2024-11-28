@@ -4,37 +4,24 @@ import style from '../../Style/AuthStyle/ResetPassword.module.css'; // CSS modul
 import { refreshToken, forgotPassword, resetPassword } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { checkPasswordRequirements } from '../../utils/checkPasswordRequirements';
 
 function ResetPassword() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [requirement, setRequirement] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
     const { email, token } = location.state || {};
 
     const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
         setError(null);
         const inputPassword = e.target.value;
-        setPassword(inputPassword);
-
-        if(inputPassword==="")
-        {
-            setRequirement(null); 
-            return; 
-        }
-        // Lấy yêu cầu đầu tiên chưa đạt
-        const firstUnmetRequirement = checkPasswordRequirements(inputPassword);
-        setRequirement(firstUnmetRequirement);
-
+        setPassword(inputPassword)
     };
 
     const handleConfirmPasswordChange = (e) => {
@@ -67,35 +54,9 @@ function ResetPassword() {
             setSuccessMessage('Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập.');
             setTimeout(() => navigate('/login'), 1000);
         } catch (err) {
-            const serverError = err.response.data;
-
-            console.log('HTTP Status:', err.response.status);
-            console.log('Server Error:', serverError);
-
-            // Handle password errors
-            if (serverError.non_field_errors) {
-                const passwordErrors = serverError.non_field_errors.join(' ');
-                console.log('Password Errors:', passwordErrors);
-                setError({ message: passwordErrors });
-                return;
-            }
-
-            // Handle other errors
-            if (serverError.detail) {
-                try {
-                    console.log('Token hết hạn. Đang refresh token...');
-                    const refreshedToken = await refreshToken(token); // Refresh token
-                    console.log('Token mới:', refreshedToken);
-                    const resetData = { email, password };
-                    await resetPassword(resetData, refreshedToken.access); // Retry resetPassword with new token
-                } catch (refreshError) {
-                    console.error('Lỗi khi refresh token:', refreshError);
-                    setError({ message: 'Không thể làm mới token. Vui lòng thử lại.' });
-                    await forgotPassword(email);
-                    navigate('/verify-otp', { state: { mode: 'forgotPassword', email } });
-                }
-            }
-        } finally {
+            setError('Mật Khẩu Không hợp lệ');
+        }
+        finally {
             setIsSubmitting(false);
         }
     };
@@ -122,15 +83,6 @@ function ResetPassword() {
                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                 </span>
             </div>
-
-            {/* Hiển thị yêu cầu đầu tiên chưa đạt */}
-            {requirement && (
-            <div className={style["password-requirement"]}>
-                <p style={{ color: "red" }}>
-                • {requirement.text}
-                </p>
-            </div>
-            )}
 
             <label htmlFor="confirm-new-password">Xác nhận mật khẩu mới</label>
             <div className={style['password-input-container']}>

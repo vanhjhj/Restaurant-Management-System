@@ -93,6 +93,7 @@ export const ChangeInfoLogCus = async (CusId, InfoChange, token) => {
             }
         );
         console.log(response.data.message); // Thông báo từ API nếu thành công
+        console.log("Pass moi",InfoChange);
         return response.data;
     } catch (error) {
             console.error(
@@ -102,3 +103,27 @@ export const ChangeInfoLogCus = async (CusId, InfoChange, token) => {
             throw error;
         }
 };
+
+export const CheckPassword =async(CusID,Pass,token)=>{
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}/auth/password-check/`,
+            {id: CusID, password: Pass},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Đính kèm token
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        console.log(response.data.message); // Thông báo từ API nếu thành công
+        return response.data;
+    } catch (error) {
+        console.log("Check-Password",CusID);
+            console.error(
+                "Lỗi khi ktra Password:",
+                error.response ? error.response.data : error.message
+            );
+            throw error;
+    }
+}
