@@ -2,11 +2,11 @@ from django.shortcuts import render
 from .models import *
 from .serializers import *
 from .permissions import *
+from .filters import *
 from rest_framework.response import Response
 from rest_framework import generics, permissions, authentication
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import TableFilterSet, ReservationFilterSet
 from rest_framework.filters import OrderingFilter
 
 # Create your views here.
@@ -137,3 +137,28 @@ class ReservationRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIV
         reservation.delete()
         return Response({'message': 'Reservation deleted successfully'}, status=status.HTTP_200_OK)
 
+class OrderListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    ordering_fields = ['date', 'final_price', 'total_discount', 'total_price']
+    filterset_class = OrderFilterSet
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [permissions.IsAdminUser()]
+        elif self.request.method == 'POST':
+            return [IsEmployeeOrAdmin()]
+        return super().get_permissions()
+    
+    def post(self, request, *args, **kwargs):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            response = {
+                'message': 'Order created successfully',
+                'data': serializer.data
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

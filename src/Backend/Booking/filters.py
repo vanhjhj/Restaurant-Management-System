@@ -1,5 +1,5 @@
 import django_filters
-from .models import Table, Reservation
+from .models import Table, Reservation, Order
 
 class TableFilterSet(django_filters.FilterSet):
     nos_min = django_filters.NumberFilter(field_name="number_of_seats", lookup_expr='gte')
@@ -20,3 +20,15 @@ class ReservationFilterSet(django_filters.FilterSet):
     class Meta:
         model = Reservation
         fields = ['date_range', 'date', 'time_range', 'time', 'phone_number']
+
+class OrderFilterSet(django_filters.FilterSet):
+    date_range = django_filters.DateFromToRangeFilter(field_name="date")
+    date = django_filters.DateFilter(field_name="date")
+    total_price_range = django_filters.NumericRangeFilter(field_name="total_price")
+    final_price_range = django_filters.NumericRangeFilter(field_name="final_price")
+    total_discount_range = django_filters.NumericRangeFilter(field_name="total_discount")
+    table = django_filters.NumberFilter(field_name="table", lookup_expr='exact')
+
+    class Meta:
+        model = Order
+        fields = ['date_range', 'date', 'total_price_range', 'final_price_range', 'total_discount_range', 'table']

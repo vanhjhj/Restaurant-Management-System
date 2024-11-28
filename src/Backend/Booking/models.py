@@ -29,6 +29,8 @@ class Order(models.Model):
     total_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
     total_discount = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
     final_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
+    status = models.CharField(max_length=20, choices=[('P', 'Paid'), ('NP', 'Not Paid')], default='NP')
+    table = models.ForeignKey(Table, related_name='orders', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f"Order {self.pk} - {self.date} - {self.final_price}"
