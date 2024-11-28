@@ -58,7 +58,7 @@ function SignUp() {
         } catch (err) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
-                message: "Lỗi kiểm tra tài khoản: " + err.message,
+                ...err,
             }));
             return;
         }
@@ -74,6 +74,7 @@ function SignUp() {
                 ...prevErrors,
                 message: "Lỗi gửi OTP: " + err.message,
             }));
+            return;
         }
     };
 
