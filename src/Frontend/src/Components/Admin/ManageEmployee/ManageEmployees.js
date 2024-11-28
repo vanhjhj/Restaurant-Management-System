@@ -8,7 +8,6 @@ function ManageEmployees() {
     return (
         <div className="manage-employees">
             <div className="header">
-                <button className="back-button">← Back</button>
                 <h2>Quản lý nhân viên</h2>
             </div>
             <h3>Danh sách nhân viên hiện tại</h3>
