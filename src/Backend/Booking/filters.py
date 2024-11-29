@@ -8,7 +8,7 @@ class TableFilterSet(django_filters.FilterSet):
 
     class Meta:
         model = Table
-        fields = ['nos_min', 'nos_max', 'status']
+        fields = ['number_of_seats', 'status']
 
 class ReservationFilterSet(django_filters.FilterSet):
     date_range = django_filters.DateFromToRangeFilter(field_name="date")
@@ -19,7 +19,7 @@ class ReservationFilterSet(django_filters.FilterSet):
 
     class Meta:
         model = Reservation
-        fields = ['date_range', 'date', 'time_range', 'time', 'phone_number']
+        fields = ['date', 'time', 'phone_number']
 
 class OrderFilterSet(django_filters.FilterSet):
     date_range = django_filters.DateFromToRangeFilter(field_name="date")
@@ -31,4 +31,4 @@ class OrderFilterSet(django_filters.FilterSet):
 
     class Meta:
         model = Order
-        fields = ['date_range', 'date', 'total_price_range', 'final_price_range', 'total_discount_range', 'table']
+        fields = ['date', 'total_price', 'final_price', 'total_discount', 'table']

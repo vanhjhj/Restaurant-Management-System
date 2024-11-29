@@ -25,7 +25,7 @@ class Reservation(models.Model):
     
 
 class Order(models.Model):
-    date = models.DateField(default=datetime.date.today)
+    datetime = models.DateTimeField(default=datetime.datetime.now)
     total_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
     total_discount = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
     final_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)

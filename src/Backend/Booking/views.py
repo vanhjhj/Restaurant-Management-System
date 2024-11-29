@@ -162,3 +162,53 @@ class OrderListCreateAPIView(generics.ListCreateAPIView):
             return Response(response, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class OrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsEmployeeOrAdmin]
+
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            return [permissions.IsAdminUser()]
+        return super().get_permissions()
+    
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        if 'id' in request.data:
+            return Response({'message': 'Cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        order = self.get_object()
+        serializer = OrderSerializer(order, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                'message': 'Order updated successfully',
+                'data': serializer.data
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, *args, **kwargs):
+        order = self.get_object()
+        order.delete()
+        return Response({'message': 'Order deleted successfully'}, status=status.HTTP_200_OK)
+    
+class GetCurrentTableOrderAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = Order.objects.all()
+
+    def get (self, request, *args, **kwargs):
+        table_id = kwargs.get('pk')
+        try:
+            order = Order.objects.get(table=table_id, status='NP')
+            serializer = OrderSerializer(order)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Order.DoesNotExist:
+            return Response({'message': 'Table does not have any order'}, status=status.HTTP_404_NOT_FOUND)
+    
+        

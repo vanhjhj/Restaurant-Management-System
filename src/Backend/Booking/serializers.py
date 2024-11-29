@@ -37,10 +37,17 @@ class OrderSerializer(serializers.ModelSerializer):
     table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all())
     class Meta:
         model = Order
-        fields = ('id', 'date', 'total_price', 'total_discount', 'final_price', 'status', 'table')
+        fields = ('id', 'datetime', 'total_price', 'total_discount', 'final_price', 'status', 'table')
         extra_kwargs = {
             'date': {'read_only': True},
             'total_price': {'read_only': True},
             'total_discount': {'read_only': True},
             'final_price': {'read_only': True},
         }
+
+    def validate(self, attrs):
+        #at once time only has one order link to table with NP status
+        table_id = attrs.get('table')
+        if Order.objects.filter(table=table_id, status='NP').exists():
+            raise serializers.ValidationError({'table': 'Table has already had an order'})
+        return attrs
