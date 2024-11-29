@@ -151,6 +151,10 @@ class OrderListCreateAPIView(generics.ListCreateAPIView):
         return super().get_permissions()
     
     def post(self, request, *args, **kwargs):
+        #cannot create order with status
+        if 'status' in request.data:
+            return Response({'message': 'Cannot create order with status'}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
