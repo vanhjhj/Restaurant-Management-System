@@ -10,7 +10,7 @@ function Menu() {
 
   const [menuTabs, setMenuTabs] = useState([]);
   
-  const [error, setError] = useState([]);
+  const [error, setError] = useState(null);
 
   const [searchItem, setSearchItem] = useState('');
 
@@ -95,25 +95,11 @@ function Menu() {
                 value={searchItem}
                 onChange={e => setSearchItem(e.target.value) }
                 className={style['input-search-menuitem']} />
-              <button type="button" class={style["input-search-btn"]}>
-                <i class="fas fa-search"></i>
+              <button type="button" className={style["input-search-btn"]}>
+                <i className="fas fa-search"></i>
               </button>
             </div>
           </div>
-          {/* <div className={style['col-lg-3']}>
-            <div className={style['search-catagory']}>
-              <select
-                value={selectedType}
-                onChange={(e) => { setSelectedType(parseInt(e.target.value, 10));}}
-                >
-                  {menuTabs.map(tab => (
-                    <option key={tab.id} value={tab.id}>
-                      {tab.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div> */}
           <div className={style['col-lg-3']}>
             <div className={style['search-price']}>
               <div className={style["input-priceMin"]}>
@@ -140,6 +126,13 @@ function Menu() {
             </div>
           </div>
         </div>
+        {error && ( 
+          <div className={style['row']}>
+            <div className={style['Error-container']}> 
+              <h2 className={style['error']}>Error </h2> 
+              <p>{error.response ? error.response.data : error.message}</p>
+            </div>
+            </div>)}
         <div className={style["menu-tab-row"]}>
           <div className={style["row"]}>
             <div className={style['col-lg-12']}>

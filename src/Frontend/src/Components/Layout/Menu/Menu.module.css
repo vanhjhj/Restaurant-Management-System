@@ -201,3 +201,25 @@
     font-family: 'Playfair Display', serif;
     font-size: 20px;
 }
+
+.Error-container{
+    padding: 20px;
+    margin:auto;
+    margin-top:30px;
+    width: 500px;
+    text-align: center;
+    border: 2px solid rgba(255, 56, 56, 0.5);
+    border-radius: 8px;
+    background-color: rgba(255, 56, 56, 0.2);
+}
+
+.Error-container h2{
+    color:#ff3838;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.Error-container p{
+    color: black;
+    font-size: 30px;
+}

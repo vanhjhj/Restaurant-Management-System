@@ -48,7 +48,7 @@ function VerifyOTP() {
           setError('Không tìm thấy thông tin đăng ký. Vui lòng thử lại.');
           return;
         }
-
+        
         const userData = {
           username: signupData.username,
           email: signupData.email,

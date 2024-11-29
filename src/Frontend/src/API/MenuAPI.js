@@ -8,7 +8,6 @@ export const getMenuTabs = async () => {
         return response.data.results;
     }
     catch(error) {
-        console.error('Error:', error);
         throw error;
     }
 }
@@ -19,7 +18,6 @@ export const getFoodItems = async () => {
         return response.data.results;
     }
     catch(error) {
-        console.error('Error:', error);
         throw error;
     }
 }
