@@ -20,14 +20,17 @@ function Menu() {
 
   const handlePriceMin = (value) => {
     // Allow only positive numbers or empty string (to handle backspacing)
-    if (value === '' || /^[+]?\d+(\.\d+)?$/.test(value)) {
+    if (/^\d*$/.test(value)) {
       setSearchPriceMin(value);
     }
   } 
 
   const handlePriceMax = (value) => {
     // Allow only positive numbers or empty string (to handle backspacing)
-    if (value === '' || /^[+]?\d+(\.\d+)?$/.test(value)) {
+    // if (value === '' || /^[+]?\d+(\.\d+)?$/.test(value)) {
+    //   setSearchPriceMax(value);
+    // }
+    if (/^\d*$/.test(value)) {
       setSearchPriceMax(value);
     }
   }
@@ -103,8 +106,7 @@ function Menu() {
           <div className={style['col-lg-3']}>
             <div className={style['search-price']}>
               <div className={style["input-priceMin"]}>
-                <input type="number" 
-                  min = {0}
+                <input type="text" 
                   placeholder="Giá từ..."
                   value={searchPriceMin}
                   onChange={(e) => handlePriceMin(e.target.value) }
@@ -115,8 +117,7 @@ function Menu() {
 
               </div> 
               <div className={style["input-priceMin"]}>
-                <input type="number" 
-                  min = {0}
+                <input type="text" 
                   placeholder="Đến..."
                   value={searchPriceMax}
                   onChange={(e) => handlePriceMax(e.target.value) }
