@@ -10,7 +10,6 @@ function HomePage() {
     navigate('/menu'); // Điều hướng đến trang menu
   };
 
-
   const bgImg = useRef([]); 
 
   useEffect(() => {

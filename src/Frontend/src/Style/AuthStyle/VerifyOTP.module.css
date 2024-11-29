@@ -1,8 +1,18 @@
+.OTP-container{
+    height: 80vh;
+    position: relative;
+    overflow: hidden;
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .verify-otp-container {
-    flex: 1;
-    padding: 15px;
-    width: 600px;
-    display: flex;
+    padding: 50px; 
+    width: 700px; 
+    height: 300px;
+    display: flex; 
     flex-direction: column;
     justify-content: center;
     align-items: center;
