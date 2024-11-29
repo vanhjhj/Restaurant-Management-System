@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 const ProtectedRoute = ({ children, isLoggedIn, allowedRoles, userRole }) => {
     // Nếu người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
     if (!isLoggedIn) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/" />;
     }
 
     // Nếu vai trò của người dùng không được phép, chuyển hướng về trang chủ

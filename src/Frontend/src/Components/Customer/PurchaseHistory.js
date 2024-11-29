@@ -1,6 +1,6 @@
 // src/Components/PurchaseHistory.js
 import React, { useEffect, useState } from 'react';
-import './PurchaseHistory.css';
+import style from '../../Style/CustomerStyle/PurchaseHistory.module.css';
 
 function PurchaseHistory() {
     const [historyData, setHistoryData] = useState([]);

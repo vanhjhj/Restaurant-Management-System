@@ -359,3 +359,33 @@ class ResetPasswordAPIView(generics.CreateAPIView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class CheckPasswordAPIView(generics.CreateAPIView):
+    queryset = Account.objects.all()
+    permission_classes = [IsOwner]
+
+    def post(self, request, *args, **kwargs):
+        id = request.data.get('id')
+        password = request.data.get('password')
+        if not id:
+            return Response({'id': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not password:
+            return Response({'password': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            account = Account.objects.get(pk=id)
+        except Account.DoesNotExist:
+            return Response({'id': 'Account does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        self.check_object_permissions(request, account) #check if user is owner of the account
+
+        if account.check_password(password):
+            response = {
+                'status': 'success',
+                'message': 'Password is correct',
+                'data': {
+                    'id': account.id,
+                }
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        return Response({'password': 'Incorrect password'}, status=status.HTTP_400_BAD_REQUEST)

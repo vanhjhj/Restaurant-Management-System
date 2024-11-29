@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './Components/Layout/Header/Header'
 import Footer from './Components/Layout/Footer/Footer';
@@ -11,16 +11,15 @@ import SignUp from './Components/Auth/SignUp';
 import VerifyOTP from './Components/Auth/VerifyOTP'
 import ForgotPassword from './Components/Auth/ForgotPassword';
 import ResetPassword from './Components/Auth/ResetPassword';
-import FillFormInfo from './Components/Auth/FillFormInfo/FillFormInfo';
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
-import Profile from './Components/Customer/Profile/Profile';
+import Profile from './Components/Customer/Profile';
 import ManageEmployees from './Components/Admin/ManageEmployee/ManageEmployees';
 import ManageMenu from './Components/Admin/ManageMenu/ManageMenu';
 import ManagePromotions from './Components/Admin/ManagePromotion/ManagePromotions';
 import RegisterEmployeeAccount from './Components/Admin/RegisterEmployeeAccout/RegisterEmployeeAccount';
 import ViewSalesReports from './Components/Admin/ViewSalesReports/ViewSalesReports';
 import ManageRestaurantInfo from './Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo';
-import PurchaseHistory from './Components/Customer/Purchase History/PurchaseHistory';
+import PurchaseHistory from './Components/Customer/PurchaseHistory';
 import AdminDashboard from './Components/Admin/AdminDashboard/AdminDashboard';
 import EmployeeDashboard from './Components/Employee/EmployeeDashboard/EmployeeDashboard';
 import './App.css';
@@ -35,6 +34,41 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userRole, setUserRole] = useState('Customer');
+  let logoutTimer;
+
+  // useEffect(() => {
+  //   const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  //   const storedUserRole = localStorage.getItem('userRole') || 'Customer';
+  //   setIsLoggedIn(storedIsLoggedIn);
+  //   setUserRole(storedUserRole);
+
+  //   // Xử lý sự kiện rời khỏi hoặc quay lại trang
+  //   const handleVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       // Khi tab bị ẩn -> bắt đầu đếm ngược
+  //       logoutTimer = setTimeout(() => {
+  //         localStorage.removeItem('isLoggedIn');
+  //         localStorage.removeItem('userRole');
+  //         setIsLoggedIn(false);
+  //         setUserRole('Customer');
+  //         alert('Bạn đã bị logout do không hoạt động trong 5 phút!');
+  //       }, 5 * 60 * 1000); // 5 phút
+  //     } else {
+  //       // Khi tab quay lại -> xóa bộ đếm
+  //       clearTimeout(logoutTimer);
+  //     }
+  //   };
+
+  //   // Thêm sự kiện
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  //   return () => {
+  //     // Xóa sự kiện khi component unmount
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //     clearTimeout(logoutTimer);
+  //   };
+  // }, []);
+
 
    // Hàm được gọi khi đăng nhập thành công từ Login.js
   const handleLogin = (accountType) => {
@@ -131,7 +165,7 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOTP/>}/>
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword/>}/>
-        <Route path ='/FillFormInfo' element={<FillFormInfo/>}/>
+        <Route path='/Profile' isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} element ={<Profile/>}/>
         <Route path="/profile" element={<Profile />} />
       </Routes>
       <Footer />
