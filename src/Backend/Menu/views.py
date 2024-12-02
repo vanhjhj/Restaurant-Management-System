@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import django_filters
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from .models import *
 from .serializers import *
 from rest_framework import generics,permissions, status
@@ -81,7 +81,7 @@ class MenuItemListCreateAPIView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     permission_classes = [permissions.IsAdminUser]
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = MenuItemFilter
     search_fields = ['name', 'category__name']
     ordering_fields = ['price', 'category__name', 'name']

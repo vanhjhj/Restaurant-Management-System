@@ -11,19 +11,9 @@ export function checkPasswordRequirements(password) {
       valid: /[a-z]/.test(password),
     },
     {
-      id: "uppercase",
-      text: "Mật khẩu phải có ít nhất 1 chữ cái hoa (A-Z)",
-      valid: /[A-Z]/.test(password),
-    },
-    {
       id: "number",
       text: "Mật khẩu phải có ít nhất 1 số (0-9)",
       valid: /[0-9]/.test(password),
-    },
-    {
-      id: "specialChar",
-      text: "Mật khẩu phải có ít nhất 1 ký tự đặc biệt (@, $, !, %, *, ?, &)",
-      valid: /[@$!%*?&]/.test(password),
     },
   ];
 

@@ -5,9 +5,17 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
-function Header({ isLoggedIn, onLogout, userRole }) {
+function Header({onLogout }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null); // Tham chiếu đến dropdown menu
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const userRole = localStorage.getItem('userRole');
+
+    const handleLogoutBtn = () => {
+        setIsMenuOpen(false);
+        onLogout();
+    }
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -58,32 +66,44 @@ function Header({ isLoggedIn, onLogout, userRole }) {
 
                                     {isLoggedIn ? (
                                         <li className={style["user-menu"]} ref={menuRef}>
-                                            <button onClick={toggleMenu} className="user-icon">
+                                            <button onClick={toggleMenu} title='user-icon'>
                                                 <FontAwesomeIcon icon={faUser} size="lg" />
                                             </button>
                                             {isMenuOpen && (
                                                 <div className={style["user-dropdown"]}>
-                                                    {/* Show only the Logout option for admin */}
-                                                    {userRole === 'admin' ? (
-                                                        <button onClick={onLogout}>Đăng xuất</button>
-                                                    ) : userRole === 'Employee' ? (
-                                                        <>
-                                                            {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
-                                                            <Link to="/profile">Thông tin cá nhân</Link>
-                                                            <button onClick={onLogout}>Đăng xuất</button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Link to="/profile">Thông tin cá nhân</Link>
-                                                            <Link to="/purchasehistory">Tra cứu lịch sử mua hàng</Link>
-                                                            <button onClick={onLogout}>Đăng xuất</button>
-                                                        </>
-                                                    )}
+                                                    <ul className={style["dropdown-list"]}>
+                                                        {/* Show only the Logout option for admin */}
+                                                        {userRole === 'admin' ? (
+                                                            <li><button onClick={handleLogoutBtn}>Đăng xuất</button></li>
+                                                        ) : userRole === 'Employee' ? (
+                                                            <>
+                                                            <li>
+                                                                {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
+                                                                <Link to="/profile">Thông tin cá nhân</Link>
+                                                            </li>
+                                                            <li> <button onClick={handleLogoutBtn}>Đăng xuất</button></li>
+                                                            </>
+                                                            
+                                                        ) : (
+                                                            <>
+                                                                <li><Link to="/profile">Thông tin cá nhân</Link></li>
+                                                                <li><Link to="/purchasehistory">Lịch sử mua hàng</Link></li>
+                                                                <li>
+                                                                    <div className={style['logout-section']}>
+                                                                        <button onClick={handleLogoutBtn} className={style['logout-button']}>Đăng xuất</button>
+                                                                    </div>      
+                                                                </li>
+                                                            </>
+                                                                
+                                                            
+                                                        )}
+                                                    </ul>
+                                                    
                                                 </div>
                                             )}
                                         </li>
                                     ) : (
-                                        <li>
+                                            <li>
                                                 <Link to="/login" className={style["login-btn"]}>Đăng Nhập</Link>
                                         </li>
                                         )}

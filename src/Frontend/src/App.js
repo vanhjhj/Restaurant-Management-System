@@ -22,6 +22,7 @@ import ManageRestaurantInfo from './Components/Admin/ManagerRestaurantInfo/Manag
 import PurchaseHistory from './Components/Customer/PurchaseHistory';
 import AdminDashboard from './Components/Admin/AdminDashboard';
 import EmployeeDashboard from './Components/Employee/EmployeeDashboard/EmployeeDashboard';
+import ScrollToTop from './Style/scrollToTop';
 import './App.css';
 import { logout, refreshToken } from './API/authAPI';
 import { isTokenExpired } from './utils/tokenHelper.mjs';
@@ -34,6 +35,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userRole, setUserRole] = useState('Customer');
+  let logoutTimer;
 
   // Khôi phục trạng thái đăng nhập từ localStorage
   useEffect(() => {
@@ -63,7 +65,6 @@ function App() {
   const handleLogout = async () => {
     let refreshTokenValue = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
     let token = localStorage.getItem('accessToken');
-
     if (!refreshTokenValue) {
         console.error('Không tìm thấy refresh token. Đăng xuất thủ công.');
         setIsLoggedIn(false);
@@ -95,6 +96,7 @@ function App() {
 
   return (
     <Router>
+        <ScrollToTop/>
       <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} />
       <Routes>
             {/* Trang công khai */}

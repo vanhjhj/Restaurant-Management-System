@@ -7,3 +7,5 @@ urlpatterns = [
     path('menuitems/', views.MenuItemListCreateAPIView.as_view(), name='menuitems'),
     path('menuitems/<int:pk>/', views.MenuItemRetrieveUpdateDestroyAPIView.as_view(), name='menuitems'),
 ]
+
+

@@ -9,8 +9,8 @@ export const account_check=async(userData)=>{
         console.log(response.message); // Trả về dữ liệu từ API nếu thành công
     } catch (error) {
         console.log("User Data:", userData);
-        console.error('Lỗi khi đăng ký:', error.response ? error.response.data : error.message);
-        throw error.response ? error.response.data : { message: "Đã xảy ra lỗi không xác định" };
+        console.error(error.response.data);
+        throw error.response.data;
     }
 }
 

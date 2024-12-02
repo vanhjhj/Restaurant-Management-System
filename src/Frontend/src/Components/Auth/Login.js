@@ -36,7 +36,7 @@ function Login({ onLogin }) {
                 throw new Error('Không thể giải mã token!');
             }
           } catch (error) {
-            setError(error.message); // Hiển thị lỗi nếu có
+            setError('Tên đăng nhập hoặc mật khẩu sai'); // Hiển thị lỗi nếu có
           }
     };
 

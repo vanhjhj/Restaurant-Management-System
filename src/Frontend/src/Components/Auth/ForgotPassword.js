@@ -6,21 +6,22 @@ import { forgotPassword } from '../../API/authAPI';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
-    const [error, setError] = useState({});
-    const [success, setSuccess] = useState(false); // Trạng thái khi gửi thành công
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const handleChangeEmail=(e)=>{
+        setError('');
+        setEmail(e.target.value)
+    }
 
     const handleResetSubmit = async (event) => {
         event.preventDefault();
 
         try {
             await forgotPassword(email); // Gọi API quên mật khẩu
-            setSuccess(true); // Hiển thị thông báo thành công
-            alert("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn!");
             navigate('/verify-otp', { state: { mode: 'forgotPassword', email } });
         } catch (err) {
-            const errorMessage = err.response?.data?.email || 'Email chưa được đăng ký.';
-            setError(errorMessage);
+            setError("Email Chưa được đăng kí");
         }
     };
 
@@ -37,12 +38,15 @@ function ForgotPassword() {
                     placeholder="Nhập email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleChangeEmail}
                 />
-                {error.email && <p className={style["error-message"]}>{error.email}</p>}
-                <button type="submit" className={style["reset-btn"]}>
+                    {error && <p className={style["error-message"]}>{error}</p>}
+                <div className={style['btn-container']}>
+                    <button type="submit" className={style["reset-btn"]}>
                     Đặt lại mật khẩu
                     </button>
+                </div>
+                
             </form>
             <button
                 type="button"
