@@ -82,7 +82,7 @@
 
 /* Nút chính trong modal */
 .modal-button {
-    background: #808000; /* Màu vàng xanh */
+    background-color: #35737d;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -95,7 +95,7 @@
 }
 
 .modal-button:hover {
-    background: #829132; /* Màu vàng sáng hơn khi hover */
+    background-color: #35737d;
     opacity: 0.9;
 }
 
@@ -103,7 +103,7 @@
 .forgot-password {
     border: none;
     background: none;
-    color: #b9a94e;
+    color: #35737d;
     font-size: 14px;
     text-align: center;
     font-weight: bold;

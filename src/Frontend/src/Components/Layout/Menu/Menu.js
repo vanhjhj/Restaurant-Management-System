@@ -105,7 +105,7 @@ function Menu() {
           </div>
           <div className={style['col-lg-3']}>
             <div className={style['search-price']}>
-              <div className={style["input-priceMin"]}>
+              <div className={style["input-price"]}>
                 <input type="text" 
                   placeholder="Giá từ..."
                   value={searchPriceMin}
@@ -113,10 +113,7 @@ function Menu() {
                 >
                 </input>
               </div> 
-              <div>
-
-              </div> 
-              <div className={style["input-priceMin"]}>
+              <div className={style["input-price"]}>
                 <input type="text" 
                   placeholder="Đến..."
                   value={searchPriceMax}

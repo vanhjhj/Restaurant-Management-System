@@ -99,13 +99,14 @@ function VerifyOTP() {
   return (
     <div className={style['OTP-container']}>
         <div className={style["verify-otp-container"]}>
-          <h2>Xác Minh OTP</h2>
+        <h2>Xác Minh OTP</h2>
+        <h3>Nhập mã OTP đã được gửi về gmail của bạn</h3>
           <input
-            type="text"
-            placeholder="Nhập mã OTP"
-            value={otp}
-            onChange={handleInputChange}
-            className="otp-input"
+          type="text"
+          placeholder="Nhập mã OTP"
+          value={otp}
+          onChange={handleInputChange}
+          className={style["otp-input"]}
           />
           {error && <p className={style["error-message"]}>{error}</p>}
           {successMessage && <p className="success-message">{successMessage}</p>}

@@ -101,23 +101,23 @@
 }
 
 .cta-button {
-  min-width: 120px;
-  min-height: 58px;
-  background: #f3f3f5;
-  box-shadow: 9px 9px 12px #b2b2b3, -9px -9px 12px #ffffff;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 30px;
-  color: #0d0d25;
-  text-transform: capitalize;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  outline: none !important;
-  overflow: hidden;
-  position: relative;
-  padding: 6px 30px;
+    min-width: 120px;
+    min-height: 58px;
+    background: #f3f3f5;
+    box-shadow: 9px 9px 12px #b2b2b3, -9px -9px 12px #ffffff;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+    color: #0d0d25;
+    text-transform: capitalize;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    outline: none !important;
+    overflow: hidden;
+    position: relative;
+    padding: 6px 30px;
 }
 
 .cta-button:hover {

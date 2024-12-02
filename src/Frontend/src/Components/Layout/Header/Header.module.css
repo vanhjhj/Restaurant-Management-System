@@ -109,3 +109,46 @@ a{
     border-color: #0d0d25;
     box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
 }
+
+.user-dropdown{
+    display: block;
+    position: absolute;
+    right:0;
+    top:64px;
+    width:250px;
+    background: rgba(255, 255, 255, 1);
+}
+
+.dropdown-list{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.dropdown-list li{
+    padding:10px;
+}
+
+.logout-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-section .logout-button{
+    width: 200px;
+    padding: 10px;
+    background-color: #35737d;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.logout-section .logout-button:hover{
+    color: #ff8243;
+}
+  
