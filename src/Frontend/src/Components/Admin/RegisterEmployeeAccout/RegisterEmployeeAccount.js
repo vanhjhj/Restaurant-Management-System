@@ -30,7 +30,6 @@ function RegisterEmployeeAccount() {
 
     return (
         <div className="employee-registration">
-            <button className="back-button">← Back</button>
             <div className="registration-form">
                 <h2>Đăng ký</h2>
                 <form onSubmit={handleSubmit}>
