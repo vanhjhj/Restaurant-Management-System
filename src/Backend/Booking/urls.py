@@ -9,4 +9,7 @@ urlpatterns = [
     path('orders/', views.OrderListCreateAPIView.as_view(), name='order-list-create'),
     path('orders/<int:pk>/', views.OrderRetrieveUpdateDestroyAPIView.as_view(), name='order-retrieve-update-destroy'),
     path('tables/current-order/<int:pk>/', views.GetCurrentTableOrderAPIView.as_view(), name='current-order'),
+    path('orders/add-item/', views.AddOrderItemAPIView.as_view(), name='add-item'),
+    path('orders/remove-item/', views.RemoveOrderItemAPIView.as_view(), name='remove-item'),
+    path('orders/update-item/', views.UpdateOrderItemAPIView.as_view(), name='update-item'),
 ]

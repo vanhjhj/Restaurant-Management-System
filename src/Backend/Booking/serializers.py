@@ -51,3 +51,16 @@ class OrderSerializer(serializers.ModelSerializer):
         if Order.objects.filter(table=table_id, status='NP').exists():
             raise serializers.ValidationError({'table': 'Table has already had an order'})
         return attrs
+    
+class OrderItemSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
+    menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+
+    class Meta:
+        model = OrderItem
+        fields = ('id', 'order', 'menu_item', 'quantity', 'price', 'total', 'note')
+        extra_kwargs = {
+            'price': {'read_only': True},
+            'total': {'read_only': True},
+        }

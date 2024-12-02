@@ -33,40 +33,31 @@ class Order(models.Model):
     table = models.ForeignKey(Table, related_name='orders', on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return f"Order {self.pk} - {self.date} - {self.final_price}"
+        return f"Order {self.pk} - {self.datetime.date()} - {self.final_price}"
     
     def add_item(self, menu_item: MenuItem, quantity):
-        order_item = OrderItem.objects.create(order=self, menu_item=menu_item, quantity=quantity, price=menu_item.price)
-        self.total_price += order_item.total
-        self.final_price += order_item.total
+        self.total_price += menu_item.price * quantity
+        self.final_price += menu_item.price * quantity
         self.save()
-        return order_item
     
     def remove_item(self, order_item):
         self.total_price -= order_item.total
         self.final_price -= order_item.total
-        order_item.delete()
         self.save()
 
-    def increase_quantity(self, order_item, quantity=1):
-        order_item.quantity += quantity
-        self.total_price += order_item.price
-        self.final_price += order_item.price
+    def update_total_when_change_quantity(self, order_item, new_quantity):
+        #remove old total
+        self.total_price -= order_item.total
+        self.final_price -= order_item.total
+
+        #update new total
+        order_item.quantity = new_quantity
         order_item.save()
+
+        self.total_price += order_item.total
+        self.final_price += order_item.total
         self.save()
-
-    def decrease_quantity(self, order_item, quantity=1):
-        order_item.quantity -= quantity
-
-        if order_item.quantity <= 0:
-            self.remove_item(order_item)
-            return
         
-        self.total_price -= order_item.price
-        self.final_price -= order_item.price
-        order_item.save()
-        self.save()
-
     def apply_discount(self, discount):
         self.total_discount = discount
         self.final_price -= discount
@@ -92,13 +83,9 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.order} - {self.menu_item} - {self.quantity} - {self.total}"
-    
-    def __init__(self, *args, **kwargs):
-        self.price = self.menu_item.price
-        self.total = self.price * self.quantity
-        super().__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
+        self.price = self.menu_item.price
         self.total = self.price * self.quantity
         super().save(*args, **kwargs)
 
