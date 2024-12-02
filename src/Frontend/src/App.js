@@ -22,6 +22,7 @@ import ManageRestaurantInfo from './Components/Admin/ManagerRestaurantInfo/Manag
 import PurchaseHistory from './Components/Customer/PurchaseHistory';
 import AdminDashboard from './Components/Admin/AdminDashboard/AdminDashboard';
 import EmployeeDashboard from './Components/Employee/EmployeeDashboard/EmployeeDashboard';
+import ScrollToTop from './Style/scrollToTop';
 import './App.css';
 import { logout, refreshToken } from './API/authAPI';
 import { isTokenExpired } from './utils/tokenHelper.mjs';
@@ -81,7 +82,6 @@ function App() {
   const handleLogout = async () => {
     let refreshTokenValue = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
     let token = localStorage.getItem('accessToken');
-
     if (!refreshTokenValue) {
         console.error('Không tìm thấy refresh token. Đăng xuất thủ công.');
         setIsLoggedIn(false);
@@ -113,62 +113,63 @@ function App() {
 
   return (
     <Router>
-      <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/reservation" element={<Reservation isLoggedIn={isLoggedIn}/>}/>
+        <ScrollToTop/>
+        <Header onLogout={handleLogout}/>
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/reservation" element={<Reservation isLoggedIn={isLoggedIn}/>}/>
 
-        <Route>
-          {/* Trang chỉ dành cho Admin */}
-          <Route
-              path="/admin-dashboard"
-              element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin']} userRole={userRole}>
-                      <AdminDashboard />
-                      <ManageRestaurantInfo/>
-                      <ManageEmployees/>
-                      <ManagePromotions/>
-                      <ManageMenu/>
-                      <ViewSalesReports/>
-                      <RegisterEmployeeAccount/>
-                  </ProtectedRoute>
-              }
-          />
+            <Route>
+            {/* Trang chỉ dành cho Admin */}
+            <Route
+                path="/admin-dashboard"
+                element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Admin']} userRole={userRole}>
+                        <AdminDashboard />
+                        <ManageRestaurantInfo/>
+                        <ManageEmployees/>
+                        <ManagePromotions/>
+                        <ManageMenu/>
+                        <ViewSalesReports/>
+                        <RegisterEmployeeAccount/>
+                    </ProtectedRoute>
+                }
+            />
 
-              {/* Trang chỉ dành cho Nhân viên */}
-          <Route
-              path="/employee-dashboard"
-              element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Employee']} userRole={userRole}>
-                      <EmployeeDashboard />
-                  </ProtectedRoute>
-              }
-          />
+                {/* Trang chỉ dành cho Nhân viên */}
+            <Route
+                path="/employee-dashboard"
+                element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Employee']} userRole={userRole}>
+                        <EmployeeDashboard />
+                    </ProtectedRoute>
+                }
+            />
 
-              {/* Trang chỉ dành cho Khách hàng */}
-          <Route
-              path="/purchase-history"
-              element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Customer']} userRole={userRole}>
-                      <PurchaseHistory />
-                  </ProtectedRoute>
-              }
-          />
-        </Route>;
+                {/* Trang chỉ dành cho Khách hàng */}
+            <Route
+                path="/purchase-history"
+                element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={['Customer']} userRole={userRole}>
+                        <PurchaseHistory />
+                    </ProtectedRoute>
+                }
+            />
+            </Route>;
 
-        {/* Đăng nhập và đăng ký */}
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/signup" element={<SignUp />} />
-        
-        <Route path="/verify-otp" element={<VerifyOTP/>}/>
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword/>}/>
-        <Route path='/Profile' isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} element ={<Profile/>}/>
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-      <Footer />
+            {/* Đăng nhập và đăng ký */}
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/signup" element={<SignUp />} />
+            
+            <Route path="/verify-otp" element={<VerifyOTP/>}/>
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword/>}/>
+            <Route path='/Profile' isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} element ={<Profile/>}/>
+            <Route path="/profile" element={<Profile />} />
+        </Routes>
+        <Footer />
     </Router>
   );
 }

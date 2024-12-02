@@ -22,7 +22,7 @@ function Reservation({ isLoggedIn }) {
   return (
     <div className={style["reservation-container"]}>
       <h2>Đặt Bàn</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={style['reservation-form']}>
         <label>
           Tên:
           <input

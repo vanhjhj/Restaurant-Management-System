@@ -19,7 +19,6 @@ function ForgotPassword() {
 
         try {
             await forgotPassword(email); // Gọi API quên mật khẩu
-            alert("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn!");
             navigate('/verify-otp', { state: { mode: 'forgotPassword', email } });
         } catch (err) {
             setError("Email Chưa được đăng kí");
@@ -41,10 +40,13 @@ function ForgotPassword() {
                     value={email}
                     onChange={handleChangeEmail}
                 />
-                {error && <p className={style["error-message"]}>{error}</p>}
-                <button type="submit" className={style["reset-btn"]}>
+                    {error && <p className={style["error-message"]}>{error}</p>}
+                <div className={style['btn-container']}>
+                    <button type="submit" className={style["reset-btn"]}>
                     Đặt lại mật khẩu
                     </button>
+                </div>
+                
             </form>
             <button
                 type="button"
