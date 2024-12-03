@@ -1,0 +1,66 @@
+/* Căn giữa tiêu đề */
+h2 {
+  text-align: center;
+  font-size: 42px;
+  font-weight: bold;
+  color: #514f00;
+  margin-bottom: 30px;
+}
+
+/* Căn giữa và định dạng các trường input */
+.form-group {
+  margin-bottom: 15px;
+  text-align: center; /* Căn giữa các label và input */
+}
+
+.form-group label {
+  font-size: 26px; /* Tăng kích thước chữ label */
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 10%; /* Giới hạn chiều rộng của các input */
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 0 auto; /* Căn giữa */
+  display: block;
+}
+
+button {
+  width: 200px; /* Làm nút rộng hơn */
+  padding: 12px;
+  font-size: 18px; /* Tăng kích thước chữ của nút */
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 30px auto; /* Căn giữa */
+}
+
+button:hover {
+  background-color: #45a049; /* Màu nền khi hover */
+}
+
+/* Hiển thị lỗi */
+p {
+  color: rgb(177, 92, 13);
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Đặt form căn giữa */
+form {
+  width: 80%;
+  margin: 0 auto;
+  text-align: center; /* Căn giữa nội dung của form */
+}
+
+/* Tạo khoảng cách giữa các phần tử trong form */
+div.form-group {
+  margin-bottom: 20px;
+}

@@ -1,92 +1,98 @@
-.manage-discounts {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
+.manage-Promotions {
+  padding: 20px;
+  position: relative; /* Đảm bảo nút back nằm ngoài cùng bên trái */
 }
 
 .back-button {
-    background: none;
-    border: none;
-    color: #007bff;
-    font-size: 16px;
-    cursor: pointer;
-    margin-bottom: 10px;
+  position: absolute;
+  top: 20px; /* Điều chỉnh khoảng cách từ trên cùng */
+  left: 20px; /* Điều chỉnh khoảng cách từ bên trái */
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-top: 40px;
 }
 
-.discount-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.discount-card {
-    width: 250px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    background-color: #f8f9fa;
-    text-align: center;
-}
-
-.discount-image {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.button-group {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.edit-button, .delete-button {
-    padding: 8px 12px;
-    font-size: 14px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.edit-button {
-    background-color: #ffc107;
-    color: white;
-}
-
-.delete-button {
-    background-color: #dc3545;
-    color: white;
+.no-promotions {
+  text-align: center;
+  margin-top: 20px;
 }
 
 .add-discount-button {
-    margin-top: 20px;
-    padding: 12px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
 }
 
-.save-changes-button {
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px;
+.add-discount-button:hover {
+  background-color: #45a049;
+}
+
+.discount-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.discount-card {
+  width: 300px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.discount-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #ff4b5c;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #e03d46;
 }
