@@ -218,7 +218,7 @@ function App() {
           }
         />
         <Route
-          path="/edit-promotion"
+          path="/edit-promotion/:id"
           element={
             <ProtectedRoute
               isLoggedIn={isLoggedIn}
@@ -229,6 +229,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/register-employee-account"
           element={

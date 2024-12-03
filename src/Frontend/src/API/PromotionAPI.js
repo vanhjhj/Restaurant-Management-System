@@ -152,9 +152,10 @@ export const updatePromotion = async (id, promotion) => {
   }
 
   try {
+    // Gửi PATCH request với các trường dữ liệu cần cập nhật
     const response = await axios.patch(
       `${API_BASE_URL}/promotion/promotions/${id}/`,
-      promotion,
+      promotion, // Chỉ gửi những trường thay đổi
       {
         headers: {
           Authorization: `Bearer ${token}`,

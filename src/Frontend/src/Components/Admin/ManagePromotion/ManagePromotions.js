@@ -66,11 +66,13 @@ function ManagePromotions() {
           {Promotions.map((discount) => (
             <div key={discount.id} className="discount-card">
               <img
-                src={discount.image} // Sửa lại thành 'image' từ 'imageUrl'
+                src={discount.image}
                 alt={discount.title}
                 className="discount-image"
               />
-              <p>{discount.description}</p>
+              <p>{discount.title}</p>
+              <p>Mô tả: {discount.description}</p>
+              <p>Giảm giá: {discount.discount * 100}%</p>
               <div className="button-group">
                 <button
                   onClick={() => handleEdit(discount.id)}

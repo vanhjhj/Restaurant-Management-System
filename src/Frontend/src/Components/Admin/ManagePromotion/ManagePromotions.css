@@ -1,12 +1,12 @@
 .manage-Promotions {
   padding: 20px;
-  position: relative; /* Đảm bảo nút back nằm ngoài cùng bên trái */
+  position: relative;
 }
 
 .back-button {
   position: absolute;
-  top: 20px; /* Điều chỉnh khoảng cách từ trên cùng */
-  left: 20px; /* Điều chỉnh khoảng cách từ bên trái */
+  top: 20px;
+  left: 20px;
   background-color: #f0f0f0;
   border: none;
   padding: 10px 15px;
