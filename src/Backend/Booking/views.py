@@ -241,7 +241,7 @@ class AddOrderItemAPIView(generics.CreateAPIView):
             if OrderItem.objects.filter(order=order, menu_item=menu_item).exists():
                 order_item = OrderItem.objects.filter(order=order, menu_item=menu_item).first()
                 order_item.quantity += serializers.validated_data['quantity']
-                order_item.note = serializers.validated_data['note']
+                order_item.note = serializers.validated_data.get('note', '')
                 order_item.save() #total and price will be updated in save method of OrderItem model
                 serializers = OrderItemSerializer(order_item)
                 response['data'] = serializers.data
@@ -289,7 +289,7 @@ class UpdateOrderItemAPIView(generics.UpdateAPIView):
         return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     def patch(self, request, *args, **kwargs):
-        serializers = OrderItemSerializer(data=request.data)
+        serializers = OrderItemSerializer(data=request.data, partial=True)
         if serializers.is_valid():
             order_item = OrderItem.objects.get(order=serializers.validated_data['order'], menu_item=serializers.validated_data['menu_item'])
             order = Order.objects.get(pk=serializers.validated_data['order'].id)
@@ -297,7 +297,7 @@ class UpdateOrderItemAPIView(generics.UpdateAPIView):
             if order.status == 'P':
                 return Response({'message': 'Cannot update item in paid order'}, status=status.HTTP_400_BAD_REQUEST)
             
-            #update orther fields
+            #update other fields
             for key, value in serializers.validated_data.items():
                 if key == 'quantity':
                     order.update_total_when_change_quantity(order_item, value)
@@ -312,4 +312,11 @@ class UpdateOrderItemAPIView(generics.UpdateAPIView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class OrderItemListAPIView(generics.ListAPIView):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
+    filterset_class = OrderItemFilterSet
+    ordering_fields = ['quantity', 'price', 'total']
+    permission_classes = [IsEmployeeOrAdmin]
         

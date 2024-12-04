@@ -39,7 +39,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('id', 'datetime', 'total_price', 'total_discount', 'final_price', 'status', 'table')
         extra_kwargs = {
-            'date': {'read_only': True},
+            'datetime': {'read_only': True},
             'total_price': {'read_only': True},
             'total_discount': {'read_only': True},
             'final_price': {'read_only': True},

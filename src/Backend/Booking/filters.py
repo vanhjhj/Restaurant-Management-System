@@ -1,5 +1,5 @@
 import django_filters
-from .models import Table, Reservation, Order
+from .models import Table, Reservation, Order, OrderItem
 
 class TableFilterSet(django_filters.FilterSet):
     nos_min = django_filters.NumberFilter(field_name="number_of_seats", lookup_expr='gte')
@@ -32,3 +32,11 @@ class OrderFilterSet(django_filters.FilterSet):
     class Meta:
         model = Order
         fields = ['date', 'total_price', 'final_price', 'total_discount', 'table']
+
+class OrderItemFilterSet(django_filters.FilterSet):
+    order = django_filters.NumberFilter(field_name="order", lookup_expr='exact')
+    menu_item = django_filters.NumberFilter(field_name="menu_item", lookup_expr='exact')
+
+    class Meta:
+        model = OrderItem
+        fields = ['order', 'menu_item']
