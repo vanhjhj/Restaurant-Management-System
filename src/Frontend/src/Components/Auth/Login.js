@@ -25,8 +25,8 @@ function Login({ onLogin }) {
             const userInfo = decodeToken(response.access);
             if (userInfo) {
                 localStorage.setItem('userId', userInfo.user_id);
+                console.log(userInfo.user_id);
                 localStorage.setItem('accountType', userInfo.account_type);
-
                 // Gọi hàm onLogin được truyền từ App.js
                 onLogin(userInfo.account_type);
 
@@ -36,7 +36,7 @@ function Login({ onLogin }) {
                 throw new Error('Không thể giải mã token!');
             }
           } catch (error) {
-            setError(error.message); // Hiển thị lỗi nếu có
+            setError('Tên đăng nhập hoặc mật khẩu sai'); // Hiển thị lỗi nếu có
           }
     };
 
