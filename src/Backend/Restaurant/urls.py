@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('LoginRegister.urls')),
     path('api/menu/', include('Menu.urls')),
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('api/booking/', include('Booking.urls')),
+]
 
