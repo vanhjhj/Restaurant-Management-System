@@ -17,6 +17,10 @@ function Header({onLogout }) {
         onLogout();
     }
 
+    const closeMenu = () => {
+        setIsMenuOpen(false);
+    };
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -86,8 +90,8 @@ function Header({onLogout }) {
                                                             
                                                         ) : (
                                                             <>
-                                                                <li><Link to="/profile">Thông tin cá nhân</Link></li>
-                                                                <li><Link to="/purchasehistory">Lịch sử mua hàng</Link></li>
+                                                                <li><Link to="/profile" onClick={closeMenu}>Thông tin cá nhân</Link></li>
+                                                                <li><Link to="/purchasehistory" onClick={closeMenu}>Lịch sử mua hàng</Link></li>
                                                                 <li>
                                                                     <div className={style['logout-section']}>
                                                                         <button onClick={handleLogoutBtn} className={style['logout-button']}>Đăng xuất</button>

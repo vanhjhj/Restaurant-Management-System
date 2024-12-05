@@ -20,74 +20,33 @@ function Reservation({ isLoggedIn }) {
   };
 
   return (
-    <div className={style["reservation-container"]}>
-      <h2>Đặt Bàn</h2>
-      <form onSubmit={handleSubmit} className={style['reservation-form']}>
-        <label>
-          Tên:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Email:
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Số điện thoại:
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Ngày:
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Giờ:
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Số khách:
-          <input
-            type="number"
-            value={guests}
-            onChange={(e) => setGuests(e.target.value)}
-            min="1"
-            required
-          />
-        </label>
-        <label>
-          Ghi chú:
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Thêm ghi chú của bạn"
-          />
-        </label>
-        <button type="submit">Đặt Bàn</button>
-      </form>
+    <div className={style['reservation']}>
+      <div className={style['container']}>
+        <div className={style['row']}>
+          <div className={style['reservation-img']}>
+            <div className={style['col-lg-12']}>
+
+            </div>
+          </div>
+        </div>
+        <div className={style['reservation-content']}>
+          <div className={style['row']}>
+            <div className={style['promotion-info']}>
+              <h2>Promotion note</h2>    
+              <ul>
+                <li>Giảm giá ...</li> 
+              </ul>
+              <h3>Chi tiết xem tại khuyễn mãi</h3>  
+            </div>
+          </div>
+          <div className={style['row']}>
+            <div className={style['reservation-form']}>
+              <h2>title</h2>  
+              <form></form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

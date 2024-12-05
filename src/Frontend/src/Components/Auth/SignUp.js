@@ -64,11 +64,10 @@ function SignUp() {
         }
 
         try {
-            await sendOrResendOTP({ email: signupData.email });
-            localStorage.setItem('signupData', JSON.stringify(signupData));
             navigate('/verify-otp', {
                 state: { mode: 'register', signupData, email: signupData.email },
             });
+            await sendOrResendOTP({ email: signupData.email });
         } catch (err) {
             setErrors((prevErrors) => ({
                 ...prevErrors,

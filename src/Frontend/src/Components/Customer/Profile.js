@@ -221,7 +221,9 @@ function Profile() {
                                             <option value="Nữ">Nữ</option>
                                         </select>
                                     </div>
+                                    
                                     <div className={style['info-form']}>
+                                        {error&& <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}    
                                         <label htmlFor="phone-number">Số Điện Thoại:</label>
                                         <input
                                             id="phone-number"
@@ -297,7 +299,7 @@ function Profile() {
                 </div>
             </div>
             
-            {error&& <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}           
+                   
 
             {/* Modal */}
             {showModal && (

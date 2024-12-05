@@ -82,6 +82,11 @@
     margin-bottom: 10px;
 }
 
+.error-message{
+    margin-bottom: 0px;
+    color:red;
+}
+
 .info-form label{
     font-size: 18px;
 }
