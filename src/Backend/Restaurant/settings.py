@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'LoginRegister',
     'Menu',
+    'Promotion',
     'Booking',
     'rest_framework',
     'phonenumber_field',
