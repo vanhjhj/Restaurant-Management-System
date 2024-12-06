@@ -59,12 +59,6 @@ function ManagePromotions() {
       {Promotions.length === 0 ? (
         <div className="no-promotions">
           <p>Chưa có ưu đãi</p>
-          <button
-            onClick={handleAddDiscount}
-            className={style["add-discount-button"]}
-          >
-            Thêm ưu đãi mới
-          </button>
         </div>
       ) : (
         <div className={style["discount-cards"]}>
