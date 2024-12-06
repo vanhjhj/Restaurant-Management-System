@@ -137,7 +137,7 @@ export const addPromotion = async (promotion) => {
         "Lỗi khi thêm ưu đãi:",
         error.response ? error.response.data : error.message
       );
-      throw error;
+      throw error.response.data;
     }
   }
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ManagePromotions.css";
+import style from "./ManagePromotions.module.css";
 import { fetchPromotions, deletePromotion } from "../../../API/PromotionAPI";
 
 function ManagePromotions() {
@@ -47,42 +47,47 @@ function ManagePromotions() {
   };
 
   return (
-    <div className="manage-Promotions">
-      <button onClick={() => window.history.back()} className="back-button">
+    <div className={style["manage-Promotions"]}>
+      <button
+        onClick={() => navigate("/admin-dashboard")}
+        className={style["back-button"]}
+      >
         ← Back
       </button>
       <h2>Quản lý ưu đãi</h2>
-
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
         <div className="no-promotions">
           <p>Chưa có ưu đãi</p>
-          <button onClick={handleAddDiscount} className="add-discount-button">
+          <button
+            onClick={handleAddDiscount}
+            className={style["add-discount-button"]}
+          >
             Thêm ưu đãi mới
           </button>
         </div>
       ) : (
-        <div className="discount-cards">
+        <div className={style["discount-cards"]}>
           {Promotions.map((discount) => (
-            <div key={discount.id} className="discount-card">
+            <div key={discount.id} className={style["discount-card"]}>
               <img
                 src={discount.image}
                 alt={discount.title}
-                className="discount-image"
+                className={style["discount-image"]}
               />
               <p>{discount.title}</p>
               <p>Mô tả: {discount.description}</p>
-              <p>Giảm giá: {discount.discount * 100}%</p>
-              <div className="button-group">
+              <p>Giảm giá: {discount.discount}%</p>
+              <div className={style["button-group"]}>
                 <button
                   onClick={() => handleEdit(discount.id)}
-                  className="edit-button"
+                  className={style["edit-button"]}
                 >
                   Chỉnh sửa
                 </button>
                 <button
                   onClick={() => handleDelete(discount.id)} // Khi ấn nút xóa sẽ gọi handleDelete
-                  className="delete-button"
+                  className={style["delete-button"]}
                 >
                   Xóa
                 </button>
@@ -92,7 +97,10 @@ function ManagePromotions() {
         </div>
       )}
 
-      <button onClick={handleAddDiscount} className="add-discount-button">
+      <button
+        onClick={handleAddDiscount}
+        className={style["add-discount-button"]}
+      >
         Tạo ưu đãi mới
       </button>
     </div>

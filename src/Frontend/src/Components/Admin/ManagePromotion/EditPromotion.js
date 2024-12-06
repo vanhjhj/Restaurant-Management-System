@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchPromotionById, updatePromotion } from "../../../API/PromotionAPI"; // Import API functions
-import "./EditPromotion.css"; // Import stylesheet
+import style from "./EditPromotion.module.css"; // Import stylesheet
+import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 
 function EditPromotion() {
   const { id } = useParams(); // Lấy id từ URL
@@ -11,6 +12,7 @@ function EditPromotion() {
     image: null,
     discount: 0,
   });
+  const [editingField, setEditingField] = useState(null); // Lưu trữ trường đang được chỉnh sửa
   const [error, setError] = useState(""); // Để lưu lỗi nếu có
   const navigate = useNavigate(); // Dùng để điều hướng sau khi cập nhật
 
@@ -45,10 +47,19 @@ function EditPromotion() {
     let discountValue = promotion.discount;
 
     if (discountValue !== "")
-      if (discountValue < 0 || discountValue > 1) {
+      if (discountValue < 0 || discountValue > 100) {
         setError("Giảm giá phải nằm trong khoảng 0-100%.");
         return;
       }
+    if (
+      promotion.title === "" ||
+      promotion.description === "" ||
+      promotion.discount === 0 ||
+      promotion.image === null
+    ) {
+      setError("Chưa có thông tin để cập nhật.");
+      return;
+    }
 
     try {
       // Tạo object chỉ chứa các trường đã thay đổi
@@ -70,61 +81,106 @@ function EditPromotion() {
     }
   };
 
+  const handleEdit = (field) => {
+    setEditingField(field); // Chỉnh sửa trường nào
+  };
+
   return (
-    <div className="edit-promotion">
-      <button onClick={() => window.history.back()} className="back-button">
+    <div className={style["edit-promotion"]}>
+      <button
+        onClick={() => navigate("/manage-promotions")}
+        className={style["back-button"]}
+      >
         ← Back
       </button>
       <h2>Chỉnh sửa ưu đãi</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}{" "}
       {/* Hiển thị lỗi nếu có */}
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={promotion.title}
-            onChange={handleChange}
-            placeholder=""
-          />
+          {editingField === "title" ? (
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={promotion.title}
+              onChange={handleChange}
+              placeholder=""
+            />
+          ) : (
+            <p>
+              {promotion.title}{" "}
+              <FaEdit
+                className={style.editIcon}
+                onClick={() => handleEdit("title")}
+              />
+            </p>
+          )}
         </div>
 
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="description">Mô tả</label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            value={promotion.description}
-            onChange={handleChange}
-            placeholder=""
-          />
+          {editingField === "description" ? (
+            <input
+              type="text"
+              id="description"
+              name="description"
+              value={promotion.description}
+              onChange={handleChange}
+              placeholder=""
+            />
+          ) : (
+            <p>
+              {promotion.description}{" "}
+              <FaEdit
+                className={style.editIcon}
+                onClick={() => handleEdit("description")}
+              />
+            </p>
+          )}
         </div>
 
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="discount">Giảm giá</label>
-          <input
-            type="number"
-            id="discount"
-            name="discount"
-            value={promotion.discount}
-            onChange={handleChange}
-            placeholder=""
-          />
+          {editingField === "discount" ? (
+            <input
+              type="number"
+              id="discount"
+              name="discount"
+              value={promotion.discount}
+              onChange={handleChange}
+              placeholder=""
+            />
+          ) : (
+            <p>
+              {promotion.discount * 100}%{" "}
+              <FaEdit
+                className={style.editIcon}
+                onClick={() => handleEdit("discount")}
+              />
+            </p>
+          )}
         </div>
 
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleChange}
-            // Nếu có hình ảnh, hiển thị tên file
-          />
-          {promotion.image && <p>{promotion.image.name}</p>}
+          {editingField === "image" ? (
+            <input
+              type="file"
+              id="image"
+              name="image"
+              onChange={handleChange}
+            />
+          ) : (
+            <p>
+              {promotion.image ? promotion.image.name : "Chưa có hình ảnh"}{" "}
+              <FaEdit
+                className={style.editIcon}
+                onClick={() => handleEdit("image")}
+              />
+            </p>
+          )}
         </div>
 
         <button type="submit">Cập nhật ưu đãi</button>

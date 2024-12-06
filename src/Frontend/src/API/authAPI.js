@@ -188,11 +188,11 @@ export const refreshToken = async () => {
 };
 
 // Hàm đăng xuất
-export const logout = async (refreshToken, token) => {
+export const logout = async (refresh_token, token) => {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/auth/logout/`,
-      { refresh: refreshToken },
+      { refresh: refresh_token },
       {
         headers: {
           Authorization: `Bearer ${token}`, // Gửi token qua header Authorization

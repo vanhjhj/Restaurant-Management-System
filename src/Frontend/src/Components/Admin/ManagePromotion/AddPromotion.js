@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // Import axios để gửi HTTP requests
 import { addPromotion } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
-import "./AddPromotion.css";
+import style from "./AddPromotion.module.css";
 
 function AddPromotion() {
   const [promotion, setPromotion] = useState({
@@ -31,6 +31,11 @@ function AddPromotion() {
       return;
     }
 
+    if (promotion.discount < 0 || promotion.discount > 100) {
+      setError("Tỷ lệ giảm giá phải từ 0 đến 100.");
+      return;
+    }
+
     try {
       // Gọi hàm addPromotion với dữ liệu
       await addPromotion(promotion);
@@ -43,12 +48,18 @@ function AddPromotion() {
   };
 
   return (
-    <div>
+    <div className={style["add-promotion"]}>
+      <button
+        onClick={() => navigate("/manage-promotions")}
+        className={style["back-button"]}
+      >
+        ← Back
+      </button>
       <h2>Thêm ưu đãi mới</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}{" "}
       {/* Hiển thị lỗi nếu có */}
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
           <input
             type="text"
@@ -60,7 +71,7 @@ function AddPromotion() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="description">Mô tả</label>
           <input
             type="text"
@@ -72,7 +83,7 @@ function AddPromotion() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="discount">Giảm giá</label>
           <input
             type="number"
@@ -84,12 +95,14 @@ function AddPromotion() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
           <input type="file" id="image" name="image" onChange={handleChange} />
         </div>
 
-        <button type="submit">Thêm ưu đãi</button>
+        <button className={style["submit-button"]} type="submit">
+          Thêm ưu đãi
+        </button>
       </form>
     </div>
   );

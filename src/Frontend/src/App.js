@@ -37,37 +37,35 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userRole, setUserRole] = useState("Customer");
-  let logoutTimer;
+  //let logoutTimer;
 
-  // Khôi phục trạng thái đăng nhập từ localStorage
+  //Khôi phục trạng thái đăng nhập từ localStorage
   useEffect(() => {
     const storedIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     const storedUserRole = localStorage.getItem("userRole") || "Customer";
 
-    // Cập nhật trạng thái nếu dữ liệu trong localStorage hợp lệ
     if (storedIsLoggedIn && storedUserRole) {
       setIsLoggedIn(storedIsLoggedIn);
       setUserRole(storedUserRole);
     } else {
-      // Nếu không hợp lệ, reset trạng thái
       setIsLoggedIn(false);
       setUserRole("Customer");
       localStorage.clear();
     }
-  }, []);
+  }, []); // Dependency array để trống
 
-  // Hàm được gọi khi đăng nhập thành công từ Login.js
   const handleLogin = (accountType) => {
     setIsLoggedIn(true);
     setUserRole(accountType);
-    localStorage.setItem("isLoggedIn", true);
+    localStorage.setItem("isLoggedIn", "true"); // Chuyển về dạng chuỗi
     localStorage.setItem("userRole", accountType);
   };
 
   const handleLogout = async () => {
-    let refreshTokenValue = localStorage.getItem("refreshToken"); // Lấy refresh token từ localStorage
-    let token = localStorage.getItem("accessToken");
-    if (!refreshTokenValue) {
+    const refreshTokenValue = localStorage.getItem("refresh_token");
+    let token = localStorage.getItem("access_token");
+
+    if (!refreshTokenValue || !token) {
       console.error("Không tìm thấy refresh token. Đăng xuất thủ công.");
       setIsLoggedIn(false);
       setUserRole("Customer");
@@ -78,13 +76,11 @@ function App() {
     try {
       if (isTokenExpired(token)) {
         const newTokens = await refreshToken(refreshTokenValue, token);
-        token = newTokens.access; // Cập nhật access token mới
+        token = newTokens.access;
         localStorage.setItem("accessToken", token);
       }
-      // Gọi API logout
       await logout(refreshTokenValue, token);
 
-      // Xóa trạng thái đăng nhập
       setIsLoggedIn(false);
       setUserRole("Customer");
       localStorage.clear();
