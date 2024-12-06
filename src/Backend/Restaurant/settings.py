@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'LoginRegister',
     'Menu',
     'Promotion',
+    'Booking',
     'rest_framework',
     'phonenumber_field',
     'rest_framework_simplejwt',
