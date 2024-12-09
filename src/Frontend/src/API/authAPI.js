@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../Config/apiConfig';
 //kiểm tra username, password, email, account_type hợp lệ
 export const account_check=async(userData)=>{
     try {
+        console.log(userData);
         const response = await axios.post(`${API_BASE_URL}/auth/account-check/`, userData);
         console.log(response.message); // Trả về dữ liệu từ API nếu thành công
     } catch (error) {

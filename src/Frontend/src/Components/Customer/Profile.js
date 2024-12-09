@@ -5,6 +5,7 @@ import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../API/authAPI';
 import Modal from './Modal'; // Import Modal component
 import style from '../../Style/CustomerStyle/Profile.module.css';
+import { useAuth } from '../Auth/AuthContext';
 
 function Profile() {
     const [personalInfo, setPersonalInfo] = useState({ full_name: "", gender: "", phone_number: "" });
@@ -19,7 +20,7 @@ function Profile() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
-    const token = localStorage.getItem('accessToken');
+    const { accessToken,setAccessToken } = useAuth();
     const refresh = localStorage.getItem('refreshToken');
     const CusID = localStorage.getItem('userId');
     
@@ -38,7 +39,7 @@ function Profile() {
         if (isTokenExpired(token)) {
             const refreshed = await refreshToken(refresh);
             activeToken = refreshed.access;
-            localStorage.setItem('accessToken', activeToken);
+            setAccessToken(activeToken);
         }
         return activeToken;
     };

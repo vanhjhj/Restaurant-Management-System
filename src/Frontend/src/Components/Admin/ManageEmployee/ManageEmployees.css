@@ -24,7 +24,7 @@
     cursor: pointer;
 }
 
-h2 {
+.name_container h2 {
     font-size: 28px;
     color: #1a1a1a;
 }

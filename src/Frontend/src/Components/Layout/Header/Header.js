@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
-function Header({onLogout }) {
+function Header({ onLogout }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const menuRef = useRef(null); // Tham chiếu đến dropdown menu
 
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
     const userRole = localStorage.getItem('userRole');
 
     const handleLogoutBtn = () => {
@@ -26,6 +26,7 @@ function Header({onLogout }) {
     };
 
     useEffect(() => {
+        setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setIsMenuOpen(false);
