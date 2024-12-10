@@ -26,15 +26,6 @@ function Profile() {
     
     let email;
 
-    useEffect(() => {
-        console.log(accessToken);
-        if (!accessToken || !refresh || !CusID) {
-            navigate('/login');
-        } else {
-            fetchProfileData();
-        }
-    }, []);
-
     const ensureActiveToken = async () => {
         let activeToken = accessToken;
         if (isTokenExpired(accessToken)) {
@@ -44,6 +35,15 @@ function Profile() {
         }
         return activeToken;
     };
+
+    useEffect(() => {
+        const activeToken = ensureActiveToken();
+        if (!activeToken || !refresh || !CusID) {
+            navigate('/login');
+        } else {
+            fetchProfileData();
+        }
+    }, []);
 
     const fetchProfileData = async () => {
         try {
