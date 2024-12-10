@@ -15,7 +15,6 @@ function ManageMenu() {
     return (
         <div className="manage-menu">
             <div className="header">
-                <button className="back-button">← Back</button>
                 <h2>Quản lý thực đơn</h2>
             </div>
             <h3>Thực đơn hiện có</h3>

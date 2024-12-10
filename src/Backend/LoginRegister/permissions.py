@@ -1,7 +1,4 @@
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import AuthenticationFailed
-from django.conf import settings
-import jwt
 from .models import Account, EmployeeAccount, CustomerAccount
 class IsEmployee(BasePermission):
     def has_permission(self, request, view):
