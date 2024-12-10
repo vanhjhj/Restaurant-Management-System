@@ -27,7 +27,8 @@ function Profile() {
     let email;
 
     useEffect(() => {
-        if (!token || !refresh || !CusID) {
+        console.log(accessToken);
+        if (!accessToken || !refresh || !CusID) {
             navigate('/login');
         } else {
             fetchProfileData();
@@ -35,8 +36,8 @@ function Profile() {
     }, []);
 
     const ensureActiveToken = async () => {
-        let activeToken = token;
-        if (isTokenExpired(token)) {
+        let activeToken = accessToken;
+        if (isTokenExpired(accessToken)) {
             const refreshed = await refreshToken(refresh);
             activeToken = refreshed.access;
             setAccessToken(activeToken);

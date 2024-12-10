@@ -34,82 +34,12 @@ import { AuthProvider } from './Components/Auth/AuthContext';
 library.add(faEye, faEyeSlash);
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
     const [refreshAlert, setRefreshAlert] = useState(false);
     const [userRole, setUserRole] = useState('Customer');
-    let logoutTimer;
-
-  // useEffect(() => {
-  //   const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  //   const storedUserRole = localStorage.getItem('userRole') || 'Customer';
-  //   setIsLoggedIn(storedIsLoggedIn);
-  //   setUserRole(storedUserRole);
-
-  //   // Xử lý sự kiện rời khỏi hoặc quay lại trang
-  //   const handleVisibilityChange = () => {
-  //     if (document.hidden) {
-  //       // Khi tab bị ẩn -> bắt đầu đếm ngược
-  //       logoutTimer = setTimeout(() => {
-  //         localStorage.removeItem('isLoggedIn');
-  //         localStorage.removeItem('userRole');
-  //         setIsLoggedIn(false);
-  //         setUserRole('Customer');
-  //         alert('Bạn đã bị logout do không hoạt động trong 5 phút!');
-  //       }, 5 * 60 * 1000); // 5 phút
-  //     } else {
-  //       // Khi tab quay lại -> xóa bộ đếm
-  //       clearTimeout(logoutTimer);
-  //     }
-  //   };
-
-  //   // Thêm sự kiện
-  //   document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  //   return () => {
-  //     // Xóa sự kiện khi component unmount
-  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
-  //     clearTimeout(logoutTimer);
-  //   };
-  // }, []);
-
-
-   // Hàm được gọi khi đăng nhập thành công từ Login.js
   
-  const handleLogout = async () => {
-    let refreshTokenValue = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
-    let token = localStorage.getItem('accessToken');
-    if (!refreshTokenValue) {
-        console.error('Không tìm thấy refresh token. Đăng xuất thủ công.');
-        setIsLoggedIn(false);
-        setUserRole('Customer');
-        localStorage.clear();
-        localStorage.setItem('isLoggedIn', false);
-        return;
-    }
-
-    try {
-        if(isTokenExpired(token))
-        {
-            const newTokens = await refreshToken(refreshTokenValue, token);
-                token = newTokens.access; // Cập nhật access token mới
-                localStorage.setItem('accessToken', token);
-
-        }
-        // Gọi API logout
-        await logout(refreshTokenValue, token);
-
-        // Xóa trạng thái đăng nhập
-        setIsLoggedIn(false);
-        setUserRole('Customer');
-        localStorage.clear();
-        localStorage.setItem('isLoggedIn', false);
-    } catch (error) {
-        console.error('Đăng xuất thất bại:', error.message);
-    }
-};
-
     useEffect(() => {
-        async function checkLoginStatus() {
+        function checkLoginStatus() {
             if (localStorage.getItem('isLoggedIn') === 'false') {
                 return;
             }
@@ -139,7 +69,7 @@ function App() {
             <Router>
                 <ScrollToTop />
                 {refreshAlert && <ShowAlert handleAlert = {handleAlert} />}
-                <Header onLogout={handleLogout}/>
+                <Header isLoggedIn={isLoggedIn}  setIsLoggedIn={setIsLoggedIn}/>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about" element={<About />} />
@@ -185,13 +115,12 @@ function App() {
                     </Route>;
 
                     {/* Đăng nhập và đăng ký */}
-                    <Route path="/login" element={<Login/>} />
+                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
                     <Route path="/signup" element={<SignUp />} />
                     
                     <Route path="/verify-otp" element={<VerifyOTP/>}/>
                     <Route path="/forgotpassword" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword/>}/>
-                    <Route path='/Profile' isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={userRole} element ={<Profile/>}/>
                     <Route path="/profile" element={<Profile />} />
                 </Routes>
                 <Footer />
