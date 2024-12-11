@@ -2,36 +2,48 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./ManagePromotions.module.css";
 import { fetchPromotions, deletePromotion } from "../../../API/PromotionAPI";
+import { useAuth } from "../../../Components/Auth/AuthContext";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
   const navigate = useNavigate();
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     async function getPromotions() {
       try {
         const data = await fetchPromotions();
-        setPromotions(data); // Lưu dữ liệu vào state
+        setPromotions(data);
       } catch (error) {
-        console.error("Error fetching Promotions:", error);
+        console.error("Error fetching promotions:", error);
       }
     }
 
     getPromotions();
   }, []);
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const handleEdit = (id) => {
     navigate(`/edit-promotion/${id}`);
   };
 
   const handleDelete = async (id) => {
+    if (!accessToken) {
+      console.error("Token không tồn tại");
+      return;
+    }
+
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn muốn xóa ưu đãi này không?"
     );
     if (confirmDelete) {
       try {
-        await deletePromotion(id); // Gọi hàm xóa ưu đãi
-        setPromotions(Promotions.filter((discount) => discount.id !== id)); // Cập nhật state sau khi xóa
+        await deletePromotion(id, accessToken);
+        setPromotions(Promotions.filter((discount) => discount.id !== id));
       } catch (error) {
         console.error("Lỗi khi xóa ưu đãi:", error);
         alert("Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.");
@@ -42,7 +54,6 @@ function ManagePromotions() {
   };
 
   const handleAddDiscount = () => {
-    // Điều hướng đến trang tạo ưu đãi mới
     navigate("/add-promotion");
   };
 
@@ -70,6 +81,8 @@ function ManagePromotions() {
                 className={style["discount-image"]}
               />
               <p>{discount.title}</p>
+              <p>Ngày bắt đầu: {formatDate(discount.startdate)}</p>
+              <p>Ngày kết thúc: {formatDate(discount.enddate)}</p>
               <p>Mô tả: {discount.description}</p>
               <p>Giảm giá: {discount.discount}%</p>
               <div className={style["button-group"]}>
@@ -80,7 +93,7 @@ function ManagePromotions() {
                   Chỉnh sửa
                 </button>
                 <button
-                  onClick={() => handleDelete(discount.id)} // Khi ấn nút xóa sẽ gọi handleDelete
+                  onClick={() => handleDelete(discount.id)}
                   className={style["delete-button"]}
                 >
                   Xóa

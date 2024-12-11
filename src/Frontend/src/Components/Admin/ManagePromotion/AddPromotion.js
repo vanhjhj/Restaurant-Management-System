@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios để gửi HTTP requests
 import { addPromotion } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
+import { useAuth } from "../../../Components/Auth/AuthContext"; // Import useAuth
 import style from "./AddPromotion.module.css";
 
 function AddPromotion() {
   const [promotion, setPromotion] = useState({
     title: "",
     description: "",
-    image: null, // Thay đổi image thành null để lưu trữ file
+    image: null,
     discount: 0,
+    startdate: "",
+    enddate: "",
   });
-  const [error, setError] = useState(""); // Để lưu lỗi nếu có
-  const navigate = useNavigate(); // Dùng để điều hướng sau khi thêm thành công
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { accessToken } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -25,22 +28,48 @@ function AddPromotion() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra các trường nhập liệu
-    if (!promotion.title || !promotion.description || !promotion.image) {
+    const { title, description, image, discount, startdate, enddate } =
+      promotion;
+
+    // Kiểm tra dữ liệu nhập vào
+    if (!title || !description || !image || !startdate || !enddate) {
       setError("Tất cả các trường đều phải nhập.");
       return;
     }
 
-    if (promotion.discount < 0 || promotion.discount > 100) {
+    if (discount < 0 || discount > 100) {
       setError("Tỷ lệ giảm giá phải từ 0 đến 100.");
       return;
     }
 
+    if (new Date(startdate) >= new Date(enddate)) {
+      setError("Ngày bắt đầu phải trước ngày kết thúc.");
+      return;
+    }
+
+    if (!accessToken) {
+      setError("Không tìm thấy token. Vui lòng đăng nhập lại.");
+      return;
+    }
+
+    // Chuyển đổi startdate và enddate về định dạng YYYY-MM-DD
+    const formattedStartDate = new Date(promotion.startdate)
+      .toISOString()
+      .split("T")[0];
+    const formattedEndDate = new Date(promotion.enddate)
+      .toISOString()
+      .split("T")[0];
+
+    const promotionData = {
+      ...promotion,
+      startdate: formattedStartDate,
+      enddate: formattedEndDate,
+    };
+
     try {
-      // Gọi hàm addPromotion với dữ liệu
-      await addPromotion(promotion);
+      await addPromotion(promotionData, accessToken);
       alert("Ưu đãi đã được thêm thành công");
-      navigate("/manage-promotions"); // Chuyển hướng sau khi thành công
+      navigate("/manage-promotions");
     } catch (error) {
       console.error(error);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -84,7 +113,7 @@ function AddPromotion() {
         </div>
 
         <div className={style["form-group"]}>
-          <label htmlFor="discount">Giảm giá</label>
+          <label htmlFor="discount">Giảm giá (%)</label>
           <input
             type="number"
             id="discount"
@@ -92,6 +121,28 @@ function AddPromotion() {
             value={promotion.discount}
             onChange={handleChange}
             placeholder="Nhập tỷ lệ giảm giá (0-100)"
+          />
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="startdate">Ngày bắt đầu</label>
+          <input
+            type="date"
+            id="startdate"
+            name="startdate"
+            value={promotion.startdate}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="enddate">Ngày kết thúc</label>
+          <input
+            type="date"
+            id="enddate"
+            name="enddate"
+            value={promotion.enddate}
+            onChange={handleChange}
           />
         </div>
 
