@@ -1,5 +1,12 @@
 /* Tổng thể phần Modal */
 
+
+.password-input-container input[type="password"]::-ms-reveal,
+.password-input-container input[type="password"]::-ms-clear, 
+.password-input-container input[type="password"]::-webkit-clear-button, 
+.password-input-container input[type="password"]::-webkit-reveal-button {
+  display: none; /* Ẩn icon mặc định */
+}
 /* Overlay mờ phía sau modal */
 .modal-overlay {
     position: fixed;
