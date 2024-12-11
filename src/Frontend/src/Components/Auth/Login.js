@@ -34,6 +34,7 @@ function Login({setIsLoggedIn}) {
                 setIsLoggedIn(true);
                 localStorage.setItem('userRole', userInfo.account_type);
                 // Điều hướng đến trang chính
+                
                 navigate('/');
             } else {
                 throw new Error('Không thể giải mã token!');
