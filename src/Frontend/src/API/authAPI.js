@@ -20,16 +20,9 @@ export const account_check = async (userData) => {
 // Hàm đăng nhập
 export const login = async (credentials) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/auth/token/`,
-      credentials
-    );
+    console.log(credentials);
+    const response = await axios.post(`${API_BASE_URL}/auth/token/`, credentials);
     console.log(response);
-    const { access, refresh } = response.data; // Sử dụng tên chính xác của các trường
-    localStorage.setItem("access_token", access);
-    localStorage.setItem("refresh_token", refresh);
-
-    console.log("Token đã được lưu vào localStorage:", access, refresh);
 
     return response.data; // Trả về access và refresh tokens nếu thành công
   } catch (error) {
@@ -143,47 +136,29 @@ export const resetPassword = async (resetData, token) => {
 };
 
 // Hàm refresh token
-export const refreshToken = async () => {
-  const refresh = localStorage.getItem("refresh_token"); // Lấy refresh_token từ localStorage
-  const access = localStorage.getItem("access_token"); // Lấy access_token từ localStorage
-
-  // Kiểm tra xem token có tồn tại không
-  if (!refresh || !access) {
-    console.error("Không tìm thấy token trong localStorage");
-    return null; // Nếu không có token, trả về null
-  }
-
+export const refreshToken = async (refreshToken,accessToken) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/auth/token/refresh/`,
-      { refresh }, // Chỉ cần gửi refresh_token vào request body
-      {
-        headers: {
-          Authorization: `Bearer ${access}`, // Gửi access_token qua header Authorization
-          "Content-Type": "application/json", // Định dạng nội dung JSON
-        },
-      }
-    );
-
-    // Trả về dữ liệu nếu thành công
-    const { access: newAccessToken } = response.data; // Giả sử API trả về trường 'access'
-    localStorage.setItem("access_token", newAccessToken); // Cập nhật access_token mới vào localStorage
-
-    console.log("Làm mới token thành công:", response.data.message);
-    return newAccessToken; // Trả về access_token mới
+      const response = await axios.post(
+          `${API_BASE_URL}/auth/token/refresh/`,
+          {refresh: refreshToken},
+          {
+              headers: {
+                  Authorization: `Bearer ${accessToken}`, // Gửi token qua header Authorization
+                  'Content-Type': 'application/json', // Định dạng nội dung JSON
+              },
+          }
+      );
+      // Trả về dữ liệu nếu thành công
+      console.log('lam moi token thanh cong:', response.data.message);
+      return response.data;
   } catch (error) {
-    // Ghi log lỗi chi tiết
-    console.error(
-      "Lỗi khi làm mới token:",
-      error.response ? error.response.data : error.message
-    );
-
-    // Xóa hết các token khi gặp lỗi
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-
-    // Ném lỗi để xử lý ở nơi gọi hàm
-    throw error;
+      // Ghi log lỗi chi tiết
+      console.error(
+          'Lỗi khi lam moi token:',
+          error.response ? error.response.data : error.message
+      );
+      // Ném lỗi với thông báo chi tiết
+      throw error;
   }
 };
 

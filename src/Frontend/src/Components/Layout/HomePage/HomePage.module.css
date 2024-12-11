@@ -87,17 +87,7 @@
   -webkit-background-clip: text;
   color: transparent;
   background-size: 200%;
-  animation: gradientAnimation 5s infinite;
   margin-top: 10px; /* Khoảng cách trên cho span */
-}
-
-@keyframes gradientAnimation {
-  0% {
-      background-position: 0% 50%;
-  }
-  100% {
-      background-position: 100% 50%;
-  }
 }
 
 .cta-button {

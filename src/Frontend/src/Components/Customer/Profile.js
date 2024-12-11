@@ -5,6 +5,7 @@ import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../API/authAPI';
 import Modal from './Modal'; // Import Modal component
 import style from '../../Style/CustomerStyle/Profile.module.css';
+import { useAuth } from '../Auth/AuthContext';
 
 function Profile() {
     const [personalInfo, setPersonalInfo] = useState({ full_name: "", gender: "", phone_number: "" });
@@ -19,29 +20,30 @@ function Profile() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
-    const token = localStorage.getItem('accessToken');
+    const { accessToken,setAccessToken } = useAuth();
     const refresh = localStorage.getItem('refreshToken');
     const CusID = localStorage.getItem('userId');
     
     let email;
 
+    const ensureActiveToken = async () => {
+        let activeToken = accessToken;
+        if (isTokenExpired(accessToken)) {
+            const refreshed = await refreshToken(refresh);
+            activeToken = refreshed.access;
+            setAccessToken(activeToken);
+        }
+        return activeToken;
+    };
+
     useEffect(() => {
-        if (!token || !refresh || !CusID) {
+        const activeToken = ensureActiveToken();
+        if (!activeToken || !refresh || !CusID) {
             navigate('/login');
         } else {
             fetchProfileData();
         }
     }, []);
-
-    const ensureActiveToken = async () => {
-        let activeToken = token;
-        if (isTokenExpired(token)) {
-            const refreshed = await refreshToken(refresh);
-            activeToken = refreshed.access;
-            localStorage.setItem('accessToken', activeToken);
-        }
-        return activeToken;
-    };
 
     const fetchProfileData = async () => {
         try {
@@ -221,7 +223,9 @@ function Profile() {
                                             <option value="Nữ">Nữ</option>
                                         </select>
                                     </div>
+                                    
                                     <div className={style['info-form']}>
+                                        {error&& <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}    
                                         <label htmlFor="phone-number">Số Điện Thoại:</label>
                                         <input
                                             id="phone-number"
@@ -297,7 +301,7 @@ function Profile() {
                 </div>
             </div>
             
-            {error&& <p className={style["error-message"]}>{'Số Điện thoại không hợp lệ'}</p>}           
+                   
 
             {/* Modal */}
             {showModal && (

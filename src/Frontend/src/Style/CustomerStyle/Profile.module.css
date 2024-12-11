@@ -26,7 +26,7 @@
 }
 
 .brief-info{
-    background: linear-gradient(to right, #ee5a6f, #ff8243);
+    background: linear-gradient(45deg, #ee5a6f, #ff8243);
     box-sizing: border-box;
     padding:20px;
     text-align: center;
@@ -80,6 +80,11 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
+}
+
+.error-message{
+    margin-bottom: 0px;
+    color:red;
 }
 
 .info-form label{

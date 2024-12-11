@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import style from'../../Style/AuthStyle/ForgotPassword.module.css';
 import { forgotPassword } from '../../API/authAPI';
+import { useAuth } from './AuthContext';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -18,8 +19,8 @@ function ForgotPassword() {
         event.preventDefault();
 
         try {
-            await forgotPassword(email); // Gọi API quên mật khẩu
             navigate('/verify-otp', { state: { mode: 'forgotPassword', email } });
+            await forgotPassword(email); // Gọi API quên mật khẩu    
         } catch (err) {
             setError("Email Chưa được đăng kí");
         }

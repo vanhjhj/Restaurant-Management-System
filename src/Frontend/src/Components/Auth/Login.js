@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { decodeToken } from '../../utils/tokenHelper.mjs';
+import { useAuth } from './AuthContext';
 
-function Login({ onLogin }) {
+function Login({setIsLoggedIn}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Để điều khiển hiển thị mật khẩu
     const [error, setError] = useState(null);
+    const { accessToken, setAccessToken } = useAuth();
 
     const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ function Login({ onLogin }) {
 
         try {
             const response = await login({ username, password });
-            localStorage.setItem('accessToken',response.access);
+            setAccessToken(response.access);
             localStorage.setItem('refreshToken',response.refresh);
 
             // Decode token và lấy thông tin người dùng
@@ -28,9 +30,11 @@ function Login({ onLogin }) {
                 console.log(userInfo.user_id);
                 localStorage.setItem('accountType', userInfo.account_type);
                 // Gọi hàm onLogin được truyền từ App.js
-                onLogin(userInfo.account_type);
-
+                localStorage.setItem('isLoggedIn', true);
+                setIsLoggedIn(true);
+                localStorage.setItem('userRole', userInfo.account_type);
                 // Điều hướng đến trang chính
+                
                 navigate('/');
             } else {
                 throw new Error('Không thể giải mã token!');

@@ -3,19 +3,64 @@ import React, { useState, useRef, useEffect } from 'react';
 import style from './Header.module.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faL, faUser } from '@fortawesome/free-solid-svg-icons';
+import { refreshToken,logout } from '../../../API/authAPI';
+import { useAuth } from '../../Auth/AuthContext';
+import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
+import { useNavigate } from 'react-router-dom';
 
-function Header({onLogout }) {
+function Header({isLoggedIn, setIsLoggedIn}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null); // Tham chiếu đến dropdown menu
+    const { accessToken, setAccessToken } = useAuth();
+    const refresh = localStorage.getItem('refreshToken');
+    const navigate = useNavigate();
 
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
     const userRole = localStorage.getItem('userRole');
+
+    const ensureActiveToken = async () => {
+        let activeToken = accessToken;
+        if (isTokenExpired(accessToken)) {
+            const refreshed = await refreshToken(refresh);
+            activeToken = refreshed.access;
+            setAccessToken(activeToken);
+        }
+        return activeToken;
+    };
+
+    const handleLogout = async () => {
+        let refreshTokenValue = localStorage.getItem('refreshToken'); // Lấy refresh token từ localStorage
+        if (!refreshTokenValue) {
+            console.error('Không tìm thấy refresh token. Đăng xuất thủ công.');
+            setIsLoggedIn(false);
+            localStorage.clear();
+            localStorage.setItem('isLoggedIn', false);
+            return;
+        }
+        try {
+            const activeToken = await ensureActiveToken();
+            console.log(accessToken);
+            // Gọi API logout
+            await logout(refreshTokenValue, activeToken);
+    
+            // Xóa trạng thái đăng nhập
+            setIsLoggedIn(false);
+            localStorage.clear();
+            localStorage.setItem('isLoggedIn', false);
+            navigate('/');
+        } catch (error) {
+            console.error('Đăng xuất thất bại:', error.message);
+        }
+    };
 
     const handleLogoutBtn = () => {
         setIsMenuOpen(false);
-        onLogout();
+        handleLogout();
     }
+
+    const closeMenu = () => {
+        setIsMenuOpen(false);
+    };
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -86,8 +131,8 @@ function Header({onLogout }) {
                                                             
                                                         ) : (
                                                             <>
-                                                                <li><Link to="/profile">Thông tin cá nhân</Link></li>
-                                                                <li><Link to="/purchasehistory">Lịch sử mua hàng</Link></li>
+                                                                <li><Link to="/profile" onClick={closeMenu}>Thông tin cá nhân</Link></li>
+                                                                <li><Link to="/purchasehistory" onClick={closeMenu}>Lịch sử mua hàng</Link></li>
                                                                 <li>
                                                                     <div className={style['logout-section']}>
                                                                         <button onClick={handleLogoutBtn} className={style['logout-button']}>Đăng xuất</button>
