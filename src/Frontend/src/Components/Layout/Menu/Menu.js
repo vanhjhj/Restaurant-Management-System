@@ -34,26 +34,15 @@ function Menu() {
       setSearchPriceMax(value);
     }
   }
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await getMenuTabs();
-        setMenuTabs(data);
-      } 
-      catch (error) {
-        setError(error);
-        console.log(error);
-      }
-    };
-    loadData();
-  }, []);
-
+  
   useEffect(() => {
     const loadData = async () => {
       try {
         const data = await getFoodItems();
         setFoodItems(data);
+
+        const tab = await getMenuTabs();
+        setMenuTabs(tab);
       } 
       catch (error) {
         setError(error);
@@ -65,11 +54,11 @@ function Menu() {
 
   const filter = (item, name, category, priceMin, priceMax) => {
     let addCondition = item.name.toLowerCase().includes(name.toLowerCase())
-      && item.price > priceMin;
+      && item.price >= priceMin;
     if (priceMax > 0) {
-      addCondition = addCondition && item.price < priceMax;
+      addCondition = addCondition && item.price <= priceMax;
     }
-    if (category !== 1) {
+    if (category !== 0) {
       addCondition = addCondition && item.category === category;
     }
     return addCondition;
@@ -136,6 +125,14 @@ function Menu() {
             <div className={style['col-lg-12']}>
               <div className={style["menu-tab"]}>
                 <ul>
+                  <li key ={0}>
+                    <button
+                          onClick={() => setSelectedType(0)}
+                          className={style['menu-tab-btn'] + ' ' + style[selectedType === 0 ? 'active' : '']}
+                        >
+                          All
+                        </button>
+                  </li>
                   {menuTabs.map(tab => (
                     <li key={tab.id}>
                       <button
@@ -159,7 +156,7 @@ function Menu() {
                   <img src={item.image} alt={item.name} />
                   <h3>{item.name}</h3>
                   <h6>{item.description}</h6>
-                  <p>Rs. {item.price}</p>
+                  <p>{item.price} .VND</p>
                 </div>
               </div>
             ))}

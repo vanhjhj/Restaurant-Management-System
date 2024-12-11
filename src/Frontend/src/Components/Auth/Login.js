@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { decodeToken } from '../../utils/tokenHelper.mjs';
 import { useAuth } from './AuthContext';
 
-function Login({setIsLoggedIn}) {
+function Login({setIsLoggedIn, setUserRole}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Để điều khiển hiển thị mật khẩu
@@ -29,6 +29,7 @@ function Login({setIsLoggedIn}) {
                 localStorage.setItem('userId', userInfo.user_id);
                 console.log(userInfo.user_id);
                 localStorage.setItem('accountType', userInfo.account_type);
+                setUserRole(userInfo.account_type);
                 // Gọi hàm onLogin được truyền từ App.js
                 localStorage.setItem('isLoggedIn', true);
                 setIsLoggedIn(true);

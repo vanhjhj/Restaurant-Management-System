@@ -97,6 +97,8 @@
 }
 
 .menu-item img{
+    width: 250px;
+    height: 250px;
     margin-top: -130px;
     margin-bottom: 30px;
     box-shadow: 28px 28px 45px #d4d4d4, -28px -28px 45px #ffffff;

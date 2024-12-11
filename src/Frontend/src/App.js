@@ -82,7 +82,7 @@ function App() {
                     />
 
                     {/* Đăng nhập và đăng ký */}
-                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn}/>} />
+                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/verify-otp" element={<VerifyOTP />} />
                     <Route path="/forgotpassword" element={<ForgotPassword />} />
