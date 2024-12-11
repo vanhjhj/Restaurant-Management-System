@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchPromotionById, updatePromotion } from "../../../API/PromotionAPI"; // Import API functions
-import style from "./EditPromotion.module.css"; // Import stylesheet
+import { fetchPromotionById, updatePromotion } from "../../../API/PromotionAPI";
+import { useAuth } from "../../../Components/Auth/AuthContext";
+import style from "./EditPromotion.module.css";
 import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 
 function EditPromotion() {
@@ -11,26 +12,29 @@ function EditPromotion() {
     description: "",
     image: null,
     discount: 0,
+    startdate: "",
+    enddate: "",
   });
-  const [editingField, setEditingField] = useState(null); // Lưu trữ trường đang được chỉnh sửa
-  const [error, setError] = useState(""); // Để lưu lỗi nếu có
-  const navigate = useNavigate(); // Dùng để điều hướng sau khi cập nhật
+  const [editingField, setEditingField] = useState(null);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     async function getPromotion() {
       try {
-        const data = await fetchPromotionById(id); // Lấy ưu đãi theo ID
-        if (data && data.results) {
-          const promotionData = data.results[0]; // Giả sử API trả về results với dạng mảng
-          setPromotion(promotionData); // Lưu dữ liệu vào state
+        const data = await fetchPromotionById(id);
+        if (data) {
+          setPromotion(data);
         }
       } catch (error) {
         console.error("Error fetching promotion:", error);
+        setError("Không thể tải dữ liệu ưu đãi.");
       }
     }
 
     getPromotion();
-  }, [id]); // Gọi lại khi ID thay đổi
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -40,41 +44,44 @@ function EditPromotion() {
     }));
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra và xử lý discount
-    let discountValue = promotion.discount;
+    if (!accessToken) {
+      setError("Token không tồn tại. Vui lòng đăng nhập lại.");
+      return;
+    }
 
-    if (discountValue !== "")
-      if (discountValue < 0 || discountValue > 100) {
-        setError("Giảm giá phải nằm trong khoảng 0-100%.");
-        return;
-      }
-    if (
-      promotion.title === "" ||
-      promotion.description === "" ||
-      promotion.discount === 0 ||
-      promotion.image === null
-    ) {
-      setError("Chưa có thông tin để cập nhật.");
+    const { startdate, enddate, discount } = promotion;
+
+    if (discount < 0 || discount > 100) {
+      setError("Giảm giá phải nằm trong khoảng 0-100%.");
+      return;
+    }
+
+    if (new Date(startdate) >= new Date(enddate)) {
+      setError("Ngày kết thúc phải sau ngày bắt đầu.");
       return;
     }
 
     try {
-      // Tạo object chỉ chứa các trường đã thay đổi
-      const updatedPromotion = {};
+      const updatedPromotion = {
+        title: promotion.title,
+        description: promotion.description,
+        discount: discount,
+        image: promotion.image,
+        startdate,
+        enddate,
+      };
 
-      if (promotion.title !== "") updatedPromotion.title = promotion.title;
-      if (promotion.description !== "")
-        updatedPromotion.description = promotion.description;
-      if (promotion.discount !== 0) updatedPromotion.discount = discountValue;
-      if (promotion.image) updatedPromotion.image = promotion.image;
-
-      // Cập nhật dữ liệu
-      await updatePromotion(id, updatedPromotion);
+      await updatePromotion(id, updatedPromotion, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
-      navigate("/manage-promotions"); // Chuyển hướng về trang quản lý ưu đãi
+      navigate("/manage-promotions");
     } catch (error) {
       console.error("Lỗi khi cập nhật ưu đãi:", error);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -82,7 +89,7 @@ function EditPromotion() {
   };
 
   const handleEdit = (field) => {
-    setEditingField(field); // Chỉnh sửa trường nào
+    setEditingField(field);
   };
 
   return (
@@ -106,7 +113,6 @@ function EditPromotion() {
               name="title"
               value={promotion.title}
               onChange={handleChange}
-              placeholder=""
             />
           ) : (
             <p>
@@ -114,6 +120,48 @@ function EditPromotion() {
               <FaEdit
                 className={style.editIcon}
                 onClick={() => handleEdit("title")}
+              />
+            </p>
+          )}
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="startdate">Ngày bắt đầu</label>
+          {editingField === "startdate" ? (
+            <input
+              type="date"
+              id="startdate"
+              name="startdate"
+              value={promotion.startdate}
+              onChange={handleChange}
+            />
+          ) : (
+            <p>
+              {formatDate(promotion.startdate)}{" "}
+              <FaEdit
+                className={style.editIcon}
+                onClick={() => handleEdit("startdate")}
+              />
+            </p>
+          )}
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="enddate">Ngày kết thúc</label>
+          {editingField === "enddate" ? (
+            <input
+              type="date"
+              id="enddate"
+              name="enddate"
+              value={promotion.enddate}
+              onChange={handleChange}
+            />
+          ) : (
+            <p>
+              {formatDate(promotion.enddate)}{" "}
+              <FaEdit
+                className={style.editIcon}
+                onClick={() => handleEdit("enddate")}
               />
             </p>
           )}
@@ -128,7 +176,6 @@ function EditPromotion() {
               name="description"
               value={promotion.description}
               onChange={handleChange}
-              placeholder=""
             />
           ) : (
             <p>
@@ -150,11 +197,10 @@ function EditPromotion() {
               name="discount"
               value={promotion.discount}
               onChange={handleChange}
-              placeholder=""
             />
           ) : (
             <p>
-              {promotion.discount * 100}%{" "}
+              {promotion.discount}%{" "}
               <FaEdit
                 className={style.editIcon}
                 onClick={() => handleEdit("discount")}
@@ -183,7 +229,9 @@ function EditPromotion() {
           )}
         </div>
 
-        <button type="submit">Cập nhật ưu đãi</button>
+        <button type="submit" className={style["submit-button"]}>
+          Cập nhật ưu đãi
+        </button>
       </form>
     </div>
   );

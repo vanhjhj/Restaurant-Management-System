@@ -45,7 +45,7 @@
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
-  background-color: #4caf50;
+  background-color: #0f4758;
   color: white;
   border: none;
   cursor: pointer;
@@ -54,7 +54,7 @@
 }
 
 .add-promotion button:hover {
-  background-color: #45a049; /* Màu nền khi hover */
+  background-color: #0f4758; /* Màu nền khi hover */
 }
 
 /* Hiển thị lỗi */
