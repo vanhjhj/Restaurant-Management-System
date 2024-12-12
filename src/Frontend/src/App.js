@@ -31,6 +31,7 @@ import { isTokenExpired } from "./utils/tokenHelper.mjs";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
+import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
 
 library.add(faEye, faEyeSlash);
 
@@ -235,6 +236,18 @@ function App() {
                         userRole={userRole}
                         >
                         <EmployeeDashboard />
+                        </ProtectedRoute>
+                    }
+                    />
+                    <Route
+                    path="/table"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Employee"]}
+                        userRole={userRole}
+                        >
+                        <EmployeeReservation />
                         </ProtectedRoute>
                     }
                     />
