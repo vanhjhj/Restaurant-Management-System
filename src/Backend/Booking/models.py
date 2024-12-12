@@ -7,10 +7,9 @@ from Menu.models import MenuItem
 # Create your models here.
 class Table(models.Model):
     number_of_seats = models.IntegerField(validators=[MinValueValidator(1)])
-    status = models.CharField(max_length=20, choices=[('A', 'Available'), ('R', 'Reserved'), ('OP', 'Order Placed'), ('OFS', 'Order Fully Served')], default='A')
+    status = models.CharField(max_length=20, choices=[('A', 'Available'), ('R', 'Reserved'), ('S', 'Serving'), ('D', 'Done')], default='A')
     def __str__(self):
         return str(self.pk) + ' - ' + str(self.number_of_seats) + ' - ' + self.status
-
 
 class Reservation(models.Model):
     guest_name = models.CharField(max_length=100, blank=False, null=False)
@@ -19,11 +18,12 @@ class Reservation(models.Model):
     time = models.TimeField()
     number_of_guests = models.IntegerField(validators=[MinValueValidator(1)])
     note = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('A', 'Assigned'), ('D', 'Done')], default='P')
+    table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, blank=True, null=True, default=None)
 
     def __str__(self):
         return self.guest_name + ' - ' + str(self.date) + ' - ' + str(self.time)
     
-
 class Order(models.Model):
     datetime = models.DateTimeField(default=datetime.datetime.now)
     total_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)

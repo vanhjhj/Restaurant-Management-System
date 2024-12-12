@@ -12,10 +12,11 @@ class TableSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Reservation
-        fields = ('id', 'guest_name', 'phone_number', 'date', 'time', 'number_of_guests', 'note')
+        fields = ('id', 'guest_name', 'phone_number', 'date', 'time', 'number_of_guests', 'note', 'status', 'table')
     
     def to_representation(self, instance):
         # Trả về số điện thoại không có mã quốc gia
@@ -26,11 +27,16 @@ class ReservationSerializer(serializers.ModelSerializer):
         return representation
     
     def validate(self, attrs):
-        if attrs.get('date') < datetime.date.today():
-            raise serializers.ValidationError({'date': 'Date must be greater than or equal to today'})
-        elif attrs.get('date') == datetime.date.today() and attrs.get('time') < datetime.datetime.now().time():
-            raise serializers.ValidationError({'time': 'Time must be greater than or equal to current time'})
+        date = attrs.get('date')
+        time = attrs.get('time')
+        if date and time:
+            if date < datetime.date.today():
+                raise serializers.ValidationError({'date': 'Date must be greater than or equal to today'})
+            elif date == datetime.date.today() and time < datetime.datetime.now().time():
+                raise serializers.ValidationError({'time': 'Time must be greater than or equal to current time'})
+            
         return attrs
+        
     
 class OrderSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
