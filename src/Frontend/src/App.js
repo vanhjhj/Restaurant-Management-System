@@ -31,6 +31,7 @@ import { isTokenExpired } from "./utils/tokenHelper.mjs";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
+import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
 
 library.add(faEye, faEyeSlash);
 
@@ -38,22 +39,23 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
     const [refreshAlert, setRefreshAlert] = useState(false);
     const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
-  
     useEffect(() => {
-        function checkLoginStatus() {
+        const checkLoginStatus = async () => {
             if (localStorage.getItem('isLoggedIn') === 'false') {
                 return;
             }
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
+            const rt = localStorage.getItem('refreshToken');
+            if (!rt) {
                 localStorage.clear();
                 localStorage.setItem('isLoggedIn', false);
+                setIsLoggedIn(false);
                 setRefreshAlert(true);
                 return;
             }
-            if (isTokenExpired(refreshToken)) {
+            if (isTokenExpired(rt)) {
                 localStorage.clear();
                 localStorage.setItem('isLoggedIn', false);
+                setIsLoggedIn(false);
                 setRefreshAlert(true);
                 return;
             }
@@ -235,6 +237,18 @@ function App() {
                         userRole={userRole}
                         >
                         <EmployeeDashboard />
+                        </ProtectedRoute>
+                    }
+                    />
+                    <Route
+                    path="/table"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Employee"]}
+                        userRole={userRole}
+                        >
+                        <EmployeeReservation />
                         </ProtectedRoute>
                     }
                     />

@@ -13,6 +13,9 @@ function EmployeeDashboard() {
         navigate('/create-bill'); // Điều hướng đến trang Tạo Hóa Đơn
     };
 
+    const handleTable = () => {
+        navigate('/table')
+    }
     return (
         <div className="employee-dashboard">
             <h1>Trang Nhân Viên</h1>
@@ -22,6 +25,9 @@ function EmployeeDashboard() {
                 </button>
                 <button className="action-button" onClick={handleCreateBill}>
                     Tạo Hóa Đơn
+                </button>
+                <button className="action-button" onClick={handleTable}>
+                    Xem bàn
                 </button>
             </div>
         </div>
