@@ -19,13 +19,15 @@ export const fetchTablesData = async (token) => {
 
 export const fetchReservationData = async (token) => {
   try {
-      const response = await axios.get(`${API_BASE_URL}/booking/tables/`,
+    console.log(token);
+      const response = await axios.get(`${API_BASE_URL}/booking/reservations/`,
       {
           headers: {
             Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
             "Content-Type": "application/json", // Định dạng nội dung JSON
           },
         });
+        
       return response.data;
   }
   catch(error) {

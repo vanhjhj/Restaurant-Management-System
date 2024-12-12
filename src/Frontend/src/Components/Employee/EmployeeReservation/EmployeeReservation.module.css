@@ -14,6 +14,26 @@
     composes: col-lg-2 from '../../../Style/bootstrap.min.css';
 }
 
+.yellow{
+    background-color: rgba(255, 223, 116, 0.7);
+}
+
+.red{
+    background-color: rgba(255, 153, 153, 0.7);
+}
+
+.blue{
+    background-color: rgba(110, 198, 241, 0.7);
+}
+
+.green{
+    background-color: rgba(144, 238, 144, 0.7);
+}
+
+.EER-container{
+    font-family: 'Playfair Display', serif;
+}
+
 .Table-container{
     margin: 20px;
     padding: 20px;
@@ -23,20 +43,34 @@
     text-align: center;
 }
 
-.EER-container{
+.body-EER{
     display: grid; 
-    grid-template-columns:250px 1fr; 
+    grid-template-columns:300px 1fr; 
     height: 100vh;
 }
 
 .sidebar-container{
     height: 100%; 
-    width: 250px; 
+    width: 300px; 
     z-index: 1; 
     top: 0; 
     right: 0;
-    background-color: rgb(172, 172, 172); 
     overflow-x: hidden;
     padding-top: 20px;
     padding: 20px;
+}
+
+.section-title {
+    border-bottom:1px solid #ff8243;
+}
+
+.section-title h2{
+    color: #ff8243;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.reservation-info{
+    margin-top: 20px;
+    border:2px solid rgb(204 204 204 / 80%);
 }

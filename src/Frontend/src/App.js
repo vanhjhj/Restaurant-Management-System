@@ -39,22 +39,23 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
     const [refreshAlert, setRefreshAlert] = useState(false);
     const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
-  
     useEffect(() => {
-        function checkLoginStatus() {
+        const checkLoginStatus = async () => {
             if (localStorage.getItem('isLoggedIn') === 'false') {
                 return;
             }
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
+            const rt = localStorage.getItem('refreshToken');
+            if (!rt) {
                 localStorage.clear();
                 localStorage.setItem('isLoggedIn', false);
+                setIsLoggedIn(false);
                 setRefreshAlert(true);
                 return;
             }
-            if (isTokenExpired(refreshToken)) {
+            if (isTokenExpired(rt)) {
                 localStorage.clear();
                 localStorage.setItem('isLoggedIn', false);
+                setIsLoggedIn(false);
                 setRefreshAlert(true);
                 return;
             }
