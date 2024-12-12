@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Case, When, IntegerField
 from .models import Table, Reservation, Order, OrderItem
 
 class TableFilterSet(django_filters.FilterSet):
@@ -9,6 +10,20 @@ class TableFilterSet(django_filters.FilterSet):
     class Meta:
         model = Table
         fields = ['number_of_seats', 'status']
+
+def custom_status_reservation_order(queryset):
+    queryset = queryset.annotate(
+        status_order=Case(
+            When(status='P', then=0),
+            When(status='A', then=1),
+            When(status='D', then=2),
+            When(status='C', then=3),
+            default=4,  # Nếu status không phải trong các giá trị trên
+            output_field=IntegerField()
+        )
+    )
+    
+    return queryset.order_by('status_order')
 
 class ReservationFilterSet(django_filters.FilterSet):
     date_range = django_filters.DateFromToRangeFilter(field_name="date")

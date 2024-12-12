@@ -36,7 +36,17 @@ class ReservationSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'time': 'Time must be greater than or equal to current time'})
             
         return attrs
-        
+    
+
+class ReservationAssignTableSerializer(serializers.ModelSerializer):
+    table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all(), required=True)
+    
+    class Meta:
+        model = Reservation
+        fields = ('table',)
+        extra_kwargs = {
+            'table': {'required': True}
+        }
     
 class OrderSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)

@@ -83,8 +83,18 @@ class TableRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class ReservationListCreateAPIView(generics.ListCreateAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
-    ordering_fields = ['date', 'number_of_guests']
+    ordering_fields = ['date', 'time', 'number_of_guests', 'status_order']
     filterset_class = ReservationFilterSet
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Nếu có tham số ordering trong request, áp dụng custom sắp xếp
+        ordering = self.request.query_params.get('ordering', None)
+        if ordering and 'status' in ordering:
+            queryset = custom_status_reservation_order(queryset)  # Áp dụng sắp xếp tuỳ chỉnh theo status
+
+        return queryset
 
     def get_permissions(self):
         if self.request.method == 'GET':
@@ -123,62 +133,19 @@ class ReservationRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIV
     
     def patch(self, request, *args, **kwargs):
         if 'id' in request.data:
-            return Response({'message': 'Cannot update id field'}, status=new_status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
         
         reservation = self.get_object()
         serializer = ReservationSerializer(reservation, data=request.data, partial=True)
 
         if serializer.is_valid():
-            current_status = reservation.status
-            current_table = reservation.table
-            new_status = serializer.validated_data.get('status')
-            table = serializer.validated_data.get('table')
-
-            if current_status == 'P':
-                if new_status == 'D':
-                    return Response({'message': 'Status must be A (Assigned) before change to D (Done)'}, status=status.HTTP_400_BAD_REQUEST)
-                if not new_status and table:
-                    return Response({'message': 'Cannot assign table to pending reservation'}, status=status.HTTP_400_BAD_REQUEST)
-                if new_status == 'A':
-                    if not table:
-                        return Response({'message': 'Table is required when status is A (Assigned)'}, status=status.HTTP_400_BAD_REQUEST)
-                    if table.status != 'A':
-                        return Response({'message': f'Table is not available, it is currently {table.get_status_display()}'}, status=status.HTTP_400_BAD_REQUEST)
-                    table.status = 'R'
-                    table.save()
-
-            elif current_status == 'A':
-                if table:
-                    #change table and update status of old table
-                    if table.status != 'A':
-                        return Response({'message': f'Table is not available, it is currently {table.get_status_display()}'}, status=status.HTTP_400_BAD_REQUEST)
-                    
-                    current_table.status = 'A'
-                    current_table.save()
-                    table.status = 'R'
-                    table.save()
-                
-                if new_status == 'P':
-                    #update table status to 'A' (Available) when reservation is pending
-                    current_table.status = 'A'
-                    reservation.table = None
-                    reservation.save()
-                elif new_status == 'D':
-                    #update table status to 'S' (Serving) when reservation is done
-                    current_table.status = 'S'
-                current_table.save()
-            
-            elif current_status == 'D':
-                if new_status:
-                    return Response({'message': 'Cannot change status of done reservation'}, status=status.HTTP_400_BAD_REQUEST)
-                if table:
-                    return Response({'message': 'Cannot change table of done reservation'}, status=status.HTTP_400_BAD_REQUEST)
-
+            if serializer.validated_data.get('status') or serializer.validated_data.get('table'):
+                return Response({'message': 'Cannot modify status and table at this API endpoint'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
 
             response = {
                 'message': 'Reservation updated successfully',
-                'data': serializer.data
+                'data': ReservationSerializer(reservation).data
             }
             return Response(response, status=status.HTTP_200_OK)
         
@@ -189,6 +156,115 @@ class ReservationRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIV
         reservation.delete()
         return Response({'message': 'Reservation deleted successfully'}, status=status.HTTP_200_OK)
     
+class ReservationAssignTableAPIView(generics.UpdateAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationAssignTableSerializer
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        reservation = self.get_object()
+        serializers = self.serializer_class(data=request.data, partial= False)
+
+        if serializers.is_valid():
+            #check if table is available and assign to reservation
+            if serializers.validated_data['table'].status != 'A':
+                #if reassign table
+                if reservation.table and reservation.table == serializers.validated_data['table']:
+                    return Response({'message': 'Table is already assigned to this reservation'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                #if not, response table is not available
+                return Response({'message': 'Table is not available'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            #table is available
+            #in case change table
+            if reservation.table:
+                reservation.table.status = 'A'
+                reservation.table.save()
+
+                reservation.table = serializers.validated_data['table']
+                reservation.table.status = 'R'
+                reservation.table.save()
+            else: #in case assign table for the first time
+                reservation.table = serializers.validated_data['table']
+                reservation.table.status = 'R'
+                reservation.table.save()
+
+            reservation.status = 'A'
+            reservation.save()
+
+            response = {
+                'message': 'Table assigned successfully',
+                'data': ReservationSerializer(reservation).data
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ReservationMarkDoneAPIView(generics.UpdateAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = Reservation.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        reservation = self.get_object()
+        if reservation.status == 'D':
+            return Response({'message': 'Reservation is already done'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if reservation.status == 'C':
+            return Response({'message': 'Cannot mark canceled reservation as done'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if reservation.status == 'P':
+            return Response({'message': 'Cannot mark pending reservation as done'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        #only mark assigned reservation as done
+
+        reservation.status = 'D'
+        reservation.table.status = 'S'
+        reservation.table.save()
+        reservation.save()
+
+        response = {
+            'message': 'Reservation marked as done successfully',
+            'data': ReservationSerializer(reservation).data
+        }
+        return Response(response, status=status.HTTP_200_OK)
+    
+class ReservationMarkCancelAPIView(generics.UpdateAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = Reservation.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        reservation = self.get_object()
+        if reservation.status == 'C':
+            return Response({'message': 'Reservation is already canceled'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if reservation.status == 'D':
+            return Response({'message': 'Cannot mark done reservation as canceled'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        #if reservation is assigned, update table status to available
+        if reservation.status == 'A':
+            reservation.table.status = 'A'
+            reservation.table.save()
+
+        #update status of reservation for both cases (P, A)
+        reservation.status = 'C'
+        reservation.save()
+
+        response = {
+            'message': 'Reservation marked as canceled successfully',
+            'data': ReservationSerializer(reservation).data
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+    
 class GetCurrentTableReservationAPIView(generics.RetrieveAPIView):
     permission_classes = [IsEmployeeOrAdmin]
     queryset = Reservation.objects.all()
@@ -196,7 +272,7 @@ class GetCurrentTableReservationAPIView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         table_id = kwargs.get('pk')
         try:
-            reservation = Reservation.objects.get(table=table_id, status='A')
+            reservation = Reservation.objects.filter(table=table_id, status='A').last()
             serializer = ReservationSerializer(reservation)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Reservation.DoesNotExist:

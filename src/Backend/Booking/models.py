@@ -18,7 +18,7 @@ class Reservation(models.Model):
     time = models.TimeField()
     number_of_guests = models.IntegerField(validators=[MinValueValidator(1)])
     note = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('A', 'Assigned'), ('D', 'Done')], default='P')
+    status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('A', 'Assigned'), ('D', 'Done'), ('C', 'Canceled')], default='P')
     table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, blank=True, null=True, default=None)
 
     def __str__(self):
