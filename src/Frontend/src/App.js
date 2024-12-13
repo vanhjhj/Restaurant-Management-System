@@ -23,7 +23,9 @@ import ViewSalesReports from "./Components/Admin/ViewSalesReports/ViewSalesRepor
 import ManageRestaurantInfo from "./Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo";
 import PurchaseHistory from "./Components/Customer/PurchaseHistory";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
+import ManageDepartment from "./Components/Admin/ManageDepartment";
 import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeDashboard";
+import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
 import { logout, refreshToken } from "./API/authAPI";
@@ -201,6 +203,18 @@ function App() {
                     />
 
                     <Route
+                    path="/verify-otp-employee"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <VerifyOtpAccount/>
+                        </ProtectedRoute>
+                    }
+                    />
+                    <Route
                     path="/register-employee-account"
                     element={
                         <ProtectedRoute
@@ -221,6 +235,19 @@ function App() {
                         userRole={userRole}
                         >
                         <ViewSalesReports />
+                        </ProtectedRoute>
+                    }
+                    />
+
+                    <Route
+                    path="/manage-department"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <ManageDepartment />
                         </ProtectedRoute>
                     }
                     />

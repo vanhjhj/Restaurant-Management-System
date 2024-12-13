@@ -127,3 +127,6 @@ export const CheckPassword =async(CusID,Pass,token)=>{
             throw error;
     }
 }
+
+
+

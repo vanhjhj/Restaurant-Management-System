@@ -1,6 +1,6 @@
 // src/Components/ManageEmployees.js
 import React from 'react';
-import './ManageEmployees.css';
+import style from './ManageEmployees.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 
