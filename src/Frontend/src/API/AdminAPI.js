@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../Config/apiConfig';
 export const FillInfoEmp = async (EmpId, InfoChange, token) => {
     try {
         const response = await axios.patch(
-            `${API_BASE_URL}/auth/customers/${EmpId}/`,
+            `${API_BASE_URL}/auth/employees/${EmpId}/`,
             InfoChange,
             {
                 headers: {
@@ -25,6 +25,72 @@ export const FillInfoEmp = async (EmpId, InfoChange, token) => {
         }
 };
 
-//Lấy thông tin bộ phận
+// Lấy danh sách bộ phận
+export const getDepartments = async (token) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/auth/departments/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching departments:', error);
+        throw error;
+    }
+};
+
+// Thêm bộ phận mới
+export const addDepartment = async (department,token) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/auth/departments/`, department,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error adding department:', error);
+        throw error;
+    }
+};
+
+// Cập nhật bộ phận 
+export const updateDepartment = async (id, updatedFields,token) => {
+    try {
+        const response = await axios.patch(`${API_BASE_URL}/auth/departments/${id}/`, updatedFields,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating department:', error);
+        throw error;
+    }
+};
+
+
+// Xóa bộ phận
+export const deleteDepartment = async (id,token) => {
+    try {
+        await axios.delete(`${API_BASE_URL}/auth/departments/${id}/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+    } catch (error) {
+        console.error('Error deleting department:', error);
+        throw error;
+    }
+};
 
 

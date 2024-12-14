@@ -1,33 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import style from "./../../../Style/AdminStyle/FillInfoEmployee.module.css";
 import { useAuth } from '../../Auth/AuthContext';
-import { FillInfoEmp/*, fetchDepartments*/ } from '../../../API/AdminAPI';
+import { refreshToken } from '../../../API/authAPI';
+import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
+import { FillInfoEmp, getDepartments } from '../../../API/AdminAPI';
 
 function FillInfoEmployee() {
     const { accessToken, setAccessToken } = useAuth();
     const refresh = localStorage.getItem('refreshToken');
-    const EmpID = localStorage.getItem('EmpID');
-
+    const {id} = useParams();
     const [formData, setFormData] = useState({
-        fullName: '',
-        dateOfBirth: '',
+        full_name: '',
+        date_of_birth: '',
         gender: '',
         address: '',
+        start_working_date: '',
         department: '',
-        account: '',
     });
 
     const [departments, setDepartments] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    // Đảm bảo token hợp lệ
+    const ensureActiveToken = async () => {
+        let activeToken = accessToken;
+        if (isTokenExpired(accessToken)) {
+            try {
+                const refreshed = await refreshToken(localStorage.getItem('refreshToken'));
+                activeToken = refreshed.access;
+                setAccessToken(activeToken);
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+                navigate('/login'); // Điều hướng nếu refresh token thất bại
+                throw error;
+            }
+        }
+        return activeToken;
+    };
 
     useEffect(() => {
-        // Load danh sách bộ phận từ database
         const loadDepartments = async () => {
             try {
                 const activeToken = await ensureActiveToken();
-                /*const departmentList = await fetchDepartments(activeToken);
-                setDepartments(departmentList); // Giả định `departmentList` là danh sách bộ phận từ API*/
+                const departmentList = await getDepartments(activeToken);
+                setDepartments(departmentList.results);
             } catch (err) {
                 console.error("Error fetching departments:", err);
                 setError("Không thể tải danh sách bộ phận.");
@@ -47,21 +66,90 @@ function FillInfoEmployee() {
 
     const handleSaveInfo = async () => {
         setIsSubmitting(true);
+        setError(null);
+    
+        // Lấy ngày hiện tại
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để chỉ so sánh ngày
+    
+        // Kiểm tra dữ liệu đầu vào
+        if (!formData.full_name || formData.full_name.trim() === "") {
+            setError("Họ và tên không được để trống.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        if (!formData.date_of_birth) {
+            setError("Ngày sinh không được để trống.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        // Kiểm tra tuổi >= 18
+        const birthDate = new Date(formData.date_of_birth);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const ageCheck = today < new Date(birthDate.setFullYear(birthDate.getFullYear() + age)) ? age - 1 : age;
+    
+        if (ageCheck < 18) {
+            setError("Nhân viên chưa đủ 18 tuổi.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        if (!formData.gender) {
+            setError("Giới tính không được để trống.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        if (!formData.department) {
+            setError("Vui lòng chọn bộ phận.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        if (!formData.start_working_date) {
+            setError("Ngày bắt đầu làm việc không được để trống.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        // Kiểm tra ngày bắt đầu làm việc >= ngày hiện tại
+        const startDate = new Date(formData.start_working_date);
+        if (startDate < today) {
+            setError("Ngày bắt đầu làm việc đang là quá khứ.");
+            setIsSubmitting(false);
+            return;
+        }
+    
+        // Chuẩn bị dữ liệu gửi lên API
+        const sanitizedData = {
+            full_name: formData.full_name.trim(),
+            date_of_birth: formData.date_of_birth,
+            gender: formData.gender,
+            address: formData.address ? formData.address.trim() : "",
+            start_working_date: formData.start_working_date,
+            department: formData.department,
+        };
+    
         try {
             const activeToken = await ensureActiveToken();
-            await FillInfoEmp(EmpID, formData, activeToken);
+            console.log("Dữ liệu gửi lên API:", sanitizedData);
+            await FillInfoEmp(id, sanitizedData, activeToken);
             alert("Thông tin nhân viên đã được lưu thành công.");
         } catch (error) {
-            console.error("Error filling employee info:", error);
-            setError("Không thể cập nhật thông tin.");
+            console.error("Error filling employee info:", error.response?.data || error.message);
+            setError("Không thể cập nhật thông tin. Vui lòng thử lại.");
         } finally {
             setIsSubmitting(false);
         }
     };
+    
+    
 
     return (
         <div className={style["fill-info-employee-container"]}>
-            <h2>Nhập thông tin nhân viên</h2>
+            <h2 className={style["fill-info-employee-header"]}>Thông tin nhân viên</h2>
             {error && <p className={style["error-message"]}>{error}</p>}
             <form className={style["fill-info-employee-form"]} onSubmit={(e) => e.preventDefault()}>
                 {/* Họ và tên */}
@@ -69,8 +157,8 @@ function FillInfoEmployee() {
                     <label>Họ và Tên</label>
                     <input
                         type="text"
-                        name="fullName"
-                        value={formData.fullName}
+                        name="full_name"
+                        value={formData.full_name}
                         onChange={handleInputChange}
                         placeholder="Nhập họ và tên"
                         required
@@ -82,8 +170,8 @@ function FillInfoEmployee() {
                     <label>Ngày sinh</label>
                     <input
                         type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
+                        name="date_of_birth"
+                        value={formData.date_of_birth}
                         onChange={handleInputChange}
                         required
                     />
@@ -102,6 +190,18 @@ function FillInfoEmployee() {
                         <option value="Nam">Nam</option>
                         <option value="Nữ">Nữ</option>
                     </select>
+                </div>
+
+                 {/* Ngày bắt đầu làm việc */}
+                 <div className={style["form-group"]}>
+                    <label>Ngày bắt đầu làm việc</label>
+                    <input
+                        type="date"
+                        name="start_working_date"
+                        value={formData.start_working_date}
+                        onChange={handleInputChange}
+                        required
+                    />
                 </div>
 
                 {/* Địa chỉ */}
@@ -127,24 +227,11 @@ function FillInfoEmployee() {
                     >
                         <option value="">Chọn bộ phận</option>
                         {departments.map((dept) => (
-                            <option key={dept.id} value={dept.name}>
+                            <option key={dept.id} value={dept.id}>
                                 {dept.name}
                             </option>
                         ))}
                     </select>
-                </div>
-
-                {/* Tài khoản */}
-                <div className={style["form-group"]}>
-                    <label>Tài khoản</label>
-                    <input
-                        type="text"
-                        name="account"
-                        value={formData.account}
-                        onChange={handleInputChange}
-                        placeholder="Nhập tài khoản"
-                        required
-                    />
                 </div>
 
                 <button

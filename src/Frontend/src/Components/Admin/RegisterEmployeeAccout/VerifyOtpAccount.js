@@ -63,10 +63,10 @@ function VerifyOTP() {
 
         // Đăng ký tài khoản
         const responseRegister=await register(userData, token);
-        localStorage.setItem('EmpID',responseRegister.id);
+        const id=responseRegister.id;
         alert('dang ki thanh cong');
 
-        navigate('/fill-info-Employee');
+        navigate(`/fill-info-emp/${id}`);
     } catch (err) {
       const errorMessage = err.response?.data?.detail || 'Mã OTP không hợp lệ. Vui lòng thử lại.';
       setError(errorMessage);
