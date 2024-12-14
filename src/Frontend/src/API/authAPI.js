@@ -136,17 +136,11 @@ export const resetPassword = async (resetData, token) => {
 };
 
 // Hàm refresh token
-export const refreshToken = async (refreshToken,accessToken) => {
+export const refreshToken = async (refreshToken) => {
   try {
       const response = await axios.post(
           `${API_BASE_URL}/auth/token/refresh/`,
           {refresh: refreshToken},
-          {
-              headers: {
-                  Authorization: `Bearer ${accessToken}`, // Gửi token qua header Authorization
-                  'Content-Type': 'application/json', // Định dạng nội dung JSON
-              },
-          }
       );
       // Trả về dữ liệu nếu thành công
       console.log('lam moi token thanh cong:', response.data.message);

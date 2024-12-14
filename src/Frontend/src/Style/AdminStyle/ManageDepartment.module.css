@@ -1,0 +1,115 @@
+/* Container tổng */
+.manage-department-container {
+    margin: 100px auto 0 auto;
+    max-width: 1200px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: flex;
+}
+
+/* Tiêu đề */
+.manage-department-header {
+    text-align: center;
+    font-family: Courier;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #333;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+
+/* Bảng */
+.department-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.department-table th,
+.department-table td {
+    padding: 10px 16px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.department-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.department-table td {
+    background-color: #fff;
+}
+
+/* Nút hành động */
+.department-table .edit-button,
+.department-table .delete-button {
+    width: 80px;
+    justify-content: center;
+    gap: 4px;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.department-table .edit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.department-table .edit-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.department-table .delete-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.department-table .delete-button:hover {
+    background-color: #a71d2a;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Nút thêm bộ phận */
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.manage-department-button {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #155e58;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.manage-department-button:hover {
+    background-color: #176e67;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon */
+.departmant-icon {
+    margin-left: 6px;
+    font-size: 18px;
+    vertical-align: middle;
+}

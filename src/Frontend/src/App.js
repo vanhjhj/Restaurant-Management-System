@@ -23,7 +23,12 @@ import ViewSalesReports from "./Components/Admin/ViewSalesReports/ViewSalesRepor
 import ManageRestaurantInfo from "./Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo";
 import PurchaseHistory from "./Components/Customer/PurchaseHistory";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
+import AddDepartment from "./Components/Admin/ManagerDepartment/AddDepartment";
+import EditDepartment from "./Components/Admin/ManagerDepartment/EditDepartment";
+import FillInfoEmployee from "./Components/Admin/RegisterEmployeeAccout/FillInfoEmployee";
+import ManageDepartment from "./Components/Admin/ManagerDepartment/ManageDepartment";
 import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeDashboard";
+import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
 import { logout, refreshToken } from "./API/authAPI";
@@ -201,6 +206,32 @@ function App() {
                     />
 
                     <Route
+                    path="/verify-otp-employee"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <VerifyOtpAccount/>
+                        </ProtectedRoute>
+                    }
+                    />
+
+<Route
+                    path="/fill-info-Emp/:id"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <FillInfoEmployee/>
+                        </ProtectedRoute>
+                    }
+                    />
+
+                    <Route
                     path="/register-employee-account"
                     element={
                         <ProtectedRoute
@@ -221,6 +252,45 @@ function App() {
                         userRole={userRole}
                         >
                         <ViewSalesReports />
+                        </ProtectedRoute>
+                    }
+                    />
+
+                    <Route
+                    path="/manage-department"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <ManageDepartment />
+                        </ProtectedRoute>
+                    }
+                    />
+
+                    <Route
+                    path="/add-department"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <AddDepartment/>
+                        </ProtectedRoute>
+                    }
+                    />
+
+                    <Route
+                    path="/edit-department/:id"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <EditDepartment />
                         </ProtectedRoute>
                     }
                     />
