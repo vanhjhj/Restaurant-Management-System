@@ -70,7 +70,96 @@
     margin-bottom: 10px;
 }
 
+.search-row{
+    display:flex;
+    padding-top: 20px;
+}
+
+.search-cus{
+    position: relative;
+    align-items: center;
+}
+
+.input-search-cus{
+    width: 100%;
+    padding-right: 2.5rem;
+    padding-left: 1rem;
+    box-sizing: border-box;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px; 
+}
+
+.input-search-btn{
+    position: absolute;
+    right: 0.5rem; /* Position the button slightly from the right edge */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the button */
+    background: none; /* Remove default background */
+    border: none; /* Remove default border */
+    padding: 0.5rem; /* Add padding for aesthetics */
+    cursor: pointer; /* Make the button clickable */
+}
+
+.status-search-row{
+    margin-top:20px;
+}
+
+.status-search{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.status-search ul{
+    list-style: none;
+    display: flex;
+    gap: 15px; /* Giảm khoảng cách giữa các mục menu */
+    margin: 0;
+    padding: 0;
+}
+
+.status-search-btn{
+    padding: 10px 20px;
+    border: none;
+    background-color: #f4f4f4; /* light gray for non-active tabs */
+    color: #333;
+    cursor: pointer;
+    border-radius: 30px; /* rounded buttons */
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.status-search-btn.active{
+    background-color: #ff8243; /* distinct color */
+    color: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
 .reservation-info{
     margin-top: 20px;
+    box-sizing: border-box;
     border:2px solid rgb(204 204 204 / 80%);
 }
+
+.reservation-info h5{
+    text-align: center;
+    border-bottom: 2px solid rgb(204 204 204 / 80%);
+    padding: 10px 0px;
+}
+
+.reservation-info p{
+    padding:0px 10px;
+    margin-bottom: 10px;
+}
+
+.table-info-ctn{
+    margin-top: 40px;
+}
+
+.input-table{
+    display: inline-block;
+}
+
