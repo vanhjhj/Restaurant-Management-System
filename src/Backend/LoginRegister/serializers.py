@@ -137,3 +137,9 @@ class ResetPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({'password': list(e.messages)})
         
         return attrs
+    
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'

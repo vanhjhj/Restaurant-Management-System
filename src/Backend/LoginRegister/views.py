@@ -389,3 +389,49 @@ class CheckPasswordAPIView(generics.CreateAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
         return Response({'password': 'Incorrect password'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class DepartmentListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class DepartmentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    lookup_field = 'pk'
+    permission_classes = [permissions.IsAdminUser]
+
+    def put(self, request, *args, **kwargs):
+        return Response({"detail": "Method 'PUT' not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        if 'id' in request.data.keys():
+            return Response({'id': 'You cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        department = self.get_object()
+        serializer = self.serializer_class(department, data=request.data, partial=True)
+
+        if serializer.is_valid(raise_exception=True):
+            for key, value in request.data.items():
+                setattr(department, key, value)
+            department.save()
+
+            response = {
+                'message': 'Department updated successfully',
+                'status': 'success',
+                'data': serializer.data
+            }
+            return Response(response, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        department = self.get_object()
+        try:
+            department.delete()
+        except IntegrityError:
+            return Response({'message': 'Cannot delete this department due to integrity constraints'}, status=status.HTTP_400_BAD_REQUEST)
+
+        response = {
+            'status': 'success',
+            'message': 'Department deleted successfully'
+        }
+        return Response(response, status=status.HTTP_200_OK)
