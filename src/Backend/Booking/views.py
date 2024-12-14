@@ -203,6 +203,33 @@ class ReservationAssignTableAPIView(generics.UpdateAPIView):
         
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class ReservationUnassignTableAPIView(generics.UpdateAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = Reservation.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        reservation = self.get_object()
+
+        if (not reservation.table) or (reservation.status != 'A'):
+            return Response({'message': 'Reservation does not have any assigned table'}, status=status.HTTP_400_BAD_REQUEST)
+
+        reservation.table.status = 'A'
+        reservation.table.save()
+
+        reservation.table = None
+        reservation.status = 'P'
+        reservation.save()
+
+        response = {
+            'message': 'Table unassigned successfully',
+            'data': ReservationSerializer(reservation).data
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+    
 class ReservationMarkDoneAPIView(generics.UpdateAPIView):
     permission_classes = [IsEmployeeOrAdmin]
     queryset = Reservation.objects.all()

@@ -10,6 +10,7 @@ urlpatterns = [
     path('reservations/assign-table/<int:pk>/', views.ReservationAssignTableAPIView.as_view(), name='reservation-assign-table'),
     path('reservations/mark-done/<int:pk>/', views.ReservationMarkDoneAPIView.as_view(), name='reservation-mark-done'),
     path('reservations/mark-cancel/<int:pk>/', views.ReservationMarkCancelAPIView.as_view(), name='reservation-mark-cancel'),
+    path('reservations/unassign-table/<int:pk>/', views.ReservationUnassignTableAPIView.as_view(), name='reservation-unassign-table'),
     
     path('orders/', views.OrderListCreateAPIView.as_view(), name='order-list-create'),
     path('orders/<int:pk>/', views.OrderRetrieveUpdateDestroyAPIView.as_view(), name='order-retrieve-update-destroy'),
