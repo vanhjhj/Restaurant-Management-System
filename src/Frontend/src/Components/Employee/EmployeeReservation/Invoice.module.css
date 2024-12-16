@@ -1,0 +1,89 @@
+.container{
+    composes: container from '../../../Style/bootstrap.min.css';
+}
+
+.row{
+    composes: row from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-12{
+    composes: col-lg-12 from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-6{
+    composes: col-lg-6 from '../../../Style/bootstrap.min.css';
+}
+
+.ctn{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* Hiển thị modal phía trên cùng */
+}
+
+.invoice-ctn{
+    width: 100%;
+    height: 600px;
+    padding: 10px 20px;
+    background-color: white;
+    overflow: hidden;
+    margin: 0px 20px;
+}
+
+.invoice-info-ctn{
+    border-right: 1px solid black;
+    display: grid;
+    grid-template-rows: 1fr 5fr 3fr 1fr;
+    padding-right:20px;
+}
+
+.invoice-info-title{
+    display: flex;
+}
+
+.ordered-food-ctn{
+    overflow-x: hidden;
+}
+
+.table-food {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  .table-food tbody {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    height: 200px;
+  }
+  .table-food thead tr {
+    display: block;
+  }
+  .table-food thead {
+    background: rgb(91, 91, 91);
+    color: #fff;
+  }
+  .table-food th,
+  .table-food td {
+    padding: 5px;
+    text-align: left;
+    width: 200px;
+    
+  }
+  .table-food td{
+    border: 1px solid #ccc;
+  }
+
+.total-money-ctn{
+    display: flex;
+}
+
+.btn-ctn{
+    display: flex;
+}

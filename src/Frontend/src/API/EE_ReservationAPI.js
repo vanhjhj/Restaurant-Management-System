@@ -19,7 +19,13 @@ export const fetchTablesData = async (token) => {
 
 export const fetchReservationData = async (token) => {
   try {
-      const response = await axios.get(`${API_BASE_URL}/booking/reservations/?order=status/`,
+      const today = new Date();
+
+      const day = today.getDate(); 
+      const month = today.getMonth() + 1; 
+      const year = today.getFullYear(); 
+      const formattedDate = `${year}-${month}-${day}`;
+      const response = await axios.get(`${API_BASE_URL}/booking/reservations/?date=${formattedDate}&ordering=status`,
       {
           headers: {
             Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
@@ -96,5 +102,59 @@ export const unsignTableAPI = async (token, rID) => {
   }
   catch(error) {
       throw error;
+  }
+}
+
+export const createOrder = async (token, tID) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/booking/orders/`,{table: tID},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const fetchOrderData = async (token, tID) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/booking/tables/current-order/${tID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const fetchOrderItemData = async (token, oID) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/booking/orderitems/?order=${oID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
   }
 }
