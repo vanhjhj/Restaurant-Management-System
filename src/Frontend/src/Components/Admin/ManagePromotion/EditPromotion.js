@@ -22,6 +22,7 @@ function EditPromotion() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { accessToken } = useAuth();
+  const [originalPromotion, setOriginalPromotion] = useState({});
 
   useEffect(() => {
     async function getPromotion() {
@@ -29,6 +30,7 @@ function EditPromotion() {
         const data = await fetchPromotionByCode(code);
         if (data) {
           setPromotion(data); // Gán dữ liệu từ API
+          setOriginalPromotion(data);
         }
       } catch (error) {
         console.error("Error fetching promotion:", error);
@@ -76,20 +78,21 @@ function EditPromotion() {
     }
 
     const hasChanges =
-      title !== promotion.title ||
-      description !== promotion.description ||
-      startdate !== promotion.startdate ||
-      enddate !== promotion.enddate ||
-      discount !== promotion.discount ||
-      (promotion.image instanceof File && promotion.image.name !== image.name); // Kiểm tra hình ảnh
+      promotion.title !== originalPromotion.title ||
+      promotion.description !== originalPromotion.description ||
+      new Date(promotion.startdate).toISOString() !==
+        new Date(originalPromotion.startdate).toISOString() ||
+      new Date(promotion.enddate).toISOString() !==
+        new Date(originalPromotion.enddate).toISOString() ||
+      promotion.discount !== originalPromotion.discount ||
+      promotion.image instanceof File; // Kiểm tra file ảnh
 
     if (!hasChanges) {
       setError("Chưa có thay đổi gì để cập nhật.");
-      return; // Không gửi yêu cầu PATCH nếu không có thay đổi
+      return;
     }
 
     try {
-      // Gửi dữ liệu cập nhật
       await updatePromotion(code, promotion, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");

@@ -1,116 +1,164 @@
-/* src/Components/ManageMenu.css */
-
-.manage-menu {
-    padding: 40px;
-    max-width: 1000px;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.manage-menu-container {
+  display: flex;
+  font-family: Arial, sans-serif;
+  padding-top: 60px;
 }
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.manage-menu h3 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #000000;
 }
-
+.manage-menu h4 {
+  font-size: 20px;
+  font-weight: lighter;
+  color: #380101;
+}
+.add-category-button {
+  width: 70%;
+  padding: 1rem;
+  border-right: 2px solid #ddd;
+  color: #ffffff;
+  border-radius: 5px;
+  font-size: 24px;
+}
+.add-food-button {
+  width: 20%;
+  padding: 1rem;
+  border-right: 2px solid #ddd;
+  color: #ffffff;
+  border-radius: 5px;
+  font-size: 24px;
+}
 .back-button {
-    font-size: 16px;
-    color: #333;
-    background: none;
-    border: none;
-    cursor: pointer;
+  position: fixed;
+  top: 120px;
+  left: 20 px;
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
-h2 {
-    font-size: 28px;
-    color: #1a1a1a;
+button:hover {
+  background-color: #7c9197;
+}
+.no-food-message {
+  font-size: 1.2rem;
+  color: #888;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-style: italic;
 }
 
-h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
+/* Sidebar Styles */
+.menu-sidebar {
+  width: 20%;
+  padding: 1rem;
 }
 
-.dishes-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
+.menu-sidebar h3,
+.menu-sidebar h4 {
+  margin-bottom: 1rem;
+  color: #333;
 }
 
-.dish-item {
-    width: 30%;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    text-align: center;
+.menu-tab {
+  display: block;
+  width: 50%;
+  margin: 0.5rem 0;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #8f8686;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 10px;
+}
+.menu-tab.active {
+  background-color: rgb(141, 89, 40);
+  color: #ffffff;
 }
 
-.dish-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
+.add-category-button {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: #0f4758;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.dish-name {
-    font-size: 16px;
-    margin: 10px 0;
+/* Main Content */
+.menu-content {
+  width: 80%;
+  padding: 2rem;
+  text-align: center;
 }
 
-.edit-button, .delete-button {
-    background: none;
-    border: none;
-    font-size: 14px;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 5px;
+.food-items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.food-price {
+  font-size: 1rem;
+  color: #888; /* Màu xám nhạt */
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.food-item-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  width: 200px;
+}
+
+.food-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.food-card-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem;
+}
+
+.edit-button,
+.delete-button {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .edit-button {
-    color: #4CAF50; /* Green for edit */
+  background-color: #ffcc80;
+  color: #ffffff;
 }
 
 .delete-button {
-    color: #f44336; /* Red for delete */
+  background-color: #ef9a9a;
+  color: #ffffff;
 }
 
-.actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.add-dish-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #333;
-    background-color: #fbd2af;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.save-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    color: white;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s;
-}
-
-.save-button:hover {
-    background-color: #45a049;
+.add-food-button {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #0f4758;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
 }

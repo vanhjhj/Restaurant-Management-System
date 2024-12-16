@@ -1,45 +1,127 @@
-// src/Components/ManageMenu.js
-import React from 'react';
-import './ManageMenu.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import {
+  getMenuTabs,
+  getFoodItems,
+  getFoodItemsByID,
+} from "../../../API/MenuAPI";
+import "./ManageMenu.css";
+import { useNavigate } from "react-router-dom";
 
-function ManageMenu() {
-    const dishes = [
-        { id: 1, name: "Manam Tiste", imageUrl: "/assets/images/dish1.jpg" },
-        { id: 2, name: "Aut Luia", imageUrl: "/assets/images/dish2.jpg" },
-        { id: 3, name: "Est Eligendi", imageUrl: "/assets/images/dish3.jpg" },
-        // Add more dishes as necessary
-    ];
+const ManageMenu = () => {
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [foodItems, setFoodItems] = useState([]);
+  const navigate = useNavigate();
 
-    return (
-        <div className="manage-menu">
-            <div className="header">
-                <h2>Quản lý thực đơn</h2>
-            </div>
-            <h3>Thực đơn hiện có</h3>
-            <div className="dishes-container">
-                {dishes.map((dish) => (
-                    <div key={dish.id} className="dish-item">
-                        <img src={dish.imageUrl} alt={dish.name} className="dish-image" />
-                        <p className="dish-name">{dish.name}</p>
-                        <button className="edit-button">
-                            <FontAwesomeIcon icon={faEdit} /> Chỉnh sửa
-                        </button>
-                        <button className="delete-button">
-                            <FontAwesomeIcon icon={faTrash} /> Xóa
-                        </button>
-                    </div>
-                ))}
-            </div>
-            <div className="actions">
-                <button className="add-dish-button">
-                    Tạo món ăn mới <FontAwesomeIcon icon={faPlus} />
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getMenuTabs();
+        setCategories(data);
+        if (data.length > 0) setSelectedCategory(data[0].id); // Chọn mục đầu tiên
+      } catch (error) {
+        console.error("Error fetching menu categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchFoodItems = async () => {
+      try {
+        if (selectedCategory) {
+          const data = await getFoodItems();
+          const filteredItems = data.filter(
+            (item) => item.category === selectedCategory
+          );
+          setFoodItems(filteredItems);
+        }
+      } catch (error) {
+        console.error("Error fetching food items:", error);
+      }
+    };
+
+    fetchFoodItems();
+  }, [selectedCategory]);
+
+  const formatPrice = (price) => {
+    return `${price.toLocaleString("vi-VN")} VND`;
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa món ăn này không?")) {
+      // API delete logic
+      console.log("Deleting food item:", id);
+      setFoodItems(foodItems.filter((item) => item.id !== id));
+    }
+  };
+
+  return (
+    <div className="manage-menu-container">
+      {/* Sidebar */}
+      <div className="menu-sidebar">
+        <button onClick={() => navigate(-1)} className="back-button">
+          ← Back
+        </button>
+        <h3>Thực đơn hiện tại</h3>
+        <h4>Danh sách mục có sẵn</h4>
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            className={`menu-tab ${
+              selectedCategory === category.id ? "active" : ""
+            }`}
+            onClick={() => setSelectedCategory(category.id)}
+          >
+            {category.name}
+          </button>
+        ))}
+        <button className="add-category-button">Tạo mục mới +</button>
+      </div>
+
+      {/* Main Content */}
+      <div className="menu-content">
+        <h2>Quản lý thực đơn</h2>
+        {foodItems.length === 0 && (
+          <p className="no-food-message">Chưa có món ăn nào, hãy thêm mới!</p>
+        )}
+        <div className="food-items-container">
+          {foodItems.map((item) => (
+            <div key={item.id} className="food-item-card">
+              <img
+                src={item.image || "https://via.placeholder.com/150"}
+                alt={item.name}
+                className="food-image"
+              />
+              <h4>{item.name}</h4>
+              <p className="food-price">{formatPrice(item.price)}</p>
+              <div className="food-card-buttons">
+                <button
+                  className="edit-button"
+                  onClick={() => navigate(`/edit-food/${item.id}`)}
+                >
+                  Chỉnh sửa
                 </button>
-                <button className="save-button">Lưu thay đổi</button>
+                <button
+                  className="delete-button"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  Xóa
+                </button>
+              </div>
             </div>
+          ))}
         </div>
-    );
-}
+        <button
+          className="add-food-button"
+          onClick={() => navigate("/add-food")}
+        >
+          Tạo món ăn mới +
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default ManageMenu;

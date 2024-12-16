@@ -20,16 +20,7 @@ export const fetchPromotionByCode = async (code) => {
       `${API_BASE_URL}/promotion/promotions/${code}/`
     );
 
-    const promotion = response.data;
-    return {
-      code: promotion.code,
-      title: promotion.title,
-      startdate: promotion.startdate,
-      enddate: promotion.enddate,
-      description: promotion.description,
-      image: promotion.image,
-      discount: promotion.discount,
-    };
+    return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy thông tin ưu đãi:", error.message);
     throw error;

@@ -1,10 +1,17 @@
 import axios from "axios";
 import { API_BASE_URL } from "../Config/apiConfig";
 
-export const getFoodItemsByID = async (id) => {};
-export const postMenuTab = async () => {
+export const getFoodItemsByID = async (id) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/menu/categories/`);
+    const response = await axios.get(`${API_BASE_URL}/menu/menuitems/${id}/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const getMenuTabByID = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/menu/categories/${id}/`);
     return response.data;
   } catch (error) {
     throw error;
