@@ -13,7 +13,7 @@ function EditPromotion() {
   const [promotion, setPromotion] = useState({
     title: "",
     description: "",
-    image: null,
+    image: "",
     discount: 0,
     startdate: "",
     enddate: "",
@@ -28,7 +28,7 @@ function EditPromotion() {
       try {
         const data = await fetchPromotionByCode(code);
         if (data) {
-          setPromotion(data);
+          setPromotion(data); // Gán dữ liệu từ API
         }
       } catch (error) {
         console.error("Error fetching promotion:", error);
@@ -42,10 +42,10 @@ function EditPromotion() {
   }, [code]);
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value, files } = e.target;
     setPromotion((prevPromotion) => ({
       ...prevPromotion,
-      [name]: type === "file" ? files[0] : value, // Lưu file nếu input là file
+      [name]: files ? files[0] : value, // Nếu có file, lấy file, không thì lấy giá trị input
     }));
   };
 
@@ -62,7 +62,8 @@ function EditPromotion() {
       return;
     }
 
-    const { startdate, enddate, discount } = promotion;
+    const { startdate, enddate, discount, image, title, description } =
+      promotion;
 
     if (discount < 0 || discount > 100) {
       setError("Giảm giá phải nằm trong khoảng 0-100%.");
@@ -74,24 +75,26 @@ function EditPromotion() {
       return;
     }
 
+    const hasChanges =
+      title !== promotion.title ||
+      description !== promotion.description ||
+      startdate !== promotion.startdate ||
+      enddate !== promotion.enddate ||
+      discount !== promotion.discount ||
+      (promotion.image instanceof File && promotion.image.name !== image.name); // Kiểm tra hình ảnh
+
+    if (!hasChanges) {
+      setError("Chưa có thay đổi gì để cập nhật.");
+      return; // Không gửi yêu cầu PATCH nếu không có thay đổi
+    }
+
     try {
-      const updatedPromotion = {
-        title: promotion.title,
-        description: promotion.description,
-        discount: discount,
-        image: promotion.image,
-        startdate,
-        enddate,
-      };
-      await updatePromotion(code, updatedPromotion, accessToken);
+      // Gửi dữ liệu cập nhật
+      await updatePromotion(code, promotion, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");
     } catch (error) {
-      if (error.response) {
-        console.error("Lỗi từ server:", error.response.data);
-      } else {
-        console.error("Lỗi khác:", error.message);
-      }
+      console.error("Lỗi khi cập nhật ưu đãi:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
     }
   };
@@ -109,8 +112,7 @@ function EditPromotion() {
         ← Back
       </button>
       <h2>Chỉnh sửa ưu đãi {code}</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-      {/* Hiển thị lỗi nếu có */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>

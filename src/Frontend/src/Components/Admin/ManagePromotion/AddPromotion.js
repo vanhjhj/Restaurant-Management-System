@@ -97,7 +97,6 @@ function AddPromotion() {
       </button>
       <h2>Thêm ưu đãi mới</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-      {/* Hiển thị lỗi nếu có */}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
           <label htmlFor="code">Mã ưu đãi</label>

@@ -6,23 +6,14 @@ import { refreshToken } from "./authAPI";
 export const fetchPromotions = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/promotion/promotions/`);
-    const filteredPromotions = response.data.results.map((promotion) => ({
-      code: promotion.code,
-      title: promotion.title,
-      startdate: promotion.startdate,
-      enddate: promotion.enddate,
-      description: promotion.description,
-      image: promotion.image,
-      discount: promotion.discount,
-    }));
-
-    return filteredPromotions;
+    return response.data.results;
   } catch (error) {
-    console.error("Error fetching promotions:", error);
+    console.error("Lỗi khi lấy danh sách ưu đãi:", error.message);
     throw error;
   }
 };
 
+// Hàm lấy thông tin ưu đãi cụ thể theo mã code
 export const fetchPromotionByCode = async (code) => {
   try {
     const response = await axios.get(
@@ -30,7 +21,7 @@ export const fetchPromotionByCode = async (code) => {
     );
 
     const promotion = response.data;
-    const filteredPromotion = {
+    return {
       code: promotion.code,
       title: promotion.title,
       startdate: promotion.startdate,
@@ -39,10 +30,8 @@ export const fetchPromotionByCode = async (code) => {
       image: promotion.image,
       discount: promotion.discount,
     };
-
-    return filteredPromotion;
   } catch (error) {
-    console.error("Error fetching promotion:", error);
+    console.error("Lỗi khi lấy thông tin ưu đãi:", error.message);
     throw error;
   }
 };
@@ -55,28 +44,19 @@ export const deletePromotion = async (code, accessToken) => {
   }
 
   try {
-    const response = await axios.delete(
-      `${API_BASE_URL}/promotion/promotions/${code}/`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    console.log("Ưu đãi đã được xóa:", response.data);
-    return response.data;
+    await axios.delete(`${API_BASE_URL}/promotion/promotions/${code}/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    console.log("Xóa ưu đãi thành công");
   } catch (error) {
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
       const newToken = await refreshToken(
         localStorage.getItem("refresh_token")
       );
-      if (newToken) {
-        return await deletePromotion(code, newToken); // Gọi lại với token mới
-      }
-    } else {
-      console.error("Lỗi khi xóa ưu đãi:", error.message);
+      if (newToken) return await deletePromotion(code, newToken);
     }
+    console.error("Lỗi khi xóa ưu đãi:", error.message);
     throw error;
   }
 };
@@ -92,8 +72,8 @@ export const addPromotion = async (promotion, accessToken) => {
     const formData = new FormData();
     formData.append("code", promotion.code);
     formData.append("title", promotion.title);
-    formData.append("startdate", promotion.startdate); // Đảm bảo định dạng ngày đúng
-    formData.append("enddate", promotion.enddate); // Đảm bảo định dạng ngày đúng
+    formData.append("startdate", promotion.startdate);
+    formData.append("enddate", promotion.enddate);
     formData.append("description", promotion.description);
     formData.append("image", promotion.image);
     formData.append("discount", promotion.discount);
@@ -111,17 +91,14 @@ export const addPromotion = async (promotion, accessToken) => {
 
     return response.data;
   } catch (error) {
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
       const newToken = await refreshToken(
         localStorage.getItem("refresh_token")
       );
-      if (newToken) {
-        return await addPromotion(promotion, newToken); // Gọi lại với token mới
-      }
-    } else {
-      console.error("Lỗi khi thêm ưu đãi:", error.message);
+      if (newToken) return await addPromotion(promotion, newToken);
     }
+    console.error("Lỗi khi thêm mới ưu đãi:", error.message);
     throw error;
   }
 };
@@ -134,29 +111,40 @@ export const updatePromotion = async (code, promotion, accessToken) => {
   }
 
   try {
+    const formData = new FormData();
+    formData.append("title", promotion.title);
+    formData.append("description", promotion.description);
+    formData.append("startdate", promotion.startdate);
+    formData.append("enddate", promotion.enddate);
+    formData.append("discount", promotion.discount);
+
+    if (promotion.image instanceof File) {
+      formData.append("image", promotion.image);
+    }
+
     const response = await axios.patch(
       `${API_BASE_URL}/promotion/promotions/${code}/`,
-      promotion,
+      formData,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );
+
+    console.log("Cập nhật thành công:", response.data);
     return response.data;
   } catch (error) {
+    console.error("Lỗi chi tiết từ backend:", error.response?.data);
     if (error.response && error.response.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
       const newToken = await refreshToken(
         localStorage.getItem("refresh_token")
       );
-      if (newToken) {
-        return await updatePromotion(code, promotion, newToken); // Gọi lại với token mới
-      }
-    } else {
-      console.error("Lỗi khi cập nhật ưu đãi:", error.message);
+      if (newToken) return await updatePromotion(code, promotion, newToken);
     }
+    console.error("Lỗi khi cập nhật ưu đãi:", error.message);
     throw error;
   }
 };
