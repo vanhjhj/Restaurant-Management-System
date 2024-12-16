@@ -80,6 +80,7 @@ class OrderItem(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     total = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     note = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=[('P', 'Preparing'), ('D', 'Done')], default='P')
 
     def __str__(self):
         return f"{self.order} - {self.menu_item} - {self.quantity} - {self.total}"

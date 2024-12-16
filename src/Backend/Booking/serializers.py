@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 import datetime
+from Menu.serializers import MenuItemSerializer
 
 class TableSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -71,11 +72,12 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
-    menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+    #menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+    menu_item = MenuItemSerializer()
 
     class Meta:
         model = OrderItem
-        fields = ('id', 'order', 'menu_item', 'quantity', 'price', 'total', 'note')
+        fields = ('id', 'order', 'menu_item', 'quantity', 'price', 'total', 'note', 'status')
         extra_kwargs = {
             'price': {'read_only': True},
             'total': {'read_only': True},
