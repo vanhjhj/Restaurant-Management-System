@@ -7,7 +7,7 @@ export const fetchPromotions = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/promotion/promotions/`);
     const filteredPromotions = response.data.results.map((promotion) => ({
-      id: promotion.id,
+      code: promotion.code,
       title: promotion.title,
       startdate: promotion.startdate,
       enddate: promotion.enddate,
@@ -23,15 +23,15 @@ export const fetchPromotions = async () => {
   }
 };
 
-export const fetchPromotionById = async (id) => {
+export const fetchPromotionByCode = async (code) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/promotion/promotions/${id}/`
+      `${API_BASE_URL}/promotion/promotions/${code}/`
     );
 
     const promotion = response.data;
     const filteredPromotion = {
-      id: promotion.id,
+      code: promotion.code,
       title: promotion.title,
       startdate: promotion.startdate,
       enddate: promotion.enddate,
@@ -48,7 +48,7 @@ export const fetchPromotionById = async (id) => {
 };
 
 // Hàm xóa một ưu đãi
-export const deletePromotion = async (id, accessToken) => {
+export const deletePromotion = async (code, accessToken) => {
   if (!accessToken) {
     console.error("Token không tồn tại");
     return;
@@ -56,7 +56,7 @@ export const deletePromotion = async (id, accessToken) => {
 
   try {
     const response = await axios.delete(
-      `${API_BASE_URL}/promotion/promotions/${id}/`,
+      `${API_BASE_URL}/promotion/promotions/${code}/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -72,7 +72,7 @@ export const deletePromotion = async (id, accessToken) => {
         localStorage.getItem("refresh_token")
       );
       if (newToken) {
-        return await deletePromotion(id, newToken); // Gọi lại với token mới
+        return await deletePromotion(code, newToken); // Gọi lại với token mới
       }
     } else {
       console.error("Lỗi khi xóa ưu đãi:", error.message);
@@ -90,6 +90,7 @@ export const addPromotion = async (promotion, accessToken) => {
 
   try {
     const formData = new FormData();
+    formData.append("code", promotion.code);
     formData.append("title", promotion.title);
     formData.append("startdate", promotion.startdate); // Đảm bảo định dạng ngày đúng
     formData.append("enddate", promotion.enddate); // Đảm bảo định dạng ngày đúng
@@ -126,7 +127,7 @@ export const addPromotion = async (promotion, accessToken) => {
 };
 
 // Hàm cập nhật ưu đãi
-export const updatePromotion = async (id, promotion, accessToken) => {
+export const updatePromotion = async (code, promotion, accessToken) => {
   if (!accessToken) {
     console.error("Token không tồn tại");
     return;
@@ -134,7 +135,7 @@ export const updatePromotion = async (id, promotion, accessToken) => {
 
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/promotion/promotions/${id}/`,
+      `${API_BASE_URL}/promotion/promotions/${code}/`,
       promotion,
       {
         headers: {
@@ -151,7 +152,7 @@ export const updatePromotion = async (id, promotion, accessToken) => {
         localStorage.getItem("refresh_token")
       );
       if (newToken) {
-        return await updatePromotion(id, promotion, newToken); // Gọi lại với token mới
+        return await updatePromotion(code, promotion, newToken); // Gọi lại với token mới
       }
     } else {
       console.error("Lỗi khi cập nhật ưu đãi:", error.message);

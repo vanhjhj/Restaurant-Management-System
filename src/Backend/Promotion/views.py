@@ -33,6 +33,7 @@ class PromotionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
     permission_classes = [permissions.IsAdminUser]
+    lookup_field = 'code'  
 
     def get_permissions(self):
         if self.request.method == 'GET':
@@ -43,14 +44,14 @@ class PromotionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
         return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def patch(self, request, *args, **kwargs):
-        if 'id' in request.data:
-            return Response({'message': 'Cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
-        promotion = self.get_object()
-        serializer = self.serializer_class(promotion, data=request.data, partial=True)
-        if (serializer.is_valid(raise_exception=True)):
-            for key, value in request.data.items():
-                setattr(promotion, key, value)
 
+        if 'code' in request.data:
+            return Response({'message': 'Cannot update code field'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        promotion = self.get_object()  
+        serializer = self.serializer_class(promotion, data=request.data, partial=True)
+        
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
 
             response = {
@@ -59,4 +60,5 @@ class PromotionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
                 'message': 'Promotion updated successfully'
             }
             return Response(response, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

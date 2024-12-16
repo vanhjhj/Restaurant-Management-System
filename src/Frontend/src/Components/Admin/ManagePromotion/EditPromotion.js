@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchPromotionById, updatePromotion } from "../../../API/PromotionAPI";
+import {
+  fetchPromotionByCode,
+  updatePromotion,
+} from "../../../API/PromotionAPI";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import style from "./EditPromotion.module.css";
 import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 
 function EditPromotion() {
-  const { id } = useParams(); // Lấy id từ URL
+  const { code } = useParams(); // Lấy code từ URL
   const [promotion, setPromotion] = useState({
     title: "",
     description: "",
@@ -23,7 +26,7 @@ function EditPromotion() {
   useEffect(() => {
     async function getPromotion() {
       try {
-        const data = await fetchPromotionById(id);
+        const data = await fetchPromotionByCode(code);
         if (data) {
           setPromotion(data);
         }
@@ -33,8 +36,10 @@ function EditPromotion() {
       }
     }
 
-    getPromotion();
-  }, [id]);
+    if (code) {
+      getPromotion();
+    }
+  }, [code]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -78,12 +83,15 @@ function EditPromotion() {
         startdate,
         enddate,
       };
-
-      await updatePromotion(id, updatedPromotion, accessToken);
+      await updatePromotion(code, updatedPromotion, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");
     } catch (error) {
-      console.error("Lỗi khi cập nhật ưu đãi:", error);
+      if (error.response) {
+        console.error("Lỗi từ server:", error.response.data);
+      } else {
+        console.error("Lỗi khác:", error.message);
+      }
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
     }
   };
@@ -100,7 +108,7 @@ function EditPromotion() {
       >
         ← Back
       </button>
-      <h2>Chỉnh sửa ưu đãi</h2>
+      <h2>Chỉnh sửa ưu đãi {code}</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}{" "}
       {/* Hiển thị lỗi nếu có */}
       <form onSubmit={handleSubmit}>

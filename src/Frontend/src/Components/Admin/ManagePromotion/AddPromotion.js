@@ -6,6 +6,7 @@ import style from "./AddPromotion.module.css";
 
 function AddPromotion() {
   const [promotion, setPromotion] = useState({
+    code: "",
     title: "",
     description: "",
     image: null,
@@ -28,16 +29,26 @@ function AddPromotion() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, description, image, discount, startdate, enddate } =
+    const { code, title, description, image, discount, startdate, enddate } =
       promotion;
 
-    // Kiểm tra dữ liệu nhập vào
-    if (!title || !description || !image || !startdate || !enddate) {
+    // Validate input
+    if (!code || !title || !description || !image || !startdate || !enddate) {
       setError("Tất cả các trường đều phải nhập.");
       return;
     }
 
-    if (discount < 0 || discount > 100) {
+    if (code.length > 10) {
+      setError("Mã ưu đãi không được quá 10 ký tự.");
+      return;
+    }
+
+    if (title.length > 100100) {
+      setError("Tiêu đề không được quá 100 ký tự.");
+      return;
+    }
+
+    if (isNaN(discount) || discount < 0 || discount > 100) {
       setError("Tỷ lệ giảm giá phải từ 0 đến 100.");
       return;
     }
@@ -52,13 +63,9 @@ function AddPromotion() {
       return;
     }
 
-    // Chuyển đổi startdate và enddate về định dạng YYYY-MM-DD
-    const formattedStartDate = new Date(promotion.startdate)
-      .toISOString()
-      .split("T")[0];
-    const formattedEndDate = new Date(promotion.enddate)
-      .toISOString()
-      .split("T")[0];
+    // Format dates
+    const formattedStartDate = new Date(startdate).toISOString().split("T")[0];
+    const formattedEndDate = new Date(enddate).toISOString().split("T")[0];
 
     const promotionData = {
       ...promotion,
@@ -71,7 +78,11 @@ function AddPromotion() {
       alert("Ưu đãi đã được thêm thành công");
       navigate("/manage-promotions");
     } catch (error) {
-      console.error(error);
+      if (error.response) {
+        console.error("Lỗi từ server:", error.response.data);
+      } else {
+        console.error("Lỗi khác:", error.message);
+      }
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
     }
   };
@@ -88,6 +99,17 @@ function AddPromotion() {
       {error && <p style={{ color: "red" }}>{error}</p>}{" "}
       {/* Hiển thị lỗi nếu có */}
       <form onSubmit={handleSubmit}>
+        <div className={style["form-group"]}>
+          <label htmlFor="code">Mã ưu đãi</label>
+          <input
+            type="text"
+            id="code"
+            name="code"
+            value={promotion.code}
+            onChange={handleChange}
+            placeholder="Nhập mã ưu đãi"
+          />
+        </div>
         <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
           <input

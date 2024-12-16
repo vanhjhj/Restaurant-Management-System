@@ -27,11 +27,11 @@ function ManagePromotions() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const handleEdit = (id) => {
-    navigate(`/edit-promotion/${id}`);
+  const handleEdit = (code) => {
+    navigate(`/edit-promotion/${code}`);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (code) => {
     if (!accessToken) {
       console.error("Token không tồn tại");
       return;
@@ -42,8 +42,8 @@ function ManagePromotions() {
     );
     if (confirmDelete) {
       try {
-        await deletePromotion(id, accessToken);
-        setPromotions(Promotions.filter((discount) => discount.id !== id));
+        await deletePromotion(code, accessToken);
+        setPromotions(Promotions.filter((discount) => discount.code !== code));
       } catch (error) {
         console.error("Lỗi khi xóa ưu đãi:", error);
         alert("Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.");
@@ -74,26 +74,28 @@ function ManagePromotions() {
       ) : (
         <div className={style["discount-cards"]}>
           {Promotions.map((discount) => (
-            <div key={discount.id} className={style["discount-card"]}>
+            <div key={discount.code} className={style["discount-card"]}>
               <img
                 src={discount.image}
                 alt={discount.title}
                 className={style["discount-image"]}
               />
-              <p>{discount.title}</p>
-              <p>Ngày bắt đầu: {formatDate(discount.startdate)}</p>
-              <p>Ngày kết thúc: {formatDate(discount.enddate)}</p>
+              <p>{discount.code}</p>
+              <p>Tiêu đề: {discount.title}</p>
+              <p>
+                Từ {discount.startdate} đến hết {discount.enddate}
+              </p>
               <p>Mô tả: {discount.description}</p>
               <p>Giảm giá: {discount.discount}%</p>
               <div className={style["button-group"]}>
                 <button
-                  onClick={() => handleEdit(discount.id)}
+                  onClick={() => handleEdit(discount.code)}
                   className={style["edit-button"]}
                 >
                   Chỉnh sửa
                 </button>
                 <button
-                  onClick={() => handleDelete(discount.id)}
+                  onClick={() => handleDelete(discount.code)}
                   className={style["delete-button"]}
                 >
                   Xóa
