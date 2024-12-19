@@ -335,7 +335,7 @@ class OrderListCreateAPIView(generics.ListCreateAPIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class OrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+class OrderRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsEmployeeOrAdmin]
@@ -345,30 +345,84 @@ class OrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
             return [permissions.IsAdminUser()]
         return super().get_permissions()
     
-    def put(self, request, *args, **kwargs):
-        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
-    def patch(self, request, *args, **kwargs):
-        if 'id' in request.data:
-            return Response({'message': 'Cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        order = self.get_object()
-        serializer = OrderSerializer(order, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            response = {
-                'message': 'Order updated successfully',
-                'data': serializer.data
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     def delete(self, request, *args, **kwargs):
         order = self.get_object()
         order.delete()
         return Response({'message': 'Order deleted successfully'}, status=status.HTTP_200_OK)
+    
+class OrderMarkPaidAPIView(generics.UpdateAPIView):
+    queryset = Order.objects.all()
+    permission_classes = [IsEmployeeOrAdmin]
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        order = self.get_object()
+
+        if OrderItem.objects.filter(order=order, status='P').exists():
+            return Response({'message': 'Cannot mark order as paid because there are items are preparing'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if order.status == 'P':
+            return Response({'message': 'Cannot update status of paid order'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        order.status = 'P'
+
+        #update table status
+        order.update_table_status()
+
+        order.save()
+
+        response = {
+            'message': 'Order status updated successfully',
+            'data': OrderSerializer(order).data
+        }
+        return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ChangeTableOrderAPIView(generics.UpdateAPIView):
+    queryset = Order.objects.all()
+    permission_classes = [IsEmployeeOrAdmin]
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        order = self.get_object()
+        serializers = OrderSerializer(data=request.data, partial=True)
+        if serializers.is_valid():
+            if 'table' not in serializers.validated_data:
+                return Response({'message': 'Table is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if order.status == 'P':
+                return Response({'message': 'Cannot change table of paid order'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            table = Table.objects.get(pk=serializers.validated_data['table'].id)
+            if table.status != 'A':
+                return Response({'message': 'Table is not available'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            #table is available
+
+            #update current table status
+            order.table.status = 'A'
+            order.table.save()
+
+            #assign new table
+            order.table = table
+            
+            #update new table status
+            order.update_table_status()
+
+            order.save()
+
+            response = {
+                'message': 'Order table updated successfully',
+                'data': OrderSerializer(order).data
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class GetCurrentTableOrderAPIView(generics.RetrieveAPIView):
     permission_classes = [IsEmployeeOrAdmin]
@@ -409,12 +463,20 @@ class AddOrderItemAPIView(generics.CreateAPIView):
                 order_item = OrderItem.objects.filter(order=order, menu_item=menu_item).first()
                 order_item.quantity += serializers.validated_data['quantity']
                 order_item.note = serializers.validated_data.get('note', '')
+
+                #if order item is done, change status to preparing
+                if order_item.status == 'D':
+                    order_item.status = 'P'
+
                 order_item.save() #total and price will be updated in save method of OrderItem model
                 serializers = OrderItemSerializer(order_item)
                 response['data'] = serializers.data
             else:
                 serializers.save()
                 response['data'] = serializers.data
+
+            #update table status
+            order.update_table_status()
 
             response['message'] = 'Order item added successfully'
             return Response(response, status=status.HTTP_201_CREATED)
@@ -426,31 +488,55 @@ class RemoveOrderItemAPIView(generics.DestroyAPIView):
     queryset = OrderItem.objects.all()
 
     def delete(self, request, *args, **kwargs):
-        if 'menu_item' not in request.data or 'order' not in request.data:
-            return Response({'message': 'Menu item and order are required'}, status=status.HTTP_400_BAD_REQUEST)
+        order_item = self.get_object()
+        order = Order.objects.get(pk=order_item.order.id)
 
-        try:
-            order_item = OrderItem.objects.get(menu_item=request.data['menu_item'], order=request.data['order'])
-            order = Order.objects.get(pk=request.data['order'])
-
-            if order.status == 'P':
-                return Response({'message': 'Cannot remove item from paid order'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            if len(OrderItem.objects.filter(order=order)) == 1:
-                return Response({'message': 'Order must have at least one item'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            order.remove_item(order_item)
-            order_item.delete()
-
-            return Response({'message': 'Order item removed successfully'}, status=status.HTTP_200_OK)
+        if order.status == 'P':
+            return Response({'message': 'Cannot remove item from paid order'}, status=status.HTTP_400_BAD_REQUEST)
         
-        except OrderItem.DoesNotExist:
-            return Response({'message': 'Order item does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        except Order.DoesNotExist:
-            return Response({'message': 'Order does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        if len(OrderItem.objects.filter(order=order)) == 1:
+            return Response({'message': 'Order must have at least one item'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        order.remove_item(order_item)
+        order_item.delete()
+
+        #update table status
+        order.update_table_status()
+
+        return Response({'message': 'Order item removed successfully'}, status=status.HTTP_200_OK)
+        
+class MarkDoneOrderItemStatusAPIView(generics.UpdateAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = OrderItem.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        order_item = self.get_object()
+        order = Order.objects.get(pk=order_item.order.id)
+
+        if order.status == 'P':
+            return Response({'message': 'Cannot update item in paid order'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if order_item.status == 'D':
+            return Response({'message': 'Order item is already done'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        order_item.status = 'D'
+        order_item.save()
+
+        #update table status
+        order.update_table_status()
+
+        response = {
+            'message': 'Order item status updated successfully',
+            'data': OrderItemSerializer(order_item).data
+        }
+        return Response(response, status=status.HTTP_200_OK)
         
 class UpdateOrderItemAPIView(generics.UpdateAPIView):
     permission_classes = [IsEmployeeOrAdmin]
+    queryset = OrderItem.objects.all()
 
     def put(self, request, *args, **kwargs):
         return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -458,25 +544,37 @@ class UpdateOrderItemAPIView(generics.UpdateAPIView):
     def patch(self, request, *args, **kwargs):
         serializers = OrderItemSerializer(data=request.data, partial=True)
         if serializers.is_valid():
-            order_item = OrderItem.objects.get(order=serializers.validated_data['order'], menu_item=serializers.validated_data['menu_item'])
-            order = Order.objects.get(pk=serializers.validated_data['order'].id)
+            order_item = self.get_object()
+            order = Order.objects.get(pk=order_item.order.id)
 
             if order.status == 'P':
                 return Response({'message': 'Cannot update item in paid order'}, status=status.HTTP_400_BAD_REQUEST)
             
-            #update other fields
+            if 'menu_item' in serializers.validated_data:
+                return Response({'message': 'Cannot update menu item'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if 'status' in serializers.validated_data:
+                return Response({'message': 'Cannot update status in this API endpoint'}, status=status.HTTP_400_BAD_REQUEST)
+            
             for key, value in serializers.validated_data.items():
                 if key == 'quantity':
+                    if value > order_item.quantity: #update status to preparing
+                        order_item.status = 'P'
+
                     order.update_total_when_change_quantity(order_item, value)
+
                 else:
                     setattr(order_item, key, value)
-            order_item.save()
+
+            #update table status
+            order.update_table_status()
 
             response = {
                 'message': 'Order item updated successfully',
                 'data': OrderItemSerializer(order_item).data
             }
             return Response(response, status=status.HTTP_200_OK)
+
         
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
