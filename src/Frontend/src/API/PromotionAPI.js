@@ -29,11 +29,6 @@ export const fetchPromotionByCode = async (code) => {
 
 // Hàm xóa một ưu đãi
 export const deletePromotion = async (code, accessToken) => {
-  if (!accessToken) {
-    console.error("Token không tồn tại");
-    return;
-  }
-
   try {
     await axios.delete(`${API_BASE_URL}/promotion/promotions/${code}/`, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -54,24 +49,10 @@ export const deletePromotion = async (code, accessToken) => {
 
 // Hàm thêm mới một ưu đãi
 export const addPromotion = async (promotion, accessToken) => {
-  if (!accessToken) {
-    console.error("Token không tồn tại");
-    return;
-  }
-
   try {
-    const formData = new FormData();
-    formData.append("code", promotion.code);
-    formData.append("title", promotion.title);
-    formData.append("startdate", promotion.startdate);
-    formData.append("enddate", promotion.enddate);
-    formData.append("description", promotion.description);
-    formData.append("image", promotion.image);
-    formData.append("discount", promotion.discount);
-
     const response = await axios.post(
       `${API_BASE_URL}/promotion/promotions/`,
-      formData,
+      promotion,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -96,26 +77,10 @@ export const addPromotion = async (promotion, accessToken) => {
 
 // Hàm cập nhật ưu đãi
 export const updatePromotion = async (code, promotion, accessToken) => {
-  if (!accessToken) {
-    console.error("Token không tồn tại");
-    return;
-  }
-
   try {
-    const formData = new FormData();
-    formData.append("title", promotion.title);
-    formData.append("description", promotion.description);
-    formData.append("startdate", promotion.startdate);
-    formData.append("enddate", promotion.enddate);
-    formData.append("discount", promotion.discount);
-
-    if (promotion.image instanceof File) {
-      formData.append("image", promotion.image);
-    }
-
     const response = await axios.patch(
       `${API_BASE_URL}/promotion/promotions/${code}/`,
-      formData,
+      promotion,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

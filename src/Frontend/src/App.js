@@ -36,6 +36,7 @@ import { isTokenExpired } from "./utils/tokenHelper.mjs";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
+import AddFoodItem from "./Components/Admin/ManageMenu/AddFoodItem";
 
 library.add(faEye, faEyeSlash);
 
@@ -172,6 +173,18 @@ function App() {
                 userRole={userRole}
               >
                 <ManageMenu />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-food"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <AddFoodItem />
               </ProtectedRoute>
             }
           />

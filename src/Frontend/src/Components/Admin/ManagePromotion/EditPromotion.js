@@ -31,6 +31,7 @@ function EditPromotion() {
         if (data) {
           setPromotion(data); // Gán dữ liệu từ API
           setOriginalPromotion(data);
+          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching promotion:", error);
@@ -58,13 +59,7 @@ function EditPromotion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!accessToken) {
-      setError("Token không tồn tại. Vui lòng đăng nhập lại.");
-      return;
-    }
-
-    const { startdate, enddate, discount, image, title, description } =
+    const { title, description, discount, image, startdate, enddate } =
       promotion;
 
     if (discount < 0 || discount > 100) {
@@ -75,6 +70,23 @@ function EditPromotion() {
     if (new Date(startdate) >= new Date(enddate)) {
       setError("Ngày kết thúc phải sau ngày bắt đầu.");
       return;
+    }
+
+    const updatedPromotion = {
+      title,
+      description,
+      discount,
+      startdate,
+      enddate,
+    };
+
+    if (promotion.image instanceof File) {
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+      if (!allowedExtensions.exec(promotion.image.name)) {
+        setError("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, png.");
+        return;
+      }
+      updatedPromotion.image = promotion.image;
     }
 
     const hasChanges =
@@ -92,8 +104,13 @@ function EditPromotion() {
       return;
     }
 
+    if (!accessToken) {
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+      return;
+    }
+
     try {
-      await updatePromotion(code, promotion, accessToken);
+      await updatePromotion(code, updatedPromotion, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");
     } catch (error) {

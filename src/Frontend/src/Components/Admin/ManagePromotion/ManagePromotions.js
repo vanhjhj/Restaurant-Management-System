@@ -33,14 +33,17 @@ function ManagePromotions() {
 
   const handleDelete = async (code) => {
     if (!accessToken) {
-      console.error("Token không tồn tại");
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
       return;
     }
-
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn muốn xóa ưu đãi này không?"
     );
     if (confirmDelete) {
+      if (!accessToken) {
+        window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+        return;
+      }
       try {
         await deletePromotion(code, accessToken);
         setPromotions(Promotions.filter((discount) => discount.code !== code));
@@ -85,8 +88,6 @@ function ManagePromotions() {
               <p>
                 Từ {discount.startdate} đến hết {discount.enddate}
               </p>
-              <p>Mô tả: {discount.description}</p>
-              <p>Giảm giá: {discount.discount}%</p>
               <div className={style["button-group"]}>
                 <button
                   onClick={() => handleEdit(discount.code)}

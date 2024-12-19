@@ -58,9 +58,12 @@ function AddPromotion() {
       return;
     }
 
-    if (!accessToken) {
-      setError("Không tìm thấy token. Vui lòng đăng nhập lại.");
-      return;
+    if (promotion.image instanceof File) {
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+      if (!allowedExtensions.exec(promotion.image.name)) {
+        setError("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, png.");
+        return;
+      }
     }
 
     // Format dates
@@ -72,6 +75,11 @@ function AddPromotion() {
       startdate: formattedStartDate,
       enddate: formattedEndDate,
     };
+
+    if (!accessToken) {
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+      return;
+    }
 
     try {
       await addPromotion(promotionData, accessToken);

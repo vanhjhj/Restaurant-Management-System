@@ -5,7 +5,7 @@ import {
   createNewMenuTab,
   deleteFoodItem,
 } from "../../../API/MenuAPI";
-import "./ManageMenu.css";
+import style from "./ManageMenu.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 
@@ -56,7 +56,7 @@ const ManageMenu = () => {
 
   const handleDelete = async (id) => {
     if (!accessToken) {
-      console.error("Token không tồn tại");
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
       return;
     }
 
@@ -92,6 +92,11 @@ const ManageMenu = () => {
       return;
     }
 
+    if (!accessToken) {
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+      return;
+    }
+
     try {
       const newCategory = await createNewMenuTab(
         { name: newCategoryName },
@@ -117,10 +122,10 @@ const ManageMenu = () => {
   };
 
   return (
-    <div className="manage-menu-container">
+    <div className={style["manage-menu-container"]}>
       {/* Sidebar */}
-      <div className="menu-sidebar">
-        <button onClick={() => navigate(-1)} className="back-button">
+      <div className={style["menu-sidebar"]}>
+        <button onClick={() => navigate(-1)} className={style["back-button"]}>
           ← Back
         </button>
         <h3>Thực đơn hiện tại</h3>
@@ -129,8 +134,8 @@ const ManageMenu = () => {
           categories.map((category) => (
             <button
               key={category.id}
-              className={`menu-tab ${
-                selectedCategory === category.id ? "active" : ""
+              className={`${style["menu-tab"]} ${
+                selectedCategory === category.id ? style["active"] : ""
               }`}
               onClick={() => setSelectedCategory(category.id)}
             >
@@ -138,34 +143,34 @@ const ManageMenu = () => {
             </button>
           ))
         ) : (
-          <p>Đang tải danh sách mục...</p>
+          <p>Chưa có mục nào, hãy thêm mới!</p>
         )}
 
         {/* Nút và Form tạo mục mới */}
         {!showNewCategoryForm ? (
           <button
-            className="add-category-button"
+            className={style["add-category-button"]}
             onClick={() => setShowNewCategoryForm(true)}
           >
             Tạo mục mới +
           </button>
         ) : (
-          <div className="new-category-form">
+          <div className={style["new-category-form"]}>
             <input
               type="text"
               placeholder="Tên mục mới"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
-              className="new-category-input"
+              className={style["new-category-input"]}
             />
             <button
-              className="save-category-button"
+              className={style["save-category-button"]}
               onClick={handleCreateNewCategory}
             >
               Lưu
             </button>
             <button
-              className="cancel-category-button"
+              className={style["cancel-category-button"]}
               onClick={() => setShowNewCategoryForm(false)}
             >
               Hủy
@@ -175,30 +180,32 @@ const ManageMenu = () => {
       </div>
 
       {/* Main Content */}
-      <div className="menu-content">
+      <div className={style["menu-content"]}>
         <h2>Quản lý thực đơn</h2>
         {foodItems.length === 0 ? (
-          <p className="no-food-message">Chưa có món ăn nào, hãy thêm mới!</p>
+          <p className={style["no-food-message"]}>
+            Chưa có món ăn nào, hãy thêm mới!
+          </p>
         ) : (
-          <div className="food-items-container">
+          <div className={style["food-items-container"]}>
             {foodItems.map((item) => (
-              <div key={item.id} className="food-item-card">
+              <div key={item.id} className={style["food-item-card"]}>
                 <img
                   src={item.image || "https://via.placeholder.com/150"}
                   alt={item.name}
-                  className="food-image"
+                  className={style["food-image"]}
                 />
                 <h4>{item.name}</h4>
-                <p className="food-price">{formatPrice(item.price)}</p>
-                <div className="food-card-buttons">
+                <p className={style["food-price"]}>{formatPrice(item.price)}</p>
+                <div className={style["food-card-buttons"]}>
                   <button
-                    className="edit-button"
+                    className={style["edit-button"]}
                     onClick={() => navigate(`/edit-food/${item.id}`)}
                   >
                     Chỉnh sửa
                   </button>
                   <button
-                    className="delete-button"
+                    className={style["delete-button"]}
                     onClick={() => handleDelete(item.id)}
                   >
                     Xóa
@@ -209,7 +216,7 @@ const ManageMenu = () => {
           </div>
         )}
         <button
-          className="add-food-button"
+          className={style["add-food-button"]}
           onClick={() => navigate("/add-food")}
         >
           Tạo món ăn mới +

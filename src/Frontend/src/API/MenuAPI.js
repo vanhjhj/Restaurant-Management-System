@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../Config/apiConfig";
 import { refreshToken } from "./authAPI";
 
-export const getFoodItemsByID = async (id) => {
+export const getFoodItemByID = async (id) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/menu/menuitems/${id}/`);
     return response.data;
@@ -36,18 +36,10 @@ export const getFoodItems = async () => {
   }
 };
 export const createNewMenuTab = async (category, accessToken) => {
-  if (!accessToken) {
-    console.error("Token không tồn tại");
-    return;
-  }
-
   try {
-    const formData = new FormData();
-    formData.append("name", category.name);
-
     const response = await axios.post(
       `${API_BASE_URL}/menu/categories/`,
-      formData,
+      category,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -71,11 +63,6 @@ export const createNewMenuTab = async (category, accessToken) => {
 };
 
 export const deleteFoodItem = async (id, accessToken) => {
-  if (!accessToken) {
-    console.error("Token không tồn tại");
-    return;
-  }
-
   try {
     await axios.delete(`${API_BASE_URL}/menu/menuitems/${id}/`, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -90,6 +77,33 @@ export const deleteFoodItem = async (id, accessToken) => {
       if (newToken) return await deleteFoodItem(id, newToken);
     }
     console.error("Lỗi khi xóa món ăn:", error.message);
+    throw error;
+  }
+};
+
+export const createNewFoodItem = async (foodItem, accessToken) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/menu/menuitems/`,
+      foodItem,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      console.log("Token hết hạn, đang làm mới token...");
+      const newToken = await refreshToken(
+        localStorage.getItem("refresh_token")
+      );
+      if (newToken) return await createNewFoodItem(foodItem, newToken);
+    }
+    console.error("Lỗi khi thêm mới món ăn:", error.message);
     throw error;
   }
 };
