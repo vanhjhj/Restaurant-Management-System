@@ -154,12 +154,25 @@
     padding:0px 10px;
     margin-bottom: 10px;
 }
+.input-table-text{
+    display: inline-block;
+}
+
+.input-table-btn{
+    display: inline-block;
+    justify-content: flex-end;
+}
+
+
+.table-info{
+    cursor: pointer;
+}
 
 .table-info-ctn{
     margin-top: 40px;
 }
 
-.input-table{
-    display: inline-block;
+.table-info-ctn p{
+    margin-bottom: 0px;
 }
 

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import style from './EmployeeReservation.module.css';
 import { MdTableRestaurant  } from "react-icons/md"; // Sử dụng icon chỉnh sửa từ react-icons
-import { fetchTablesData, fetchReservationData, assignTableAPI } from '../../../API/EE_ReservationAPI';
+import { fetchTablesData, fetchReservationData, assignTableAPI, markDoneReservationAPI, markCancelReservationAPI, unsignTableAPI, createOrder } from '../../../API/EE_ReservationAPI';
 import { useAuth } from '../../Auth/AuthContext';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../../API/authAPI';
 import TableIcon from './tableIcon';
+import Invoice from './Invoice'
 
 function EmployeeReservation() {
     const { accessToken, setAccessToken } = useAuth();
@@ -56,41 +57,42 @@ function EmployeeReservation() {
         }
     }
 
-    useEffect(() => {
-        const loadData = async () => {
-            const activeToken = await ensureActiveToken();
-            try {
-                const tablesData = await fetchTablesData(activeToken);
-                console.log(tablesData.results);
-                setTables(tablesData.results);
+    const fetchData = async () => {
+        const activeToken = await ensureActiveToken();
+        try {
+            const tablesData = await fetchTablesData(activeToken);
+            setTables(tablesData.results.map((table) => ({
+                ...table,
+                isShowInvoice: false,
+            })));
 
-                const reservationsData = await fetchReservationData(activeToken);
-                console.log(reservationsData.results);
-                setReservations(reservationsData.results);
-                setReservations(reservationsData.results.map((reser) => ({
-                    ...reser,
-                    isEditing: false,
-                })))
-            }
-            catch (error) {
-                console.log(error);
-            }
-        };
-        loadData();
-    }, [reservations.reduce((acc, item) => acc + item.table, 0)]);
-
-    const handleInputTableData = (id, value) => {
-        setReservations((preReser) =>
-            preReser.map((r) => 
-                r.id === id ? {...r, table: value} : r
-            )
-        );
+            const reservationsData = await fetchReservationData(activeToken);
+            setReservations(reservationsData.results.map((reser) => ({
+                ...reser,
+                isEditing: false,
+            })))
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
+
+    useEffect(() => {
+        fetchData()
+    }, []);
 
     const handleEdit = (id) => {
         setReservations((preReser) =>
             preReser.map((r) =>
                 r.id === id ? { ...r, isEditing: true } : r)
+        );
+    }
+
+    const handleCancelEdit = (id) => {
+        setInputTable({ id: null, value: "" });
+        setReservations((preReser) =>
+            preReser.map((r) =>
+                r.id === id ? { ...r, isEditing: false } : r)
         );
     }
 
@@ -106,10 +108,8 @@ function EmployeeReservation() {
             const activeToken = await ensureActiveToken();
             try {
                 const result = await assignTableAPI(activeToken, inputTable.id, inputTable.value);
-                setReservations((preReser) =>
-                    preReser.map((r) =>
-                        r.id === inputTable.id ? { ...r,table:inputTable.value, isEditing: false } : r)
-                );
+                fetchData();
+                setInputTable({ id: null, value: "" });
             }
             catch (error) {
                 console.error(error);
@@ -118,10 +118,54 @@ function EmployeeReservation() {
         assignTable();
     }
 
+    const handleEraseTable = async (id) => {
+        const activeToken = await ensureActiveToken();
+        try {
+            const result = await unsignTableAPI(activeToken, id);
+            fetchData();
+            setInputTable({ id: null, value: "" });
+        }
+        catch (error) {
+                console.error(error);
+        }
+    }
+
+    const handleDoneReservation = async (id, tID) => {
+        const activeToken = await ensureActiveToken();
+        try {
+            const result = await markDoneReservationAPI(activeToken, id);
+            createOrder(accessToken, tID);
+            fetchData();
+            setInputTable({ id: null, value: "" });
+        }
+        catch (error) {
+                console.error(error);
+        }
+    }
+
+    const handleCancelReservation = async (id) => {
+        const activeToken = await ensureActiveToken();
+            try {
+                const result = await markCancelReservationAPI(activeToken, id);
+                fetchData();
+                setInputTable({ id: null, value: "" });
+            }
+            catch (error) {
+                    console.error(error);
+        }
+    }
+
     const filterReservation = (r, name, status) => {
         if (status == 'All') return r.guest_name.toLowerCase().includes(name.toLowerCase());
         return r.guest_name.toLowerCase().includes(name.toLowerCase()) && r.status === status;
     };
+
+    const handleShowInvoice = (id, status) => {
+        setTables((preTable) =>
+            preTable.map((table) =>
+                table.id === id ? { ...table, isShowInvoice: status } : table)
+        );
+    }
 
     const reservationFilered = reservations.filter(r => filterReservation(r, searchName, searchStatus));
 
@@ -180,8 +224,8 @@ function EmployeeReservation() {
                                         <p>Số điện thoại: {r.phone_number}</p>
                                         <p>Thời gian: {r.time}</p>
                                         <p>Ghi chú: {r.note}</p>
-                                        <div>
-                                            <p className={style['input-table']}>Bàn số:</p>
+                                        <div className={style['input-table-ctn']}>
+                                            <p className={style['input-table-text']}>Bàn số:</p>
                                             {r.isEditing ? (
                                                 <input
                                                     type='text'
@@ -192,13 +236,19 @@ function EmployeeReservation() {
                                                 : (
                                                     <span>{r.table || ''}</span>
                                                 )}
-                                            <button onClick={()=>r.isEditing ? handleSave(r.id) : handleEdit(r.id)}>
-                                                    {r.isEditing ? 'Save' : 'Edit'}
-                                            </button>
+                                            <div className={style['input-table-btn']}>
+                                                <button onClick={()=>r.isEditing ? handleSave(r.id) : handleEdit(r.id)}>
+                                                        {r.isEditing ? 'Lưu' : 'Chỉnh sửa'}
+                                                </button>
+                                                <button onClick={()=>r.isEditing ? handleCancelEdit(r.id) : handleEraseTable(r.id)}>
+                                                        {r.isEditing ? 'Hủy' : 'Xóa'}
+                                                </button>
+                                            </div>
+                                            
                                         </div>
                                         <div>
-                                            {r.status === 'A' && <button onClick={handleDoneReservation}>Done</button>} 
-                                            {r.status !== 'D' && <button onClick={handleCancelReservation}>Cancel</button>}
+                                            {r.status === 'A' && <button onClick={() => handleDoneReservation(r.id, r.table)}>Done</button>} 
+                                            {r.status !== 'D' && <button onClick={() => handleCancelReservation(r.id)}>Cancel</button>}
                                         </div>
                                     
                                     </div>
@@ -221,10 +271,12 @@ function EmployeeReservation() {
                             <div className={style['row']}>
                                 {tables.map(table => (
                                     <div key={table.id} className={style['col-lg-2']}>
-                                        <div className={style['table-info']}>
+                                        <div className={style['table-info']} onClick={() => handleShowInvoice(table.id, !table.isShowInvoice)}>
                                             <TableIcon w={64} h={64} c={getTableColor(table.status)} />
                                             <p>Bàn số: {table.id}</p>
+                                            <p>Số lượng ghế: {table.number_of_seats}</p>
                                         </div>
+                                        {table.isShowInvoice && <Invoice tableID={table.id} setShowInvoice={handleShowInvoice}/>}
                                     </div>
                                 ))}
                             </div>
@@ -232,8 +284,8 @@ function EmployeeReservation() {
                     </div>
                 </div>
             </div>
+            
         </div>
-        
     )
 }
 

@@ -245,7 +245,7 @@ function App() {
                     element={
                         <ProtectedRoute
                         isLoggedIn={isLoggedIn}
-                        allowedRoles={["Employee"]}
+                        allowedRoles={["Employee", "Admin"]}
                         userRole={userRole}
                         >
                         <EmployeeReservation />

@@ -19,7 +19,13 @@ export const fetchTablesData = async (token) => {
 
 export const fetchReservationData = async (token) => {
   try {
-      const response = await axios.get(`${API_BASE_URL}/booking/reservations/`,
+      const today = new Date();
+
+      const day = today.getDate(); 
+      const month = today.getMonth() + 1; 
+      const year = today.getFullYear(); 
+      const formattedDate = `${year}-${month}-${day}`;
+      const response = await axios.get(`${API_BASE_URL}/booking/reservations/?date=${formattedDate}&ordering=status`,
       {
           headers: {
             Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
@@ -36,7 +42,6 @@ export const fetchReservationData = async (token) => {
 
 export const assignTableAPI = async (token, rID, tID) => {
   try {
-    console.log(token);
     const response = await axios.patch(`${API_BASE_URL}/booking/reservations/assign-table/${rID}/`,
       { table: tID },
       {
@@ -45,10 +50,111 @@ export const assignTableAPI = async (token, rID, tID) => {
             "Content-Type": "application/json", // Định dạng nội dung JSON
           },
         });
-    console.log(response.data);
     return response.data;
   }
   catch(error) {
       throw error;
+  }
+}
+
+export const markDoneReservationAPI = async (token, rID) => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/booking/reservations/mark-done/${rID}/`,{},
+      {
+          headers: {
+            Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
+            "Content-Type": "application/json", // Định dạng nội dung JSON
+          },
+      });
+    return response.data;
+  }
+  catch(error) {
+      throw error;
+  }
+}
+
+export const markCancelReservationAPI = async (token, rID) => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/booking/reservations/mark-cancel/${rID}/`,{},
+      {
+          headers: {
+            Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
+            "Content-Type": "application/json", // Định dạng nội dung JSON
+          },
+      });
+    return response.data;
+  }
+  catch(error) {
+      throw error;
+  }
+}
+
+export const unsignTableAPI = async (token, rID) => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/booking/reservations/unassign-table/${rID}/`,{},
+      {
+          headers: {
+            Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
+            "Content-Type": "application/json", // Định dạng nội dung JSON
+          },
+      });
+    return response.data;
+  }
+  catch(error) {
+      throw error;
+  }
+}
+
+export const createOrder = async (token, tID) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/booking/orders/`,{table: tID},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const fetchOrderData = async (token, tID) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/booking/tables/current-order/${tID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const fetchOrderItemData = async (token, oID) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/booking/orderitems/?order=${oID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    console.log(response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
   }
 }
