@@ -4,8 +4,6 @@ import { API_BASE_URL } from '../Config/apiConfig';
 // Hàm GetInfoCus
 export const GetInfoCus = async (CusId, token) => {
     try {
-
-        console.log("hi",CusId);
         const response = await axios.get(
             `${API_BASE_URL}/auth/customers/${CusId}/`,
             {
