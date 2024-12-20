@@ -6,7 +6,7 @@ import { getFoodItems, getMenuTabs } from '../../../API/MenuAPI';
 function Menu() {
   const [foodItems, setFoodItems] = useState([]);
 
-  const [selectedType, setSelectedType] = useState(1);
+  const [selectedType, setSelectedType] = useState(0);
 
   const [menuTabs, setMenuTabs] = useState([]);
   
