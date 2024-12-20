@@ -12,7 +12,7 @@ import VerifyOTP from "./Components/Auth/VerifyOTP";
 import ForgotPassword from "./Components/Auth/ForgotPassword";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import ProtectedRoute from "./Components/Routes/ProtectedRoute";
-import Profile from "./Components/Customer/Profile";
+import Profile from "./Components/Auth/Profile";
 import ManageEmployees from "./Components/Admin/ManageEmployee/ManageEmployees";
 import ManageMenu from "./Components/Admin/ManageMenu/ManageMenu";
 import ManagePromotions from "./Components/Admin/ManagePromotion/ManagePromotions";
