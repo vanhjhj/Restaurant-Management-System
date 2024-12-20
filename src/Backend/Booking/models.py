@@ -57,6 +57,18 @@ class Order(models.Model):
         self.total_price += order_item.total
         self.final_price += order_item.total
         self.save()
+
+    def update_table_status(self):
+        if self.status == 'NP': #Not Paid
+            #check if there is any order item is preparing
+            if OrderItem.objects.filter(order=self, status='P').exists():
+                self.table.status = 'S' #Serving
+            else:
+                self.table.status = 'D' #Done
+        else:
+            self.table.status = 'A'
+
+        self.table.save()
         
     def apply_discount(self, discount):
         self.total_discount = discount
@@ -74,7 +86,7 @@ class Order(models.Model):
     
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE, )
+    order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.DO_NOTHING)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])

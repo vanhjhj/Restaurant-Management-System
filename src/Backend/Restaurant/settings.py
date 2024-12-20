@@ -164,9 +164,9 @@ EMAIL_USE_TLS = True
 MEDIA_URL = '/media/' 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 
-# from datetime import timedelta
+from datetime import timedelta
 
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),  # Thời gian sống của access token
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Thời gian sống của refresh token
-# }
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),  # Thời gian sống của access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Thời gian sống của refresh token
+}

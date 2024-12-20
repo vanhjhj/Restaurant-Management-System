@@ -86,11 +86,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
     menu_item = serializers.PrimaryKeyRelatedField(
         queryset=MenuItem.objects.all(), write_only=True)
-    menu_item_detail = MenuItemSerializer(source='menu_item', read_only=True)
+    menu_item_details = MenuItemSerializer(source='menu_item', read_only=True)
 
     class Meta:
         model = OrderItem
-        fields = ('id', 'order', 'menu_item', 'menu_item_detail',
+        fields = ('id', 'order', 'menu_item', 'menu_item_details',
                   'quantity', 'price', 'total', 'note', 'status')
         extra_kwargs = {
             'price': {'read_only': True},
