@@ -17,6 +17,7 @@ function FillInfoEmployee() {
         address: '',
         start_working_date: '',
         department: '',
+        phone_number: '',
     });
 
     const [departments, setDepartments] = useState([]);
@@ -29,7 +30,7 @@ function FillInfoEmployee() {
         let activeToken = accessToken;
         if (isTokenExpired(accessToken)) {
             try {
-                const refreshed = await refreshToken(localStorage.getItem('refreshToken'));
+                const refreshed = await refreshToken(refresh);
                 activeToken = refreshed.access;
                 setAccessToken(activeToken);
             } catch (error) {
@@ -113,6 +114,11 @@ function FillInfoEmployee() {
             setIsSubmitting(false);
             return;
         }
+        if (!formData.phone_number) {
+            setError("Số điện thoại không được để trống.");
+            setIsSubmitting(false);
+            return;
+        }
     
         // Kiểm tra ngày bắt đầu làm việc >= ngày hiện tại
         const startDate = new Date(formData.start_working_date);
@@ -130,6 +136,7 @@ function FillInfoEmployee() {
             address: formData.address ? formData.address.trim() : "",
             start_working_date: formData.start_working_date,
             department: formData.department,
+            phone_number: formData.phone_number,
         };
     
         try {
@@ -137,6 +144,7 @@ function FillInfoEmployee() {
             console.log("Dữ liệu gửi lên API:", sanitizedData);
             await FillInfoEmp(id, sanitizedData, activeToken);
             alert("Thông tin nhân viên đã được lưu thành công.");
+            navigate("/admin-dashboard")
         } catch (error) {
             console.error("Error filling employee info:", error.response?.data || error.message);
             setError("Không thể cập nhật thông tin. Vui lòng thử lại.");
@@ -204,15 +212,15 @@ function FillInfoEmployee() {
                     />
                 </div>
 
-                {/* Địa chỉ */}
+                {/* Số điện thoại */}
                 <div className={style["form-group"]}>
-                    <label>Địa chỉ</label>
+                    <label>Số Điện Thoại</label>
                     <input
                         type="text"
-                        name="address"
-                        value={formData.address}
+                        name="phone_number"
+                        value={formData.phone_number}
                         onChange={handleInputChange}
-                        placeholder="Nhập địa chỉ"
+                        placeholder="Nhập số điện thoại"
                     />
                 </div>
 
@@ -232,6 +240,19 @@ function FillInfoEmployee() {
                             </option>
                         ))}
                     </select>
+                </div>
+
+
+                {/* Địa chỉ */}
+                <div className={style["form-group"]}>
+                    <label>Địa chỉ</label>
+                    <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        placeholder="Nhập địa chỉ"
+                    />
                 </div>
 
                 <button
