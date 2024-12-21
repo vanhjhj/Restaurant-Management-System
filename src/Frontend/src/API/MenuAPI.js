@@ -50,11 +50,6 @@ export const createNewMenuTab = async (category, accessToken) => {
 
     return response.data;
   } catch (error) {
-    if (error.response?.status === 401) {
-      console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
-      if (newToken) return await createNewMenuTab(category, newToken);
-    }
     console.error("Lỗi khi thêm mới mục:", error.message);
     throw error;
   }
@@ -67,11 +62,6 @@ export const deleteFoodItem = async (id, accessToken) => {
     });
     console.log("Xóa ưu đãi thành công");
   } catch (error) {
-    if (error.response?.status === 401) {
-      console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
-      if (newToken) return await deleteFoodItem(id, newToken);
-    }
     console.error("Lỗi khi xóa món ăn:", error.message);
     throw error;
   }
@@ -92,11 +82,6 @@ export const createNewFoodItem = async (foodItem, accessToken) => {
 
     return response.data;
   } catch (error) {
-    if (error.response?.status === 401) {
-      console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
-      if (newToken) return await createNewFoodItem(foodItem, newToken);
-    }
     console.error("Lỗi khi thêm mới món ăn:", error.message);
     throw error;
   }
@@ -118,12 +103,6 @@ export const updateFoodItem = async (id, menuitem, accessToken) => {
     console.log("Cập nhật thành công:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi chi tiết từ backend:", error.response?.data);
-    if (error.response && error.response.status === 401) {
-      console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
-      if (newToken) return await updateFoodItem(id, menuitem, newToken);
-    }
     console.error("Lỗi khi cập nhật món ăn:", error.message);
     throw error;
   }

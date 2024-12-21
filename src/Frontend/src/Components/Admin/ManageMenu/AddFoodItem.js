@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createNewFoodItem } from "../../../API/MenuAPI"; // Import hàm thêm ưu đãi
-import { useAuth } from "../../../Components/Auth/AuthContext"; // Import useAuth
-import { getMenuTabs } from "../../../API/MenuAPI"; // Import hàm lấy danh mục
+import { createNewFoodItem } from "../../../API/MenuAPI";
+import { useAuth } from "../../../Components/Auth/AuthContext";
+import { refreshToken } from "../../../API/authAPI";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { getMenuTabs } from "../../../API/MenuAPI";
 import style from "./AddFoodItem.module.css";
 
 function AddFoodItem() {
@@ -16,7 +18,8 @@ function AddFoodItem() {
   const [categories, setCategories] = useState([]); // State để lưu danh sách danh mục
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -30,6 +33,24 @@ function AddFoodItem() {
 
     fetchCategories();
   }, []);
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
+        throw error;
+      }
+    }
+    return activeToken;
+  };
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -67,23 +88,18 @@ function AddFoodItem() {
         return;
       }
     }
-
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-      return;
-    }
+    setLoading(true);
 
     try {
-      await createNewFoodItem(menu, accessToken);
+      const activeToken = await ensureActiveToken();
+      await createNewFoodItem(menu, activeToken);
       alert("Món ăn đã được thêm thành công");
       navigate("/manage-menu");
     } catch (error) {
-      if (error.response) {
-        console.error("Lỗi từ server:", error.response.data);
-      } else {
-        console.error("Lỗi khác:", error.message);
-      }
+      console.error("Lỗi khi thêmthêm món ăn:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 

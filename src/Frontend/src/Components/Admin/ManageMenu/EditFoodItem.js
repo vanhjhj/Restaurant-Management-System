@@ -6,6 +6,8 @@ import {
   getMenuTabs,
 } from "../../../API/MenuAPI";
 import { useAuth } from "../../../Components/Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
 import style from "./EditFoodItem.module.css";
 import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 
@@ -21,15 +23,17 @@ function EditFoodItem() {
   const [editingField, setEditingField] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   const [originalFoodItem, setOriginalFoodItem] = useState({});
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchFoodItem = async () => {
       try {
         const data = await getFoodItemByID(id);
         setFoodItem({ ...data, category: data.category || "" });
+        setOriginalFoodItem({ ...data, category: data.category || "" });
       } catch (error) {
         console.error("Error fetching food item:", error);
         setError("Không thể tải dữ liệu món ăn.");
@@ -49,6 +53,24 @@ function EditFoodItem() {
     fetchCategories();
   }, [id]);
 
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
+        throw error;
+      }
+    }
+    return activeToken;
+  };
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFoodItem((prevPromotion) => ({
@@ -59,11 +81,6 @@ function EditFoodItem() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-      return;
-    }
-
     const { name, price, description, image, category } = fooditem;
 
     // Kiểm tra các thay đổi
@@ -112,13 +129,17 @@ function EditFoodItem() {
       formData.append("image", fooditem.image);
     }
 
+    setLoading(true);
     try {
-      await updateFoodItem(id, formData, accessToken);
+      const activeToken = await ensureActiveToken();
+      await updateFoodItem(id, formData, activeToken);
       alert("Món ăn đã được cập nhật thành công");
       navigate("/manage-menu");
     } catch (error) {
       console.error("Lỗi khi cập nhật món ăn:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -2,12 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./ManagePromotions.module.css";
 import { fetchPromotions, deletePromotion } from "../../../API/PromotionAPI";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useAuth } from "../../../Components/Auth/AuthContext";
+import { refreshToken } from "../../../API/authAPI";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
+        throw error;
+      }
+    }
+    return activeToken;
+  };
 
   useEffect(() => {
     async function getPromotions() {
@@ -32,27 +52,15 @@ function ManagePromotions() {
   };
 
   const handleDelete = async (code) => {
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-      return;
-    }
-    const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa ưu đãi này không?"
-    );
-    if (confirmDelete) {
-      if (!accessToken) {
-        window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-        return;
-      }
-      try {
-        await deletePromotion(code, accessToken);
-        setPromotions(Promotions.filter((discount) => discount.code !== code));
-      } catch (error) {
-        console.error("Lỗi khi xóa ưu đãi:", error);
-        alert("Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.");
-      }
-    } else {
-      console.log("Hành động xóa đã bị hủy.");
+    if (!window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này không?")) return;
+    try {
+      const activeToken = await ensureActiveToken();
+      await deletePromotion(code, activeToken);
+      setPromotions(Promotions.filter((discount) => discount.code !== code));
+      alert("Xóa ưu đãi thành công.");
+    } catch (error) {
+      console.error("Lỗi khi xóa ưu đãi:", error);
+      alert("Không thể xóa ưu đãi. Vui lòng thử lại.");
     }
   };
 
