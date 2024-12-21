@@ -5,6 +5,8 @@ import {
   updatePromotion,
 } from "../../../API/PromotionAPI";
 import { useAuth } from "../../../Components/Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
 import style from "./EditPromotion.module.css";
 import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 
@@ -21,8 +23,9 @@ function EditPromotion() {
   const [editingField, setEditingField] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   const [originalPromotion, setOriginalPromotion] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function getPromotion() {
@@ -43,6 +46,24 @@ function EditPromotion() {
       getPromotion();
     }
   }, [code]);
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
+        throw error;
+      }
+    }
+    return activeToken;
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -104,18 +125,18 @@ function EditPromotion() {
       return;
     }
 
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-      return;
-    }
+    setLoading(true);
 
     try {
-      await updatePromotion(code, formData, accessToken);
+      const activeToken = await ensureActiveToken();
+      await updatePromotion(code, formData, activeToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");
     } catch (error) {
       console.error("Lỗi khi cập nhật ưu đãi:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 

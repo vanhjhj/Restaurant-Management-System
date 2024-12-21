@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addPromotion } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
 import { useAuth } from "../../../Components/Auth/AuthContext"; // Import useAuth
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
 import style from "./AddPromotion.module.css";
 
 function AddPromotion() {
@@ -16,7 +18,26 @@ function AddPromotion() {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
+        throw error;
+      }
+    }
+    return activeToken;
+  };
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -28,7 +49,6 @@ function AddPromotion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { code, title, description, image, discount, startdate, enddate } =
       promotion;
 
@@ -76,13 +96,10 @@ function AddPromotion() {
       enddate: formattedEndDate,
     };
 
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-      return;
-    }
-
+    setLoading(true);
     try {
-      await addPromotion(promotionData, accessToken);
+      const activeToken = await ensureActiveToken();
+      await addPromotion(promotionData, activeToken);
       alert("Ưu đãi đã được thêm thành công");
       navigate("/manage-promotions");
     } catch (error) {
@@ -92,6 +109,8 @@ function AddPromotion() {
         console.error("Lỗi khác:", error.message);
       }
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 

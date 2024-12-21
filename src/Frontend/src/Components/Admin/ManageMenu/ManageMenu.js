@@ -8,6 +8,8 @@ import {
 import style from "./ManageMenu.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Components/Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
 
 const ManageMenu = () => {
   const [categories, setCategories] = useState([]);
@@ -16,7 +18,8 @@ const ManageMenu = () => {
   const [showNewCategoryForm, setShowNewCategoryForm] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -50,32 +53,40 @@ const ManageMenu = () => {
     fetchFoodItems();
   }, [selectedCategory]);
 
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
+        throw error;
+      }
+    }
+    return activeToken;
+  };
+
   const formatPrice = (price) => {
     return `${price.toLocaleString("vi-VN")} VND`;
   };
 
   const handleDelete = async (id) => {
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
-      return;
-    }
-
-    const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa món ăn này không?"
-    );
-    if (confirmDelete) {
-      try {
-        await deleteFoodItem(id, accessToken);
-        setFoodItems((prevFoodItems) =>
-          prevFoodItems.filter((item) => item.id !== id)
-        );
-        alert("Món ăn đã được xóa thành công!");
-      } catch (error) {
-        console.error("Lỗi khi xóa món ăn:", error);
-        alert("Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.");
-      }
-    } else {
-      console.log("Hành động xóa đã bị hủy.");
+    if (!window.confirm("Bạn có chắc chắn muốn xóa món ăn này không?")) return;
+    try {
+      const activeToken = await ensureActiveToken();
+      await deleteFoodItem(id, activeToken);
+      setFoodItems((prevFoodItems) =>
+        prevFoodItems.filter((item) => item.id !== id)
+      );
+      alert("Món ăn đã được xóa thành công!");
+    } catch (error) {
+      console.error("Lỗi khi xóa món ăn:", error);
+      alert("Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.");
     }
   };
 
@@ -83,6 +94,9 @@ const ManageMenu = () => {
     try {
       const updatedCategories = await getMenuTabs();
       setCategories(updatedCategories);
+      if (updatedCategories.length > 0) {
+        setSelectedCategory(updatedCategories[updatedCategories.length - 1].id);
+      }
     } catch (error) {
       console.error("Error updating categories:", error);
     }
@@ -94,28 +108,22 @@ const ManageMenu = () => {
       return;
     }
 
-    if (!accessToken) {
-      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+    if (newCategoryName.length > 255) {
+      setError("Tên mục không được quá 255 ký tự.");
       return;
     }
 
     try {
+      const activeToken = await ensureActiveToken();
       const newCategory = await createNewMenuTab(
         { name: newCategoryName },
-        accessToken
+        activeToken
       );
 
-      // Cập nhật danh sách mục và ẩn form
-      setCategories([...categories, newCategory]);
-      setNewCategoryName(""); // Reset tên mục
+      setNewCategoryName("");
       setShowNewCategoryForm(false);
 
-      // Làm mới lại danh sách mục
       await updateCategories();
-
-      // Chọn mục mới được tạo
-      setSelectedCategory(newCategory.id);
-
       alert("Tạo mục mới thành công!");
     } catch (error) {
       console.error("Lỗi khi tạo mục mới:", error);
