@@ -132,13 +132,14 @@ export const deleteEmployee= async (id,token) => {
 //xem danh sách hóa đơn
 export const getInvoice= async (token) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/bookings/order`,
+        const response = await axios.get(`${API_BASE_URL}/booking/orders`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             }
         );
+        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Error get Invoices:', error);

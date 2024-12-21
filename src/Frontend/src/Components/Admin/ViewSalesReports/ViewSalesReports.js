@@ -1,48 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { getInvoice } from "../../../API/AdminAPI";
 import { refreshToken } from "../../../API/authAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useAuth } from "../../Auth/AuthContext";
+import style from "./../../../Style/AdminStyle/ViewSalesReports.module.css"; // Import file CSS
 
 function ViewSalesReports() {
   const { accessToken, setAccessToken } = useAuth();
   const [reportType, setReportType] = useState("Tháng"); // Loại báo cáo: Tháng, Quý, Năm
   const [chartData, setChartData] = useState({}); // Dữ liệu biểu đồ
   const [error, setError] = useState(null); // Lưu lỗi nếu có
+  const [loading, setLoading] = useState(true); // Trạng thái loading
   const navigate = useNavigate();
 
   useEffect(() => {
-    const refresh= localStorage.getItem('refreshToken');
+    const refresh = localStorage.getItem("refreshToken");
     const fetchInvoices = async () => {
-      // Đảm bảo token hợp lệ
       const ensureActiveToken = async () => {
         let activeToken = accessToken;
         if (isTokenExpired(accessToken)) {
-            try {
-                const refreshed = await refreshToken(refresh);
-                activeToken = refreshed.access;
-                setAccessToken(activeToken);
-            } catch (error) {
-                console.error('Error refreshing token:', error);
-                navigate('/login'); // Điều hướng nếu refresh token thất bại
-                throw error;
-            }
+          try {
+            const refreshed = await refreshToken(refresh);
+            activeToken = refreshed.access;
+            setAccessToken(activeToken);
+          } catch (error) {
+            console.error("Error refreshing token:", error);
+            navigate("/login");
+            throw error;
+          }
         }
         return activeToken;
       };
-      
+
       try {
-        let response= await getInvoice(ensureActiveToken);
-        
-        const data = response.data;
+        setLoading(true); // Đặt trạng thái đang tải
+        const token = await ensureActiveToken(); // Gọi hàm để lấy token
+        let response = await getInvoice(token); // Truyền token vào hàm getInvoice
+        const data = response.results;
 
         // Lọc hóa đơn đã thanh toán
-        const paidInvoices = data.filter((invoice) => invoice.status === "paid");
+        const paidInvoices = data.filter((invoice) => invoice.status === "P");
 
         // Xử lý dữ liệu theo loại báo cáo
-        if (reportType === "Tháng") {
+        if (paidInvoices.length === 0) {
+          setError(null); // Không có lỗi
+          setChartData({}); // Không có dữ liệu
+        } else if (reportType === "Tháng") {
           generateMonthlyData(paidInvoices);
         } else if (reportType === "Quý") {
           generateQuarterlyData(paidInvoices);
@@ -52,18 +57,19 @@ function ViewSalesReports() {
       } catch (err) {
         console.error("Error fetching invoices:", err);
         setError("Không thể tải dữ liệu hóa đơn. Vui lòng thử lại sau.");
+      } finally {
+        setLoading(false); // Kết thúc tải
       }
     };
 
     fetchInvoices();
   }, [reportType]);
 
-  // Tạo dữ liệu doanh thu theo Tháng
   const generateMonthlyData = (invoices) => {
     const revenueByMonth = Array(12).fill(0);
     invoices.forEach((invoice) => {
-      const month = new Date(invoice.datetime).getMonth(); // Lấy tháng (0-11)
-      revenueByMonth[month] += invoice.final_price; // Cộng dồn doanh thu
+      const month = new Date(invoice.datetime).getMonth();
+      revenueByMonth[month] += invoice.final_price;
     });
 
     setChartData({
@@ -93,13 +99,12 @@ function ViewSalesReports() {
     });
   };
 
-  // Tạo dữ liệu doanh thu theo Quý
   const generateQuarterlyData = (invoices) => {
     const revenueByQuarter = Array(4).fill(0);
     invoices.forEach((invoice) => {
-      const month = new Date(invoice.datetime).getMonth(); // Lấy tháng (0-11)
-      const quarter = Math.floor(month / 3); // Xác định quý (0-3)
-      revenueByQuarter[quarter] += invoice.final_price; // Cộng dồn doanh thu
+      const month = new Date(invoice.datetime).getMonth();
+      const quarter = Math.floor(month / 3);
+      revenueByQuarter[quarter] += invoice.final_price;
     });
 
     setChartData({
@@ -116,19 +121,18 @@ function ViewSalesReports() {
     });
   };
 
-  // Tạo dữ liệu doanh thu theo Năm
   const generateYearlyData = (invoices) => {
     const revenueByYear = {};
     invoices.forEach((invoice) => {
-      const year = new Date(invoice.datetime).getFullYear(); // Lấy năm
+      const year = new Date(invoice.datetime).getFullYear();
       if (!revenueByYear[year]) {
         revenueByYear[year] = 0;
       }
-      revenueByYear[year] += invoice.final_price; // Cộng dồn doanh thu
+      revenueByYear[year] += invoice.final_price;
     });
 
     setChartData({
-      labels: Object.keys(revenueByYear), // Danh sách năm
+      labels: Object.keys(revenueByYear),
       datasets: [
         {
           label: "Doanh thu (VNĐ)",
@@ -142,52 +146,34 @@ function ViewSalesReports() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 style={{ textAlign: "center" }}>Báo cáo doanh thu</h2>
-
-      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-
-      {/* Nút chọn loại báo cáo */}
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+    <div className={style["viewsalesreport-container"]}>
+      <h2 className={style["viewsalesreport-title"]}>Báo cáo doanh thu</h2>
+      <div className={style["viewsalesreport-button-group"]}>
         <button
-          style={{
-            marginRight: "10px",
-            padding: "10px 20px",
-            backgroundColor: reportType === "Tháng" ? "#f0ad4e" : "#ddd",
-            border: "none",
-            cursor: "pointer",
-          }}
+          className={`${style["button"]} ${reportType === "Tháng" ? style["selected"] : ""}`}
           onClick={() => setReportType("Tháng")}
         >
           Tháng
         </button>
         <button
-          style={{
-            marginRight: "10px",
-            padding: "10px 20px",
-            backgroundColor: reportType === "Quý" ? "#f0ad4e" : "#ddd",
-            border: "none",
-            cursor: "pointer",
-          }}
+          className={`${style["button"]} ${reportType === "Quý" ? style["selected"] : ""}`}
           onClick={() => setReportType("Quý")}
         >
           Quý
         </button>
         <button
-          style={{
-            padding: "10px 20px",
-            backgroundColor: reportType === "Năm" ? "#f0ad4e" : "#ddd",
-            border: "none",
-            cursor: "pointer",
-          }}
+          className={`${style["button"]} ${reportType === "Năm" ? style["selected"] : ""}`}
           onClick={() => setReportType("Năm")}
         >
           Năm
         </button>
       </div>
 
-      {/* Biểu đồ */}
-      {chartData.labels ? (
+      {loading ? (
+        <p className={style["viewsalesreport-error-message"]}>Đang tải dữ liệu...</p>
+      ) : error ? (
+        <p className={style["viewsalesreport-error-message"]}>{error}</p>
+      ) : chartData.labels && chartData.datasets && chartData.datasets[0].data.some((value) => value > 0) ? (
         <Line
           data={chartData}
           options={{
@@ -213,7 +199,7 @@ function ViewSalesReports() {
           }}
         />
       ) : (
-        <p style={{ textAlign: "center" }}>Đang tải dữ liệu...</p>
+        <p className={style["viewsalesreport-message"]}>Cửa hàng chưa có doanh thu.</p>
       )}
     </div>
   );
