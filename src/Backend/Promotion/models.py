@@ -7,6 +7,7 @@ def validate_discount(value):
         raise ValidationError('Discount must be between 0 and 100.')
 
 class Promotion(models.Model):
+    code=models.CharField(max_length=10, primary_key = True)
     title = models.CharField(max_length=100)
     startdate=models.DateField()
     enddate=models.DateField()

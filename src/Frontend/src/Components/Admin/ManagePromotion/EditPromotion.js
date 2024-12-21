@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchPromotionById, updatePromotion } from "../../../API/PromotionAPI";
+import {
+  fetchPromotionByCode,
+  updatePromotion,
+} from "../../../API/PromotionAPI";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import style from "./EditPromotion.module.css";
 import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 
 function EditPromotion() {
-  const { id } = useParams(); // Lấy id từ URL
+  const { code } = useParams(); // Lấy code từ URL
   const [promotion, setPromotion] = useState({
     title: "",
     description: "",
-    image: null,
+    image: "",
     discount: 0,
     startdate: "",
     enddate: "",
@@ -19,13 +22,16 @@ function EditPromotion() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { accessToken } = useAuth();
+  const [originalPromotion, setOriginalPromotion] = useState({});
 
   useEffect(() => {
     async function getPromotion() {
       try {
-        const data = await fetchPromotionById(id);
+        const data = await fetchPromotionByCode(code);
         if (data) {
-          setPromotion(data);
+          setPromotion(data); // Gán dữ liệu từ API
+          setOriginalPromotion(data);
+          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching promotion:", error);
@@ -33,14 +39,16 @@ function EditPromotion() {
       }
     }
 
-    getPromotion();
-  }, [id]);
+    if (code) {
+      getPromotion();
+    }
+  }, [code]);
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value, files } = e.target;
     setPromotion((prevPromotion) => ({
       ...prevPromotion,
-      [name]: type === "file" ? files[0] : value, // Lưu file nếu input là file
+      [name]: files ? files[0] : value, // Nếu có file, lấy file, không thì lấy giá trị input
     }));
   };
 
@@ -51,13 +59,8 @@ function EditPromotion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!accessToken) {
-      setError("Token không tồn tại. Vui lòng đăng nhập lại.");
-      return;
-    }
-
-    const { startdate, enddate, discount } = promotion;
+    const { title, description, discount, image, startdate, enddate } =
+      promotion;
 
     if (discount < 0 || discount > 100) {
       setError("Giảm giá phải nằm trong khoảng 0-100%.");
@@ -69,21 +72,49 @@ function EditPromotion() {
       return;
     }
 
-    try {
-      const updatedPromotion = {
-        title: promotion.title,
-        description: promotion.description,
-        discount: discount,
-        image: promotion.image,
-        startdate,
-        enddate,
-      };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("discount", discount);
+    formData.append("startdate", startdate);
+    formData.append("enddate", enddate);
 
-      await updatePromotion(id, updatedPromotion, accessToken);
+    // Nếu có ảnh mới, thêm vào formData
+    if (promotion.image instanceof File) {
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+      if (!allowedExtensions.exec(promotion.image.name)) {
+        setError("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, png.");
+        return;
+      }
+      formData.append("image", promotion.image);
+    }
+
+    const hasChanges =
+      promotion.title !== originalPromotion.title ||
+      promotion.description !== originalPromotion.description ||
+      new Date(promotion.startdate).getTime() !==
+        new Date(originalPromotion.startdate).getTime() ||
+      new Date(promotion.enddate).getTime() !==
+        new Date(originalPromotion.enddate).getTime() ||
+      promotion.discount !== originalPromotion.discount ||
+      promotion.image instanceof File;
+
+    if (!hasChanges) {
+      setError("Chưa có thay đổi gì để cập nhật.");
+      return;
+    }
+
+    if (!accessToken) {
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+      return;
+    }
+
+    try {
+      await updatePromotion(code, formData, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");
     } catch (error) {
-      console.error("Lỗi khi cập nhật ưu đãi:", error);
+      console.error("Lỗi khi cập nhật ưu đãi:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
     }
   };
@@ -100,9 +131,8 @@ function EditPromotion() {
       >
         ← Back
       </button>
-      <h2>Chỉnh sửa ưu đãi</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-      {/* Hiển thị lỗi nếu có */}
+      <h2>Chỉnh sửa ưu đãi {code}</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
