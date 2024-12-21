@@ -1,27 +1,23 @@
-/* src/Components/ManageEmployees.css */
+
 
 .manage-employees {
-    padding: 40px;
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: #fff;
+    margin: 100px auto 0 auto;
+    max-width: 1200px;
+    padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: flex;
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.back-button {
-    font-size: 16px;
+.header h2 {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
     color: #333;
-    background: none;
-    border: none;
-    cursor: pointer;
+    margin-bottom: 50px;
+    text-transform: uppercase;
 }
 
 .name_container h2 {
@@ -62,28 +58,19 @@ h3 {
     justify-content: center;
 }
 
-.edit-button, .delete-button {
+.delete-button {
     background: none;
     border: none;
     cursor: pointer;
     font-size: 16px;
 }
 
-.edit-button {
-    color: #4CAF50; /* Green for edit */
-}
-
 .delete-button {
     color: #f44336; /* Red for delete */
 }
 
-.actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.add-employee-button {
+.manage-employee-button {
     padding: 10px 20px;
     font-size: 16px;
     color: #333;
@@ -94,20 +81,5 @@ h3 {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.save-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    color: white;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s;
-}
-
-.save-button:hover {
-    background-color: #45a049;
+    margin-left: auto;
 }

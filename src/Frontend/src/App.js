@@ -82,8 +82,8 @@ function App() {
                     <Route path="/about" element={<About />} />
                     <Route path="/menu" element={<Menu />} />
                     <Route
-                    path="/reservation"
-                    element={<Reservation isLoggedIn={isLoggedIn} />}
+                        path="/reservation"
+                        element={<Reservation isLoggedIn={isLoggedIn} />}
                     />
 
                     {/* Đăng nhập và đăng ký */}
@@ -218,7 +218,7 @@ function App() {
                     }
                     />
 
-<Route
+                    <Route
                     path="/fill-info-Emp/:id"
                     element={
                         <ProtectedRoute

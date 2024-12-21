@@ -94,3 +94,37 @@ export const deleteDepartment = async (id,token) => {
 };
 
 
+
+// Lấy danh sách nhan vien
+export const getEmployee = async (token) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/auth/employees/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching employees:', error);
+        throw error;
+    }
+};
+
+//xoa tai khoan nhan vien
+export const deleteEmployee= async (id,token) => {
+    try {
+        const response = await axios.delete(`${API_BASE_URL}/auth/accounts/${id}/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error delete employee:', error);
+        throw error;
+    }
+};
