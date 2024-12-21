@@ -71,21 +71,6 @@ function App() {
     checkLoginStatus();
   }, []);
 
-    return (
-      <AuthProvider>
-            <Router>
-                <ScrollToTop />
-                <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
-                <Routes>
-                    {/* Trang công khai */}
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/menu" element={<Menu />} />
-                    <Route
-                        path="/reservation"
-                        element={<Reservation isLoggedIn={isLoggedIn} />}
-                    />
-
   return (
     <AuthProvider>
       <Router>
