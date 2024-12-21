@@ -4,11 +4,8 @@ import style from './../../../Style/AuthStyle/SignUp.module.css';
 import { account_check, sendOrResendOTP } from './../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkPasswordRequirements } from './../../../utils/checkPasswordRequirements';
-import { useAuth } from '../../Auth/AuthContext';
 
 function RegisterEmployeeAccount() {
-    const { accessToken,setAccessToken } = useAuth();
-    const refresh = localStorage.getItem('refreshToken');
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
