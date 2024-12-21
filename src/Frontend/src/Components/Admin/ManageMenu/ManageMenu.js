@@ -10,11 +10,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 
 const ManageMenu = () => {
-  const [categories, setCategories] = useState([]); // Danh sách mục
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [foodItems, setFoodItems] = useState([]); // Danh sách món ăn
-  const [showNewCategoryForm, setShowNewCategoryForm] = useState(false); // Hiển thị form tạo mục mới
-  const [newCategoryName, setNewCategoryName] = useState(""); // Tên mục mới
+  const [foodItems, setFoodItems] = useState([]);
+  const [showNewCategoryForm, setShowNewCategoryForm] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
   const navigate = useNavigate();
   const { accessToken } = useAuth();
 
@@ -23,7 +23,7 @@ const ManageMenu = () => {
       try {
         const data = await getMenuTabs();
         setCategories(data);
-        if (data.length > 0) setSelectedCategory(data[0]?.id); // Chọn mục đầu tiên nếu có
+        if (data.length > 0) setSelectedCategory(data[0]?.id);
       } catch (error) {
         console.error("Error fetching menu categories:", error);
       }
@@ -66,7 +66,9 @@ const ManageMenu = () => {
     if (confirmDelete) {
       try {
         await deleteFoodItem(id, accessToken);
-        setFoodItems(foodItems.filter((item) => item.id !== id));
+        setFoodItems((prevFoodItems) =>
+          prevFoodItems.filter((item) => item.id !== id)
+        );
         alert("Món ăn đã được xóa thành công!");
       } catch (error) {
         console.error("Lỗi khi xóa món ăn:", error);
@@ -123,9 +125,11 @@ const ManageMenu = () => {
 
   return (
     <div className={style["manage-menu-container"]}>
-      {/* Sidebar */}
       <div className={style["menu-sidebar"]}>
-        <button onClick={() => navigate(-1)} className={style["back-button"]}>
+        <button
+          onClick={() => navigate("/admin-dashboard")}
+          className={style["back-button"]}
+        >
           ← Back
         </button>
         <h3>Thực đơn hiện tại</h3>
@@ -146,7 +150,6 @@ const ManageMenu = () => {
           <p>Chưa có mục nào, hãy thêm mới!</p>
         )}
 
-        {/* Nút và Form tạo mục mới */}
         {!showNewCategoryForm ? (
           <button
             className={style["add-category-button"]}
@@ -179,7 +182,6 @@ const ManageMenu = () => {
         )}
       </div>
 
-      {/* Main Content */}
       <div className={style["menu-content"]}>
         <h2>Quản lý thực đơn</h2>
         {foodItems.length === 0 ? (
@@ -200,7 +202,7 @@ const ManageMenu = () => {
                 <div className={style["food-card-buttons"]}>
                   <button
                     className={style["edit-button"]}
-                    onClick={() => navigate(`/edit-food/${item.id}`)}
+                    onClick={() => navigate(`/edit-fooditem/${item.id}`)}
                   >
                     Chỉnh sửa
                   </button>

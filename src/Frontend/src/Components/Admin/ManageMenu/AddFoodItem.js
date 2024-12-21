@@ -42,11 +42,6 @@ function AddFoodItem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!accessToken) {
-      setError("Không tìm thấy token. Vui lòng đăng nhập lại.");
-      return;
-    }
-
     const { name, price, description, image, category } = menu;
 
     // Validate input
@@ -71,6 +66,11 @@ function AddFoodItem() {
         setError("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, png.");
         return;
       }
+    }
+
+    if (!accessToken) {
+      window.alert("Token không tồn tại, vui lòng đăng nhập lại.");
+      return;
     }
 
     try {

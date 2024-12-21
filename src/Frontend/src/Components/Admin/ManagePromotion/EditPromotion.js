@@ -72,32 +72,32 @@ function EditPromotion() {
       return;
     }
 
-    const updatedPromotion = {
-      title,
-      description,
-      discount,
-      startdate,
-      enddate,
-    };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("discount", discount);
+    formData.append("startdate", startdate);
+    formData.append("enddate", enddate);
 
+    // Nếu có ảnh mới, thêm vào formData
     if (promotion.image instanceof File) {
       const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
       if (!allowedExtensions.exec(promotion.image.name)) {
         setError("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, png.");
         return;
       }
-      updatedPromotion.image = promotion.image;
+      formData.append("image", promotion.image);
     }
 
     const hasChanges =
       promotion.title !== originalPromotion.title ||
       promotion.description !== originalPromotion.description ||
-      new Date(promotion.startdate).toISOString() !==
-        new Date(originalPromotion.startdate).toISOString() ||
-      new Date(promotion.enddate).toISOString() !==
-        new Date(originalPromotion.enddate).toISOString() ||
+      new Date(promotion.startdate).getTime() !==
+        new Date(originalPromotion.startdate).getTime() ||
+      new Date(promotion.enddate).getTime() !==
+        new Date(originalPromotion.enddate).getTime() ||
       promotion.discount !== originalPromotion.discount ||
-      promotion.image instanceof File; // Kiểm tra file ảnh
+      promotion.image instanceof File;
 
     if (!hasChanges) {
       setError("Chưa có thay đổi gì để cập nhật.");
@@ -110,7 +110,7 @@ function EditPromotion() {
     }
 
     try {
-      await updatePromotion(code, updatedPromotion, accessToken);
+      await updatePromotion(code, formData, accessToken);
       alert("Ưu đãi đã được cập nhật thành công");
       navigate("/manage-promotions");
     } catch (error) {

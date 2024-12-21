@@ -15,6 +15,8 @@ import ProtectedRoute from "./Components/Routes/ProtectedRoute";
 import Profile from "./Components/Customer/Profile";
 import ManageEmployees from "./Components/Admin/ManageEmployee/ManageEmployees";
 import ManageMenu from "./Components/Admin/ManageMenu/ManageMenu";
+import AddFoodItem from "./Components/Admin/ManageMenu/AddFoodItem";
+import EditFoodItem from "./Components/Admin/ManageMenu/EditFoodItem";
 import ManagePromotions from "./Components/Admin/ManagePromotion/ManagePromotions";
 import AddPromotion from "./Components/Admin/ManagePromotion/AddPromotion";
 import EditPromotion from "./Components/Admin/ManagePromotion/EditPromotion";
@@ -36,7 +38,6 @@ import { isTokenExpired } from "./utils/tokenHelper.mjs";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
-import AddFoodItem from "./Components/Admin/ManageMenu/AddFoodItem";
 
 library.add(faEye, faEyeSlash);
 
@@ -185,6 +186,18 @@ function App() {
                 userRole={userRole}
               >
                 <AddFoodItem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-fooditem/:id"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <EditFoodItem />
               </ProtectedRoute>
             }
           />

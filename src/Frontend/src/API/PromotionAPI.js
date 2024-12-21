@@ -37,9 +37,7 @@ export const deletePromotion = async (code, accessToken) => {
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(
-        localStorage.getItem("refresh_token")
-      );
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
       if (newToken) return await deletePromotion(code, newToken);
     }
     console.error("Lỗi khi xóa ưu đãi:", error.message);
@@ -65,9 +63,7 @@ export const addPromotion = async (promotion, accessToken) => {
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(
-        localStorage.getItem("refresh_token")
-      );
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
       if (newToken) return await addPromotion(promotion, newToken);
     }
     console.error("Lỗi khi thêm mới ưu đãi:", error.message);
@@ -95,9 +91,7 @@ export const updatePromotion = async (code, promotion, accessToken) => {
     console.error("Lỗi chi tiết từ backend:", error.response?.data);
     if (error.response && error.response.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(
-        localStorage.getItem("refresh_token")
-      );
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
       if (newToken) return await updatePromotion(code, promotion, newToken);
     }
     console.error("Lỗi khi cập nhật ưu đãi:", error.message);

@@ -52,9 +52,7 @@ export const createNewMenuTab = async (category, accessToken) => {
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(
-        localStorage.getItem("refresh_token")
-      );
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
       if (newToken) return await createNewMenuTab(category, newToken);
     }
     console.error("Lỗi khi thêm mới mục:", error.message);
@@ -71,9 +69,7 @@ export const deleteFoodItem = async (id, accessToken) => {
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(
-        localStorage.getItem("refresh_token")
-      );
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
       if (newToken) return await deleteFoodItem(id, newToken);
     }
     console.error("Lỗi khi xóa món ăn:", error.message);
@@ -98,12 +94,37 @@ export const createNewFoodItem = async (foodItem, accessToken) => {
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Token hết hạn, đang làm mới token...");
-      const newToken = await refreshToken(
-        localStorage.getItem("refresh_token")
-      );
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
       if (newToken) return await createNewFoodItem(foodItem, newToken);
     }
     console.error("Lỗi khi thêm mới món ăn:", error.message);
+    throw error;
+  }
+};
+
+export const updateFoodItem = async (id, menuitem, accessToken) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/menu/menuitems/${id}/`,
+      menuitem,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("Cập nhật thành công:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi chi tiết từ backend:", error.response?.data);
+    if (error.response && error.response.status === 401) {
+      console.log("Token hết hạn, đang làm mới token...");
+      const newToken = await refreshToken(localStorage.getItem("refreshToken"));
+      if (newToken) return await updateFoodItem(id, menuitem, newToken);
+    }
+    console.error("Lỗi khi cập nhật món ăn:", error.message);
     throw error;
   }
 };
