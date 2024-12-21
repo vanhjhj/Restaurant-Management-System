@@ -35,6 +35,7 @@ class EmployeeAccount(models.Model):
     full_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
     gender = models.CharField(max_length=10, choices=[('Nam', 'Nam'), ('Nữ', 'Nữ')])
+    phone_number = PhoneNumberField()
     start_working_date = models.DateField(default=None, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { API_BASE_URL } from '../Config/apiConfig';
 
-// Hàm GetInfoCus
-export const GetInfoCus = async (CusId, token) => {
+// Hàm GetInfoEmp
+export const GetInfoEmp = async (EmpId, token) => {
     try {
         const response = await axios.get(
-            `${API_BASE_URL}/auth/customers/${CusId}/`,
+            `${API_BASE_URL}/auth/employees/${EmpId}/`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`, // Đính kèm token
@@ -25,14 +25,14 @@ export const GetInfoCus = async (CusId, token) => {
 
 };
 
-// Hàm GetInfoCus
-export const GetEmailCus = async (CusId, token) => {
+// Hàm GetInfoEmp
+export const GetEmailEmp = async (EmpId, token) => {
     try {
 
-        console.log(`Requesting: /auth/accounts/${CusId}/`);
+        console.log(`Requesting: /auth/accounts/${EmpId}/`);
 
         const response = await axios.get(
-            `${API_BASE_URL}/auth/accounts/${CusId}/`,
+            `${API_BASE_URL}/auth/accounts/${EmpId}/`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`, // Đính kèm token
@@ -53,11 +53,11 @@ export const GetEmailCus = async (CusId, token) => {
 };
 
 
-// Hàm ChangeInfoCus
-export const ChangeInfoCus = async (CusId, InfoChange, token) => {
+// Hàm ChangeInfoEmp
+export const ChangeInfoEmp = async (EmpId, InfoChange, token) => {
     try {
         const response = await axios.patch(
-            `${API_BASE_URL}/auth/customers/${CusId}/`,
+            `${API_BASE_URL}/auth/employees/${EmpId}/`,
             InfoChange,
             {
                 headers: {
@@ -78,10 +78,10 @@ export const ChangeInfoCus = async (CusId, InfoChange, token) => {
 };
 
 //Change Info Login
-export const ChangeInfoLogCus = async (CusId, InfoChange, token) => {
+export const ChangeInfoLogEmp = async (EmpId, InfoChange, token) => {
     try {
         const response = await axios.patch(
-            `${API_BASE_URL}/auth/accounts/${CusId}/`,
+            `${API_BASE_URL}/auth/accounts/${EmpId}/`,
             InfoChange,
             {
                 headers: {
@@ -101,30 +101,4 @@ export const ChangeInfoLogCus = async (CusId, InfoChange, token) => {
             throw error;
         }
 };
-
-export const CheckPassword =async(CusID,Pass,token)=>{
-    try {
-        const response = await axios.post(
-            `${API_BASE_URL}/auth/password-check/`,
-            {id: CusID, password: Pass},
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Đính kèm token
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-        console.log(response.data.message); // Thông báo từ API nếu thành công
-        return response.data;
-    } catch (error) {
-        console.log("Check-Password",CusID);
-            console.error(
-                "Lỗi khi ktra Password:",
-                error.response ? error.response.data : error.message
-            );
-            throw error;
-    }
-}
-
-
 

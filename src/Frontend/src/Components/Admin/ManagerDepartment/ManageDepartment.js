@@ -102,61 +102,61 @@ function ManageDepartment() {
 
     return (
         <div className={style["manage-department-container"]}>
-        <h2 className={style["manage-department-header"]}>Quản lý bộ phận</h2>
-    
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {loading ? (
-            <p>Đang tải dữ liệu...</p>
-        ) : departments.length === 0 ? (
-            <div>
-                <p>Hiện tại chưa có bộ phận nào!</p>
-                <div className={style["button-container"]}>
-                    <button 
-                        className={style["manage-department-button"]} 
-                        onClick={() => navigate('/add-department')}
-                    >
-                        Thêm bộ phận
-                    </button>
+            <h2 className={style["manage-department-header"]}>Quản lý bộ phận</h2>
+        
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {loading ? (
+                <p>Đang tải dữ liệu...</p>
+            ) : departments.length === 0 ? (
+                <div>
+                    <p>Hiện tại chưa có bộ phận nào!</p>
+                    <div className={style["button-container"]}>
+                        <button 
+                            className={style["manage-department-button"]} 
+                            onClick={() => navigate('/add-department')}
+                        >
+                            Thêm bộ phận
+                        </button>
+                    </div>
                 </div>
-            </div>
-        ) : (
-            <>
-                <table className={style["department-table"]}>
-                    <thead>
-                        <tr>
-                            <th>Tên bộ phận</th>
-                            <th>Lương</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {departments.map((dept) => (
-                            <tr key={dept.id}>
-                                <td>{dept.name}</td>
-                                <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dept.salary)}</td>
-                                <td>
-                                <button className={style["edit-button"]} onClick={() => handleEditDepartment(dept.id)}>
-                                    Sửa <FontAwesomeIcon icon={faEdit} />
-                                </button>
-                                <button className={style["delete-button"]} onClick={() => handleDeleteDepartment(dept.id)}>
-                                    Xóa  <FontAwesomeIcon icon={faTrash} />
-                                </button>
-                                </td>
+            ) : (
+                <>
+                    <table className={style["department-table"]}>
+                        <thead>
+                            <tr>
+                                <th>Tên bộ phận</th>
+                                <th>Lương</th>
+                                <th>Hành động</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-    
-                <div className={style["button-container"]}>
-                    <button 
-                        className={style["manage-department-button"]} 
-                        onClick={() => navigate('/add-department')}
-                    >
-                        Thêm bộ phận
-                    </button>
-                </div>
-            </>
-        )}
+                        </thead>
+                        <tbody>
+                            {departments.map((dept) => (
+                                <tr key={dept.id}>
+                                    <td>{dept.name}</td>
+                                    <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dept.salary)}</td>
+                                    <td>
+                                    <button className={style["edit-button"]} onClick={() => handleEditDepartment(dept.id)}>
+                                        Sửa <FontAwesomeIcon icon={faEdit} />
+                                    </button>
+                                    <button className={style["delete-button"]} onClick={() => handleDeleteDepartment(dept.id)}>
+                                        Xóa  <FontAwesomeIcon icon={faTrash} />
+                                    </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+        
+                    <div className={style["button-container"]}>
+                        <button 
+                            className={style["manage-department-button"]} 
+                            onClick={() => navigate('/add-department')}
+                        >
+                            Thêm bộ phận
+                        </button>
+                    </div>
+                </>
+            )}
     </div>
     
     );

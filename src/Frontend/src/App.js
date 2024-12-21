@@ -12,7 +12,7 @@ import VerifyOTP from "./Components/Auth/VerifyOTP";
 import ForgotPassword from "./Components/Auth/ForgotPassword";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import ProtectedRoute from "./Components/Routes/ProtectedRoute";
-import Profile from "./Components/Customer/Profile";
+import Profile from "./Components/Auth/Profile";
 import ManageEmployees from "./Components/Admin/ManageEmployee/ManageEmployees";
 import ManageMenu from "./Components/Admin/ManageMenu/ManageMenu";
 import AddFoodItem from "./Components/Admin/ManageMenu/AddFoodItem";
@@ -71,9 +71,20 @@ function App() {
     checkLoginStatus();
   }, []);
 
-  const handleAlert = () => {
-    setRefreshAlert(false);
-  };
+    return (
+      <AuthProvider>
+            <Router>
+                <ScrollToTop />
+                <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+                <Routes>
+                    {/* Trang công khai */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/menu" element={<Menu />} />
+                    <Route
+                        path="/reservation"
+                        element={<Reservation isLoggedIn={isLoggedIn} />}
+                    />
 
   return (
     <AuthProvider>
@@ -238,31 +249,19 @@ function App() {
             }
           />
 
-          <Route
-            path="/verify-otp-employee"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Admin"]}
-                userRole={userRole}
-              >
-                <VerifyOtpAccount />
-              </ProtectedRoute>
-            }
-          />
+                    <Route
+                    path="/fill-info-Emp/:id"
+                    element={
+                        <ProtectedRoute
+                        isLoggedIn={isLoggedIn}
+                        allowedRoles={["Admin"]}
+                        userRole={userRole}
+                        >
+                        <FillInfoEmployee/>
+                        </ProtectedRoute>
+                    }
+                    />
 
-          <Route
-            path="/fill-info-Emp/:id"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Admin"]}
-                userRole={userRole}
-              >
-                <FillInfoEmployee />
-              </ProtectedRoute>
-            }
-          />
 
           <Route
             path="/register-employee-account"
