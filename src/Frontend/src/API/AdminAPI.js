@@ -128,3 +128,20 @@ export const deleteEmployee= async (id,token) => {
         throw error;
     }
 };
+
+//xem danh sách hóa đơn
+export const getInvoice= async (token) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/bookings/order`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error get Invoices:', error);
+        throw error;
+    }
+};
