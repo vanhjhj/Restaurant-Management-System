@@ -3,7 +3,7 @@ import { useAuth } from '../../Auth/AuthContext';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../../API/authAPI';
 import style from './Invoice.module.css';
-import { addFood, fetchOrderData, fetchOrderItemData, removeItem, updateItem } from '../../../API/EE_ReservationAPI';
+import { addFood, createOrder, fetchOrderData, fetchOrderItemData, removeItem, updateItem, updateItemStatus } from '../../../API/EE_ReservationAPI';
 import { getFoodItems, getMenuTabs } from '../../../API/MenuAPI';
 
 function Invoice({ tableID, setShowInvoice }) {
@@ -19,7 +19,25 @@ function Invoice({ tableID, setShowInvoice }) {
     const [searchPriceMin, setSearchPriceMin] = useState('');
     const [searchPriceMax, setSearchPriceMax] = useState('');
     const [searchTab, setSearchTab] = useState(0);
-    
+    const [errorTableMessage, setErrorTableMessage] = useState();
+    const [errorType, setErrorType] = useState();
+
+    const handleError = (error, type) => {
+        if (error === 404) {
+            return 'Không tìm thấy hóa đơn';
+        }
+        if (error === 400) {
+            if (type === 'addItem') {
+                return 'Không tìm thấy hóa đơn';
+            }
+            if (type === 'editItem') {
+                return 'Chỉnh sửa không hợp lệ';
+            }
+        }
+        return ''
+    }
+
+    const errorMessage = handleError(errorTableMessage, errorType);
 
     const NumberWithSpaces = ({ number }) => {
         const formattedNumber = new Intl.NumberFormat('en-US', {
@@ -76,12 +94,12 @@ function Invoice({ tableID, setShowInvoice }) {
         try {
             const menu = await getFoodItems();
             setMenuData(menu);
-
             const tab = await getMenuTabs();
             setMenuTabs(tab);
         }
         catch (error) {
-            console.log(error);
+            setErrorTableMessage(error.response.status);
+            setErrorType('menu');
         }
     }
     const fetchData = async () => {
@@ -98,7 +116,7 @@ function Invoice({ tableID, setShowInvoice }) {
             })));
         }
         catch (error) {
-            console.log(error);
+            setErrorTableMessage(error.response.status);
         }
     }
 
@@ -106,19 +124,34 @@ function Invoice({ tableID, setShowInvoice }) {
         fetchData();
         fetchMenuData();
     }, [])
-
-    const handleSetDoneStatus = async (oID) => {
-        // ko goi fetchData
-    }
     
     const handleAddFood = async (oID, fID) => {
         const activeToken = await ensureActiveToken();
         try {
-            const tablesData = await addFood(activeToken, oID, fID, 1, "");
-            fetchData();
+            if (errorTableMessage === 404) {
+                await createOrder(activeToken, tableID);
+                setErrorTableMessage(0);
+                const orderData = await fetchOrderData(activeToken, tableID);
+                setInvoiceData(orderData);
+
+                const tablesData = await addFood(activeToken, orderData.id, fID, 1, "");
+
+                const itemData = await fetchOrderItemData(activeToken, orderData.id);
+                setItemsData(itemData.results.map((item) => ({
+                    ...item,
+                    isEditing: false,
+                    changeQuantity: false,
+                })));
+
+            }
+            else {
+                const tablesData = await addFood(activeToken, oID, fID, 1, "");
+                fetchData();
+            }
         }
         catch (error) {
-            console.log(error);
+            setErrorTableMessage(error.response.status);
+            setErrorType('addItem');
         }
     }
 
@@ -129,24 +162,10 @@ function Invoice({ tableID, setShowInvoice }) {
         setNoteData(itemNote);
     }
 
-    const handleSave = async (itemID, fID, quantity, note) => {
-        const activeToken = await ensureActiveToken();
-        try {
-            const result = await updateItem(activeToken, invoiceData.id, fID, quantity, noteData);
-            setItemsData((preItem) => (
-                preItem.map((i) => i.id === itemID ? { ...result.data,changeQuantity: i.changeQuantity, isEditing: false } : i)
-            ))
-            setNoteData('');
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }
-
     const handleErase = async (itemID, fID) => {
         const activeToken = await ensureActiveToken();
         try {
-            const result = await removeItem(activeToken, invoiceData.id, fID);
+            const result = await removeItem(activeToken, itemID);
             setItemsData((preItem) => (
                 preItem.filter((i) => i.id !== itemID)
             ))
@@ -154,12 +173,12 @@ function Invoice({ tableID, setShowInvoice }) {
             setInvoiceData(orderData);
         }
         catch (error) {
-            console.error(error);
+            setErrorTableMessage(error.response.status);
         }
     }
 
     const handleCancel = () => {
-        
+
     }
 
     const handleChangeQuantity = (value) => {
@@ -175,29 +194,47 @@ function Invoice({ tableID, setShowInvoice }) {
         setQuantity(itemQuantity);
     }
 
-    const handleKeyDown = async (event, change, itemID, fID, q, note) => {
-        if (!change) {
-            return;
-        }
-        if (event.key === 'Enter') {
-            const activeToken = await ensureActiveToken();
+    const handleSave = async (itemID, q, note, change) => {
+        const activeToken = await ensureActiveToken();
             try {
-                const result = await updateItem(activeToken, invoiceData.id, fID, q, note);
+                const result = await updateItem(activeToken, itemID, q, note);
                 setItemsData((preItem) => (
-                    preItem.map((i) => i.id === itemID ? { ...result.data, changeQuantity: false, isEditing: i.isEditing} : i)
+                    preItem.map((i) => i.id === itemID ? {
+                        ...result.data,
+                        changeQuantity: change === 'quantity' ? false : i.changeQuantity,
+                        isEditing: change === 'note' ? false : i.isEditing,
+                    } : i)
                 ))
-                setQuantity(0);
+                change === 'quantity' ? setQuantity(0) : setNoteData('');
                 const orderData = await fetchOrderData(activeToken, tableID);
                 setInvoiceData(orderData);
             }
             catch (error) {
-                console.error(error);
+                setErrorTableMessage(error.response.status);
+                setErrorType('editItem');
             }
+    }
+
+    const handleKeyDown = async (event, itemID, q, note, change) => {
+        if (event.key === 'Enter') {
+            const activeToken = await ensureActiveToken();
+            handleSave(itemID, q, note, change);
         }
     };
 
-    const handleChangeStatus = (itemID, fID, note) => {
-
+    const handleChangeStatus = async (itemID) => {
+        const activeToken = await ensureActiveToken();
+        try {
+            const result = await updateItemStatus(activeToken, itemID);
+            setItemsData((preItem) => (
+                preItem.map((i) => i.id === itemID ? result.data : i)
+            ));
+        }
+        catch (error) {
+            if (error.response.status === 404) {
+                setErrorTableMessage('Mất kết nối')
+            }
+        }
     }
 
     return (
@@ -215,6 +252,7 @@ function Invoice({ tableID, setShowInvoice }) {
                             <div className={style['invoice-info-ctn']}>
                                 <div className={style['invoice-info-title']}>
                                     <h2>Thông tin bàn số: {tableID}</h2>
+                                    {errorTableMessage ? <p className={style['error-message']}>{errorMessage}</p> : <p></p>}
                                 </div>
                                 
                                 <div className={style['ordered-food-ctn']}>
@@ -232,27 +270,39 @@ function Invoice({ tableID, setShowInvoice }) {
                                             <section className={style['content-row-section']} key={item.id}>
                                                 <article className={style["my-row"] + ' ' + style['my-content-row'] +' ' +style[(item.isEditing || item.changeQuantity) ? 'new-height':'']}>
                                                     <ul>
-                                                        <li>{item.menu_item_detail.name}</li>   
+                                                        <li>{item.menu_item_details.name}</li>   
                                                         {!item.changeQuantity ? <li
                                                             className={style['change-quantity']}
                                                             onClick={() => handleEditingQuantity(item.quantity,item.id)}>
                                                             {item.quantity}
                                                         </li>
-                                                            :<li><input
-                                                            type='number'
-                                                            className={style['quantity-input']}
-                                                            min="1"
-                                                            step="1"
-                                                            value = {quantity}
-                                                            onChange={(e) => handleChangeQuantity(e.target.value)}
-                                                            onKeyDown={(e) => handleKeyDown(e, item.changeQuantity, item.id,
-                                                                    item.menu_item_detail.id, quantity, item.note)}
-                                                            autoFocus>
-                                                        </input>
+                                                            : <li>
+                                                                <div className={style['quantity-input-ctn']}>
+                                                                    <label className={style['quantity-label']}>
+                                                                    <input
+                                                                    type='number'
+                                                                    className={style['quantity-input']}
+                                                                    min="1"
+                                                                    step="1"
+                                                                    value = {quantity}
+                                                                    onChange={(e) => handleChangeQuantity(e.target.value)}
+                                                                    onKeyDown={(e) => handleKeyDown(e, item.id, quantity, item.note, 'quantity')}
+                                                                    autoFocus>
+                                                                    </input>
+                                                                    </label>
+                                                                    
+                                                                    <button
+                                                                        className={style['confirm-button']}
+                                                                        onClick={() => handleSave(item.id, quantity, item.note, 'quantity')}
+                                                                    >
+                                                                        ✔
+                                                                    </button>
+                                                                </div>
+                                                            
                                                         </li>
                                                         }        
                                                         <li className={style['change-status']}
-                                                        onClick={() => handleChangeStatus(item.id,item.status)}>{item.status}</li>
+                                                        onClick={() => handleChangeStatus(item.id)}>{item.status}</li>
                                                         <li>{item.total}.VND</li>
                                                     </ul>
                                                     <div className={style['more-content']}>
@@ -264,6 +314,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                                                     value={noteData}
                                                                     onChange={(e) => setNoteData(e.target.value)}
                                                                     rows="3" cols="55"
+                                                                    onKeyDown={(e) => handleKeyDown(e, item.id, item.quantity, noteData, 'note')}
                                                                     autoFocus
                                                                 />
                                                             </div>) : (
@@ -272,10 +323,10 @@ function Invoice({ tableID, setShowInvoice }) {
                                                                 </div>
                                                         )}
                                                         <div className={style['my-btn']}>
-                                                            <button className={style['edit-btn']} onClick={() => item.isEditing ? handleSave(item.id, item.menu_item_detail.id, item.quantity) :
+                                                            <button className={style['edit-btn']} onClick={() => item.isEditing ? handleSave(item.id, item.quantity, noteData, 'note') :
                                                                 handleEditing(item.id, item.note)}>
                                                                 {item.isEditing ? 'Lưu': 'Chỉnh sửa'}</button>
-                                                            <button className={style['erase-btn']} onClick={()=>handleErase(item.id, item.menu_item_detail.id)}>Xóa</button>
+                                                            <button className={style['erase-btn']} onClick={()=>handleErase(item.id)}>Xóa</button>
                                                         </div>
                                                     </div>
                                                 </article>    
@@ -312,7 +363,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                         <h2>Thực đơn</h2>
                                 </div>
                                 <div className={style["search-row"]}>
-                                          <div className={style['col-lg-6']}>
+                                          <div className={style['col-lg-9']}>
                                             <div className={style['search-menuitem']}>
                                               <input type='text'  
                                                 placeholder="Tìm kiếm theo tên..."
@@ -324,26 +375,6 @@ function Invoice({ tableID, setShowInvoice }) {
                                               </button>
                                             </div>
                                           </div>
-                                          <div className={style['col-lg-3']}>
-                                            <div className={style['search-price']}>
-                                              <div className={style["input-price"]}>
-                                                <input type="text" 
-                                                  placeholder="Giá từ..."
-                                                  value={searchPriceMin}
-                                                  onChange={(e) => handlePriceMin(e.target.value) }
-                                                >
-                                                </input>
-                                              </div> 
-                                              <div className={style["input-price"]}>
-                                                <input type="text" 
-                                                  placeholder="Đến..."
-                                                  value={searchPriceMax}
-                                                  onChange={(e) => handlePriceMax(e.target.value) }
-                                                >
-                                                </input>
-                                              </div>
-                                            </div>
-                                    </div>
                                     <div className={style['col-lg-3']}>
                                         <div className={style['search-tab']}>
                                             <select value={searchTab} onChange={(e) => setSearchTab(e.target.value)} >

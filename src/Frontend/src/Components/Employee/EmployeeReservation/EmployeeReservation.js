@@ -5,6 +5,7 @@ import { fetchTablesData, fetchReservationData, assignTableAPI, markDoneReservat
 import { useAuth } from '../../Auth/AuthContext';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../../API/authAPI';
+import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'; // Import biểu tượng chỉnh sửa
 import TableIcon from './tableIcon';
 import Invoice from './Invoice'
 
@@ -15,6 +16,7 @@ function EmployeeReservation() {
     const [searchName, setSearchName] = useState('');
     const [searchStatus, setSearchStatus] = useState('All');
     const [inputTable, setInputTable] = useState({ id: null, value: "" });
+    const [errorMessage, setErrorMessage] = useState();
 
     const ensureActiveToken = async () => {
         let activeToken = accessToken;
@@ -97,12 +99,13 @@ function EmployeeReservation() {
     }
 
     const handleSave = () => {
-        console.log(inputTable.id, inputTable.value);
         const hasIdInTablesData = () => {
-            return tables.some((table) => table.id === inputTable.value);
+            return tables.some((table) => table.id == inputTable.value && table.status === 'A');
         };
         const assignTable = async () => {
-            if (!hasIdInTablesData) {
+            if (!hasIdInTablesData()) {
+                console.log(inputTable);
+                console.log(tables);
                 return;
             }
             const activeToken = await ensureActiveToken();
@@ -165,6 +168,7 @@ function EmployeeReservation() {
             preTable.map((table) =>
                 table.id === id ? { ...table, isShowInvoice: status } : table)
         );
+        if (!status) fetchData();
     }
 
     const reservationFilered = reservations.filter(r => filterReservation(r, searchName, searchStatus));
@@ -176,8 +180,26 @@ function EmployeeReservation() {
                     <div className={style['container']}>
                         <div className={style['row']}>
                             <div className={style['col-lg-12']}>
-                                <div className={style["section-title"]}>
+                                <div className={style["section-r-title"]}>
                                     <h2>Danh sách các phiếu đặt</h2>
+                                    <div className={style['status-reservation-info']}>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['yellow']}></div>
+                                            <p>Chờ</p>
+                                        </section>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['green'] }></div>
+                                            <p>Gán</p>
+                                        </section>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['blue']}></div>
+                                            <p>Xong</p>
+                                        </section>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['red']}></div>
+                                            <p>Hủy</p>
+                                        </section>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -220,35 +242,48 @@ function EmployeeReservation() {
                                         <div className={style[checkReservationStatus(r.status)]}>
                                             <h5>Mã phiếu đặt: {r.id}</h5> 
                                         </div>
-                                        <p>Tên khách hàng: {r.guest_name}</p>
+                                        <p>Tên KH: {r.guest_name}</p>
                                         <p>Số điện thoại: {r.phone_number}</p>
                                         <p>Thời gian: {r.time}</p>
                                         <p>Ghi chú: {r.note}</p>
                                         <div className={style['input-table-ctn']}>
-                                            <p className={style['input-table-text']}>Bàn số:</p>
+                                            
                                             {r.isEditing ? (
-                                                <input
+                                                <div className={style['input-table-input']}>
+                                                    <p className={style['input-table-text']}>Bàn số: </p>
+                                                    <input
                                                     type='text'
                                                     value={r.isEditing ? inputTable.value : r.table}
                                                     onChange={(e) => setInputTable({ id: r.id,value: e.target.value })}
                                                     autoFocus
-                                                />)
+                                                />
+                                                </div>
+                                                    
+                                            )
                                                 : (
-                                                    <span>{r.table || ''}</span>
+                                                    <p className={style['input-table-text']}>Bàn số: {r.table}</p>
                                                 )}
                                             <div className={style['input-table-btn']}>
-                                                <button onClick={()=>r.isEditing ? handleSave(r.id) : handleEdit(r.id)}>
-                                                        {r.isEditing ? 'Lưu' : 'Chỉnh sửa'}
+                                                <button className={style['input-table-edit-btn']} onClick={()=>r.isEditing ? handleSave(r.id) : handleEdit(r.id)}>
+                                                        {r.isEditing ? 'Lưu' : <AiOutlineEdit size={20}/>}
                                                 </button>
-                                                <button onClick={()=>r.isEditing ? handleCancelEdit(r.id) : handleEraseTable(r.id)}>
-                                                        {r.isEditing ? 'Hủy' : 'Xóa'}
+                                                <button className={style['input-table-erase-btn']} onClick={()=>r.isEditing ? handleCancelEdit(r.id) : handleEraseTable(r.id)}>
+                                                        {r.isEditing ? 'Hủy' :  <AiOutlineDelete  size={20}/> }
                                                 </button>
                                             </div>
                                             
                                         </div>
-                                        <div>
-                                            {r.status === 'A' && <button onClick={() => handleDoneReservation(r.id, r.table)}>Done</button>} 
-                                            {r.status !== 'D' && <button onClick={() => handleCancelReservation(r.id)}>Cancel</button>}
+                                        <div className={style['status-btn-ctn']}>
+                                            <button className={style['status-btn'] + ' ' + style[r.status === 'A' ? '' : 'inactive-btn']} onClick={() => {
+                                                if (r.status === 'A') {
+                                                    handleDoneReservation(r.id, r.table);
+                                                }
+                                            }}>Done</button>
+                                            <button className={style['status-btn'] + ' ' + style[r.status !== 'D' && r.status !== 'C' ? '' : 'inactive-btn']} onClick={() => {
+                                                if (r.status !== 'D' && r.status !== 'C') {
+                                                    handleCancelReservation(r.id);
+                                                }
+                                            }}>Cancel</button>
                                         </div>
                                     
                                     </div>
@@ -264,6 +299,25 @@ function EmployeeReservation() {
                             <div className={style['col-lg-12']}>
                                 <div className={style["section-title"]}>
                                     <h2>Danh sách các bàn</h2>
+                                    <div className={style['table-status-info']}>
+                                        <section className={style['section-status-info']}>
+                                            <TableIcon w={64} h={64} c={getTableColor('A')}></TableIcon>    
+                                            <p>Bàn trống</p>
+                                        </section>
+                                        <section className={style['section-status-info']}>
+                                            <TableIcon w={64} h={64} c={getTableColor('R')}></TableIcon>
+                                            <p>Bàn đã được đặt</p>
+                                        </section>
+                                        <section className={style['section-status-info']}>
+                                            <TableIcon w={64} h={64} c={getTableColor('S')}></TableIcon>   
+                                            <p>Bàn đang phục vụ</p>
+                                        </section>
+                                        <section className={style['section-status-info']}>
+                                            <TableIcon w={64} h={64} c={getTableColor('D')}></TableIcon>   
+                                            <p>Bàn phục vụ xong</p>
+                                        </section>
+                                    </div>
+                                     
                                 </div>
                             </div>
                         </div>

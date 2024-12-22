@@ -118,7 +118,6 @@ export const createOrder = async (token, tID) => {
     return response.data;
   }
   catch (error) {
-    console.log(error);
     throw error;
   }
 }
@@ -135,7 +134,6 @@ export const fetchOrderData = async (token, tID) => {
     return response.data;
   }
   catch (error) {
-    console.log(error);
     throw error;
   }
 }
@@ -152,19 +150,20 @@ export const fetchOrderItemData = async (token, oID) => {
     return response.data;
   }
   catch (error) {
-    console.log(error);
     throw error;
   }
 }
 
 export const addFood = async (token, oID, fID, q, n) => {
   try {
+
     const myData = {
       order: oID,
       menu_item: fID,
       quantity: q,
       note: n,
     }
+    console.log(myData)
     const response = await axios.post(`${API_BASE_URL}/booking/orders/add-item/`,
       myData,
       {
@@ -180,15 +179,13 @@ export const addFood = async (token, oID, fID, q, n) => {
   }
 }
 
-export const updateItem = async (token, oID, fID, q, n) => {
+export const updateItem = async (token, iID, q, n) => {
   try {
     const myData = {
-      order: oID,
-      menu_item: fID,
       quantity: q,
       note: n,
     }
-    const response = await axios.patch(`${API_BASE_URL}/booking/orders/update-item/`,
+    const response = await axios.patch(`${API_BASE_URL}/booking/orderitem/update-item/${iID}/`,
       myData,
       {
         headers: {
@@ -199,46 +196,38 @@ export const updateItem = async (token, oID, fID, q, n) => {
     return response.data;
   }
   catch (error) {
-    if (error.response) {
-      console.log("Error response data:", error.response.data);
-      console.log("Error response status:", error.response.status);
-      console.log("Error response headers:", error.response.headers);
-    } else {
-      console.log("Error message:", error.message);
-    }
     throw error;
   }
 }
 
-export const removeItem = async (token, oID, fID) => {
+export const updateItemStatus = async (token, iID) => {
   try {
-    const myData = {
-      order: oID,
-      menu_item: fID,
-    }
-    console.log(token);
-    console.log(myData);
-    const response = await axios.delete(`${API_BASE_URL}/booking/orders/remove-item/`,
+    const response = await axios.patch(`${API_BASE_URL}/booking/orderitem/mark-done/${iID}/`,{},
       {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      data: {
-        order: oID,
-        menu_item: fID,
-      }
+      });
+    return response.data;
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+export const removeItem = async (token, iID) => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/booking/orders/remove-item/${iID}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
     });
     return response.data;
   }
   catch (error) {
-    if (error.response) {
-      console.log("Error response data:", error.response.data);
-      console.log("Error response status:", error.response.status);
-      console.log("Error response headers:", error.response.headers);
-    } else {
-      console.log("Error message:", error.message);
-    }
     throw error;
   }
 }
