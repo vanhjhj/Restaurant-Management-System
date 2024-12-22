@@ -20,7 +20,7 @@ function Header({isLoggedIn, setIsLoggedIn}) {
 
     const ensureActiveToken = async () => {
         let activeToken = accessToken;
-        if (isTokenExpired(accessToken)) {
+        if (!activeToken || isTokenExpired(accessToken)) {
             const refreshed = await refreshToken(refresh);
             activeToken = refreshed.access;
             setAccessToken(activeToken);

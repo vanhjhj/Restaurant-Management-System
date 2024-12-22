@@ -7,10 +7,9 @@ from Menu.models import MenuItem
 # Create your models here.
 class Table(models.Model):
     number_of_seats = models.IntegerField(validators=[MinValueValidator(1)])
-    status = models.CharField(max_length=20, choices=[('A', 'Available'), ('R', 'Reserved'), ('OP', 'Order Placed'), ('OFS', 'Order Fully Served')], default='A')
+    status = models.CharField(max_length=20, choices=[('A', 'Available'), ('R', 'Reserved'), ('S', 'Serving'), ('D', 'Done')], default='A')
     def __str__(self):
         return str(self.pk) + ' - ' + str(self.number_of_seats) + ' - ' + self.status
-
 
 class Reservation(models.Model):
     guest_name = models.CharField(max_length=100, blank=False, null=False)
@@ -19,11 +18,12 @@ class Reservation(models.Model):
     time = models.TimeField()
     number_of_guests = models.IntegerField(validators=[MinValueValidator(1)])
     note = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('A', 'Assigned'), ('D', 'Done'), ('C', 'Canceled')], default='P')
+    table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, blank=True, null=True, default=None)
 
     def __str__(self):
         return self.guest_name + ' - ' + str(self.date) + ' - ' + str(self.time)
     
-
 class Order(models.Model):
     datetime = models.DateTimeField(default=datetime.datetime.now)
     total_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
@@ -57,6 +57,18 @@ class Order(models.Model):
         self.total_price += order_item.total
         self.final_price += order_item.total
         self.save()
+
+    def update_table_status(self):
+        if self.status == 'NP': #Not Paid
+            #check if there is any order item is preparing
+            if OrderItem.objects.filter(order=self, status='P').exists():
+                self.table.status = 'S' #Serving
+            else:
+                self.table.status = 'D' #Done
+        else:
+            self.table.status = 'A'
+
+        self.table.save()
         
     def apply_discount(self, discount):
         self.total_discount = discount
@@ -74,12 +86,13 @@ class Order(models.Model):
     
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE, )
+    order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.DO_NOTHING)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     total = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     note = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=[('P', 'Preparing'), ('D', 'Done')], default='P')
 
     def __str__(self):
         return f"{self.order} - {self.menu_item} - {self.quantity} - {self.total}"

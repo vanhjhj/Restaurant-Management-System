@@ -16,19 +16,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Category',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
             name='MenuItem',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
-                ('price', models.IntegerField(validators=[django.core.validators.MinValueValidator(0)])),
+                ('price', models.IntegerField(validators=[
+                 django.core.validators.MinValueValidator(0)])),
                 ('description', models.TextField()),
                 ('image', models.ImageField(upload_to='menu_img/')),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='menu_items', to='Menu.category')),
+                ('category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT,
+                 related_name='menu_items', to='Menu.category')),
             ],
         ),
     ]

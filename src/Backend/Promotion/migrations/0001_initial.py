@@ -15,13 +15,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Promotion',
             fields=[
-                ('code', models.CharField(max_length=10, primary_key=True, serialize=False)),
+                ('code', models.CharField(max_length=10,
+                 primary_key=True, serialize=False)),
                 ('title', models.CharField(max_length=100)),
                 ('startdate', models.DateField()),
                 ('enddate', models.DateField()),
                 ('description', models.TextField()),
                 ('image', models.ImageField(upload_to='promotion_img/')),
-                ('discount', models.FloatField(validators=[Promotion.models.validate_discount])),
+                ('discount', models.FloatField(
+                    validators=[Promotion.models.validate_discount])),
             ],
         ),
     ]
