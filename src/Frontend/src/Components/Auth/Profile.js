@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GetEmailCus, GetInfoCus, ChangeInfoCus, CheckPassword, ChangeInfoLogCus } from '../../API/FixInfoAPI';
+import { GetEmailCus, GetInfoCus, ChangeInfoCus,CheckPassword, ChangeInfoLogCus } from '../../API/FixInfoAPI';
+import { GetEmailEmp,GetInfoEmp, ChangeInfoEmp, ChangeInfoLogEmp } from '../../API/EmployeeAPI';
 import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../API/authAPI';
-import Modal from './Modal'; // Import Modal component
+import Modal from '../Customer/Modal'; // Import Modal component
 import style from '../../Style/CustomerStyle/Profile.module.css';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from './AuthContext';
 
 function Profile() {
     const [personalInfo, setPersonalInfo] = useState({ full_name: "", gender: "", phone_number: "" });
@@ -22,8 +23,8 @@ function Profile() {
     const navigate = useNavigate();
     const { accessToken,setAccessToken } = useAuth();
     const refresh = localStorage.getItem('refreshToken');
-    const CusID = localStorage.getItem('userId');
-    
+    const UserID = localStorage.getItem('userId');
+    const account_type=localStorage.getItem('accountType')
     let email;
 
     const ensureActiveToken = async () => {
@@ -38,7 +39,7 @@ function Profile() {
 
     useEffect(() => {
         const activeToken = ensureActiveToken();
-        if (!activeToken || !refresh || !CusID) {
+        if (!activeToken || !refresh || !UserID) {
             navigate('/login');
         } else {
             fetchProfileData();
@@ -48,10 +49,22 @@ function Profile() {
     const fetchProfileData = async () => {
         try {
             const activeToken = await ensureActiveToken();
+
+            let responseCusPromise, responseEmailPromise;
+            
+            if (account_type === 'Customer') {
+                responseCusPromise = GetInfoCus(UserID, activeToken);
+                responseEmailPromise = GetEmailCus(UserID, activeToken);
+            } else if (account_type === 'Employee'){
+                responseCusPromise = GetInfoEmp(UserID, activeToken);
+                responseEmailPromise = GetEmailEmp(UserID, activeToken);
+            }
+            
             const [responseCus, responseEmail] = await Promise.all([
-                GetInfoCus(CusID, activeToken),
-                GetEmailCus(CusID, activeToken),
+                responseCusPromise,
+                responseEmailPromise
             ]);
+            
             setPersonalInfo({
                 full_name: responseCus.full_name || "",
                 gender: responseCus.gender || "",
@@ -75,7 +88,10 @@ function Profile() {
         setIsSubmitting(true);
         try {
             const activeToken = await ensureActiveToken();
-            await ChangeInfoCus(CusID, personalInfo, activeToken);
+            if (account_type === 'Customer')
+            await ChangeInfoCus(UserID, personalInfo, activeToken);
+            else
+            await ChangeInfoEmp(UserID, personalInfo, activeToken);
             setOriginalInfo(personalInfo);
         } catch (error) {
             console.error("Error updating profile:", error);
@@ -94,7 +110,7 @@ function Profile() {
         setModalerror(null);
         const activeToken = await ensureActiveToken();
         try{
-            await CheckPassword(CusID,formData.oldPassword, activeToken);
+            await CheckPassword(UserID,formData.oldPassword, activeToken);
         }catch(error){
             setModalerror('Mật Khẩu Không đúng!');
             return;
@@ -114,7 +130,9 @@ function Profile() {
                 return;
             }
             let InfoChange={password: formData.newPassword}
-            await ChangeInfoLogCus(CusID,InfoChange , activeToken);
+            if (account_type === 'Customer')
+            await ChangeInfoLogCus(UserID,InfoChange , activeToken);
+            else await ChangeInfoLogEmp(UserID,InfoChange , activeToken);
             setShowModal(false);
             setModalerror(null); // Xóa lỗi
             setFormData({ // Reset nội dung form
@@ -138,7 +156,7 @@ function Profile() {
         setModalerror(null);
         const activeToken = await ensureActiveToken();
         try{
-            await CheckPassword(CusID,formData.oldPassword, activeToken);
+            await CheckPassword(UserID,formData.oldPassword, activeToken);
         }catch(error){
             setModalerror('Mật Khẩu Không đúng!');
             return;
@@ -149,7 +167,9 @@ function Profile() {
                 return;
             }
             let InfoChange={email: formData.newEmail};
-            await ChangeInfoLogCus(CusID,InfoChange , activeToken);
+            if (account_type === 'Customer')
+            await ChangeInfoLogCus(UserID,InfoChange , activeToken);
+            else await ChangeInfoLogEmp(UserID,InfoChange , activeToken);
             setShowModal(false);
             setModalerror(null); // Xóa lỗi
             setFormData({ // Reset nội dung form

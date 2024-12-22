@@ -1,4 +1,4 @@
-.add-promotion h2 {
+.add-food h2 {
   text-align: center;
   font-size: 42px;
   font-weight: bold;
@@ -6,7 +6,7 @@
   margin-bottom: 30px;
 }
 
-.add-promotion .back-button {
+.add-food .back-button {
   position: absolute;
   top: 80px;
   left: 20px;
@@ -20,18 +20,18 @@
 }
 
 /* Căn giữa và định dạng các trường input */
-.add-promotion .form-group {
+.add-food .form-group {
   margin-bottom: 15px;
   text-align: center; /* Căn giữa các label và input */
 }
 
-.add-promotion .form-group label {
+.add-food .form-group label {
   font-size: 26px; /* Tăng kích thước chữ label */
   display: block;
   margin-bottom: 5px;
 }
 
-.add-promotion .form-group input {
+.add-food .form-group input {
   width: 20%; /* Giới hạn chiều rộng của các input */
   padding: 10px;
   font-size: 16px;
@@ -41,7 +41,7 @@
   display: block;
 }
 
-.add-promotion button {
+.add-food button {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
@@ -49,29 +49,33 @@
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 20px;
 }
 
-.add-promotion button:hover {
+.add-food button:hover {
   background-color: #0f4758; /* Màu nền khi hover */
 }
 
 /* Hiển thị lỗi */
-.add-promotion p {
+.add-food p {
   color: rgb(177, 92, 13);
   text-align: center;
   font-size: 16px;
 }
 
 /* Đặt form căn giữa */
-.add-promotion form {
+.add-food form {
   width: 80%;
   margin: 0 auto;
   text-align: center; /* Căn giữa nội dung của form */
 }
 
 /* Tạo khoảng cách giữa các phần tử trong form */
-.add-promotion div.form-group {
+.add-food div.form-group {
   margin-bottom: 20px;
+}
+
+.add-food .form-group select {
+  width: 10%;
 }

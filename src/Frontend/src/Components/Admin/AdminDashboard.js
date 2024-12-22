@@ -14,7 +14,7 @@ function AdminDashboard() {
     return (
         <div className={style["admin-dashboard"]}>
             <div className={style["dashboard-header"]}>
-                <h1>Xin chào, admin</h1>
+                <h1 >Xin chào, admin</h1>
             </div>
             <div className={style["dashboard-container"]}>
                 <div className={style["menu-options"]}>
@@ -35,6 +35,9 @@ function AdminDashboard() {
                     </button>
                     <button onClick={() => handleNavigate('/manage-employees')} className={style["menu-item"]}>
                         Quản lý nhân viên
+                    </button>
+                    <button onClick={() => handleNavigate('/manage-department')} className={style["menu-item"]}>
+                        Quản lý bộ phận
                     </button>
                 </div>
                 <div className={style["image-section"]}>

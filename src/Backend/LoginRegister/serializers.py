@@ -66,7 +66,7 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EmployeeAccount
-        fields = ('account_id', 'full_name', 'date_of_birth', 'gender', 'start_working_date', 'address', 'department')
+        fields = ('account_id', 'full_name', 'date_of_birth', 'gender', 'phone_number', 'start_working_date', 'address', 'department')
     
     def validate(self, attrs):
 
@@ -85,6 +85,14 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'start_working_date': 'Start working date must be after date of birth'})
 
         return attrs
+    
+    def to_representation(self, instance):
+        # Trả về số điện thoại không có mã quốc gia
+        representation = super().to_representation(instance)
+        phone_number = representation.get('phone_number', '')
+        if phone_number.startswith('+84'):
+            representation['phone_number'] = '0' + phone_number[3:]  # Bỏ mã +84 và thêm số 0
+        return representation
 
 
 class CustomerAccountSerializer(serializers.ModelSerializer):
@@ -137,3 +145,9 @@ class ResetPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({'password': list(e.messages)})
         
         return attrs
+    
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'

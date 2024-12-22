@@ -1,56 +1,164 @@
 // src/Components/ManageEmployees.js
-import React from 'react';
-import './ManageEmployees.css';
+import React ,{ useState, useEffect }  from 'react';
+import { useNavigate } from 'react-router-dom';
+import style from './ManageEmployees.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from './../../Auth/AuthContext';
+import { getEmployee, deleteEmployee } from '../../../API/AdminAPI';
+import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
+import { refreshToken } from '../../../API/authAPI';
 
 function ManageEmployees() {
+    const [employees, setEmployee] = useState([]); // Danh sách nhân viên
+    const [loading, setLoading] = useState(true); // Trạng thái tải dữ liệu
+    const [error, setError] = useState(null); // Trạng thái lỗi
+    const { accessToken, setAccessToken } = useAuth();
+    const navigate = useNavigate();
+    
+     // Hàm đảm bảo token hợp lệ
+    const ensureActiveToken = async () => {
+        let activeToken = accessToken;
+        if (isTokenExpired(accessToken)) {
+            try {
+                const refreshed = await refreshToken(localStorage.getItem('refreshToken'));
+                activeToken = refreshed.access;
+                setAccessToken(activeToken);
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+                navigate('/login'); // Điều hướng đến login nếu refresh thất bại
+                throw error;
+            }
+        }
+        return activeToken;
+    };
+
+    // Hàm lấy danh sách bộ phận
+        const fetchEmployees = async () => {
+            setLoading(true);
+            setError(null); // Xóa lỗi cũ
+            try {
+                const activeToken = await ensureActiveToken();
+                const data = await getEmployee(activeToken);
+                console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
+                if (data && Array.isArray(data.results)) {
+                    setEmployee(data.results); // Gán danh sách từ `results`
+                } else {
+                    throw new Error("Dữ liệu API không hợp lệ");
+                }
+            } catch (error) {
+                console.error('Error fetching Employees:', error);
+                setError('Không thể tải danh sách bộ phận. Vui lòng thử lại sau.');
+                setEmployee([]); // Đặt mảng rỗng nếu lỗi xảy ra
+            } finally {
+                setLoading(false);
+            }
+        };
+
+    // Hàm xóa nhân viên với xác nhận
+    const handleDeleteEmployee = async (id) => {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này không?")) return;
+        try {
+            const activeToken = await ensureActiveToken();
+            await deleteEmployee(id, activeToken);
+            setEmployee(employees.filter((emps) => emps.id !== id));
+            alert('Xóa nhân viên thành công!');
+        } catch (error) {
+            console.error('Error deleting Employee:', error);
+            alert('Không thể xóa nhân viên. Vui lòng thử lại sau.');
+        }
+    };
+
+    // Tự động tải danh sách nhân viên khi component được render
+    useEffect(() => {
+        const controller = new AbortController();
+        const fetchData = async () => {
+            try {
+                const activeToken = await ensureActiveToken();
+                const data = await getEmployee(activeToken, { signal: controller.signal });
+                console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
+                if (data && Array.isArray(data.results)) {
+                    setEmployee(data.results); // Gán danh sách từ `results`
+                } else {
+                    throw new Error("Dữ liệu API không hợp lệ");
+                }
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error("Error fetching Employee:", error);
+                    setError('Không thể tải danh sách nhân viên. Vui lòng thử lại sau.');
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+
+        return () => controller.abort(); // Dọn dẹp khi component bị hủy
+    }, [accessToken]);
+
     return (
-        <div className="manage-employees">
-            <div className="header">
+        <div className={style["manage-employees"]}>
+            <div className={style["header"]}>
                 <h2>Quản lý nhân viên</h2>
             </div>
-            <h3>Danh sách nhân viên hiện tại</h3>
-            <table className="employee-table">
-                <thead>
-                    <tr>
-                        <th>Mã nhân viên</th>
-                        <th>Họ và tên</th>
-                        <th>Ngày sinh</th>
-                        <th>Số điện thoại</th>
-                        <th>Địa chỉ</th>
-                        <th>Bộ phận</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* Dummy data for illustration */}
-                    {[...Array(8)].map((_, index) => (
-                        <tr key={index}>
-                            <td>Text</td>
-                            <td>Text</td>
-                            <td>Text</td>
-                            <td>Text</td>
-                            <td>Text</td>
-                            <td>Text</td>
-                            <td className="action-buttons">
-                                <button className="edit-button">
-                                    <FontAwesomeIcon icon={faEdit} />
-                                </button>
-                                <button className="delete-button">
-                                    <FontAwesomeIcon icon={faTrash} />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <div className="actions">
-                <button className="add-employee-button">
-                    Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
-                </button>
-                <button className="save-button">Lưu thay đổi</button>
-            </div>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+                {loading ? (
+                    <p>Đang tải dữ liệu...</p>
+                ) : employees.length === 0 ? (
+                    <div>
+                        <p>Hiện tại chưa có nhân viên nào!</p>
+                        <div className={style["button-container"]}>
+                            <button 
+                                className={style["manage-employee-button"]} 
+                                onClick={() => navigate("/register-employee-account")}
+                            >
+                                Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <table className={style["employee-table"]}>
+                            <thead>
+                                <tr> 
+                                    <th>STT</th>
+                                    <th>Tên nhân viên</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Ngày bắt đầu làm việc</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {employees.map((emps,id) => (
+                                    <tr key={emps.account_id}>
+                                        <td>{id+1}</td>
+                                        <td>{emps.full_name}</td>
+                                        <td>{emps.date_of_birth}</td>
+                                        <td>{emps.phone_number}</td>
+                                        <td>{emps.address}</td>
+                                        <td>{emps.start_working_date}</td>
+                                        <td>
+                                        <button className={style["delete-button"]} onClick={() => handleDeleteEmployee(emps.account_id)}>
+                                            Xóa  <FontAwesomeIcon icon={faTrash} />
+                                        </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+            
+                        <div className={style["button-container"]}>
+                            <button 
+                                className={style["manage-employee-button"]} 
+                                onClick={() => navigate("/register-employee-account")}
+                            >
+                                Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                        </div>
+                    </>
+                )}
         </div>
     );
 }
