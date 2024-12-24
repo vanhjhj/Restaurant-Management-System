@@ -235,18 +235,31 @@ function App() {
             }
           />
 
-                    <Route
-                    path="/fill-info-Emp/:id"
-                    element={
-                        <ProtectedRoute
-                        isLoggedIn={isLoggedIn}
-                        allowedRoles={["Admin"]}
-                        userRole={userRole}
-                        >
-                        <FillInfoEmployee/>
-                        </ProtectedRoute>
-                    }
-                    />
+          <Route
+          path="/fill-info-Emp/:id"
+          element={
+              <ProtectedRoute
+              isLoggedIn={isLoggedIn}
+              allowedRoles={["Admin"]}
+              userRole={userRole}
+              >
+              <FillInfoEmployee/>
+              </ProtectedRoute>
+          }
+          />
+
+        <Route
+          path="/verify-otp-employee"
+          element={
+              <ProtectedRoute
+              isLoggedIn={isLoggedIn}
+              allowedRoles={["Admin"]}
+              userRole={userRole}
+              >
+              <VerifyOtpAccount/>
+              </ProtectedRoute>
+          }
+          />
 
 
           <Route
@@ -327,17 +340,17 @@ function App() {
             }
           />
           <Route
-                    path="/table"
-                    element={
-                        <ProtectedRoute
-                        isLoggedIn={isLoggedIn}
-                        allowedRoles={["Employee", "Admin"]}
-                        userRole={userRole}
-                        >
-                        <EmployeeReservation />
-                        </ProtectedRoute>
-                    }
-                    />
+            path="/table"
+            element={
+                <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Employee", "Admin"]}
+                userRole={userRole}
+                >
+                <EmployeeReservation />
+                </ProtectedRoute>
+            }
+            />
         </Routes>
         <Footer />
       </Router>

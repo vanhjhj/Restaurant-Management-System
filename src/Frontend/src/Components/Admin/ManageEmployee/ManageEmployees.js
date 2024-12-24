@@ -34,26 +34,26 @@ function ManageEmployees() {
     };
 
     // Hàm lấy danh sách bộ phận
-        const fetchEmployees = async () => {
-            setLoading(true);
-            setError(null); // Xóa lỗi cũ
-            try {
-                const activeToken = await ensureActiveToken();
-                const data = await getEmployee(activeToken);
-                console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
-                if (data && Array.isArray(data.results)) {
-                    setEmployee(data.results); // Gán danh sách từ `results`
-                } else {
-                    throw new Error("Dữ liệu API không hợp lệ");
-                }
-            } catch (error) {
-                console.error('Error fetching Employees:', error);
-                setError('Không thể tải danh sách bộ phận. Vui lòng thử lại sau.');
-                setEmployee([]); // Đặt mảng rỗng nếu lỗi xảy ra
-            } finally {
-                setLoading(false);
+    const fetchEmployees = async () => {
+        setLoading(true);
+        setError(null); // Xóa lỗi cũ
+        try {
+            const activeToken = await ensureActiveToken();
+            const data = await getEmployee(activeToken);
+            console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
+            if (data && Array.isArray(data.results)) {
+                setEmployee(data.results); // Gán danh sách từ `results`
+            } else {
+                throw new Error("Dữ liệu API không hợp lệ");
             }
-        };
+        } catch (error) {
+            console.error('Error fetching Employees:', error);
+            setError('Không thể tải danh sách bộ phận. Vui lòng thử lại sau.');
+            setEmployee([]); // Đặt mảng rỗng nếu lỗi xảy ra
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Hàm xóa nhân viên với xác nhận
     const handleDeleteEmployee = async (id) => {
@@ -63,6 +63,7 @@ function ManageEmployees() {
             await deleteEmployee(id, activeToken);
             setEmployee(employees.filter((emps) => emps.id !== id));
             alert('Xóa nhân viên thành công!');
+            await fetchEmployees(); 
         } catch (error) {
             console.error('Error deleting Employee:', error);
             alert('Không thể xóa nhân viên. Vui lòng thử lại sau.');
