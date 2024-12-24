@@ -5,6 +5,7 @@ import Footer from "./Components/Layout/Footer/Footer";
 import HomePage from "./Components/Layout/HomePage/HomePage";
 import About from "./Components/Layout/About/About";
 import Menu from "./Components/Layout/Menu/Menu";
+import Promotion from "./Components/Layout/Promotion/Promotion";
 import Reservation from "./Components/Layout/Reservation/Reservation";
 import Login from "./Components/Auth/Login";
 import SignUp from "./Components/Auth/SignUp";
@@ -86,6 +87,7 @@ function App() {
             path="/reservation"
             element={<Reservation isLoggedIn={isLoggedIn} />}
           />
+          <Route path="/promotion" element={<Promotion />} />
 
           {/* Đăng nhập và đăng ký */}
           <Route
@@ -235,19 +237,18 @@ function App() {
             }
           />
 
-                    <Route
-                    path="/fill-info-Emp/:id"
-                    element={
-                        <ProtectedRoute
-                        isLoggedIn={isLoggedIn}
-                        allowedRoles={["Admin"]}
-                        userRole={userRole}
-                        >
-                        <FillInfoEmployee/>
-                        </ProtectedRoute>
-                    }
-                    />
-
+          <Route
+            path="/fill-info-Emp/:id"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <FillInfoEmployee />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/register-employee-account"
@@ -327,17 +328,17 @@ function App() {
             }
           />
           <Route
-                    path="/table"
-                    element={
-                        <ProtectedRoute
-                        isLoggedIn={isLoggedIn}
-                        allowedRoles={["Employee", "Admin"]}
-                        userRole={userRole}
-                        >
-                        <EmployeeReservation />
-                        </ProtectedRoute>
-                    }
-                    />
+            path="/table"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Employee", "Admin"]}
+                userRole={userRole}
+              >
+                <EmployeeReservation />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Footer />
       </Router>

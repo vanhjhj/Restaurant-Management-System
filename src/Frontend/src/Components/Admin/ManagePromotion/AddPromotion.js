@@ -63,11 +63,6 @@ function AddPromotion() {
       return;
     }
 
-    if (title.length > 100100) {
-      setError("Tiêu đề không được quá 100 ký tự.");
-      return;
-    }
-
     if (isNaN(discount) || discount < 0 || discount > 100) {
       setError("Tỷ lệ giảm giá phải từ 0 đến 100.");
       return;

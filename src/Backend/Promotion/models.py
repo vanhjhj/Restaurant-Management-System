@@ -8,7 +8,7 @@ def validate_discount(value):
 
 class Promotion(models.Model):
     code=models.CharField(max_length=10, primary_key = True)
-    title = models.CharField(max_length=100)
+    title = models.TextField()
     startdate=models.DateField()
     enddate=models.DateField()
     description = models.TextField()
