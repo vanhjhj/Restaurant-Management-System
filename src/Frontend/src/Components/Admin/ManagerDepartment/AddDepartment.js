@@ -5,7 +5,7 @@ import { refreshToken } from '../../../API/authAPI';
 import { useAuth } from './../../Auth/AuthContext';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import style from './../../../Style/AdminStyle/AddDepartment.module.css';
-
+import { ModalGeneral } from '../../ModalGeneral';
 
 function AddDepartment() {
     const [newDepartment, setNewDepartment] = useState({ name: '', salary: '' });
@@ -13,6 +13,13 @@ function AddDepartment() {
     const [error, setError] = useState(null); // Trạng thái lỗi
     const { accessToken, setAccessToken } = useAuth();
     const navigate = useNavigate();
+
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success" hoặc "error"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -38,14 +45,25 @@ function AddDepartment() {
         return activeToken;
     };
 
+    const handleCloseModal = () => {
+        setModal({ isOpen: false }); // Đóng modal
+        navigate('/manage-department'); // Điều hướng
+    };
+
     const handleAddDepartment = async () => {
         setLoading(true);
         setError(null); // Xóa lỗi cũ
         try {
             const activeToken = await ensureActiveToken();
             await addDepartment(newDepartment, activeToken);
-            alert('Thêm thành công!');
-            navigate('/manage-department');
+            setModal({
+                isOpen: true,
+                text: "Thêm bộ phận thành công!",
+                type: "success",
+            });
+            setTimeout(() => {
+                handleCloseModal();
+            }, 15000);
         } catch (error) {
             console.error('Error adding department:', error);
             setError('Không thể thêm bộ phận. Vui lòng thử lại.');
@@ -81,6 +99,16 @@ function AddDepartment() {
             >
                 {loading ? 'Đang thêm...' : 'Thêm mới'}
             </button>
+
+            {modal.isOpen && (
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                     onClose={handleCloseModal}
+                    onConfirm={modal.onConfirm}
+                />
+            )}
         </div>
     );
 }
