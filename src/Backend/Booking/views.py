@@ -494,6 +494,9 @@ class RemoveOrderItemAPIView(generics.DestroyAPIView):
         if order.status == 'P':
             return Response({'message': 'Cannot remove item from paid order'}, status=status.HTTP_400_BAD_REQUEST)
         
+        if order_item.status == 'D':
+            return Response({'message': 'Cannot remove done order item'}, status=status.HTTP_400_BAD_REQUEST)
+        
         if len(OrderItem.objects.filter(order=order)) == 1:
             return Response({'message': 'Order must have at least one item'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -558,6 +561,9 @@ class UpdateOrderItemAPIView(generics.UpdateAPIView):
             
             for key, value in serializers.validated_data.items():
                 if key == 'quantity':
+                    if value < order_item.quantity and order_item.status == 'D':
+                        return Response({'message': 'Cannot decrease quantity of done order item'}, status=status.HTTP_400_BAD_REQUEST)
+
                     if value > order_item.quantity: #update status to preparing
                         order_item.status = 'P'
 
