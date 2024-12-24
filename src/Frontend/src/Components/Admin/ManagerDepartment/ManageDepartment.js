@@ -67,6 +67,7 @@ function ManageDepartment() {
             await deleteDepartment(id, activeToken);
             setDepartments(departments.filter((dept) => dept.id !== id));
             alert('Xóa bộ phận thành công!');
+            await fetchDepartments(); 
         } catch (error) {
             console.error('Error deleting department:', error);
             alert('Không thể xóa bộ phận. Vui lòng thử lại sau.');
