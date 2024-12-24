@@ -26,6 +26,10 @@
 .manage-Promotions .no-promotions {
   text-align: center;
   margin-top: 20px;
+  font-size: 28px;
+  color: #000000;
+  font-weight: bold;
+  padding: 15px;
 }
 
 .manage-Promotions .add-discount-button {

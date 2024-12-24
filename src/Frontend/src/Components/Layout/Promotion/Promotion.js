@@ -1,23 +1,25 @@
-// src/components/PromotionsPage.js
+// src/components/PromotionPage.js
 import React, { useState, useEffect } from "react";
 import style from "./Promotion.module.css";
+import { useNavigate } from "react-router-dom";
 import { fetchPromotions } from "../../../API/PromotionAPI";
+import PromotionDetail from "./PromotionDetail";
 
 function Promotion() {
   const [promotions, setPromotions] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadPromotions = async () => {
       try {
         const data = await fetchPromotions();
         setPromotions(data);
-      } catch (error) {
-        setError(error);
-        console.log(error);
+      } catch (err) {
+        setError(err);
       }
     };
-    loadData();
+    loadPromotions();
   }, []);
 
   return (
@@ -40,7 +42,11 @@ function Promotion() {
         ) : (
           <div className={style["promotions-list"]}>
             {promotions.map((promotion) => (
-              <div key={promotion.id} className={style["promotion-card"]}>
+              <div
+                key={promotion.code}
+                className={style["promotion-card"]}
+                onClick={() => navigate(`/promotion/${promotion.code}`)}
+              >
                 <img
                   src={promotion.image}
                   alt={promotion.title}

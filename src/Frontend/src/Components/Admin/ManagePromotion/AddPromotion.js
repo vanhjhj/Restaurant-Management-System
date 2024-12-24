@@ -145,8 +145,7 @@ function AddPromotion() {
 
         <div className={style["form-group"]}>
           <label htmlFor="description">Mô tả</label>
-          <input
-            type="text"
+          <textarea
             id="description"
             name="description"
             value={promotion.description}

@@ -1,0 +1,66 @@
+.promotion-detail {
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+  min-height: 100vh;
+  text-align: left;
+  margin-left: 200px;
+  margin-right: 200px;
+  margin-top: 50px;
+}
+
+.promotion-detail .back-button {
+  position: absolute;
+  top: 100px;
+  left: 20px;
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.promotion-detail .back-button:hover {
+  background-color: #1e6c7b;
+  transform: scale(1.05);
+}
+
+.promotion-detail h2 {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.promotion-detail .promotion-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 8px;
+  margin: 0 auto 20px auto;
+  display: block;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.promotion-detail .promotion-description {
+  font-size: 24px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.promotion-detail .promotion-startdate,
+.promotion-detail .promotion-enddate {
+  font-size: 24px;
+  color: #aa2d00;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.promotion-detail .promotion-code {
+  font-size: 24px;
+  color: #004b64;
+  margin-bottom: 15px;
+  font-weight: bold;
+}

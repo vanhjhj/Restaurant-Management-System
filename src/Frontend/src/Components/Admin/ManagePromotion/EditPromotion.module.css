@@ -66,3 +66,15 @@
   margin: 0 auto;
   text-align: center; /* Căn giữa nội dung của form */
 }
+
+.edit-promotion .form-group textarea {
+  width: 20%; /* Giới hạn chiều rộng của các input */
+  height: 100px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 0 auto; /* Căn giữa */
+  display: block;
+  resize: vertical;
+}
