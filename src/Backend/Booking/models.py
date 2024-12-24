@@ -87,7 +87,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE)
-    menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.DO_NOTHING)
+    menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     total = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
