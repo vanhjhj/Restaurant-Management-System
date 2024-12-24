@@ -24,4 +24,6 @@ urlpatterns = [
     path('orderitem/mark-done/<int:pk>/', views.MarkDoneOrderItemStatusAPIView.as_view(), name='mark-done-orderitem'),
     path('orderitem/update-item/<int:pk>/', views.UpdateOrderItemAPIView.as_view(), name='update-item'),
     path('orderitems/', views.OrderItemListAPIView.as_view(), name='orderitem-list'),
+
+    path('feedbacks/', views.FeedbackListCreateAPIView.as_view(), name='feedback-list-create'),
 ]

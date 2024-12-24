@@ -96,3 +96,16 @@ class OrderItemSerializer(serializers.ModelSerializer):
             'price': {'read_only': True},
             'total': {'read_only': True},
         }
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
+
+    class Meta:
+        model = Feedback
+        fields = ('id', 'order', 'serve_point', 'food_point', 'price_point', 'space_point', 'overall_point', 'comment')
+        extra_kwargs = {
+            'order': {'read_only': True},
+            'overall_point': {'read_only': True}
+        }
+
