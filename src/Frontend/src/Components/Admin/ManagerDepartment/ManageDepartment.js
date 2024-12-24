@@ -7,6 +7,7 @@ import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {ModalGeneral} from '../../ModalGeneral';
 
 function ManageDepartment() {
     const [departments, setDepartments] = useState([]); // Danh sách bộ phận
@@ -14,6 +15,12 @@ function ManageDepartment() {
     const [error, setError] = useState(null); // Trạng thái lỗi
     const { accessToken, setAccessToken } = useAuth();
     const navigate = useNavigate();
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
 
     // Hàm đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
@@ -60,20 +67,36 @@ function ManageDepartment() {
     };
 
     // Hàm xóa bộ phận với xác nhận
-    const handleDeleteDepartment = async (id) => {
-        if (!window.confirm("Bạn có chắc chắn muốn xóa bộ phận này không?")) return;
-        try {
-            const activeToken = await ensureActiveToken();
-            await deleteDepartment(id, activeToken);
-            setDepartments(departments.filter((dept) => dept.id !== id));
-            alert('Xóa bộ phận thành công!');
-            await fetchDepartments(); 
-        } catch (error) {
-            console.error('Error deleting department:', error);
-            alert('Không thể xóa bộ phận. Vui lòng thử lại sau.');
-        }
+    const handleDeleteDepartment = (id) => {
+        setModal({
+            isOpen: true,
+            text: "Bạn có chắc chắn muốn xóa bộ phận này không?",
+            type: "confirm",
+            onConfirm: async () => {
+                console.log("Confirmed delete!");
+                setModal({ isOpen: false });
+                try {
+                    const activeToken = await ensureActiveToken();
+                    await deleteDepartment(id, activeToken);
+                    setDepartments(departments.filter((dept) => dept.id !== id));
+                    setModal({
+                        isOpen: true,
+                        text: "Xóa bộ phận thành công!",
+                        type: "success",
+                    });
+                    await fetchDepartments();
+                } catch (error) {
+                    console.error("Error deleting Department:", error);
+                    setModal({
+                        isOpen: true,
+                        text: "Không thể xóa bộ phận. Vui lòng thử lại sau.",
+                        type: "error",
+                    });
+                }
+            },
+        });
     };
-
+    
     // Tự động tải danh sách bộ phận khi component được render
     useEffect(() => {
         const controller = new AbortController();
@@ -158,6 +181,15 @@ function ManageDepartment() {
                     </div>
                 </>
             )}
+            {modal.isOpen && (
+            <ModalGeneral 
+                isOpen={modal.isOpen} 
+                text={modal.text} 
+                type={modal.type} 
+                onClose={() => setModal({ isOpen: false })} 
+                onConfirm={modal.onConfirm}
+            />
+        )}
     </div>
     
     );
