@@ -74,7 +74,7 @@ function FillInfoEmployee() {
 
     const handleCloseModal = () => {
         setModal({ isOpen: false }); // Đóng modal
-        navigate('/manage-dashboard'); // Điều hướng
+        navigate('/admin-dashboard'); // Điều hướng
     };
 
     const handleSaveInfo = async () => {
