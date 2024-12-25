@@ -130,7 +130,7 @@ function VerifyOTP() {
                 isOpen={modal.isOpen} 
                 text={modal.text} 
                 type={modal.type} 
-                onClose={() => setModal({ isOpen: false })} 
+                onClose={handleCloseModal} 
                 onConfirm={modal.onConfirm}
             />
         )}

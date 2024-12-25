@@ -122,6 +122,7 @@ class ReservationListCreateAPIView(generics.ListCreateAPIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ReservationRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
@@ -291,6 +292,38 @@ class ReservationMarkCancelAPIView(generics.UpdateAPIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+class GetLatestReservationAPIView(generics.ListAPIView):
+    queryset = Reservation.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        #need phone_number to get latest reservation
+        phone_number = request.data.get('phone_number', None)
+        if not phone_number:
+            return Response({'message': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if Reservation.objects.filter(phone_number=phone_number).exists():
+            reservation = Reservation.objects.filter(phone_number=phone_number).last()
+            serializer = ReservationSerializer(reservation)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({'message': 'Phone number does not have any reservation'}, status=status.HTTP_404_NOT_FOUND)
+        
+class GetAllReservationAPIView(generics.ListAPIView):
+    queryset = Reservation.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        phone_number = request.data.get('phone_number', None)
+        if not phone_number:
+            return Response({'message': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if Reservation.objects.filter(phone_number=phone_number).exists():
+            reservation = Reservation.objects.filter(phone_number=phone_number)
+            serializer = ReservationSerializer(reservation)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({'message': 'Phone number does not have any reservation'}, status=status.HTTP_404_NOT_FOUND)        
     
 class GetCurrentTableReservationAPIView(generics.RetrieveAPIView):
     permission_classes = [IsEmployeeOrAdmin]
