@@ -3,15 +3,15 @@
   font-family: Arial, sans-serif;
   padding-top: 60px;
 }
-.manage-menu h3 {
-  font-size: 30px;
+.manage-menu-container h3 {
+  font-size: 36px;
   font-weight: bold;
   color: #000000;
 }
-.manage-menu h4 {
-  font-size: 20px;
+.manage-menu-container h4 {
+  font-size: 24px;
+  color: #5a0808;
   font-weight: lighter;
-  color: #380101;
 }
 .add-category-button {
   width: 70%;
@@ -54,6 +54,24 @@ button:hover {
   font-style: italic;
 }
 
+.no-menutab-message {
+  font-size: 1.2rem;
+  color: #888;
+  font-style: italic;
+}
+
+.new-category-form input {
+  font-size: 20px;
+  width: 80%;
+  text-align: center;
+}
+
+.new-category-form button {
+  font-size: 18px;
+  width: 80%;
+  text-align: center;
+}
+
 /* Sidebar Styles */
 .menu-sidebar {
   width: 20%;
@@ -68,7 +86,7 @@ button:hover {
 
 .menu-tab {
   display: block;
-  width: 50%;
+  width: 70%;
   margin: 0.5rem 0;
   padding: 10px;
   color: #ffffff;
@@ -77,6 +95,7 @@ button:hover {
   text-align: center;
   cursor: pointer;
   font-size: 18px;
+  font-weight: bold;
   border-radius: 10px;
 }
 .menu-tab.active {

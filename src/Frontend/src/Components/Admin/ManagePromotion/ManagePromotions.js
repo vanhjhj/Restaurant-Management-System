@@ -104,8 +104,8 @@ function ManagePromotions() {
       <h2>Quản lý ưu đãi</h2>
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
-        <div className="no-promotions">
-          <p>Chưa có ưu đãi</p>
+        <div className={style["no-promotions"]}>
+          <p>Chưa có ưu đãi nào, hãy tạo mới ưu đãi!</p>
         </div>
       ) : (
         <div className={style["discount-cards"]}>
@@ -116,10 +116,9 @@ function ManagePromotions() {
                 alt={discount.title}
                 className={style["discount-image"]}
               />
-              <p>{discount.code}</p>
-              <p>Tiêu đề: {discount.title}</p>
-              <p>
-                Từ {discount.startdate} đến hết {discount.enddate}
+              <h3 className={style["discount-title"]}>{discount.title}</h3>
+              <p className={style["discount-description"]}>
+                {discount.description}
               </p>
               <div className={style["button-group"]}>
                 <button
@@ -144,7 +143,7 @@ function ManagePromotions() {
         onClick={handleAddDiscount}
         className={style["add-discount-button"]}
       >
-        Tạo ưu đãi mới
+        Tạo ưu đãi mới +
       </button>
 
       {modal.isOpen && (

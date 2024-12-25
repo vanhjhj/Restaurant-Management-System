@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addPromotion } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
+import { addPromotion, fetchPromotions } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
 import { useAuth } from "../../../Components/Auth/AuthContext"; // Import useAuth
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
@@ -46,6 +46,16 @@ function AddPromotion() {
     return activeToken;
   };
 
+  const checkCodeExistence = async (code) => {
+    try {
+      const promotions = await fetchPromotions();
+      return promotions.some((promo) => promo.code === code);
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra mã ưu đãi:", error.message);
+      throw error;
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setPromotion((prevPromotion) => ({
@@ -69,13 +79,13 @@ function AddPromotion() {
       return;
     }
 
-    if (code.length > 10) {
-      setError("Mã ưu đãi không được quá 10 ký tự.");
+    if (await checkCodeExistence(code)) {
+      setError("Mã ưu đãi đã tồn tại.");
       return;
     }
 
-    if (title.length > 100100) {
-      setError("Tiêu đề không được quá 100 ký tự.");
+    if (code.length > 10) {
+      setError("Mã ưu đãi không được quá 10 ký tự.");
       return;
     }
 
@@ -168,8 +178,7 @@ function AddPromotion() {
 
         <div className={style["form-group"]}>
           <label htmlFor="description">Mô tả</label>
-          <input
-            type="text"
+          <textarea
             id="description"
             name="description"
             value={promotion.description}

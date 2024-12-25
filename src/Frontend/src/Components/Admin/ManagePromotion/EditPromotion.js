@@ -239,8 +239,7 @@ function EditPromotion() {
         <div className={style["form-group"]}>
           <label htmlFor="description">Mô tả</label>
           {editingField === "description" ? (
-            <input
-              type="text"
+            <textarea
               id="description"
               name="description"
               value={promotion.description}

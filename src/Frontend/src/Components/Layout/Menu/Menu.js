@@ -1,7 +1,8 @@
 // src/components/Menu.js
-import React, { useState,useEffect } from 'react';
-import style from './Menu.module.css';
-import { getFoodItems, getMenuTabs } from '../../../API/MenuAPI';
+import React, { useState, useEffect } from "react";
+import style from "./Menu.module.css";
+import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
+import { useNavigate } from "react-router-dom";
 
 function Menu() {
   const [foodItems, setFoodItems] = useState([]);
@@ -9,21 +10,23 @@ function Menu() {
   const [selectedType, setSelectedType] = useState(0);
 
   const [menuTabs, setMenuTabs] = useState([]);
-  
+
   const [error, setError] = useState(null);
 
-  const [searchItem, setSearchItem] = useState('');
+  const [searchItem, setSearchItem] = useState("");
 
-  const [searchPriceMin, setSearchPriceMin] = useState('');
+  const [searchPriceMin, setSearchPriceMin] = useState("");
 
-  const [searchPriceMax, setSearchPriceMax] = useState('');
+  const [searchPriceMax, setSearchPriceMax] = useState("");
+
+  const navigate = useNavigate();
 
   const handlePriceMin = (value) => {
     // Allow only positive numbers or empty string (to handle backspacing)
     if (/^\d*$/.test(value)) {
       setSearchPriceMin(value);
     }
-  } 
+  };
 
   const handlePriceMax = (value) => {
     // Allow only positive numbers or empty string (to handle backspacing)
@@ -33,8 +36,8 @@ function Menu() {
     if (/^\d*$/.test(value)) {
       setSearchPriceMax(value);
     }
-  }
-  
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -43,18 +46,18 @@ function Menu() {
 
         const tab = await getMenuTabs();
         setMenuTabs(tab);
-      } 
-      catch (error) {
+      } catch (error) {
         setError(error);
         console.log(error);
       }
     };
     loadData();
-  }, [])
+  }, []);
 
   const filter = (item, name, category, priceMin, priceMax) => {
-    let addCondition = item.name.toLowerCase().includes(name.toLowerCase())
-      && item.price >= priceMin;
+    let addCondition =
+      item.name.toLowerCase().includes(name.toLowerCase()) &&
+      item.price >= priceMin;
     if (priceMax > 0) {
       addCondition = addCondition && item.price <= priceMax;
     }
@@ -62,16 +65,22 @@ function Menu() {
       addCondition = addCondition && item.category === category;
     }
     return addCondition;
-  }
+  };
 
-  const filteredItems = foodItems.filter(item => filter(item, searchItem, selectedType, searchPriceMin, searchPriceMax));
+  const filteredItems = foodItems.filter((item) =>
+    filter(item, searchItem, selectedType, searchPriceMin, searchPriceMax)
+  );
+
+  const formatPrice = (price) => {
+    return `${price.toLocaleString("vi-VN")} VND`;
+  };
 
   return (
     <div className={style["menu-container"]}>
       <div className={style["container"]}>
         <div className={style["title-row"]}>
-          <div className={style['row']}>
-            <div className={style['col-lg-12']}>
+          <div className={style["row"]}>
+            <div className={style["col-lg-12"]}>
               <div className={style["section-title"]}>
                 <p>OUR MENU</p>
                 <h2>Check our YUMMY Menu</h2>
@@ -80,64 +89,75 @@ function Menu() {
           </div>
         </div>
         <div className={style["search-row"]}>
-          <div className={style['col-lg-9']}>
-            <div className={style['search-menuitem']}>
-              <input type='text'  
+          <div className={style["col-lg-9"]}>
+            <div className={style["search-menuitem"]}>
+              <input
+                type="text"
                 placeholder="Search..."
                 value={searchItem}
-                onChange={e => setSearchItem(e.target.value) }
-                className={style['input-search-menuitem']} />
+                onChange={(e) => setSearchItem(e.target.value)}
+                className={style["input-search-menuitem"]}
+              />
               <button type="button" className={style["input-search-btn"]}>
                 <i className="fas fa-search"></i>
               </button>
             </div>
           </div>
-          <div className={style['col-lg-3']}>
-            <div className={style['search-price']}>
+          <div className={style["col-lg-3"]}>
+            <div className={style["search-price"]}>
               <div className={style["input-price"]}>
-                <input type="text" 
+                <input
+                  type="text"
                   placeholder="Giá từ..."
                   value={searchPriceMin}
-                  onChange={(e) => handlePriceMin(e.target.value) }
-                >
-                </input>
-              </div> 
+                  onChange={(e) => handlePriceMin(e.target.value)}
+                ></input>
+              </div>
               <div className={style["input-price"]}>
-                <input type="text" 
+                <input
+                  type="text"
                   placeholder="Đến..."
                   value={searchPriceMax}
-                  onChange={(e) => handlePriceMax(e.target.value) }
-                >
-                </input>
+                  onChange={(e) => handlePriceMax(e.target.value)}
+                ></input>
               </div>
             </div>
           </div>
         </div>
-        {error && ( 
-          <div className={style['row']}>
-            <div className={style['Error-container']}> 
-              <h2 className={style['error']}>Error </h2> 
+        {error && (
+          <div className={style["row"]}>
+            <div className={style["Error-container"]}>
+              <h2 className={style["error"]}>Error </h2>
               <p>{error.response ? error.response.data : error.message}</p>
             </div>
-            </div>)}
+          </div>
+        )}
         <div className={style["menu-tab-row"]}>
           <div className={style["row"]}>
-            <div className={style['col-lg-12']}>
+            <div className={style["col-lg-12"]}>
               <div className={style["menu-tab"]}>
                 <ul>
-                  <li key ={0}>
+                  <li key={0}>
                     <button
-                          onClick={() => setSelectedType(0)}
-                          className={style['menu-tab-btn'] + ' ' + style[selectedType === 0 ? 'active' : '']}
-                        >
-                          All
-                        </button>
+                      onClick={() => setSelectedType(0)}
+                      className={
+                        style["menu-tab-btn"] +
+                        " " +
+                        style[selectedType === 0 ? "active" : ""]
+                      }
+                    >
+                      All
+                    </button>
                   </li>
-                  {menuTabs.map(tab => (
+                  {menuTabs.map((tab) => (
                     <li key={tab.id}>
                       <button
                         onClick={() => setSelectedType(tab.id)}
-                        className={style['menu-tab-btn'] + ' ' + style[selectedType === tab.id ? 'active' : '']}
+                        className={
+                          style["menu-tab-btn"] +
+                          " " +
+                          style[selectedType === tab.id ? "active" : ""]
+                        }
                       >
                         {tab.name}
                       </button>
@@ -150,17 +170,20 @@ function Menu() {
         </div>
         <div className={style["menu-list-row"]}>
           <div className={style["row"]}>
-            {filteredItems.map(item => (
-              <div key={item.id} className={style["col-lg-3"]}>
+            {filteredItems.map((item) => (
+              <div
+                key={item.id}
+                className={style["col-lg-3"]}
+                onClick={() => navigate(`/fooddetail/${item.id}`)}
+              >
                 <div className={style["menu-item"]}>
                   <img src={item.image} alt={item.name} />
                   <h3>{item.name}</h3>
                   <h6>{item.description}</h6>
-                  <p>{item.price} .VND</p>
+                  <p>{formatPrice(item.price)}</p>
                 </div>
               </div>
             ))}
-            
           </div>
         </div>
       </div>

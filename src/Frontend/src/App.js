@@ -5,6 +5,9 @@ import Footer from "./Components/Layout/Footer/Footer";
 import HomePage from "./Components/Layout/HomePage/HomePage";
 import About from "./Components/Layout/About/About";
 import Menu from "./Components/Layout/Menu/Menu";
+import FoodDetail from "./Components/Layout/Menu/FoodDetail";
+import Promotion from "./Components/Layout/Promotion/Promotion";
+import PromotionDetail from "./Components/Layout/Promotion/PromotionDetail";
 import Reservation from "./Components/Layout/Reservation/Reservation";
 import Login from "./Components/Auth/Login";
 import SignUp from "./Components/Auth/SignUp";
@@ -82,10 +85,13 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/fooddetail/:id" element={<FoodDetail />} />
           <Route
             path="/reservation"
             element={<Reservation isLoggedIn={isLoggedIn} />}
           />
+          <Route path="/promotion" element={<Promotion />} />
+          <Route path="/promotion/:code" element={<PromotionDetail />} />
 
           {/* Đăng nhập và đăng ký */}
           <Route
@@ -260,7 +266,6 @@ function App() {
               </ProtectedRoute>
           }
           />
-
 
           <Route
             path="/register-employee-account"
