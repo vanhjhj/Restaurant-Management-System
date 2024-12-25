@@ -590,4 +590,29 @@ class OrderItemListAPIView(generics.ListAPIView):
     filterset_class = OrderItemFilterSet
     ordering_fields = ['quantity', 'price', 'total']
     permission_classes = [IsEmployeeOrAdmin]
-        
+
+class FeedbackListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    ordering_fields = ['serve_point', 'food_point', 'price_point', 'space_point', 'overall_point']
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = FeedbackSerializer(data=request.data)
+
+        if serializer.is_valid():
+            if Feedback.objects.filter(order=serializer.validated_data['order']).exists():
+                return Response({'message': 'Feedback for this order already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+            order = Order.objects.get(pk=serializer.validated_data['order'].id)
+            if order.status != 'P':
+                return Response({'message': 'Cannot feedback for unpaid order'}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.save()
+            response = {
+                'message': 'Feedback created successfully',
+                'data': serializer.data
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
