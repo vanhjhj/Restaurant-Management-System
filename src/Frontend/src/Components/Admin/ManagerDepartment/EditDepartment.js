@@ -4,6 +4,7 @@ import { updateDepartment, getDepartments } from '../../../API/AdminAPI';
 import { refreshToken } from '../../../API/authAPI';
 import { useAuth } from './../../Auth/AuthContext';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
+import { ModalGeneral } from '../../ModalGeneral';
 
 function EditDepartment() {
     const { id } = useParams(); // Lấy ID từ URL
@@ -12,6 +13,12 @@ function EditDepartment() {
     const [error, setError] = useState(null); // Trạng thái lỗi
     const { accessToken, setAccessToken } = useAuth();
     const navigate = useNavigate();
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
 
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
@@ -66,6 +73,10 @@ function EditDepartment() {
         }));
     };
 
+    const handleCloseModal = () => {
+        setModal({ isOpen: false }); // Đóng modal
+        navigate('/manage-department'); // Điều hướng
+    };
     // Cập nhật thông tin bộ phận
     const handleUpdateDepartment = async () => {
         setError(null);
@@ -84,8 +95,15 @@ function EditDepartment() {
             const activeToken = await ensureActiveToken();
             console.log("Dữ liệu gửi lên API PATCH:", updatedDepartment);
             await updateDepartment(id, updatedDepartment, activeToken);
-            alert('Cập nhật thành công!');
-            navigate('/manage-department');
+            setModal({
+                isOpen: true,
+                text: "Chỉnh sửa bộ phận thành công!",
+                type: "success",
+            });
+            
+            setTimeout(() => {
+                handleCloseModal();
+            }, 15000);
         } catch (error) {
             console.error('Error updating department:', error.response?.data || error.message);
             setError('Không thể cập nhật thông tin. Vui lòng thử lại.');
@@ -121,6 +139,16 @@ function EditDepartment() {
                 required
             />
             <button onClick={handleUpdateDepartment}>Cập nhật</button>
+
+            {modal.isOpen && (
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                    onClose={handleCloseModal}
+                    onConfirm={modal.onConfirm}
+                />
+            )}
         </div>
     );
 }

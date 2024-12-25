@@ -5,18 +5,25 @@ import { fetchPromotions, deletePromotion } from "../../../API/PromotionAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import { refreshToken } from "../../../API/authAPI";
+import { ModalGeneral } from "../../ModalGeneral";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
       try {
         const refreshed = await refreshToken(
-          localStorage.getItem("refreshToken")
+          localStorage.getdiscount("refreshToken")
         );
         activeToken = refreshed.access;
         setAccessToken(activeToken);
@@ -52,16 +59,34 @@ function ManagePromotions() {
   };
 
   const handleDelete = async (code) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này không?")) return;
-    try {
-      const activeToken = await ensureActiveToken();
-      await deletePromotion(code, activeToken);
-      setPromotions(Promotions.filter((discount) => discount.code !== code));
-      alert("Xóa ưu đãi thành công.");
-    } catch (error) {
-      console.error("Lỗi khi xóa ưu đãi:", error);
-      alert("Không thể xóa ưu đãi. Vui lòng thử lại.");
-    }
+
+    setModal({
+      isOpen: true,
+      text: "Bạn có chắc chắn muốn xóa ưu đãi này không?",
+      type: "confirm",
+      onConfirm: async () => {
+          setModal({ isOpen: false });
+          try {
+            const activeToken = await ensureActiveToken();
+            await deletePromotion(code, activeToken);
+            setPromotions((prevPromotions) =>
+              prevPromotions.filter((discount) => discount.code !== code)
+            );
+            setModal({
+              isOpen: true,
+              text: "Xóa ưu đãi thành công",
+              type: "success",
+            });
+          } catch (error) {
+            console.error("Lỗi khi xóa ưu đãi:", error);
+            setModal({
+              isOpen: true,
+              text: "Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.",
+              type: "error",
+            });
+          }
+      },
+    });
   };
 
   const handleAddDiscount = () => {
@@ -120,6 +145,16 @@ function ManagePromotions() {
       >
         Tạo ưu đãi mới +
       </button>
+
+      {modal.isOpen && (
+          <ModalGeneral 
+              isOpen={modal.isOpen} 
+              text={modal.text} 
+              type={modal.type} 
+              onClose={() => setModal({ isOpen: false })} 
+              onConfirm={modal.onConfirm}
+          />
+      )}
     </div>
   );
 }

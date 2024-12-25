@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import style from '../../../Style/AuthStyle/VerifyOTP.module.css';
 import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../../API/authAPI';
 import { isTokenExpired } from './../../../utils/tokenHelper.mjs';
+import { ModalGeneral } from '../../ModalGeneral';
 
 function VerifyOTP() {
   const [otp, setOtp] = useState('');
@@ -10,7 +11,12 @@ function VerifyOTP() {
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [modal, setModal] = useState({
+      isOpen: false,
+      text: "",
+      type: "", // "confirm" hoặc "success"
+      onConfirm: null, // Hàm được gọi khi xác nhận
+  });
   // Lấy mode, email, và signupData từ location.state
   const {email, signupData } = location.state || {};
 
@@ -20,6 +26,11 @@ function VerifyOTP() {
     setSuccessMessage('');
   };
 
+  const handleCloseModal = (id) => {
+    setModal({ isOpen: false }); // Đóng modal
+    navigate(`/fill-info-emp/${id}`); // Điều hướng
+  };
+  
   const handleVerify = async () => {
     if (!email) {
       setError('Không tìm thấy email. Vui lòng thử lại.');
@@ -64,9 +75,15 @@ function VerifyOTP() {
         // Đăng ký tài khoản
         const responseRegister=await register(userData, token);
         const id=responseRegister.id;
-        alert('dang ki thanh cong');
 
-        navigate(`/fill-info-emp/${id}`);
+        setModal({
+          isOpen: true,
+          text: "Đăng ký thành công",
+          type: "success",
+        });
+        setTimeout(() => {
+          handleCloseModal(id);
+        }, 15000);
     } catch (err) {
       const errorMessage = err.response?.data?.detail || 'Mã OTP không hợp lệ. Vui lòng thử lại.';
       setError(errorMessage);
@@ -87,8 +104,8 @@ function VerifyOTP() {
   return (
     <div className={style['OTP-container']}>
         <div className={style["verify-otp-container"]}>
-        <h2>Xác Minh OTP</h2>
-        <h3>Nhập mã OTP đã được gửi về gmail của nhân viên</h3>
+          <h2>Xác Minh OTP</h2>
+          <h3>Nhập mã OTP đã được gửi về gmail của nhân viên</h3>
           <input
           type="text"
           placeholder="Nhập mã OTP"
@@ -96,15 +113,27 @@ function VerifyOTP() {
           onChange={handleInputChange}
           className={style["otp-input"]}
           />
-          {error && <p className={style["error-message"]}>{error}</p>}
-          {successMessage && <p className="success-message">{successMessage}</p>}
-          <button onClick={handleVerify} className={style["verify-button"]}>
-            Xác Minh
-          </button>
-          <button onClick={handleReSendOTP} className={style["re-verify-button"]}>
-            Gửi lại mã xác minh
-          </button>
+            {error && <p className={style["error-message"]}>{error}</p>}
+
+            {successMessage && <p className="success-message">{successMessage}</p>}
+
+            <button onClick={handleVerify} className={style["verify-button"]}>
+              Xác Minh
+            </button>
+
+            <button onClick={handleReSendOTP} className={style["re-verify-button"]}>
+              Gửi lại mã xác minh
+            </button>
         </div>
+        {modal.isOpen && (
+            <ModalGeneral 
+                isOpen={modal.isOpen} 
+                text={modal.text} 
+                type={modal.type} 
+                onClose={() => setModal({ isOpen: false })} 
+                onConfirm={modal.onConfirm}
+            />
+        )}
     </div>
     
   );

@@ -10,6 +10,7 @@ import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./EditFoodItem.module.css";
 import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
+import { ModalGeneral } from "../../ModalGeneral";
 
 function EditFoodItem() {
   const { id } = useParams();
@@ -27,6 +28,12 @@ function EditFoodItem() {
   const [originalFoodItem, setOriginalFoodItem] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
 
   useEffect(() => {
     const fetchFoodItem = async () => {
@@ -79,6 +86,10 @@ function EditFoodItem() {
     }));
   };
 
+  const handleCloseModal = () => {
+    setModal({ isOpen: false }); // Đóng modal
+    navigate('/manage-menu'); // Điều hướng
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, price, description, image, category } = fooditem;
@@ -133,8 +144,14 @@ function EditFoodItem() {
     try {
       const activeToken = await ensureActiveToken();
       await updateFoodItem(id, formData, activeToken);
-      alert("Món ăn đã được cập nhật thành công");
-      navigate("/manage-menu");
+      setModal({
+        isOpen: true,
+        text: "Món ăn được cập nhật thành công!",
+        type: "success",
+      });
+      setTimeout(() => {
+        handleCloseModal();
+      }, 15000);
     } catch (error) {
       console.error("Lỗi khi cập nhật món ăn:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -262,6 +279,15 @@ function EditFoodItem() {
           Cập nhật món ăn
         </button>
       </form>
+      {modal.isOpen && (
+          <ModalGeneral 
+              isOpen={modal.isOpen} 
+              text={modal.text} 
+              type={modal.type} 
+              onClose={handleCloseModal}
+              onConfirm={modal.onConfirm}
+          />
+      )}
     </div>
   );
 }

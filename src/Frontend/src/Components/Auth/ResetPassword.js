@@ -4,6 +4,7 @@ import style from '../../Style/AuthStyle/ResetPassword.module.css'; // CSS modul
 import { refreshToken, forgotPassword, resetPassword } from '../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { ModalGeneral } from '../ModalGeneral';
 
 function ResetPassword() {
     const [password, setPassword] = useState('');
@@ -15,6 +16,12 @@ function ResetPassword() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+      });
 
     const { email, token } = location.state || {};
 
@@ -29,6 +36,10 @@ function ResetPassword() {
         setError(null);
     };
 
+    const handleCloseModal = () => {
+        setModal({ isOpen: false }); // Đóng modal
+        navigate('/login'); // Điều hướng
+    };
     const handleResetPassword = async () => {
         if (isSubmitting) return;
 
@@ -51,8 +62,14 @@ function ResetPassword() {
         try {
             const resetData = { email, password };
             await resetPassword(resetData, token);
-            setSuccessMessage('Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập.');
-            setTimeout(() => navigate('/login'), 1000);
+            setModal({
+                isOpen: true,
+                text: "Mật khẩu đã được đặt lại thành công!",
+                type: "success",
+              });
+              setTimeout(() => {
+                handleCloseModal();
+            }, 15000);
         } catch (err) {
             setError('Mật Khẩu Không hợp lệ');
         }
@@ -111,6 +128,15 @@ function ResetPassword() {
             >
                 {isSubmitting ? 'Đang xử lý...' : 'Đặt Lại Mật Khẩu'}
             </button>
+            {modal.isOpen && (
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                    onClose={handleCloseModal} 
+                    onConfirm={modal.onConfirm}
+                />
+            )}
         </div>
     );
 }

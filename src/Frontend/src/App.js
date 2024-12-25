@@ -242,16 +242,29 @@ function App() {
           />
 
           <Route
-            path="/fill-info-Emp/:id"
-            element={
+          path="/fill-info-Emp/:id"
+          element={
               <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Admin"]}
-                userRole={userRole}
+              isLoggedIn={isLoggedIn}
+              allowedRoles={["Admin"]}
+              userRole={userRole}
               >
-                <FillInfoEmployee />
+              <FillInfoEmployee/>
               </ProtectedRoute>
-            }
+          }
+          />
+
+        <Route
+          path="/verify-otp-employee"
+          element={
+              <ProtectedRoute
+              isLoggedIn={isLoggedIn}
+              allowedRoles={["Admin"]}
+              userRole={userRole}
+              >
+              <VerifyOtpAccount/>
+              </ProtectedRoute>
+          }
           />
 
           <Route
@@ -334,15 +347,15 @@ function App() {
           <Route
             path="/table"
             element={
-              <ProtectedRoute
+                <ProtectedRoute
                 isLoggedIn={isLoggedIn}
                 allowedRoles={["Employee", "Admin"]}
                 userRole={userRole}
-              >
+                >
                 <EmployeeReservation />
-              </ProtectedRoute>
+                </ProtectedRoute>
             }
-          />
+            />
         </Routes>
         <Footer />
       </Router>

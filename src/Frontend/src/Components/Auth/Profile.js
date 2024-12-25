@@ -7,6 +7,7 @@ import { refreshToken } from '../../API/authAPI';
 import Modal from '../Customer/Modal'; // Import Modal component
 import style from '../../Style/CustomerStyle/Profile.module.css';
 import { useAuth } from './AuthContext';
+import { ModalGeneral } from '../ModalGeneral';
 
 function Profile() {
     const [personalInfo, setPersonalInfo] = useState({ full_name: "", gender: "", phone_number: "" });
@@ -19,6 +20,12 @@ function Profile() {
     const [error, setError] = useState(null);
     const [Modalerror, setModalerror] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
 
     const navigate = useNavigate();
     const { accessToken,setAccessToken } = useAuth();
@@ -142,7 +149,11 @@ function Profile() {
                 newEmail: "",
                 confirmNewEmail: "",
             });
-            alert("Đổi mật khẩu thành công!");
+            setModal({
+                isOpen: true,
+                text: "Đổi mật khẩu thành công!",
+                type: "success",
+            });
             await fetchProfileData();
         } catch (error) {
             console.error("Error changing password:", error);
@@ -179,7 +190,11 @@ function Profile() {
                 newEmail: "",
                 confirmNewEmail: "",
             });
-            alert("Đổi email thành công!");
+            setModal({
+                isOpen: true,
+                text: "Đổi email thành công!",
+                type: "success",
+            });
             await fetchProfileData();
         } catch (error) {
             setModalerror('Email đã tồn tại ');
@@ -347,6 +362,16 @@ function Profile() {
                     Modalerror={Modalerror}
                     setModalerror={setModalerror} 
                     navigate={navigate}
+                />
+            )}
+
+            {modal.isOpen && (
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                    onClose={() => setModal({ isOpen: false })} 
+                    onConfirm={modal.onConfirm}
                 />
             )}
         </div>

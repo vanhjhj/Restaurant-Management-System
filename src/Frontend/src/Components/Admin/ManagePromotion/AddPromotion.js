@@ -5,7 +5,7 @@ import { useAuth } from "../../../Components/Auth/AuthContext"; // Import useAut
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./AddPromotion.module.css";
-
+import { ModalGeneral } from "../../ModalGeneral";
 function AddPromotion() {
   const [promotion, setPromotion] = useState({
     code: "",
@@ -20,6 +20,13 @@ function AddPromotion() {
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
+
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
@@ -57,6 +64,10 @@ function AddPromotion() {
     }));
   };
 
+  const handleCloseModal = () => {
+    setModal({ isOpen: false }); // Đóng modal
+    navigate('/manage-promotions'); // Điều hướng
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { code, title, description, image, discount, startdate, enddate } =
@@ -110,8 +121,15 @@ function AddPromotion() {
     try {
       const activeToken = await ensureActiveToken();
       await addPromotion(promotionData, activeToken);
-      alert("Ưu đãi đã được thêm thành công");
-      navigate("/manage-promotions");
+      setModal({
+        isOpen: true,
+        text: "Thêm ưu đãi thành công!",
+        type: "success",
+      });
+      setTimeout(() => {
+        handleCloseModal();
+      }, 15000);
+      
     } catch (error) {
       if (error.response) {
         console.error("Lỗi từ server:", error.response.data);
@@ -212,6 +230,15 @@ function AddPromotion() {
           Thêm ưu đãi
         </button>
       </form>
+      {modal.isOpen && (
+          <ModalGeneral 
+              isOpen={modal.isOpen} 
+              text={modal.text} 
+              type={modal.type} 
+              onClose={handleCloseModal}
+              onConfirm={modal.onConfirm}
+          />
+      )}
     </div>
   );
 }
