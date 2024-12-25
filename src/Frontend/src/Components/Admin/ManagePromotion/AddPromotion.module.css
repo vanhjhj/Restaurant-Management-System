@@ -1,3 +1,6 @@
+.add-promotion {
+  margin-top: 20px;
+}
 .add-promotion h2 {
   text-align: center;
   font-size: 42px;
@@ -8,7 +11,7 @@
 
 .add-promotion .back-button {
   position: absolute;
-  top: 80px;
+  top: 120px;
   left: 20px;
   background-color: #f0f0f0;
   border: none;
@@ -26,7 +29,7 @@
 }
 
 .add-promotion .form-group label {
-  font-size: 26px; /* Tăng kích thước chữ label */
+  font-size: 20px; /* Tăng kích thước chữ label */
   display: block;
   margin-bottom: 5px;
 }
@@ -41,20 +44,24 @@
   display: block;
 }
 
-.add-promotion button {
+.add-promotion .submit-button {
   display: block;
-  margin: 20px auto;
+  margin: 30px auto;
   padding: 10px 20px;
   background-color: #0f4758;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 20px;
 }
 
-.add-promotion button:hover {
+.add-promotion .back-button:hover {
   background-color: #0f4758; /* Màu nền khi hover */
+}
+
+.add-promotion .submit-button:hover {
+  background-color: #6b8288;
 }
 
 /* Hiển thị lỗi */

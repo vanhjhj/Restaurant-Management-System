@@ -1,3 +1,6 @@
+.add-food {
+  margin-top: 20px;
+}
 .add-food h2 {
   text-align: center;
   font-size: 42px;
@@ -8,7 +11,7 @@
 
 .add-food .back-button {
   position: absolute;
-  top: 80px;
+  top: 120px;
   left: 20px;
   background-color: #f0f0f0;
   border: none;
@@ -31,7 +34,8 @@
   margin-bottom: 5px;
 }
 
-.add-food .form-group input {
+.add-food .form-group input,
+.add-food select {
   width: 20%; /* Giới hạn chiều rộng của các input */
   padding: 10px;
   font-size: 16px;
@@ -41,7 +45,7 @@
   display: block;
 }
 
-.add-food button {
+.add-food .submit-button {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
@@ -53,8 +57,12 @@
   font-size: 20px;
 }
 
-.add-food button:hover {
-  background-color: #0f4758; /* Màu nền khi hover */
+.submit-button:hover {
+  background-color: #7c9197;
+}
+
+.back-button:hover {
+  background-color: #0f4758;
 }
 
 /* Hiển thị lỗi */

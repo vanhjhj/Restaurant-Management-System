@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addPromotion } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
+import { addPromotion, fetchPromotions } from "../../../API/PromotionAPI"; // Import hàm thêm ưu đãi
 import { useAuth } from "../../../Components/Auth/AuthContext"; // Import useAuth
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
@@ -39,6 +39,16 @@ function AddPromotion() {
     return activeToken;
   };
 
+  const checkCodeExistence = async (code) => {
+    try {
+      const promotions = await fetchPromotions();
+      return promotions.some((promo) => promo.code === code);
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra mã ưu đãi:", error.message);
+      throw error;
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setPromotion((prevPromotion) => ({
@@ -55,6 +65,11 @@ function AddPromotion() {
     // Validate input
     if (!code || !title || !description || !image || !startdate || !enddate) {
       setError("Tất cả các trường đều phải nhập.");
+      return;
+    }
+
+    if (await checkCodeExistence(code)) {
+      setError("Mã ưu đãi đã tồn tại.");
       return;
     }
 

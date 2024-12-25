@@ -91,10 +91,9 @@ function ManagePromotions() {
                 alt={discount.title}
                 className={style["discount-image"]}
               />
-              <p>{discount.code}</p>
-              <p>Tiêu đề: {discount.title}</p>
-              <p>
-                Từ {discount.startdate} đến hết {discount.enddate}
+              <h3 className={style["discount-title"]}>{discount.title}</h3>
+              <p className={style["discount-description"]}>
+                {discount.description}
               </p>
               <div className={style["button-group"]}>
                 <button

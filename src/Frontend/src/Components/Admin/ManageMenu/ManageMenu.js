@@ -155,7 +155,9 @@ const ManageMenu = () => {
             </button>
           ))
         ) : (
-          <p>Chưa có mục nào, hãy thêm mới!</p>
+          <p className={style["no-menutab-message"]}>
+            Chưa có mục nào, hãy thêm mới!
+          </p>
         )}
 
         {!showNewCategoryForm ? (
@@ -227,7 +229,11 @@ const ManageMenu = () => {
         )}
         <button
           className={style["add-food-button"]}
-          onClick={() => navigate("/add-food")}
+          onClick={() => {
+            if (categories.length === 0)
+              alert("Vui lòng tạo ít nhất một mục trước khi thêm món ăn mới!");
+            else navigate("/add-food");
+          }}
         >
           Tạo món ăn mới +
         </button>
