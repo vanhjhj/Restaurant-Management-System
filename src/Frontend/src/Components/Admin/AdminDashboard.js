@@ -39,6 +39,9 @@ function AdminDashboard() {
                     <button onClick={() => handleNavigate('/manage-department')} className={style["menu-item"]}>
                         Quản lý bộ phận
                     </button>
+                    <button onClick={() => handleNavigate('/manage-table')} className={style["menu-item"]}>
+                        Quản lý bàn
+                    </button>
                 </div>
                 <div className={style["image-section"]}>
                     <img src="/assets/images/bt1.jpg" alt="Admin illustration" />

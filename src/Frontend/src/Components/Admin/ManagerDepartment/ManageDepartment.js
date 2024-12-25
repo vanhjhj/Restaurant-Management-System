@@ -6,7 +6,7 @@ import { getDepartments, deleteDepartment } from '../../../API/AdminAPI';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import {ModalGeneral} from '../../ModalGeneral';
 
 function ManageDepartment() {
@@ -139,7 +139,7 @@ function ManageDepartment() {
                             className={style["manage-department-button"]} 
                             onClick={() => navigate('/add-department')}
                         >
-                            Thêm bộ phận
+                            Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
                         </button>
                     </div>
                 </div>
@@ -150,7 +150,7 @@ function ManageDepartment() {
                             <tr>
                                 <th>Tên bộ phận</th>
                                 <th>Lương</th>
-                                <th>Hành động</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -176,20 +176,20 @@ function ManageDepartment() {
                             className={style["manage-department-button"]} 
                             onClick={() => navigate('/add-department')}
                         >
-                            Thêm bộ phận
+                            Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
                         </button>
                     </div>
                 </>
             )}
             {modal.isOpen && (
-            <ModalGeneral 
-                isOpen={modal.isOpen} 
-                text={modal.text} 
-                type={modal.type} 
-                onClose={() => setModal({ isOpen: false })} 
-                onConfirm={modal.onConfirm}
-            />
-        )}
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                    onClose={() => setModal({ isOpen: false })} 
+                    onConfirm={modal.onConfirm}
+                />
+            )}
     </div>
     
     );
