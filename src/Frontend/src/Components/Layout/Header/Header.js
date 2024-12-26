@@ -162,7 +162,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                                 </li>
                                 <li>
                                   <Link
-                                    to="/purchasehistory"
+                                    to="/reservation-history"
                                     onClick={closeMenu}
                                   >
                                     Lịch sử mua hàng

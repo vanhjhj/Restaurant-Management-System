@@ -26,7 +26,7 @@ import EditPromotion from "./Components/Admin/ManagePromotion/EditPromotion";
 import RegisterEmployeeAccount from "./Components/Admin/RegisterEmployeeAccout/RegisterEmployeeAccount";
 import ViewSalesReports from "./Components/Admin/ViewSalesReports/ViewSalesReports";
 import ManageRestaurantInfo from "./Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo";
-import PurchaseHistory from "./Components/Customer/PurchaseHistory";
+import ReservationHistory from "./Components/Customer/ReservationHistory";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
 import AddDepartment from "./Components/Admin/ManagerDepartment/AddDepartment";
 import EditDepartment from "./Components/Admin/ManagerDepartment/EditDepartment";
@@ -109,14 +109,14 @@ function App() {
 
           {/* Trang khách hàng */}
           <Route
-            path="/purchase-history"
+            path="/reservation-history"
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
                 allowedRoles={["Customer"]}
                 userRole={userRole}
               >
-                <PurchaseHistory />
+                <ReservationHistory />
               </ProtectedRoute>
             }
           />
