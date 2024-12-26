@@ -314,17 +314,18 @@ class GetAllReservationAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-        phone_number = request.data.get('phone_number', None)
+        phone_number = request.query_params.get('phone_number', None)  
+
         if not phone_number:
             return Response({'message': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if Reservation.objects.filter(phone_number=phone_number).exists():
+        if Reservation.objects.filter(phone_number=phone_number).exists():  
             reservation = Reservation.objects.filter(phone_number=phone_number)
-            serializer = ReservationSerializer(reservation)
+            serializer = ReservationSerializer(reservation, many=True)  
             return Response(serializer.data, status=status.HTTP_200_OK)
         
-        return Response({'message': 'Phone number does not have any reservation'}, status=status.HTTP_404_NOT_FOUND)        
-    
+        return Response({'message': 'Khách chưa từng đặt bàn'}, status=status.HTTP_200_OK)
+
 class GetCurrentTableReservationAPIView(generics.RetrieveAPIView):
     permission_classes = [IsEmployeeOrAdmin]
     queryset = Reservation.objects.all()
