@@ -4,6 +4,7 @@ import style from '../../Style/AuthStyle/VerifyOTP.module.css';
 import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../API/authAPI';
 import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { ModalGeneral } from '../ModalGeneral';
+import { ChangeInfoCus } from '../../API/FixInfoAPI';
 
 function VerifyOTP() {
   const [otp, setOtp] = useState('');
@@ -19,7 +20,7 @@ function VerifyOTP() {
   });
 
   // Lấy mode, email, và signupData từ location.state
-  const { mode = 'register', email, signupData } = location.state || {};
+  const { mode = 'register', email, signupData , CusInfo} = location.state || {};
 
   const handleInputChange = (e) => {
     setOtp(e.target.value);
@@ -27,10 +28,15 @@ function VerifyOTP() {
     setSuccessMessage('');
   };
 
-  const handleCloseModal = (token) => {
+  const handleCloseModalForgotPassword = (token) => {
     setModal({ isOpen: false }); // Đóng modal
     navigate('/reset-password', { state: { email, token } }); // Điều hướng
   };
+
+  const handleCloseModalSignUp=()=>{
+    setModal({ isOpen: false }); // Đóng modal
+    navigate('/'); // Điều hướng
+  }
 
   const handleVerify = async () => {
     if (!email) {
@@ -75,15 +81,15 @@ function VerifyOTP() {
         }
 
         // Đăng ký tài khoản
-        const responseRegister=await register(userData, token);
-
+        const response= await register(userData, token);
+        await ChangeInfoCus(response.id,CusInfo,token);
         setModal({
           isOpen: true,
           text: "Đăng ký tài khoản thành công!",
           type: "success",
         });
         setTimeout(() => {
-          navigate("/");
+          handleCloseModalSignUp();
         }, 15000);
 
       } else if (mode === 'forgotPassword') {
@@ -95,7 +101,7 @@ function VerifyOTP() {
           type: "success",
         });
         setTimeout(() => {
-          handleCloseModal(token);
+          handleCloseModalForgotPassword(token);
         }, 15000);
       }
     } catch (err) {
@@ -148,7 +154,7 @@ function VerifyOTP() {
                 isOpen={modal.isOpen} 
                 text={modal.text} 
                 type={modal.type} 
-                onClose={handleCloseModal} 
+                onClose={handleCloseModalForgotPassword} 
                 onConfirm={modal.onConfirm}
             />
         )}
