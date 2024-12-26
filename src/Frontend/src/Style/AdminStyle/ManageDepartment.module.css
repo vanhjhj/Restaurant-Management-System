@@ -62,22 +62,22 @@
 }
 
 .department-table .edit-button {
-    background-color: #007bff;
+    background-color: #ffcc80;;
     color: white;
 }
 
 .department-table .edit-button:hover {
-    background-color: #0056b3;
+    background-color: #ebbb71;;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .department-table .delete-button {
-    background-color: #dc3545;
+    background-color: #ef9a9a;
     color: white;
 }
 
 .department-table .delete-button:hover {
-    background-color: #a71d2a;
+    background-color: #e57b7b;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 

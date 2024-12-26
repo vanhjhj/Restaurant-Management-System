@@ -36,12 +36,14 @@ import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeD
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
-import { logout, refreshToken } from "./API/authAPI";
 import { isTokenExpired } from "./utils/tokenHelper.mjs";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
+import ManageTable from "./Components/Admin/ManageTable/ManageTable"
+import AddTable from "./Components/Admin/ManageTable/AddTable";
+import EditTable from "./Components/Admin/ManageTable/EditTable";
 
 library.add(faEye, faEyeSlash);
 
@@ -355,6 +357,43 @@ function App() {
                 <EmployeeReservation />
                 </ProtectedRoute>
             }
+            />
+            <Route
+              path="/manage-table"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Admin"]}
+                  userRole={userRole}
+                >
+                  <ManageTable />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/add-table"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Admin"]}
+                  userRole={userRole}
+                >
+                  <AddTable />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit-table/:id"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Admin"]}
+                  userRole={userRole}
+                >
+                  <EditTable />
+                </ProtectedRoute>
+              }
             />
         </Routes>
         <Footer />

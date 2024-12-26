@@ -42,6 +42,23 @@ export const getDepartments = async (token) => {
     }
 };
 
+// Lấy bộ phận theo id
+export const getDepartmentById = async (id,token) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/auth/departments/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching 1 departments:', error);
+        throw error;
+    }
+};
+
 // Thêm bộ phận mới
 export const addDepartment = async (department,token) => {
     try {
@@ -143,6 +160,91 @@ export const getInvoice= async (token) => {
         return response.data;
     } catch (error) {
         console.error('Error get Invoices:', error);
+        throw error;
+    }
+};
+
+// Lấy danh sách bàn
+export const GetTable = async (token) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/booking/tables/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching tables:', error);
+        throw error;
+    }
+};
+
+// Lấy danh bàn theo id
+export const GetTableById = async (id,token) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/booking/tables/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching 1 table:', error);
+        throw error;
+    }
+};
+
+// Thêm bàn mới
+export const addTable = async (department,token) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/booking/tables`, department,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error adding table:', error);
+        throw error;
+    }
+};
+
+// Cập nhật bàn
+export const UpdateTable = async (id, updatedFields,token) => {
+    try {
+        const response = await axios.patch(`${API_BASE_URL}/booking/tables/${id}/`, updatedFields,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating table:', error);
+        throw error;
+    }
+};
+
+
+// Xóa bàn
+export const DeleteTable = async (id,token) => {
+    try {
+        await axios.delete(`${API_BASE_URL}/booking/tables/${id}/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+    } catch (error) {
+        console.error('Error deleting table:', error);
         throw error;
     }
 };
