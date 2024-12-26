@@ -58,12 +58,6 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
 
-            #create employee or customer account base on account type
-            if account.account_type == 'Employee':
-                EmployeeAccount.objects.create(account=account)
-            elif account.account_type == 'Customer':
-                CustomerAccount.objects.create(account=account)
-
             response = {
                 'data': serializer.data,
                 'status': 'success',
@@ -130,10 +124,21 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         }
         return Response(response, status=status.HTTP_200_OK)
 
-class EmployeeAccountListAPIView(generics.ListAPIView):
+class EmployeeAccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = EmployeeAccount.objects.all()
     serializer_class = EmployeeAccountSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+    
+    def get_authenticators(self):
+        if self.request.method == 'POST':
+            return [CustomTokenAuthentication()]
+        return super().get_authenticators()
+        
     
 class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = EmployeeAccount.objects.all()
@@ -172,10 +177,20 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
 
-class CustomerAccountListAPIView(generics.ListAPIView):
+class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+    
+    def get_authenticators(self):
+        if self.request.method == 'POST':
+            return [CustomTokenAuthentication()]
+        return super().get_authenticators()
     
 class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = CustomerAccount.objects.all()

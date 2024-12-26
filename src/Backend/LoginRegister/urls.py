@@ -9,9 +9,9 @@ urlpatterns = [
     path('password-check/', views.CheckPasswordAPIView.as_view(), name='password_check'),
     path('register-otp/', views.RegisterOTPAPIView.as_view(), name='register_otp'),
     path('accounts/<int:pk>/', views.AccountRetrieveUpdateDestroyAPIView.as_view(), name='account'),
-    path('employees/', views.EmployeeAccountListAPIView.as_view(), name='employees'),
+    path('employees/', views.EmployeeAccountListCreateAPIView.as_view(), name='employees'),
     path('employees/<int:account_id>/', views.EmployeeAccountRetrieveUpdateAPIView.as_view(), name='employee'),
-    path('customers/', views.CustomerAccountListAPIView.as_view(), name='customers'),
+    path('customers/', views.CustomerAccountListCreateAPIView.as_view(), name='customers'),
     path('customers/<int:account_id>/', views.CustomerAccountRetrieveUpdateAPIView.as_view(), name='customer'),
 
     path('token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
