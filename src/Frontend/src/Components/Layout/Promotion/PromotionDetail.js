@@ -33,12 +33,6 @@ function PromotionDetail() {
 
   return (
     <div className={style["promotion-detail"]}>
-      <button
-        onClick={() => navigate("/promotion")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>{promotion.title}</h2>
       <img
         src={promotion.image}

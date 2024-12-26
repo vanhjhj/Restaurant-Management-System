@@ -59,32 +59,31 @@ function ManagePromotions() {
   };
 
   const handleDelete = async (code) => {
-
     setModal({
       isOpen: true,
       text: "Bạn có chắc chắn muốn xóa ưu đãi này không?",
       type: "confirm",
       onConfirm: async () => {
-          setModal({ isOpen: false });
-          try {
-            const activeToken = await ensureActiveToken();
-            await deletePromotion(code, activeToken);
-            setPromotions((prevPromotions) =>
-              prevPromotions.filter((discount) => discount.code !== code)
-            );
-            setModal({
-              isOpen: true,
-              text: "Xóa ưu đãi thành công",
-              type: "success",
-            });
-          } catch (error) {
-            console.error("Lỗi khi xóa ưu đãi:", error);
-            setModal({
-              isOpen: true,
-              text: "Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.",
-              type: "error",
-            });
-          }
+        setModal({ isOpen: false });
+        try {
+          const activeToken = await ensureActiveToken();
+          await deletePromotion(code, activeToken);
+          setPromotions((prevPromotions) =>
+            prevPromotions.filter((discount) => discount.code !== code)
+          );
+          setModal({
+            isOpen: true,
+            text: "Xóa ưu đãi thành công",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Lỗi khi xóa ưu đãi:", error);
+          setModal({
+            isOpen: true,
+            text: "Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.",
+            type: "error",
+          });
+        }
       },
     });
   };
@@ -95,12 +94,6 @@ function ManagePromotions() {
 
   return (
     <div className={style["manage-Promotions"]}>
-      <button
-        onClick={() => navigate("/admin-dashboard")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>Quản lý ưu đãi</h2>
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
@@ -147,13 +140,13 @@ function ManagePromotions() {
       </button>
 
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={() => setModal({ isOpen: false })} 
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={() => setModal({ isOpen: false })}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

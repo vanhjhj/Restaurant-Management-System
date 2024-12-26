@@ -68,7 +68,7 @@ function AddFoodItem() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate('/manage-menu'); // Điều hướng
+    navigate("/manage-menu"); // Điều hướng
   };
 
   const handleSubmit = async (e) => {
@@ -122,12 +122,6 @@ function AddFoodItem() {
 
   return (
     <div className={style["add-food"]}>
-      <button
-        onClick={() => navigate("/manage-menu")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>Thêm món ăn mới</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
@@ -156,18 +150,6 @@ function AddFoodItem() {
         </div>
 
         <div className={style["form-group"]}>
-          <label htmlFor="description">Mô tả</label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            value={menu.description}
-            onChange={handleChange}
-            placeholder="Nhập mô tả"
-          />
-        </div>
-
-        <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
           <input type="file" id="image" name="image" onChange={handleChange} />
         </div>
@@ -189,18 +171,29 @@ function AddFoodItem() {
           </select>
         </div>
 
+        <div className={`${style["form-group"]} ${style.description}`}>
+          <label htmlFor="description">Mô tả</label>
+          <textarea
+            id="description"
+            name="description"
+            value={menu.description}
+            onChange={handleChange}
+            placeholder="Nhập mô tả"
+          />
+        </div>
+
         <button className={style["submit-button"]} type="submit">
           Thêm món ăn
         </button>
       </form>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={handleCloseModal}
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={handleCloseModal}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

@@ -28,7 +28,6 @@ const ManageMenu = () => {
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
 
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -89,26 +88,26 @@ const ManageMenu = () => {
       text: "Bạn có chắc chắn muốn xóa món ăn này không?",
       type: "confirm",
       onConfirm: async () => {
-          setModal({ isOpen: false });
-          try {
-            const activeToken = await ensureActiveToken();
-            await deleteFoodItem(id, activeToken);
-            setFoodItems((prevFoodItems) =>
-              prevFoodItems.filter((item) => item.id !== id)
-            );
-            setModal({
-              isOpen: true,
-              text: "Xóa món ăn thành công",
-              type: "success",
-            });
-          } catch (error) {
-            console.error("Lỗi khi xóa món ăn:", error);
-            setModal({
-              isOpen: true,
-              text: "Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.",
-              type: "error",
-            });
-          }
+        setModal({ isOpen: false });
+        try {
+          const activeToken = await ensureActiveToken();
+          await deleteFoodItem(id, activeToken);
+          setFoodItems((prevFoodItems) =>
+            prevFoodItems.filter((item) => item.id !== id)
+          );
+          setModal({
+            isOpen: true,
+            text: "Xóa món ăn thành công",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Lỗi khi xóa món ăn:", error);
+          setModal({
+            isOpen: true,
+            text: "Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.",
+            type: "error",
+          });
+        }
       },
     });
   };
@@ -165,12 +164,6 @@ const ManageMenu = () => {
   return (
     <div className={style["manage-menu-container"]}>
       <div className={style["menu-sidebar"]}>
-        <button
-          onClick={() => navigate("/admin-dashboard")}
-          className={style["back-button"]}
-        >
-          ← Back
-        </button>
         <h3>Thực đơn hiện tại</h3>
         <h4>Danh sách mục có sẵn</h4>
         {categories.length > 0 ? (
@@ -270,13 +263,13 @@ const ManageMenu = () => {
         </button>
       </div>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={() => setModal({ isOpen: false })} 
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={() => setModal({ isOpen: false })}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

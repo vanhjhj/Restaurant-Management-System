@@ -27,7 +27,6 @@ function AddPromotion() {
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
 
-
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
@@ -66,7 +65,7 @@ function AddPromotion() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate('/manage-promotions'); // Điều hướng
+    navigate("/manage-promotions"); // Điều hướng
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,7 +128,6 @@ function AddPromotion() {
       setTimeout(() => {
         handleCloseModal();
       }, 15000);
-      
     } catch (error) {
       if (error.response) {
         console.error("Lỗi từ server:", error.response.data);
@@ -144,14 +142,8 @@ function AddPromotion() {
 
   return (
     <div className={style["add-promotion"]}>
-      <button
-        onClick={() => navigate("/manage-promotions")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>Thêm ưu đãi mới</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
           <label htmlFor="code">Mã ưu đãi</label>
@@ -226,18 +218,20 @@ function AddPromotion() {
           <input type="file" id="image" name="image" onChange={handleChange} />
         </div>
 
-        <button className={style["submit-button"]} type="submit">
-          Thêm ưu đãi
-        </button>
+        <div className={style["submit-button-container"]}>
+          <button className={style["submit-button"]} type="submit">
+            Thêm ưu đãi
+          </button>
+        </div>
       </form>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={handleCloseModal}
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={handleCloseModal}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );
