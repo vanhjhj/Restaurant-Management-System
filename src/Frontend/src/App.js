@@ -41,7 +41,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
-import ManageTable from "./Components/Admin/ManageTable/ManageTable"
+import ManageTable from "./Components/Admin/ManageTable/ManageTable";
 import AddTable from "./Components/Admin/ManageTable/AddTable";
 import EditTable from "./Components/Admin/ManageTable/EditTable";
 
@@ -244,29 +244,29 @@ function App() {
           />
 
           <Route
-          path="/fill-info-Emp/:id"
-          element={
+            path="/fill-info-Emp/:id"
+            element={
               <ProtectedRoute
-              isLoggedIn={isLoggedIn}
-              allowedRoles={["Admin"]}
-              userRole={userRole}
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
               >
-              <FillInfoEmployee/>
+                <FillInfoEmployee />
               </ProtectedRoute>
-          }
+            }
           />
 
-        <Route
-          path="/verify-otp-employee"
-          element={
+          <Route
+            path="/verify-otp-employee"
+            element={
               <ProtectedRoute
-              isLoggedIn={isLoggedIn}
-              allowedRoles={["Admin"]}
-              userRole={userRole}
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
               >
-              <VerifyOtpAccount/>
+                <VerifyOtpAccount />
               </ProtectedRoute>
-          }
+            }
           />
 
           <Route
@@ -333,6 +333,44 @@ function App() {
             }
           />
 
+          <Route
+            path="/manage-table"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <ManageTable />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/add-table"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <AddTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-table/:id"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <EditTable />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Trang nhân viên */}
           <Route
             path="/employee-dashboard"
@@ -349,52 +387,15 @@ function App() {
           <Route
             path="/table"
             element={
-                <ProtectedRoute
+              <ProtectedRoute
                 isLoggedIn={isLoggedIn}
                 allowedRoles={["Employee", "Admin"]}
                 userRole={userRole}
-                >
+              >
                 <EmployeeReservation />
-                </ProtectedRoute>
+              </ProtectedRoute>
             }
-            />
-            <Route
-              path="/manage-table"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <ManageTable />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/add-table"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddTable />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/edit-table/:id"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditTable />
-                </ProtectedRoute>
-              }
-            />
+          />
         </Routes>
         <Footer />
       </Router>
