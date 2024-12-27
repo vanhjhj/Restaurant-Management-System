@@ -10,9 +10,7 @@ class Category(models.Model):
 
 class MenuItem(models.Model):
     name = models.CharField(max_length=255)
-    price = models.IntegerField(
-        validators=[MinValueValidator(0)]  
-    )
+    price = models.IntegerField(validators=[MinValueValidator(0)])
     description = models.TextField()
     image = models.ImageField(upload_to='menu_img/')
     category = models.ForeignKey(Category, related_name='menu_items', on_delete=models.PROTECT)

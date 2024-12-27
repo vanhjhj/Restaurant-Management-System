@@ -298,7 +298,7 @@ class GetLatestReservationAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         #need phone_number to get latest reservation
-        phone_number = request.data.get('phone_number', None)
+        phone_number = request.query_params.get('phone_number', None)
         if not phone_number:
             return Response({'message': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
         
