@@ -5,6 +5,8 @@ import { refreshToken } from '../../../API/authAPI';
 import style from "./BookingTable.module.css";
 import { AddBookingTable,GetBookingTableByPhone } from "../../../API/BookingTableApi";
 import { ModalGeneral } from "../../ModalGeneral";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 function BookingTable() {
   const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
@@ -45,27 +47,59 @@ function BookingTable() {
   const checkLoginStatus = async () => {
     try {
       const token = await ensureActiveToken();
-      const response = await GetInfoCus(UserID, token); // Lấy thông tin người dùng
-
-      console.log(response);
+      const response = await GetInfoCus(UserID, token); // Lấy thông tin người dùng từ API
+  
       if (response) {
         const userPhone = response.phone_number;
         const userName = response.full_name;
-        // Cập nhật thông tin người dùng vào form
-        setPhoneNumber(userPhone);
-        setBookingInfo((prevInfo) => ({
-          ...prevInfo,
-          phone_number: userPhone,
-          guest_name: userName,
-        }));
-
-        // Kiểm tra thông tin đặt bàn qua số điện thoại
-        fetchBookingData(userPhone, userName);
+  
+        // Nếu người dùng có số điện thoại, tự động điền vào form
+        if (userPhone) {
+          setPhoneNumber(userPhone);
+          setBookingInfo((prevInfo) => ({
+            ...prevInfo,
+            phone_number: userPhone,
+            guest_name: userName,
+          }));
+  
+          // Kiểm tra thông tin đặt bàn qua số điện thoại
+          fetchBookingData(userPhone, userName);
+        } else {
+          // Không có số điện thoại, cho phép người dùng tự nhập
+          setBookingInfo((prevInfo) => ({
+            ...prevInfo,
+            guest_name: userName, // Chỉ điền tên
+          }));
+        }
       }
     } catch (err) {
-      setError("Lỗi khi lấy thông tin khách hàng.");
+      // Nếu xảy ra lỗi (ví dụ: người dùng chưa đăng nhập), để trống thông tin
+      setPhoneNumber("");
+      setBookingInfo((prevInfo) => ({
+        ...prevInfo,
+        phone_number: "",
+      }));
     }
   };
+
+  const validatePhoneNumber = (phone) => {
+    if (phone.length === 0) {
+      return "Số điện thoại không được để trống.";
+    }
+    if (!/^[0-9]+$/.test(phone)) {
+      return "Số điện thoại chỉ được chứa chữ số.";
+    }
+    if (phone.length !== 10) {
+      return "Số điện thoại phải đủ 10 chữ số.";
+    }
+    if (!/^0/.test(phone)) {
+      return "Số điện thoại phải bắt đầu bằng số 0.";
+    }
+    return null; // Hợp lệ
+  };
+  
+  
+  
 
   const fetchBookingData = async (phone, name) => {
     if (!phone) return;
@@ -76,8 +110,8 @@ function BookingTable() {
         // Load thông tin đặt bàn nếu có
         setBookingInfo({
           guest_name: response.guest_name,
-          date: response.date,
-          time: response.time,
+          date: "",
+          time: "",
           phone_number: phone,
           number_of_guests: response.number_of_guests,
           note: response.note,
@@ -104,12 +138,23 @@ function BookingTable() {
 
   const handlePhoneChange = (e) => {
     const phone = e.target.value;
+  
+    // Gọi hàm kiểm tra số điện thoại
+    const error = validatePhoneNumber(phone);
+  
+    if (error) {
+      setError(error); // Cập nhật lỗi
+    } else {
+      setError(""); // Xóa lỗi nếu hợp lệ
+    }
+  
     setPhoneNumber(phone);
-
-    if (phone.trim() !== "") {
+  
+    if (!error && phone.trim() !== "") {
       fetchBookingData(phone, bookingInfo.guest_name); // Tải dữ liệu đặt bàn qua số điện thoại mới
     }
   };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -118,10 +163,19 @@ function BookingTable() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+  const phoneError = validatePhoneNumber(phoneNumber);
+  if (phoneError) {
+    setError(phoneError);
+    return; // Dừng form nếu số điện thoại không hợp lệ
+  }
+
     const now = new Date(); 
     const bookingDate = new Date(bookingInfo.date); 
-    if(bookingDate<now)
-    {
+    const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const bookingDateOnly = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
+
+    if (bookingDateOnly < nowDateOnly) {
       setError("Không thể đặt bàn vào ngày trong quá khứ. Vui lòng sửa lại ngày đến!");
       return;
     }
@@ -135,25 +189,34 @@ function BookingTable() {
       return;
     }
     try {
-      await AddBookingTable({ phone_number: phoneNumber, ...bookingInfo });
+      const requestData = {
+        ...bookingInfo,
+        date: bookingInfo.date, // Ngày đã ở đúng định dạng
+      };
+      await AddBookingTable(requestData);
+      
       setModal({
         isOpen: true,
         text: "Đặt bàn thành công!",
         type: "success",
       });
+      setError('');
       setBookingInfo({
-        guest_name: "",
+        guest_name: bookingInfo.guest_name,
         date: "",
         time: "",
-        phone_number: "",
+        phone_number: phoneNumber,
         number_of_guests: 1,
         note: "",
       });
-      setPhoneNumber("");
     } catch (err) {
       setError("Không thể đặt bàn. Vui lòng thử lại.");
     }
   };
+
+  
+  // Khi hiển thị ngày
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className={style["booking-form-container"]}>
@@ -186,8 +249,11 @@ function BookingTable() {
           <input
             type="date"
             name="date"
-            value={bookingInfo.date}
-            onChange={handleInputChange}
+            value={bookingInfo.date || today}
+            onChange={(e) => {
+              handleInputChange({ target: { name: "date", value: e.target.value} });
+            }}
+            min={today} // Không cho phép chọn ngày trong quá khứ
             required
           />
         </label>
@@ -220,8 +286,14 @@ function BookingTable() {
             onChange={handleInputChange}
           />
         </label>
-
-        <h3>Khách hàng cần đặt bàn trước ít nhất 01 tiếng so với thời gian dự định tới nhà hàng, và thời gian thực tế tới nhà hàng chênh lệch không quá 20 phút so với thời gian theo thông tin đặt bàn, để được áp dụng ưu đãi và phục vụ tốt nhất.</h3>
+        <div className={style["warning"]}>
+          <FontAwesomeIcon icon={faExclamationTriangle} className={style["warning-icon"]} />
+          <h3 className={style["warning-text"]}>
+            Khách hàng cần đặt bàn trước ít nhất 01 tiếng so với thời gian dự định tới nhà hàng,
+            và thời gian thực tế tới nhà hàng chênh lệch không quá 20 phút so với thời gian theo thông tin đặt bàn,
+            để được áp dụng ưu đãi và phục vụ tốt nhất.
+          </h3>
+        </div>
         <button type="submit">Đặt bàn</button>
       </form>
 
