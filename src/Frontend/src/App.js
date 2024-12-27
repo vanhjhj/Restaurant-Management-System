@@ -39,6 +39,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
+import Review from "./Components/Customer/Review"
 
 library.add(faEye, faEyeSlash);
 
@@ -82,6 +83,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/review/rating/:invoiceID" element={<Review/>}/>
           <Route
             path="/reservation"
             element={<Reservation isLoggedIn={isLoggedIn} />}
