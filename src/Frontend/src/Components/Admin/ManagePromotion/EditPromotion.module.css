@@ -71,6 +71,7 @@
   height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgb(255, 255, 255);
+  object-fit: cover;
 }
 
 .edit-promotion .submit-button {

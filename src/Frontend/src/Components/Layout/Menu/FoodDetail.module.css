@@ -41,12 +41,13 @@
   line-height: 1.6;
   color: #444;
   margin-bottom: 20px;
+  white-space: pre-wrap;
 }
 
 .food-detail-container .food-price {
   font-size: 2rem;
   font-weight: bold;
-  color: rgb(255, 151, 151);
+  color: #aa2d00;
   text-align: right;
 }
 
