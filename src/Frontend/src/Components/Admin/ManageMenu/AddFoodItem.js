@@ -76,12 +76,6 @@ function AddFoodItem() {
 
     const { name, price, description, image, category } = menu;
 
-    // Validate input
-    if (!name || !price || !description || !image || !category) {
-      setError("Tất cả các trường đều phải nhập.");
-      return;
-    }
-
     if (name.length > 255) {
       setError("Tên món ăn không được quá 255 ký tự.");
       return;
@@ -134,6 +128,7 @@ function AddFoodItem() {
             value={menu.name}
             onChange={handleChange}
             placeholder="Nhập tên món ăn"
+            required
           />
         </div>
 
@@ -146,12 +141,20 @@ function AddFoodItem() {
             value={menu.price}
             onChange={handleChange}
             placeholder="Nhập giá (>0)"
+            min={0}
+            required
           />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          <input type="file" id="image" name="image" onChange={handleChange} />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className={style["form-group"]}>
@@ -161,6 +164,7 @@ function AddFoodItem() {
             name="category"
             value={menu.category}
             onChange={handleChange}
+            required
           >
             <option value="">Chọn danh mục</option>
             {categories.map((cat) => (
@@ -179,6 +183,7 @@ function AddFoodItem() {
             value={menu.description}
             onChange={handleChange}
             placeholder="Nhập mô tả"
+            required
           />
         </div>
 

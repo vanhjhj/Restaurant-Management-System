@@ -184,36 +184,12 @@ const ManageMenu = () => {
           </p>
         )}
 
-        {!showNewCategoryForm ? (
-          <button
-            className={style["add-category-button"]}
-            onClick={() => setShowNewCategoryForm(true)}
-          >
-            Tạo mục mới +
-          </button>
-        ) : (
-          <div className={style["new-category-form"]}>
-            <input
-              type="text"
-              placeholder="Tên mục mới"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              className={style["new-category-input"]}
-            />
-            <button
-              className={style["save-category-button"]}
-              onClick={handleCreateNewCategory}
-            >
-              Lưu
-            </button>
-            <button
-              className={style["cancel-category-button"]}
-              onClick={() => setShowNewCategoryForm(false)}
-            >
-              Hủy
-            </button>
-          </div>
-        )}
+        <button
+          className={style["add-category-button"]}
+          onClick={() => setShowNewCategoryForm(true)}
+        >
+          Tạo mục mới +
+        </button>
       </div>
 
       <div className={style["menu-content"]}>
@@ -262,6 +238,7 @@ const ManageMenu = () => {
           Tạo món ăn mới +
         </button>
       </div>
+
       {modal.isOpen && (
         <ModalGeneral
           isOpen={modal.isOpen}
@@ -270,6 +247,40 @@ const ManageMenu = () => {
           onClose={() => setModal({ isOpen: false })}
           onConfirm={modal.onConfirm}
         />
+      )}
+
+      {showNewCategoryForm && (
+        <div className={style["modal-overlay"]}>
+          <div className={style["modal-content"]}>
+            <h3>Tạo mục mới</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateNewCategory();
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Tên mục mới"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                required
+              />
+              <div>
+                <button className={style["save-button"]} type="submit">
+                  Lưu
+                </button>
+                <button
+                  className={style["cancel-button"]}
+                  type="button"
+                  onClick={() => setShowNewCategoryForm(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

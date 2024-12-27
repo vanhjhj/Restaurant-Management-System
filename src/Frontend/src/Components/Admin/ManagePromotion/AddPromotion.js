@@ -72,12 +72,6 @@ function AddPromotion() {
     const { code, title, description, image, discount, startdate, enddate } =
       promotion;
 
-    // Validate input
-    if (!code || !title || !description || !image || !startdate || !enddate) {
-      setError("Tất cả các trường đều phải nhập.");
-      return;
-    }
-
     if (await checkCodeExistence(code)) {
       setError("Mã ưu đãi đã tồn tại.");
       return;
@@ -154,6 +148,7 @@ function AddPromotion() {
             value={promotion.code}
             onChange={handleChange}
             placeholder="Nhập mã ưu đãi"
+            required
           />
         </div>
         <div className={style["form-group"]}>
@@ -165,6 +160,7 @@ function AddPromotion() {
             value={promotion.title}
             onChange={handleChange}
             placeholder="Nhập tiêu đề"
+            required
           />
         </div>
 
@@ -176,6 +172,7 @@ function AddPromotion() {
             value={promotion.description}
             onChange={handleChange}
             placeholder="Nhập mô tả"
+            required
           />
         </div>
 
@@ -188,6 +185,9 @@ function AddPromotion() {
             value={promotion.discount}
             onChange={handleChange}
             placeholder="Nhập tỷ lệ giảm giá (0-100)"
+            required
+            min={0}
+            max={100}
           />
         </div>
 
@@ -199,6 +199,7 @@ function AddPromotion() {
             name="startdate"
             value={promotion.startdate}
             onChange={handleChange}
+            required
           />
         </div>
 
@@ -210,12 +211,19 @@ function AddPromotion() {
             name="enddate"
             value={promotion.enddate}
             onChange={handleChange}
+            required
           />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          <input type="file" id="image" name="image" onChange={handleChange} />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className={style["submit-button-container"]}>

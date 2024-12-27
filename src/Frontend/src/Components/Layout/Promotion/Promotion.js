@@ -34,6 +34,12 @@ function Promotion() {
         <div className={style["title-row"]}>
           <h1>Khuyến mãi</h1>
         </div>
+        <div className={style["image"]}>
+          <img
+            src="assets/images/chuong-trinh-khuyen-mai-trong-kinh-doanh-scaled.jpg"
+            alt=""
+          />
+        </div>
         {error ? (
           <div className={style["error-message"]}>
             <p>
