@@ -18,6 +18,8 @@ function BookingTable() {
     number_of_guests: 1,
     note: "",
   });
+  let userName;
+  let userPhone;
 
   const [modal, setModal] = useState({
     isOpen: false,
@@ -32,6 +34,16 @@ function BookingTable() {
   useEffect(() => {
     checkLoginStatus(); // Kiểm tra trạng thái đăng nhập
   }, []);
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  useEffect(() => {
+    setBookingInfo((prevInfo) => ({
+      ...prevInfo,
+      date: prevInfo.date || today, // Đặt ngày mặc định là hôm nay nếu chưa có giá trị
+    }));
+  }, []);
+  
 
   const ensureActiveToken = async () => {
     let activeToken = localStorage.getItem("accessToken");
@@ -50,8 +62,8 @@ function BookingTable() {
       const response = await GetInfoCus(UserID, token); // Lấy thông tin người dùng từ API
   
       if (response) {
-        const userPhone = response.phone_number;
-        const userName = response.full_name;
+        userPhone = response.phone_number;
+        userName = response.full_name;
   
         // Nếu người dùng có số điện thoại, tự động điền vào form
         if (userPhone) {
@@ -110,7 +122,7 @@ function BookingTable() {
         // Load thông tin đặt bàn nếu có
         setBookingInfo({
           guest_name: response.guest_name,
-          date: "",
+          date: today,
           time: "",
           phone_number: phone,
           number_of_guests: response.number_of_guests,
@@ -202,10 +214,10 @@ function BookingTable() {
       });
       setError('');
       setBookingInfo({
-        guest_name: bookingInfo.guest_name,
+        guest_name: userName,
         date: "",
         time: "",
-        phone_number: phoneNumber,
+        phone_number: userPhone,
         number_of_guests: 1,
         note: "",
       });
@@ -213,10 +225,6 @@ function BookingTable() {
       setError("Không thể đặt bàn. Vui lòng thử lại.");
     }
   };
-
-  
-  // Khi hiển thị ngày
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className={style["booking-form-container"]}>
@@ -249,11 +257,11 @@ function BookingTable() {
           <input
             type="date"
             name="date"
-            value={bookingInfo.date || today}
+            value={bookingInfo.date}
             onChange={(e) => {
               handleInputChange({ target: { name: "date", value: e.target.value} });
             }}
-            min={today} // Không cho phép chọn ngày trong quá khứ
+            min={bookingInfo.date}
             required
           />
         </label>
