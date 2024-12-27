@@ -5,6 +5,7 @@ import { useAuth } from '../../Auth/AuthContext';
 import { refreshToken } from '../../../API/authAPI';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { FillInfoEmp, getDepartments } from '../../../API/AdminAPI';
+import { ModalGeneral } from '../../ModalGeneral';
 
 function FillInfoEmployee() {
     const { accessToken, setAccessToken } = useAuth();
@@ -24,6 +25,12 @@ function FillInfoEmployee() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
 
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
@@ -63,6 +70,11 @@ function FillInfoEmployee() {
             ...prevData,
             [name]: value,
         }));
+    };
+
+    const handleCloseModal = () => {
+        setModal({ isOpen: false }); // Đóng modal
+        navigate('/admin-dashboard'); // Điều hướng
     };
 
     const handleSaveInfo = async () => {
@@ -143,8 +155,14 @@ function FillInfoEmployee() {
             const activeToken = await ensureActiveToken();
             console.log("Dữ liệu gửi lên API:", sanitizedData);
             await FillInfoEmp(id, sanitizedData, activeToken);
-            alert("Thông tin nhân viên đã được lưu thành công.");
-            navigate("/admin-dashboard")
+            setModal({
+                isOpen: true,
+                text: "Thông tin nhân viên đã được lưu thành công!",
+                type: "success",
+            });
+            setTimeout(() => {
+                handleCloseModal();
+            }, 15000);
         } catch (error) {
             console.error("Error filling employee info:", error.response?.data || error.message);
             setError("Không thể cập nhật thông tin. Vui lòng thử lại.");
@@ -263,6 +281,16 @@ function FillInfoEmployee() {
                     {isSubmitting ? "Đang lưu..." : "Lưu Thông Tin"}
                 </button>
             </form>
+
+            {modal.isOpen && (
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                    onClose={handleCloseModal}
+                    onConfirm={modal.onConfirm}
+                />
+            )}
         </div>
     );
 }

@@ -8,12 +8,12 @@ def validate_discount(value):
 
 class Promotion(models.Model):
     code=models.CharField(max_length=10, primary_key = True)
-    title = models.CharField(max_length=100)
+    title = models.TextField()
     startdate=models.DateField()
     enddate=models.DateField()
     description = models.TextField()
     image = models.ImageField(upload_to='promotion_img/')
-    discount = models.FloatField(validators=[validate_discount])
+    discount = models.IntegerField(validators=[validate_discount])
     
     def __str__(self):
         return self.title

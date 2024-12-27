@@ -26,9 +26,9 @@ class Reservation(models.Model):
     
 class Order(models.Model):
     datetime = models.DateTimeField(default=datetime.datetime.now)
-    total_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
-    total_discount = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
-    final_price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)], default=0)
+    total_price = models.IntegerField(validators=[MinValueValidator(0)], default=0)
+    total_discount = models.IntegerField(validators=[MinValueValidator(0)], default=0)
+    final_price = models.IntegerField(validators=[MinValueValidator(0)], default=0)
     status = models.CharField(max_length=20, choices=[('P', 'Paid'), ('NP', 'Not Paid')], default='NP')
     table = models.ForeignKey(Table, related_name='orders', on_delete=models.DO_NOTHING)
 
@@ -87,10 +87,10 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='details', on_delete=models.CASCADE)
-    menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.DO_NOTHING)
+    menu_item = models.ForeignKey(MenuItem, related_name='menu_item', on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
-    price = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
-    total = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
+    price = models.IntegerField(validators=[MinValueValidator(0)])
+    total = models.IntegerField(validators=[MinValueValidator(0)])
     note = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=[('P', 'Preparing'), ('D', 'Done')], default='P')
 
@@ -104,11 +104,16 @@ class OrderItem(models.Model):
 
 class Feedback(models.Model):
     order = models.ForeignKey(Order, related_name='feedback', on_delete=models.CASCADE)
-    server_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)
-    food_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)
-    price_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)
-    space_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=1)
+    serve_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
+    food_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
+    price_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
+    space_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
+    overall_point = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
     comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.order}"
+    
+    def save(self, *args, **kwargs):
+        self.overall_point = (self.serve_point + self.food_point + self.price_point + self.space_point) / 4
+        super().save(*args, **kwargs)

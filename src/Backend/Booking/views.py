@@ -122,6 +122,7 @@ class ReservationListCreateAPIView(generics.ListCreateAPIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ReservationRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
@@ -291,7 +292,40 @@ class ReservationMarkCancelAPIView(generics.UpdateAPIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
-    
+class GetLatestReservationAPIView(generics.ListAPIView):
+    queryset = Reservation.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        #need phone_number to get latest reservation
+        phone_number = request.query_params.get('phone_number', None)
+        if not phone_number:
+            return Response({'message': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if Reservation.objects.filter(phone_number=phone_number).exists():
+            reservation = Reservation.objects.filter(phone_number=phone_number).last()
+            serializer = ReservationSerializer(reservation)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({'message': 'Phone number does not have any reservation'}, status=status.HTTP_404_NOT_FOUND)
+        
+class GetAllReservationAPIView(generics.ListAPIView):
+    queryset = Reservation.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        phone_number = request.query_params.get('phone_number', None)  
+
+        if not phone_number:
+            return Response({'message': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if Reservation.objects.filter(phone_number=phone_number).exists():  
+            reservation = Reservation.objects.filter(phone_number=phone_number)
+            serializer = ReservationSerializer(reservation, many=True)  
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({'message': 'Khách chưa từng đặt bàn'}, status=status.HTTP_200_OK)
+
 class GetCurrentTableReservationAPIView(generics.RetrieveAPIView):
     permission_classes = [IsEmployeeOrAdmin]
     queryset = Reservation.objects.all()
@@ -494,6 +528,9 @@ class RemoveOrderItemAPIView(generics.DestroyAPIView):
         if order.status == 'P':
             return Response({'message': 'Cannot remove item from paid order'}, status=status.HTTP_400_BAD_REQUEST)
         
+        if order_item.status == 'D':
+            return Response({'message': 'Cannot remove done order item'}, status=status.HTTP_400_BAD_REQUEST)
+        
         if len(OrderItem.objects.filter(order=order)) == 1:
             return Response({'message': 'Order must have at least one item'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -558,6 +595,9 @@ class UpdateOrderItemAPIView(generics.UpdateAPIView):
             
             for key, value in serializers.validated_data.items():
                 if key == 'quantity':
+                    if value < order_item.quantity and order_item.status == 'D':
+                        return Response({'message': 'Cannot decrease quantity of done order item'}, status=status.HTTP_400_BAD_REQUEST)
+
                     if value > order_item.quantity: #update status to preparing
                         order_item.status = 'P'
 
@@ -584,4 +624,29 @@ class OrderItemListAPIView(generics.ListAPIView):
     filterset_class = OrderItemFilterSet
     ordering_fields = ['quantity', 'price', 'total']
     permission_classes = [IsEmployeeOrAdmin]
-        
+
+class FeedbackListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    ordering_fields = ['serve_point', 'food_point', 'price_point', 'space_point', 'overall_point']
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = FeedbackSerializer(data=request.data)
+
+        if serializer.is_valid():
+            if Feedback.objects.filter(order=serializer.validated_data['order']).exists():
+                return Response({'message': 'Feedback for this order already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+            order = Order.objects.get(pk=serializer.validated_data['order'].id)
+            if order.status != 'P':
+                return Response({'message': 'Cannot feedback for unpaid order'}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.save()
+            response = {
+                'message': 'Feedback created successfully',
+                'data': serializer.data
+            }
+            return Response(response, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        

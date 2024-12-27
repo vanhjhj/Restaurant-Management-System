@@ -1,14 +1,17 @@
+.edit-promotion {
+  margin-top: 20px;
+}
 .edit-promotion h2 {
   text-align: center;
   font-size: 42px;
   font-weight: bold;
   color: #514f00;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .edit-promotion .back-button {
   position: absolute;
-  top: 80px;
+  top: 120px;
   left: 20px;
   background-color: #f0f0f0;
   border: none;
@@ -19,17 +22,14 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.edit-promotion .back-button:hover {
-  background-color: #0f4758;
-}
-
+/* Căn giữa và định dạng các trường input */
 .edit-promotion .form-group {
   margin-bottom: 15px;
   text-align: center; /* Căn giữa các label và input */
 }
 
 .edit-promotion .form-group label {
-  font-size: 26px; /* Tăng kích thước chữ label */
+  font-size: 20px; /* Tăng kích thước chữ label */
   display: block;
   margin-bottom: 5px;
 }
@@ -44,25 +44,53 @@
   display: block;
 }
 
-.edit-promotion button {
+.edit-promotion .submit-button {
   display: block;
-  margin: 20px auto;
+  margin: 30px auto;
   padding: 10px 20px;
   background-color: #0f4758;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 20px;
 }
 
+.edit-promotion .back-button:hover {
+  background-color: #0f4758; /* Màu nền khi hover */
+}
+
+.edit-promotion .submit-button:hover {
+  background-color: #6b8288;
+}
+
+/* Hiển thị lỗi */
 .edit-promotion p {
   color: rgb(177, 92, 13);
   text-align: center;
   font-size: 16px;
 }
+
+/* Đặt form căn giữa */
 .edit-promotion form {
   width: 80%;
   margin: 0 auto;
   text-align: center; /* Căn giữa nội dung của form */
+}
+
+/* Tạo khoảng cách giữa các phần tử trong form */
+.edit-promotion div.form-group {
+  margin-bottom: 20px;
+}
+
+.edit-promotion .form-group textarea {
+  width: 20%; /* Giới hạn chiều rộng của các input */
+  height: 100px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 0 auto; /* Căn giữa */
+  display: block;
+  resize: vertical;
 }

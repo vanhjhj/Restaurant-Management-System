@@ -7,6 +7,7 @@ from rest_framework import generics,permissions, status
 from rest_framework.response import Response
 from .filters import MenuItemFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.utils import IntegrityError
 # Create your views here.
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -147,6 +148,8 @@ class MenuItemRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
             menuitem.delete()
         except IntegrityError:
             return Response({'message': 'Cannot delete this menu item due to integrity constraints.'}, status=status.HTTP_400_BAD_REQUEST)
+        except InterruptedError:
+            return Response({'message': 'Cannot delete this menu item due to interrupted error.'}, status=status.HTTP_400_BAD_REQUEST)
 
         response = {
             'status': 'success',

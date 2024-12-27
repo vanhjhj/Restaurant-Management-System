@@ -1,0 +1,108 @@
+.TableManagement-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 50px;
+    flex: 1;
+    text-align: center;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: auto;
+    justify-content: space-between;
+}
+.header-controls p{
+    font-size: 18px;
+    padding: auto;
+    margin-top: 20px;
+}
+
+.total-tables {
+    font-size: 16px;
+    color: #333;
+}
+
+.add-table-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fbd2af;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.add-table-btn:hover {
+    background-color: #ddae85;
+    color: white;
+}
+
+.content {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.no-tables {
+    font-size: 18px;
+    color: #6c757d;
+    margin-top: 20px;
+}
+
+.table-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.table-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.table-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    border: none;
+}
+.table-actions-delete {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    background-color: #ef9a9a;
+}
+.table-actions-edit {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    background-color: #ffcc80;
+}

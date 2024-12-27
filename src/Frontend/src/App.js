@@ -5,7 +5,10 @@ import Footer from "./Components/Layout/Footer/Footer";
 import HomePage from "./Components/Layout/HomePage/HomePage";
 import About from "./Components/Layout/About/About";
 import Menu from "./Components/Layout/Menu/Menu";
-import Reservation from "./Components/Layout/Reservation/Reservation";
+import FoodDetail from "./Components/Layout/Menu/FoodDetail";
+import Promotion from "./Components/Layout/Promotion/Promotion";
+import PromotionDetail from "./Components/Layout/Promotion/PromotionDetail";
+import BookingTable from "./Components/Layout/BookingTable/BookingTable";
 import Login from "./Components/Auth/Login";
 import SignUp from "./Components/Auth/SignUp";
 import VerifyOTP from "./Components/Auth/VerifyOTP";
@@ -23,7 +26,7 @@ import EditPromotion from "./Components/Admin/ManagePromotion/EditPromotion";
 import RegisterEmployeeAccount from "./Components/Admin/RegisterEmployeeAccout/RegisterEmployeeAccount";
 import ViewSalesReports from "./Components/Admin/ViewSalesReports/ViewSalesReports";
 import ManageRestaurantInfo from "./Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo";
-import PurchaseHistory from "./Components/Customer/PurchaseHistory";
+import ReservationHistory from "./Components/Customer/ReservationHistory";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
 import AddDepartment from "./Components/Admin/ManagerDepartment/AddDepartment";
 import EditDepartment from "./Components/Admin/ManagerDepartment/EditDepartment";
@@ -33,12 +36,14 @@ import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeD
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
-import { logout, refreshToken } from "./API/authAPI";
 import { isTokenExpired } from "./utils/tokenHelper.mjs";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
+import ManageTable from "./Components/Admin/ManageTable/ManageTable";
+import AddTable from "./Components/Admin/ManageTable/AddTable";
+import EditTable from "./Components/Admin/ManageTable/EditTable";
 import Review from "./Components/Customer/Review"
 
 library.add(faEye, faEyeSlash);
@@ -83,12 +88,15 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/fooddetail/:id" element={<FoodDetail />} />
           <Route path="/review" element={<Review />} />
           <Route path="/review/rating/:invoiceID" element={<Review/>}/>
           <Route
             path="/reservation"
-            element={<Reservation isLoggedIn={isLoggedIn} />}
+            element={<BookingTable isLoggedIn={isLoggedIn} />}
           />
+          <Route path="/promotion" element={<Promotion />} />
+          <Route path="/promotion/:code" element={<PromotionDetail />} />
 
           {/* Đăng nhập và đăng ký */}
           <Route
@@ -104,14 +112,14 @@ function App() {
 
           {/* Trang khách hàng */}
           <Route
-            path="/purchase-history"
+            path="/reservation-history"
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
                 allowedRoles={["Customer"]}
                 userRole={userRole}
               >
-                <PurchaseHistory />
+                <ReservationHistory />
               </ProtectedRoute>
             }
           />
@@ -238,19 +246,31 @@ function App() {
             }
           />
 
-                    <Route
-                    path="/fill-info-Emp/:id"
-                    element={
-                        <ProtectedRoute
-                        isLoggedIn={isLoggedIn}
-                        allowedRoles={["Admin"]}
-                        userRole={userRole}
-                        >
-                        <FillInfoEmployee/>
-                        </ProtectedRoute>
-                    }
-                    />
+          <Route
+            path="/fill-info-Emp/:id"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <FillInfoEmployee />
+              </ProtectedRoute>
+            }
+          />
 
+          <Route
+            path="/verify-otp-employee"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <VerifyOtpAccount />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/register-employee-account"
@@ -316,6 +336,44 @@ function App() {
             }
           />
 
+          <Route
+            path="/manage-table"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <ManageTable />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/add-table"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <AddTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-table/:id"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Admin"]}
+                userRole={userRole}
+              >
+                <EditTable />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Trang nhân viên */}
           <Route
             path="/employee-dashboard"
@@ -330,17 +388,17 @@ function App() {
             }
           />
           <Route
-                    path="/table"
-                    element={
-                        <ProtectedRoute
-                        isLoggedIn={isLoggedIn}
-                        allowedRoles={["Employee", "Admin"]}
-                        userRole={userRole}
-                        >
-                        <EmployeeReservation />
-                        </ProtectedRoute>
-                    }
-                    />
+            path="/table"
+            element={
+              <ProtectedRoute
+                isLoggedIn={isLoggedIn}
+                allowedRoles={["Employee", "Admin"]}
+                userRole={userRole}
+              >
+                <EmployeeReservation />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Footer />
       </Router>

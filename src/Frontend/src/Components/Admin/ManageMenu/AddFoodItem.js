@@ -6,7 +6,7 @@ import { refreshToken } from "../../../API/authAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { getMenuTabs } from "../../../API/MenuAPI";
 import style from "./AddFoodItem.module.css";
-
+import { ModalGeneral } from "../../ModalGeneral";
 function AddFoodItem() {
   const [menu, setMenu] = useState({
     name: "",
@@ -20,6 +20,12 @@ function AddFoodItem() {
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -60,6 +66,11 @@ function AddFoodItem() {
     }));
   };
 
+  const handleCloseModal = () => {
+    setModal({ isOpen: false }); // Đóng modal
+    navigate('/manage-menu'); // Điều hướng
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -93,8 +104,14 @@ function AddFoodItem() {
     try {
       const activeToken = await ensureActiveToken();
       await createNewFoodItem(menu, activeToken);
-      alert("Món ăn đã được thêm thành công");
-      navigate("/manage-menu");
+      setModal({
+        isOpen: true,
+        text: "Thêm món ăn thành công!",
+        type: "success",
+      });
+      setTimeout(() => {
+        handleCloseModal();
+      }, 15000);
     } catch (error) {
       console.error("Lỗi khi thêmthêm món ăn:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -176,6 +193,15 @@ function AddFoodItem() {
           Thêm món ăn
         </button>
       </form>
+      {modal.isOpen && (
+          <ModalGeneral 
+              isOpen={modal.isOpen} 
+              text={modal.text} 
+              type={modal.type} 
+              onClose={handleCloseModal}
+              onConfirm={modal.onConfirm}
+          />
+      )}
     </div>
   );
 }

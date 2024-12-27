@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
+import { ModalGeneral } from "../../ModalGeneral";
 
 const ManageMenu = () => {
   const [categories, setCategories] = useState([]);
@@ -20,6 +21,13 @@ const ManageMenu = () => {
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
   const [error, setError] = useState("");
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -76,18 +84,33 @@ const ManageMenu = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa món ăn này không?")) return;
-    try {
-      const activeToken = await ensureActiveToken();
-      await deleteFoodItem(id, activeToken);
-      setFoodItems((prevFoodItems) =>
-        prevFoodItems.filter((item) => item.id !== id)
-      );
-      alert("Món ăn đã được xóa thành công!");
-    } catch (error) {
-      console.error("Lỗi khi xóa món ăn:", error);
-      alert("Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.");
-    }
+    setModal({
+      isOpen: true,
+      text: "Bạn có chắc chắn muốn xóa món ăn này không?",
+      type: "confirm",
+      onConfirm: async () => {
+          setModal({ isOpen: false });
+          try {
+            const activeToken = await ensureActiveToken();
+            await deleteFoodItem(id, activeToken);
+            setFoodItems((prevFoodItems) =>
+              prevFoodItems.filter((item) => item.id !== id)
+            );
+            setModal({
+              isOpen: true,
+              text: "Xóa món ăn thành công",
+              type: "success",
+            });
+          } catch (error) {
+            console.error("Lỗi khi xóa món ăn:", error);
+            setModal({
+              isOpen: true,
+              text: "Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.",
+              type: "error",
+            });
+          }
+      },
+    });
   };
 
   const updateCategories = async () => {
@@ -104,7 +127,7 @@ const ManageMenu = () => {
 
   const handleCreateNewCategory = async () => {
     if (!newCategoryName.trim()) {
-      alert("Tên mục không được để trống!");
+      setError("Tên mục không được để trống!");
       return;
     }
 
@@ -124,10 +147,18 @@ const ManageMenu = () => {
       setShowNewCategoryForm(false);
 
       await updateCategories();
-      alert("Tạo mục mới thành công!");
+      setModal({
+        isOpen: true,
+        text: "Tạo mục mới thành công!",
+        type: "success",
+      });
     } catch (error) {
       console.error("Lỗi khi tạo mục mới:", error);
-      alert("Tạo mục mới thất bại. Vui lòng thử lại!");
+      setModal({
+        isOpen: true,
+        text: "Tạo mục mới thất bại. Vui lòng thử lại!",
+        type: "error",
+      });
     }
   };
 
@@ -155,7 +186,9 @@ const ManageMenu = () => {
             </button>
           ))
         ) : (
-          <p>Chưa có mục nào, hãy thêm mới!</p>
+          <p className={style["no-menutab-message"]}>
+            Chưa có mục nào, hãy thêm mới!
+          </p>
         )}
 
         {!showNewCategoryForm ? (
@@ -227,11 +260,24 @@ const ManageMenu = () => {
         )}
         <button
           className={style["add-food-button"]}
-          onClick={() => navigate("/add-food")}
+          onClick={() => {
+            if (categories.length === 0)
+              alert("Vui lòng tạo ít nhất một mục trước khi thêm món ăn mới!");
+            else navigate("/add-food");
+          }}
         >
           Tạo món ăn mới +
         </button>
       </div>
+      {modal.isOpen && (
+          <ModalGeneral 
+              isOpen={modal.isOpen} 
+              text={modal.text} 
+              type={modal.type} 
+              onClose={() => setModal({ isOpen: false })} 
+              onConfirm={modal.onConfirm}
+          />
+      )}
     </div>
   );
 };

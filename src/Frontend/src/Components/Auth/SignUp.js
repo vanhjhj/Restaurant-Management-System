@@ -13,6 +13,10 @@ function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [requirement, setRequirement] = useState(null);
+    const [full_name, setfull_name] = useState('');
+    const [gender, setgender] = useState('');
+    const [phone_number, setphone_number] = useState('');
+
     const [errors, setErrors] = useState({});
 
     const navigate = useNavigate();
@@ -53,6 +57,12 @@ function SignUp() {
             account_type,
         };
 
+        const CusInfo={
+            full_name,
+            gender,
+            phone_number,
+        };
+
         try {
             await account_check(signupData);
         } catch (err) {
@@ -65,7 +75,7 @@ function SignUp() {
 
         try {
             navigate('/verify-otp', {
-                state: { mode: 'register', signupData, email: signupData.email },
+                state: { mode: 'register', signupData,CusInfo, email: signupData.email },
             });
             await sendOrResendOTP({ email: signupData.email });
         } catch (err) {
@@ -114,6 +124,49 @@ function SignUp() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
+
+                    {errors.username && (
+                        <p className={style["error-message"]}>{'Tên đăng nhập đã tồn tại'}</p>
+                    )}
+
+                    <label htmlFor="full_name" className={style["form-title"]}>
+                        Họ và Tên
+                    </label>
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="Tên đầy đủ"
+                        placeholder="Nhập họ và tên"
+                        required
+                        value={full_name}
+                        onChange={(e) => setfull_name(e.target.value)}
+                    />
+
+                    {errors.username && (
+                        <p className={style["error-message"]}>{'Tên đăng nhập đã tồn tại'}</p>
+                    )}
+
+                    <label htmlFor="gender" className={style["form-title"]}>
+                        Giới tính
+                    </label>
+                    <select
+                        id="gender"
+                        value={gender}
+                        onChange={(e) => setgender(e.target.value)}
+                    >
+                        <option value="" disabled>Chọn giới tính</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+
+                    <label htmlFor="phone-number">Số Điện Thoại:</label>
+                    <input
+                        id="phone-number"
+                        type="text"
+                        value={phone_number}
+                        onChange={(e) => setphone_number(e.target.value)}
+                    />
+
                     {errors.email && (
                         <p className={style["error-message"]}>{errors.email}</p>
                     )}

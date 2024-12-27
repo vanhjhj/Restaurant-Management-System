@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { updateDepartment, getDepartments } from '../../../API/AdminAPI';
+import { getDepartmentById, updateDepartment, getDepartments } from '../../../API/AdminAPI';
 import { refreshToken } from '../../../API/authAPI';
 import { useAuth } from './../../Auth/AuthContext';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
+import { ModalGeneral } from '../../ModalGeneral';
+import style from './../../../Style/AdminStyle/EditDepartment.module.css';
 
 function EditDepartment() {
     const { id } = useParams(); // Lấy ID từ URL
@@ -12,6 +14,12 @@ function EditDepartment() {
     const [error, setError] = useState(null); // Trạng thái lỗi
     const { accessToken, setAccessToken } = useAuth();
     const navigate = useNavigate();
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
 
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
@@ -36,16 +44,9 @@ function EditDepartment() {
             setLoading(true);
             setError(null);
             try {
-                const activeToken = await ensureActiveToken();
-                const data = await getDepartments(activeToken);
-                console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
-                const departments = Array.isArray(data.results) ? data.results : [];
-                const dept = departments.find((d) => d.id === parseInt(id));
-                if (dept) {
-                    setDepartment(dept);
-                } else {
-                    setError('Không tìm thấy bộ phận.');
-                }
+                const Token = await ensureActiveToken();
+                const data = await getDepartmentById(id,Token);
+                setDepartment(data);
             } catch (error) {
                 console.error('Error fetching department:', error);
                 setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
@@ -66,6 +67,11 @@ function EditDepartment() {
         }));
     };
 
+    const handleCloseModal = () => {
+        setModal({ isOpen: false }); // Đóng modal
+        navigate('/manage-department'); // Điều hướng
+    };
+
     // Cập nhật thông tin bộ phận
     const handleUpdateDepartment = async () => {
         setError(null);
@@ -73,54 +79,80 @@ function EditDepartment() {
             setError('Vui lòng nhập thông tin hợp lệ.');
             return;
         }
-    
-        // Đảm bảo dữ liệu không có giá trị null
+
         const updatedDepartment = {
             name: department.name.trim(),
-            salary: String(department.salary), // Đảm bảo là chuỗi nếu cần
+            salary: String(department.salary),
         };
-    
+
         try {
             const activeToken = await ensureActiveToken();
-            console.log("Dữ liệu gửi lên API PATCH:", updatedDepartment);
             await updateDepartment(id, updatedDepartment, activeToken);
-            alert('Cập nhật thành công!');
-            navigate('/manage-department');
+            setModal({
+                isOpen: true,
+                text: "Chỉnh sửa bộ phận thành công!",
+                type: "success",
+            });
+
+            setTimeout(() => {
+                handleCloseModal();
+            }, 15000);
         } catch (error) {
             console.error('Error updating department:', error.response?.data || error.message);
             setError('Không thể cập nhật thông tin. Vui lòng thử lại.');
         }
     };
-    
 
     if (loading) {
         return <p>Đang tải dữ liệu...</p>;
     }
 
     if (error) {
-        return <p style={{ color: 'red' }}>{error}</p>;
+        return <p className={style['error-message']}>{error}</p>;
     }
 
     return (
-        <div>
-            <h2>Sửa Bộ Phận</h2>
+        <div className={style['EditDepartment-container']}>
+            <h2 className={style['header']}>Sửa Bộ Phận</h2>
+            <label htmlFor="department-name">Tên bộ phận:</label>
             <input
                 type="text"
                 name="name"
+                className={style['input']}
                 value={department.name}
                 onChange={handleInputChange}
                 placeholder="Tên bộ phận"
                 required
             />
-            <input
-                type="number"
-                name="salary"
-                value={department.salary}
-                onChange={handleInputChange}
-                placeholder="Lương"
-                required
-            />
-            <button onClick={handleUpdateDepartment}>Cập nhật</button>
+            <div className={style['form-group']}>
+                <label htmlFor="salary">Lương của bộ phận:</label>
+                <input
+                    type="text"
+                    id="salary"
+                    name="salary"
+                    className={style['salary-input']}
+                    value={new Intl.NumberFormat('vi-VN').format(department.salary)}
+                    onChange={(e) => {
+                        const rawValue = e.target.value.replace(/[^\d]/g, ''); // Xóa ký tự không phải số
+                        setDepartment({ ...department, salary: rawValue });
+                    }}
+                />
+            </div>
+
+            <div className={style['buttons']}>
+                <button className={style['save-button']} onClick={handleUpdateDepartment}>Cập nhật</button>
+                <button className={style['cancel-button']} onClick={() => navigate('/manage-department')}>Hủy</button>
+            </div>
+
+            {modal.isOpen && (
+                <ModalGeneral 
+                    isOpen={modal.isOpen} 
+                    text={modal.text} 
+                    type={modal.type} 
+                    onClose={handleCloseModal}
+                    onConfirm={modal.onConfirm}
+                />
+            )}
         </div>
     );
 }

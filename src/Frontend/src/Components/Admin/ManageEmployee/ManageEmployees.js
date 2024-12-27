@@ -8,6 +8,7 @@ import { useAuth } from './../../Auth/AuthContext';
 import { getEmployee, deleteEmployee } from '../../../API/AdminAPI';
 import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../../API/authAPI';
+import { ModalGeneral } from '../../ModalGeneral';
 
 function ManageEmployees() {
     const [employees, setEmployee] = useState([]); // Danh sách nhân viên
@@ -15,6 +16,13 @@ function ManageEmployees() {
     const [error, setError] = useState(null); // Trạng thái lỗi
     const { accessToken, setAccessToken } = useAuth();
     const navigate = useNavigate();
+
+    const [modal, setModal] = useState({
+        isOpen: false,
+        text: "",
+        type: "", // "confirm" hoặc "success"
+        onConfirm: null, // Hàm được gọi khi xác nhận
+    });
     
      // Hàm đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
@@ -34,39 +42,55 @@ function ManageEmployees() {
     };
 
     // Hàm lấy danh sách bộ phận
-        const fetchEmployees = async () => {
-            setLoading(true);
-            setError(null); // Xóa lỗi cũ
-            try {
-                const activeToken = await ensureActiveToken();
-                const data = await getEmployee(activeToken);
-                console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
-                if (data && Array.isArray(data.results)) {
-                    setEmployee(data.results); // Gán danh sách từ `results`
-                } else {
-                    throw new Error("Dữ liệu API không hợp lệ");
-                }
-            } catch (error) {
-                console.error('Error fetching Employees:', error);
-                setError('Không thể tải danh sách bộ phận. Vui lòng thử lại sau.');
-                setEmployee([]); // Đặt mảng rỗng nếu lỗi xảy ra
-            } finally {
-                setLoading(false);
+    const fetchEmployees = async () => {
+        setLoading(true);
+        setError(null); // Xóa lỗi cũ
+        try {
+            const activeToken = await ensureActiveToken();
+            const data = await getEmployee(activeToken);
+            console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
+            if (data && Array.isArray(data.results)) {
+                setEmployee(data.results); // Gán danh sách từ `results`
+            } else {
+                throw new Error("Dữ liệu API không hợp lệ");
             }
-        };
+        } catch (error) {
+            console.error('Error fetching Employees:', error);
+            setError('Không thể tải danh sách bộ phận. Vui lòng thử lại sau.');
+            setEmployee([]); // Đặt mảng rỗng nếu lỗi xảy ra
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Hàm xóa nhân viên với xác nhận
     const handleDeleteEmployee = async (id) => {
-        if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này không?")) return;
-        try {
-            const activeToken = await ensureActiveToken();
-            await deleteEmployee(id, activeToken);
-            setEmployee(employees.filter((emps) => emps.id !== id));
-            alert('Xóa nhân viên thành công!');
-        } catch (error) {
-            console.error('Error deleting Employee:', error);
-            alert('Không thể xóa nhân viên. Vui lòng thử lại sau.');
-        }
+        setModal({
+            isOpen: true,
+            text: "Bạn có chắc chắn muốn xóa nhân viên này không?",
+            type: "confirm",
+            onConfirm: async () => {
+                setModal({ isOpen: false });
+                try {
+                    const activeToken = await ensureActiveToken();
+                    await deleteEmployee(id, activeToken);
+                    setEmployee(employees.filter((emps) => emps.account_id !== id));
+                    setModal({
+                        isOpen: true,
+                        text: "Xóa nhân viên thành công!",
+                        type: "success",
+                    });
+                    await fetchEmployees();
+                } catch (error) {
+                    console.error("Error deleting Employee:", error);
+                    setModal({
+                        isOpen: true,
+                        text: "Không thể xóa nhân viên. Vui lòng thử lại sau.",
+                        type: "error",
+                    });
+                }
+            },
+        });
     };
 
     // Tự động tải danh sách nhân viên khi component được render
@@ -158,6 +182,15 @@ function ManageEmployees() {
                             </button>
                         </div>
                     </>
+                )}
+                {modal.isOpen && (
+                    <ModalGeneral 
+                        isOpen={modal.isOpen} 
+                        text={modal.text} 
+                        type={modal.type} 
+                        onClose={() => setModal({ isOpen: false })} 
+                        onConfirm={modal.onConfirm}
+                    />
                 )}
         </div>
     );

@@ -5,18 +5,25 @@ import { fetchPromotions, deletePromotion } from "../../../API/PromotionAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import { refreshToken } from "../../../API/authAPI";
+import { ModalGeneral } from "../../ModalGeneral";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
       try {
         const refreshed = await refreshToken(
-          localStorage.getItem("refreshToken")
+          localStorage.getdiscount("refreshToken")
         );
         activeToken = refreshed.access;
         setAccessToken(activeToken);
@@ -52,16 +59,34 @@ function ManagePromotions() {
   };
 
   const handleDelete = async (code) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa ưu đãi này không?")) return;
-    try {
-      const activeToken = await ensureActiveToken();
-      await deletePromotion(code, activeToken);
-      setPromotions(Promotions.filter((discount) => discount.code !== code));
-      alert("Xóa ưu đãi thành công.");
-    } catch (error) {
-      console.error("Lỗi khi xóa ưu đãi:", error);
-      alert("Không thể xóa ưu đãi. Vui lòng thử lại.");
-    }
+
+    setModal({
+      isOpen: true,
+      text: "Bạn có chắc chắn muốn xóa ưu đãi này không?",
+      type: "confirm",
+      onConfirm: async () => {
+          setModal({ isOpen: false });
+          try {
+            const activeToken = await ensureActiveToken();
+            await deletePromotion(code, activeToken);
+            setPromotions((prevPromotions) =>
+              prevPromotions.filter((discount) => discount.code !== code)
+            );
+            setModal({
+              isOpen: true,
+              text: "Xóa ưu đãi thành công",
+              type: "success",
+            });
+          } catch (error) {
+            console.error("Lỗi khi xóa ưu đãi:", error);
+            setModal({
+              isOpen: true,
+              text: "Có lỗi xảy ra khi xóa ưu đãi. Vui lòng thử lại.",
+              type: "error",
+            });
+          }
+      },
+    });
   };
 
   const handleAddDiscount = () => {
@@ -79,8 +104,8 @@ function ManagePromotions() {
       <h2>Quản lý ưu đãi</h2>
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
-        <div className="no-promotions">
-          <p>Chưa có ưu đãi</p>
+        <div className={style["no-promotions"]}>
+          <p>Chưa có ưu đãi nào, hãy tạo mới ưu đãi!</p>
         </div>
       ) : (
         <div className={style["discount-cards"]}>
@@ -91,10 +116,9 @@ function ManagePromotions() {
                 alt={discount.title}
                 className={style["discount-image"]}
               />
-              <p>{discount.code}</p>
-              <p>Tiêu đề: {discount.title}</p>
-              <p>
-                Từ {discount.startdate} đến hết {discount.enddate}
+              <h3 className={style["discount-title"]}>{discount.title}</h3>
+              <p className={style["discount-description"]}>
+                {discount.description}
               </p>
               <div className={style["button-group"]}>
                 <button
@@ -119,8 +143,18 @@ function ManagePromotions() {
         onClick={handleAddDiscount}
         className={style["add-discount-button"]}
       >
-        Tạo ưu đãi mới
+        Tạo ưu đãi mới +
       </button>
+
+      {modal.isOpen && (
+          <ModalGeneral 
+              isOpen={modal.isOpen} 
+              text={modal.text} 
+              type={modal.type} 
+              onClose={() => setModal({ isOpen: false })} 
+              onConfirm={modal.onConfirm}
+          />
+      )}
     </div>
   );
 }
