@@ -7,9 +7,11 @@ import { AddBookingTable,GetBookingTableByPhone } from "../../../API/BookingTabl
 import { ModalGeneral } from "../../ModalGeneral";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 function BookingTable() {
   const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
+  const [islogin,setIslogin]=useState(false);
   const [bookingInfo, setBookingInfo] = useState({
     guest_name: "",
     date: "",
@@ -18,6 +20,7 @@ function BookingTable() {
     number_of_guests: 1,
     note: "",
   });
+  const navigate = useNavigate();
   let userName;
   let userPhone;
 
@@ -30,6 +33,15 @@ function BookingTable() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false); // Loading trạng thái
   const UserID = localStorage.getItem("userId");
+  useEffect(() => {
+    const accountType = localStorage.getItem("accountType");
+    if (accountType) {
+      setIslogin(true);
+    } else {
+      setIslogin(false);
+    }
+  }, []);
+  
 
   useEffect(() => {
     checkLoginStatus(); // Kiểm tra trạng thái đăng nhập
@@ -104,14 +116,11 @@ function BookingTable() {
     if (phone.length !== 10) {
       return "Số điện thoại phải đủ 10 chữ số.";
     }
-    if (!/^0/.test(phone)) {
-      return "Số điện thoại phải bắt đầu bằng số 0.";
+    if (!/^03/.test(phone)) {
+      return "Số điện thoại phải bắt đầu bằng số 03.";
     }
     return null; // Hợp lệ
   };
-  
-  
-  
 
   const fetchBookingData = async (phone, name) => {
     if (!phone) return;
@@ -176,11 +185,11 @@ function BookingTable() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  const phoneError = validatePhoneNumber(phoneNumber);
-  if (phoneError) {
-    setError(phoneError);
-    return; // Dừng form nếu số điện thoại không hợp lệ
-  }
+    const phoneError = validatePhoneNumber(phoneNumber);
+    if (phoneError) {
+      setError(phoneError);
+      return; // Dừng form nếu số điện thoại không hợp lệ
+    }
 
     const now = new Date(); 
     const bookingDate = new Date(bookingInfo.date); 
@@ -206,25 +215,49 @@ function BookingTable() {
         date: bookingInfo.date, // Ngày đã ở đúng định dạng
       };
       await AddBookingTable(requestData);
-      
       setModal({
         isOpen: true,
         text: "Đặt bàn thành công!",
         type: "success",
+        onClose:handleOpenModalQuestion, 
       });
+
       setError('');
       setBookingInfo({
-        guest_name: userName,
+        guest_name: "",
         date: "",
         time: "",
-        phone_number: userPhone,
+        phone_number: "",
         number_of_guests: 1,
         note: "",
       });
+      
     } catch (err) {
       setError("Không thể đặt bàn. Vui lòng thử lại.");
     }
   };
+
+  const handleOpenModalQuestion=()=>{
+      console.log({islogin});
+      // Đóng modal đầu tiên và mở modal thứ hai nếu cần
+      if (islogin === false) {
+        setModal({
+          isOpen: true,
+          text: "Bạn có muốn đăng ký tài khoản để nhận thêm nhiều khuyến mãi không?",
+          type: "confirm",
+          onConfirm: () => {
+            setModal({ isOpen: false });
+            navigate('/SignUp'); // Điều hướng đến trang đăng ký
+          },
+          onClose: () =>{ 
+            setModal({ isOpen: false }); // Đóng modal nếu người dùng từ chối
+            console.log('hii');
+          }
+        });
+      } else {
+        setModal({ isOpen: false });
+      }
+  }
 
   return (
     <div className={style["booking-form-container"]}>
@@ -302,7 +335,10 @@ function BookingTable() {
             để được áp dụng ưu đãi và phục vụ tốt nhất.
           </h3>
         </div>
-        <button type="submit">Đặt bàn</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Đang xử lý..." : "Đặt bàn"}
+        </button>
+
       </form>
 
       {modal.isOpen && (
@@ -310,7 +346,7 @@ function BookingTable() {
               isOpen={modal.isOpen} 
               text={modal.text} 
               type={modal.type} 
-              onClose={() => setModal({ isOpen: false })} 
+              onClose={modal.onClose} 
               onConfirm={modal.onConfirm}
           />
       )}
