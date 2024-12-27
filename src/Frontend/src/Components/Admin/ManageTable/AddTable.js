@@ -61,7 +61,6 @@ function AddTable() {
       setTimeout(() => {
         handleCloseModal();
       }, 15000);
-      navigate("/manage-table"); // Điều hướng về trang quản lý bàn
     } catch (error) {
       setErrorMessage("Không thể thêm bàn. Vui lòng thử lại!");
       console.error("Error adding table:", error);
