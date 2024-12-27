@@ -16,13 +16,30 @@
   font-size: 40px;
 }
 
-.booking-form-container h3 {
-  grid-column: span 2; /* Chiếm cả hai cột trong grid */
-  text-align: center; /* Căn giữa nội dung */
-  font-size: 16px; /* Tăng kích thước chữ */
-  font-weight: bold; /* Làm đậm chữ */
-  color: #333; /* Màu chữ */
-  margin-bottom: 20px; /* Khoảng cách bên dưới */
+.warning {
+  grid-column: span 2; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: orange;
+  margin-top: 10px;
+  padding: 10px; /* Khoảng cách bên trong */
+  border: 1px solid orange; /* Đường viền màu cam */
+  border-radius: 8px; /* Bo tròn góc */
+  background-color: #fff3cd; /* Màu nền nhẹ nhàng */
+}
+
+.warning-icon {
+  margin-right: 8px;
+  font-size: 24px; /* Kích thước icon */
+}
+
+.warning-text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left; /* Căn lề trái cho nội dung */
+  line-height: 1.5; /* Tăng khoảng cách dòng */
 }
 
 
@@ -82,7 +99,7 @@
 .booking-form-container input:focus,
 .booking-form-container textarea:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #1d6787;
 }
 
 /* Nút gửi form */
@@ -92,7 +109,7 @@
   font-size: 16px;
   font-weight: bold;
   color: #fff;
-  background-color: #007bff;
+  background-color: #30829b;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -101,7 +118,7 @@
 
 /* Hiệu ứng khi rê chuột vào nút */
 .booking-form-container button:hover {
-  background-color: #0056b3;
+  background-color: #174f67;
 }
 
 /* Responsive: Chuyển đổi sang 1 cột trên màn hình nhỏ */

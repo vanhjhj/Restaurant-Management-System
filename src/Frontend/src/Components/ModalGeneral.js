@@ -36,7 +36,7 @@ export const ModalGeneral = ({ isOpen, text, type, onClose, onConfirm }) => {
                 <div className={style["modal-buttons"]}>
                     {type === "confirm" && (
                         <button className={style["modal-confirm-button"]} onClick={onConfirm}>
-                            Xác nhận
+                            Đồng ý
                         </button>
                     )}
                 </div>
