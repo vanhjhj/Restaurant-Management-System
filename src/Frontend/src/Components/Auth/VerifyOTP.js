@@ -94,10 +94,8 @@ function VerifyOTP() {
           isOpen: true,
           text: "Đăng ký tài khoản thành công!",
           type: "success",
+          onConfirm:handleCloseModalSignUp,
         });
-        setTimeout(() => {
-          handleCloseModalSignUp();
-        }, 15000);
 
       } else if (mode === 'forgotPassword') {
 
@@ -106,10 +104,8 @@ function VerifyOTP() {
           isOpen: true,
           text: "OTP xác minh thành công. Vui lòng đặt lại mật khẩu!",
           type: "success",
+          onConfirm:handleCloseModalForgotPassword,
         });
-        setTimeout(() => {
-          handleCloseModalForgotPassword(token);
-        }, 15000);
       }
     } catch (err) {
       const errorMessage = err.response?.data?.detail || 'Mã OTP không hợp lệ. Vui lòng thử lại.';
@@ -161,7 +157,7 @@ function VerifyOTP() {
                 isOpen={modal.isOpen} 
                 text={modal.text} 
                 type={modal.type} 
-                onClose={modal.onClose} 
+                onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
                 onConfirm={modal.onConfirm}
             />
         )}
