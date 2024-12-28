@@ -8,7 +8,7 @@ import Menu from "./Components/Layout/Menu/Menu";
 import FoodDetail from "./Components/Layout/Menu/FoodDetail";
 import Promotion from "./Components/Layout/Promotion/Promotion";
 import PromotionDetail from "./Components/Layout/Promotion/PromotionDetail";
-import Reservation from "./Components/Layout/Reservation/Reservation";
+import BookingTable from "./Components/Layout/BookingTable/BookingTable";
 import Login from "./Components/Auth/Login";
 import SignUp from "./Components/Auth/SignUp";
 import VerifyOTP from "./Components/Auth/VerifyOTP";
@@ -90,7 +90,7 @@ function App() {
           <Route path="/fooddetail/:id" element={<FoodDetail />} />
           <Route
             path="/reservation"
-            element={<Reservation isLoggedIn={isLoggedIn} />}
+            element={<BookingTable isLoggedIn={isLoggedIn} />}
           />
           <Route path="/promotion" element={<Promotion />} />
           <Route path="/promotion/:code" element={<PromotionDetail />} />

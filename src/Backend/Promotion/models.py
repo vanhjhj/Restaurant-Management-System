@@ -13,7 +13,7 @@ class Promotion(models.Model):
     enddate=models.DateField()
     description = models.TextField()
     image = models.ImageField(upload_to='promotion_img/')
-    discount = models.FloatField(validators=[validate_discount])
+    discount = models.IntegerField(validators=[validate_discount])
     
     def __str__(self):
         return self.title

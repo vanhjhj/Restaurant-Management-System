@@ -4,7 +4,7 @@ import { GetEmailCus, GetInfoCus, ChangeInfoCus,CheckPassword, ChangeInfoLogCus 
 import { GetEmailEmp,GetInfoEmp, ChangeInfoEmp, ChangeInfoLogEmp } from '../../API/EmployeeAPI';
 import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { refreshToken } from '../../API/authAPI';
-import Modal from '../Customer/Modal'; // Import Modal component
+import Modal from '../Customer/Modal';
 import style from '../../Style/CustomerStyle/Profile.module.css';
 import { useAuth } from './AuthContext';
 import { ModalGeneral } from '../ModalGeneral';
