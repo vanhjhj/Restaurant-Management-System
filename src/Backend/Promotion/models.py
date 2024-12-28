@@ -11,6 +11,7 @@ class Promotion(models.Model):
     title = models.TextField()
     startdate=models.DateField(null=True, blank=True)
     enddate=models.DateField(null=True, blank=True)
+    min_order = models.IntegerField() #min order to apply promotion
     description = models.TextField()
     image = models.ImageField(upload_to='promotion_img/')
     discount = models.IntegerField(validators=[validate_discount])
