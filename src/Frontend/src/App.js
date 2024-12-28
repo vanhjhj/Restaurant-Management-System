@@ -87,7 +87,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/fooddetail/:id" element={<FoodDetail />} />
+          <Route path="/menu/:id" element={<FoodDetail />} />
           <Route
             path="/reservation"
             element={<BookingTable isLoggedIn={isLoggedIn} />}

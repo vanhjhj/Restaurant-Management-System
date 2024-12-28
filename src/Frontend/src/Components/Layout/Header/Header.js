@@ -108,7 +108,9 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                     <Link
                       to="/menu"
                       className={
-                        location.pathname === "/menu" ? style.active : ""
+                        location.pathname.startsWith("/menu")
+                          ? style.active
+                          : ""
                       }
                     >
                       Thực Đơn
@@ -128,7 +130,9 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                     <Link
                       to="/promotion"
                       className={
-                        location.pathname === "/promotion" ? style.active : ""
+                        location.pathname.startsWith("/promotion")
+                          ? style.active
+                          : ""
                       }
                     >
                       Khuyến Mãi
@@ -141,7 +145,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       <Link
                         to="/admin-dashboard"
                         className={
-                          location.pathname === "/admin-dashboard"
+                          location.pathname.startsWith("/admin-dashboard")
                             ? style.active
                             : ""
                         }
@@ -156,7 +160,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                         <Link
                           to="/employee-dashboard"
                           className={
-                            location.pathname === "/employee-dashboard"
+                            location.pathname.startsWith("/employee-dashboard")
                               ? style.active
                               : ""
                           }

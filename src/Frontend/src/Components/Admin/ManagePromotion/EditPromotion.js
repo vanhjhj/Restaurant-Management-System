@@ -79,7 +79,7 @@ function EditPromotion() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate("/manage-promotions"); // Điều hướng
+    navigate("/admin-dashboard/manage-promotions"); // Điều hướng
   };
 
   const handleSubmit = async (e) => {

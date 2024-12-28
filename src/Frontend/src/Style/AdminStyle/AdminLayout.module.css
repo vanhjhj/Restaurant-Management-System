@@ -1,7 +1,9 @@
 /* src/Style/AdminStyle/AdminLayout.module.css */
+
 .admin-dashboard {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   height: 100%;
   background-color: #f9f9f9;
   font-family: Arial, sans-serif;
@@ -12,6 +14,11 @@
   color: #fff;
   padding: 1rem 2rem;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.admin-dashboard .dashboard-header h1:hover {
+  color: #d8dde3;
 }
 
 .admin-dashboard .header-content h1 {
@@ -25,9 +32,10 @@
 }
 
 .admin-dashboard .sidebar {
+  font-size: 18px;
   width: 225px;
   background-color: #ffffff;
-  color: #102951;
+  color: #35737d;
   padding: 1rem;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -48,10 +56,13 @@
 
 .admin-dashboard .menu-item:hover {
   opacity: 0.9;
+  color: #000000;
 }
 
-.admin-dashboard .menu-item:active {
-  background-color: #007bff;
+.admin-dashboard .icon {
+  margin-right: 10px;
+  font-size: 20px;
+  color: #35737d;
 }
 
 .admin-dashboard .main-content {

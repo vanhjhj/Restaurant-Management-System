@@ -55,7 +55,7 @@ function ManagePromotions() {
   };
 
   const handleEdit = (code) => {
-    navigate(`/edit-promotion/${code}`);
+    navigate(`/admin-dashboard/edit-promotion/${code}`);
   };
 
   const handleDelete = async (code) => {
@@ -89,7 +89,7 @@ function ManagePromotions() {
   };
 
   const handleAddDiscount = () => {
-    navigate("/add-promotion");
+    navigate("/admin-dashboard/add-promotion");
   };
 
   return (
