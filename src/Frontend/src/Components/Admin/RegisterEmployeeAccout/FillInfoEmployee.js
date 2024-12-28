@@ -44,8 +44,7 @@ function FillInfoEmployee() {
     });
     console.log("Location state:", location.state);
     const {email, id, refresh_employee, token_employee}=location.state || {};
-    const [accessTokenEmployee, setaccessTokenEmployee] = useState(token_employee || "");
-
+    const [ accessTokenEmployee, setaccessTokenEmployee ] = useState(token_employee);
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
         let activeToken = accessTokenEmployee;
