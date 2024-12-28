@@ -1,0 +1,14 @@
+.container{
+    composes: container from '../../Style/bootstrap.min.css';
+}
+
+.col-lg-6{
+    composes: col-lg-6 from '../../Style/bootstrap.min.css';
+}
+
+.row{
+    composes: row from '../../Style/bootstrap.min.css';
+}
+.review-info-ctn{
+    
+}
