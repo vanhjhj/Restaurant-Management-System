@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Case, When, IntegerField
-from .models import Table, Reservation, Order, OrderItem
+from .models import Table, Reservation, Order, OrderItem, Feedback
 
 class TableFilterSet(django_filters.FilterSet):
     nos_min = django_filters.NumberFilter(field_name="number_of_seats", lookup_expr='gte')
@@ -55,3 +55,10 @@ class OrderItemFilterSet(django_filters.FilterSet):
     class Meta:
         model = OrderItem
         fields = ['order', 'menu_item']
+
+class FeedbackFilterSet(django_filters.FilterSet):
+    date = django_filters.DateFilter(field_name="date")
+
+    class Meta:
+        model = Feedback
+        fields = ['date']
