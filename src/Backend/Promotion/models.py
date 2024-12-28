@@ -9,8 +9,8 @@ def validate_discount(value):
 class Promotion(models.Model):
     code=models.CharField(max_length=10, primary_key = True)
     title = models.TextField()
-    startdate=models.DateField(null=True, blank=True)
-    enddate=models.DateField(null=True, blank=True)
+    startdate=models.DateField()
+    enddate=models.DateField()
     min_order = models.IntegerField() #min order to apply promotion
     description = models.TextField()
     image = models.ImageField(upload_to='promotion_img/')

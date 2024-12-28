@@ -5,7 +5,3 @@ class PromotionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Promotion
         fields = ('code', 'title', 'startdate', 'enddate', 'min_order', 'description', 'image', 'discount', 'type')
-        extra_kwargs = {
-            'startdate': {'required': False},
-            'enddate': {'required': False},
-        }

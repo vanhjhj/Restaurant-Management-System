@@ -3,6 +3,7 @@ from .models import Promotion
 from .serializers import PromotionSerializer
 from rest_framework import generics,permissions, status
 from rest_framework.response import Response
+from django.utils import timezone
 
 # Create your views here.
 class PromotionListCreateAPIView(generics.ListCreateAPIView):
@@ -18,11 +19,21 @@ class PromotionListCreateAPIView(generics.ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         promotions = Promotion.objects.all()
         serializer = self.serializer_class(promotions, many=True)
-        #filer by type
+
         type = request.query_params.get('type', None)
         if type is not None:
             promotions = promotions.filter(type=type)
             serializer = self.serializer_class(promotions, many=True)
+
+        isValid = request.query_params.get('valid', None)
+        if isValid is not None and isValid == 'true':
+            promotions = promotions.filter(startdate__lte=timezone.now(), enddate__gte=timezone.now())
+            serializer = self.serializer_class(promotions, many=True)
+
+        #build absolute url for image field
+        for promotion in serializer.data:
+            promotion['image'] = request.build_absolute_uri(promotion['image'])
+
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, *args, **kwargs):
@@ -30,15 +41,6 @@ class PromotionListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.serializer_class(data=promotion_data)
 
         if serializer.is_valid(raise_exception=True):
-            if serializer.validated_data['type'] == 'KMTV': #if promotion is for members, dont need startdate and enddate
-                serializer.validated_data['startdate'] = None
-                serializer.validated_data['enddate'] = None
-            else:
-                if serializer.validated_data['startdate'] is None or serializer.validated_data['enddate'] is None:
-                    return Response({'message': 'Please provide startdate and enddate'}, status=status.HTTP_400_BAD_REQUEST)
-                if serializer.validated_data['startdate'] >= serializer.validated_data['enddate']:
-                    return Response({'message': 'Enddate must be greater than startdate'}, status=status.HTTP_400_BAD_REQUEST)
-
             promotion = serializer.save()
             response = {
                 'data': serializer.data,
