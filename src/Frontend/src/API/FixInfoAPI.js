@@ -52,10 +52,34 @@ export const GetEmailCus = async (CusId, token) => {
     }
 };
 
-
+//Hàm tạo thông tin khách hàng
+export const PostInfoCus = async (InfoCus, token) => {
+    try {
+        console.log({InfoCus})
+        const response = await axios.post(
+            `${API_BASE_URL}/auth/customers/`,
+            InfoCus,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Đính kèm token
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        console.log(response.data.message); // Thông báo từ API nếu thành công
+        return response.data;
+    } catch (error) {
+            console.error(
+                "Lỗi khi tạo thông tin khách hàng:",
+                error.response ? error.response.data : error.message
+            );
+            throw error;
+        }
+};
 // Hàm ChangeInfoCus
 export const ChangeInfoCus = async (CusId, InfoChange, token) => {
     try {
+        console.log({InfoChange})
         const response = await axios.patch(
             `${API_BASE_URL}/auth/customers/${CusId}/`,
             InfoChange,

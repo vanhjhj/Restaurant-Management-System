@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import style from '../../../Style/AuthStyle/VerifyOTP.module.css';
-import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../../API/authAPI';
+import { verifyOTP, register, sendOrResendOTP, refreshToken } from '../../../API/authAPI';
 import { isTokenExpired } from './../../../utils/tokenHelper.mjs';
 import { ModalGeneral } from '../../ModalGeneral';
 
@@ -26,9 +26,9 @@ function VerifyOTP() {
     setSuccessMessage('');
   };
 
-  const handleCloseModal = (id) => {
+  const handleCloseModal = (id, refresh_employee,token_employee) => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate(`/fill-info-emp/${id}`); // Điều hướng
+    navigate('/fill-info-emp',{ state: {email, id, refresh_employee, token_employee}}); // Điều hướng
   };
   
   const handleVerify = async () => {
@@ -50,8 +50,8 @@ function VerifyOTP() {
 
       // Gửi yêu cầu xác minh OTP
       let response = await verifyOTP({ email, otp });
-      const token=response.access_token;
-      const refresh=response.refresh_token;
+      const token_employee=response.access_token;
+      const refresh_employee=response.refresh_token;
 
       //gửi thông tin đăng ký
         if (!signupData) {
@@ -66,14 +66,14 @@ function VerifyOTP() {
           account_type: signupData.account_type,
         };
 
-        if(isTokenExpired(token))
+        if(isTokenExpired(token_employee))
         {
-          let newresponse= await refreshToken(refresh,token);
-          token= newresponse.access;
+          let newresponse= await refreshToken(refresh_employee,token_employee);
+          token_employee= newresponse.access;
         }
 
         // Đăng ký tài khoản
-        const responseRegister=await register(userData, token);
+        const responseRegister=await register(userData, token_employee);
         const id=responseRegister.id;
 
         setModal({
@@ -81,9 +81,7 @@ function VerifyOTP() {
           text: "Đăng ký thành công",
           type: "success",
         });
-        setTimeout(() => {
-          handleCloseModal(id);
-        }, 15000);
+        handleCloseModal(id, refresh_employee, token_employee);
     } catch (err) {
       const errorMessage = err.response?.data?.detail || 'Mã OTP không hợp lệ. Vui lòng thử lại.';
       setError(errorMessage);
@@ -130,7 +128,7 @@ function VerifyOTP() {
                 isOpen={modal.isOpen} 
                 text={modal.text} 
                 type={modal.type} 
-                onClose={handleCloseModal} 
+                onClose={() => setModal({ isOpen: false })} 
                 onConfirm={modal.onConfirm}
             />
         )}

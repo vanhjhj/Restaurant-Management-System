@@ -4,7 +4,7 @@ import style from '../../Style/AuthStyle/VerifyOTP.module.css';
 import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../API/authAPI';
 import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { ModalGeneral } from '../ModalGeneral';
-import { ChangeInfoCus } from '../../API/FixInfoAPI';
+import { PostInfoCus } from '../../API/FixInfoAPI';
 
 function VerifyOTP() {
   const [otp, setOtp] = useState('');
@@ -82,7 +82,14 @@ function VerifyOTP() {
 
         // Đăng ký tài khoản
         const response= await register(userData, token);
-        await ChangeInfoCus(response.id,CusInfo,token);
+        const InfoCus ={
+          account_id: response.id,
+          full_name: CusInfo.full_name,
+          email: CusInfo.email,
+          gender: CusInfo.gender,
+          phone_number: CusInfo.phone_number
+        }
+        await PostInfoCus(InfoCus,token);
         setModal({
           isOpen: true,
           text: "Đăng ký tài khoản thành công!",
@@ -154,7 +161,7 @@ function VerifyOTP() {
                 isOpen={modal.isOpen} 
                 text={modal.text} 
                 type={modal.type} 
-                onClose={handleCloseModalForgotPassword} 
+                onClose={modal.onClose} 
                 onConfirm={modal.onConfirm}
             />
         )}

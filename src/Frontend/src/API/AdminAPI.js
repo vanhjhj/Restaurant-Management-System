@@ -2,10 +2,10 @@ import axios from "axios";
 import { API_BASE_URL } from "../Config/apiConfig";
 
 // Hàm FillInfoEmployee
-export const FillInfoEmp = async (EmpId, InfoChange, token) => {
+export const FillInfoEmp = async (InfoChange, token) => {
   try {
-    const response = await axios.patch(
-      `${API_BASE_URL}/auth/employees/${EmpId}/`,
+    const response = await axios.post(
+      `${API_BASE_URL}/auth/employees/`,
       InfoChange,
       {
         headers: {
@@ -18,7 +18,7 @@ export const FillInfoEmp = async (EmpId, InfoChange, token) => {
     return response.data;
   } catch (error) {
     console.error(
-      "Lỗi khi cập nhật thông tin nhân viên:",
+      "Lỗi khi tạo thông tin nhân viên:",
       error.response ? error.response.data : error.message
     );
     throw error;

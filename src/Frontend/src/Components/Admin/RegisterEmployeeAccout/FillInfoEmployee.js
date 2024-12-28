@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import style from "./../../../Style/AdminStyle/FillInfoEmployee.module.css";
 import { useAuth } from '../../Auth/AuthContext';
 import { refreshToken } from '../../../API/authAPI';
@@ -9,8 +9,18 @@ import { ModalGeneral } from '../../ModalGeneral';
 
 function FillInfoEmployee() {
     const { accessToken, setAccessToken } = useAuth();
-    const refresh = localStorage.getItem('refreshToken');
-    const {id} = useParams();
+    // Ensure token is valid
+    const ensureActiveTokenAmin = async () => {
+        let activeTokenAdmin = accessToken;
+        const refresh = localStorage.getItem('refreshToken');
+        if (!accessToken || isTokenExpired(accessToken)) {
+            const refreshed = await refreshToken(refresh);
+            activeTokenAdmin = refreshed.access;
+            setAccessToken(activeTokenAdmin);
+        }
+        return activeTokenAdmin;
+    };
+    
     const [formData, setFormData] = useState({
         full_name: '',
         date_of_birth: '',
@@ -24,6 +34,7 @@ function FillInfoEmployee() {
     const [departments, setDepartments] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const location = useLocation();
     const navigate = useNavigate();
     const [modal, setModal] = useState({
         isOpen: false,
@@ -31,20 +42,15 @@ function FillInfoEmployee() {
         type: "", // "confirm" hoặc "success"
         onConfirm: null, // Hàm được gọi khi xác nhận
     });
-
+    const {email, id, refresh_employee, token_employee}=location.state || {};
+    const { accessTokenEmployee, setaccessTokenEmployee } = useState(token_employee);
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
-        let activeToken = accessToken;
-        if (isTokenExpired(accessToken)) {
-            try {
-                const refreshed = await refreshToken(refresh);
-                activeToken = refreshed.access;
-                setAccessToken(activeToken);
-            } catch (error) {
-                console.error('Error refreshing token:', error);
-                navigate('/login'); // Điều hướng nếu refresh token thất bại
-                throw error;
-            }
+        let activeToken = accessTokenEmployee;
+        if (!accessTokenEmployee||isTokenExpired(accessTokenEmployee)) {
+            const refreshed = await refreshToken(refresh_employee);
+            activeToken = refreshed.access;
+            setaccessTokenEmployee(activeToken);
         }
         return activeToken;
     };
@@ -52,12 +58,12 @@ function FillInfoEmployee() {
     useEffect(() => {
         const loadDepartments = async () => {
             try {
-                const activeToken = await ensureActiveToken();
-                const departmentList = await getDepartments(activeToken);
+                const activeTokenAdmin = await ensureActiveTokenAmin();
+                const departmentList = await getDepartments(activeTokenAdmin);
                 setDepartments(departmentList.results);
             } catch (err) {
                 console.error("Error fetching departments:", err);
-                setError("Không thể tải danh sách bộ phận.");
+                setError("Hiện tại chưa có bộ phận nào");
             }
         };
 
@@ -80,7 +86,7 @@ function FillInfoEmployee() {
     const handleSaveInfo = async () => {
         setIsSubmitting(true);
         setError(null);
-    
+        await ensureActiveTokenAmin();
         // Lấy ngày hiện tại
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để chỉ so sánh ngày
@@ -142,9 +148,11 @@ function FillInfoEmployee() {
     
         // Chuẩn bị dữ liệu gửi lên API
         const sanitizedData = {
+            account_id: id,
             full_name: formData.full_name.trim(),
             date_of_birth: formData.date_of_birth,
             gender: formData.gender,
+            email: email,
             address: formData.address ? formData.address.trim() : "",
             start_working_date: formData.start_working_date,
             department: formData.department,
@@ -154,7 +162,7 @@ function FillInfoEmployee() {
         try {
             const activeToken = await ensureActiveToken();
             console.log("Dữ liệu gửi lên API:", sanitizedData);
-            await FillInfoEmp(id, sanitizedData, activeToken);
+            await FillInfoEmp(sanitizedData, activeToken);
             setModal({
                 isOpen: true,
                 text: "Thông tin nhân viên đã được lưu thành công!",

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import style from './../../../Style/AuthStyle/SignUp.module.css';
+import style from './../../../Style/AdminStyle/RegisterEmployeeAccount.module.css';
 import { account_check, sendOrResendOTP } from './../../../API/authAPI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkPasswordRequirements } from './../../../utils/checkPasswordRequirements';
@@ -81,7 +81,7 @@ function RegisterEmployeeAccount() {
     return (
         <div className={style["signup-container"]}>
             <div className={style["signup-box"]}>
-                <h2 className={style["title"]}>Đăng ký</h2>
+                <h2 className={style["title"]}>Đăng ký tài khoản nhân viên</h2>
                 <form onSubmit={handleSignUpSubmit} className={style["signup-form"]}>
                     {errors.message && (
                         <p className={style["error-message"]}>{errors.message}</p>

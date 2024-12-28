@@ -244,7 +244,7 @@ function App() {
           />
 
           <Route
-            path="/fill-info-Emp/:id"
+            path="/fill-info-Emp"
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
