@@ -11,9 +11,11 @@ class Promotion(models.Model):
     title = models.TextField()
     startdate=models.DateField()
     enddate=models.DateField()
+    min_order = models.IntegerField() #min order to apply promotion
     description = models.TextField()
     image = models.ImageField(upload_to='promotion_img/')
     discount = models.IntegerField(validators=[validate_discount])
+    type = models.CharField(max_length=10, choices=[('KMTV', 'Khuyen mai thanh vien'), ('KMT', 'Khuyen mai thuong')])
     
     def __str__(self):
         return self.title
