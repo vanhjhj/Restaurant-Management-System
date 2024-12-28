@@ -212,7 +212,9 @@ const ManageMenu = () => {
                 <div className={style["food-card-buttons"]}>
                   <button
                     className={style["edit-button"]}
-                    onClick={() => navigate(`/edit-fooditem/${item.id}`)}
+                    onClick={() =>
+                      navigate(`/admin-dashboard/edit-fooditem/${item.id}`)
+                    }
                   >
                     Chỉnh sửa
                   </button>
@@ -232,7 +234,7 @@ const ManageMenu = () => {
           onClick={() => {
             if (categories.length === 0)
               alert("Vui lòng tạo ít nhất một mục trước khi thêm món ăn mới!");
-            else navigate("/add-food");
+            else navigate("/admin-dashboard/add-food");
           }}
         >
           Tạo món ăn mới +

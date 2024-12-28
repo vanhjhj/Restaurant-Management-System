@@ -1,7 +1,8 @@
 .manage-menu-container {
+  margin: 100px auto 0 auto;
   display: flex;
   font-family: Arial, sans-serif;
-  padding-top: 60px;
+  margin-top: 20px;
 }
 .manage-menu-container h3 {
   font-size: 36px;

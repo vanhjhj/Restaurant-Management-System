@@ -95,7 +95,7 @@ function EditFoodItem() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate("/manage-menu"); // Điều hướng
+    navigate("/admin-dashboard/manage-menu"); // Điều hướng
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
