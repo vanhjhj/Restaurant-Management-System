@@ -12,6 +12,20 @@ export const fetchPromotions = async () => {
   }
 };
 
+export const fetchValidPromotions = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/promotion/promotions/`, {
+      params: {
+        valid: true,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách ưu đãi:", error.message);
+    throw error;
+  }
+};
+
 export const fetchPromotionByCode = async (code) => {
   try {
     const response = await axios.get(

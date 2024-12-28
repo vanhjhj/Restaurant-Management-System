@@ -15,6 +15,8 @@ function AddPromotion() {
     discount: 0,
     startdate: "",
     enddate: "",
+    type: "KMTV",
+    min_order: 0,
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -69,8 +71,17 @@ function AddPromotion() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { code, title, description, image, discount, startdate, enddate } =
-      promotion;
+    const {
+      code,
+      title,
+      description,
+      image,
+      discount,
+      startdate,
+      enddate,
+      type,
+      min_order,
+    } = promotion;
 
     if (await checkCodeExistence(code)) {
       setError("Mã ưu đãi đã tồn tại.");
@@ -79,11 +90,6 @@ function AddPromotion() {
 
     if (code.length > 10) {
       setError("Mã ưu đãi không được quá 10 ký tự.");
-      return;
-    }
-
-    if (isNaN(discount) || discount < 0 || discount > 100) {
-      setError("Tỷ lệ giảm giá phải từ 0 đến 100.");
       return;
     }
 
@@ -152,6 +158,13 @@ function AddPromotion() {
           />
         </div>
         <div className={style["form-group"]}>
+          <label htmlFor="type">Loại ưu đãi</label>
+          <select name="type" value={promotion.type} onChange={handleChange}>
+            <option value="KMTV">Khuyến mãi thành viên</option>
+            <option value="KMT">Khuyến mãi thường</option>
+          </select>
+        </div>
+        <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
           <input
             type="text"
@@ -186,8 +199,24 @@ function AddPromotion() {
             onChange={handleChange}
             placeholder="Nhập tỷ lệ giảm giá (0-100)"
             required
-            min={0}
+            min={1}
             max={100}
+          />
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="min_order">
+            Tổng tiền tối thiểu để được áp dụng ưu đãi
+          </label>
+          <input
+            type="number"
+            id="min_order"
+            name="min_order"
+            value={promotion.min_order}
+            onChange={handleChange}
+            placeholder="Nhập tổng tiền tối thiểu"
+            required
+            min={0}
           />
         </div>
 

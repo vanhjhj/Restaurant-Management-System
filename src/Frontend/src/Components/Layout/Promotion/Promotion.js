@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import style from "./Promotion.module.css";
 import { useNavigate } from "react-router-dom";
-import { fetchPromotions } from "../../../API/PromotionAPI";
+import { fetchValidPromotions } from "../../../API/PromotionAPI";
 import PromotionDetail from "./PromotionDetail";
 
 function Promotion() {
@@ -13,14 +13,8 @@ function Promotion() {
   useEffect(() => {
     const loadPromotions = async () => {
       try {
-        const data = await fetchPromotions();
-        const today = new Date();
-        const filteredPromotions = data.filter((promotion) => {
-          const startDate = new Date(promotion.startdate);
-          const endDate = new Date(promotion.enddate);
-          return startDate <= today && today <= endDate;
-        });
-        setPromotions(filteredPromotions);
+        const data = await fetchValidPromotions();
+        setPromotions(data);
       } catch (err) {
         setError(err);
       }

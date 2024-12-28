@@ -212,7 +212,7 @@ function EditFoodItem() {
           <label htmlFor="image">Hình ảnh</label>
           {fooditem.image && (
             <div className={style["current-image"]}>
-              <p>Hình ảnh hiện tại:</p>
+              <p>Hình ảnh cũ:</p>
               <img
                 src={fooditem.image}
                 alt="Current Food Item"

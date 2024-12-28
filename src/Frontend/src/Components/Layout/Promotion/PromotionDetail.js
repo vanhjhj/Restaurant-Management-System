@@ -31,6 +31,14 @@ function PromotionDetail() {
     loadPromotionDetail();
   }, [code]);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <div className={style["promotion-detail"]}>
       <h2>{promotion.title}</h2>
@@ -44,10 +52,10 @@ function PromotionDetail() {
           </p>
           <hr className={style["divider"]} />
           <p className={style["promotion-startdate"]}>
-            Bắt đầu từ: {promotion.startdate}
+            Bắt đầu từ: {formatDate(promotion.startdate)}
           </p>
           <p className={style["promotion-enddate"]}>
-            Kết thúc vào: {promotion.enddate}
+            Kết thúc vào: {formatDate(promotion.enddate)}
           </p>
           <hr className={style["divider"]} />
           <p className={style["promotion-code"]}>

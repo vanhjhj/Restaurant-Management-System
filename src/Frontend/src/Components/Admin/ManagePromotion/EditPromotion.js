@@ -19,6 +19,8 @@ function EditPromotion() {
     discount: 0,
     startdate: "",
     enddate: "",
+    type: "KMTV", // Loại ưu đãi, mặc định là "KMTV"
+    min_order: 0, // Thêm trường min_order
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -84,8 +86,16 @@ function EditPromotion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { title, description, discount, image, startdate, enddate } =
-      promotion;
+    const {
+      title,
+      description,
+      discount,
+      image,
+      startdate,
+      enddate,
+      type,
+      min_order,
+    } = promotion;
 
     if (discount < 0 || discount > 100) {
       setError("Giảm giá phải nằm trong khoảng 0-100%.");
@@ -103,6 +113,8 @@ function EditPromotion() {
     formData.append("discount", discount);
     formData.append("startdate", startdate);
     formData.append("enddate", enddate);
+    formData.append("type", type);
+    formData.append("min_order", min_order);
 
     // Nếu có ảnh mới, thêm vào formData
     if (promotion.image instanceof File) {
@@ -122,7 +134,9 @@ function EditPromotion() {
       new Date(promotion.enddate).getTime() !==
         new Date(originalPromotion.enddate).getTime() ||
       promotion.discount !== originalPromotion.discount ||
-      promotion.image instanceof File;
+      promotion.image instanceof File ||
+      promotion.type !== originalPromotion.type ||
+      promotion.min_order !== originalPromotion.min_order;
 
     if (!hasChanges) {
       setError("Chưa có thay đổi gì để cập nhật.");
@@ -155,6 +169,13 @@ function EditPromotion() {
       <h2>Chỉnh sửa ưu đãi</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
+        <div className={style["form-group"]}>
+          <label htmlFor="type">Loại ưu đãi</label>
+          <select name="type" value={promotion.type} onChange={handleChange}>
+            <option value="KMTV">Khuyến mãi thành viên</option>
+            <option value="KMT">Khuyến mãi thường</option>
+          </select>
+        </div>
         <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
           <input
@@ -189,12 +210,23 @@ function EditPromotion() {
         </div>
 
         <div className={style["form-group"]}>
-          <label htmlFor="discount">Giảm giá</label>
+          <label htmlFor="discount">Giảm giá(%)</label>
           <input
             type="number"
             id="discount"
             name="discount"
             value={promotion.discount}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="min_order">Tổng tiền tối thiểu</label>
+          <input
+            type="number"
+            id="min_order"
+            name="min_order"
+            value={promotion.min_order}
             onChange={handleChange}
           />
         </div>
@@ -211,17 +243,24 @@ function EditPromotion() {
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          {promotion.image && !(promotion.image instanceof File) && (
-            <div className={style["image-preview"]}>
-              <p>Hình ảnh hiện tại:</p>
-              <img
-                src={promotion.image}
-                alt="Current promotion"
-                className={style["current-image"]}
-              />
-            </div>
-          )}
-          <input type="file" id="image" name="image" onChange={handleChange} />
+          <div className={style["image-preview"]}>
+            {promotion.image && !(promotion.image instanceof File) && (
+              <>
+                <p>Hình ảnh cũ:</p>
+                <img
+                  src={promotion.image}
+                  alt="Current promotion"
+                  className={style["current-image"]}
+                />
+              </>
+            )}
+            <input
+              type="file"
+              id="image"
+              name="image"
+              onChange={handleChange}
+            />
+          </div>
           <p style={{ fontSize: "12px", color: "#888" }}>
             Chọn tệp hình ảnh mới để thay đổi.
           </p>
