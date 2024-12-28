@@ -5,7 +5,7 @@ import { verifyOTP, register, sendOrResendOTP, refreshToken } from '../../../API
 import { isTokenExpired } from './../../../utils/tokenHelper.mjs';
 import { ModalGeneral } from '../../ModalGeneral';
 
-function VerifyOTP() {
+function VerifyOtpAccount() {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -137,4 +137,4 @@ function VerifyOTP() {
   );
 }
 
-export default VerifyOTP;
+export default VerifyOtpAccount;

@@ -10,12 +10,12 @@ import { ModalGeneral } from '../../ModalGeneral';
 function FillInfoEmployee() {
     const { accessToken, setAccessToken } = useAuth();
     // Ensure token is valid
-    const ensureActiveTokenAmin = async () => {
+    const ensureActiveTokenAdmin = async () => {
         let activeTokenAdmin = accessToken;
         const refresh = localStorage.getItem('refreshToken');
         if (!accessToken || isTokenExpired(accessToken)) {
-            const refreshed = await refreshToken(refresh);
-            activeTokenAdmin = refreshed.access;
+            const refreshed1 = await refreshToken(refresh);
+            activeTokenAdmin = refreshed1.access;
             setAccessToken(activeTokenAdmin);
         }
         return activeTokenAdmin;
@@ -42,8 +42,10 @@ function FillInfoEmployee() {
         type: "", // "confirm" hoặc "success"
         onConfirm: null, // Hàm được gọi khi xác nhận
     });
+    console.log("Location state:", location.state);
     const {email, id, refresh_employee, token_employee}=location.state || {};
-    const { accessTokenEmployee, setaccessTokenEmployee } = useState(token_employee);
+    const [accessTokenEmployee, setaccessTokenEmployee] = useState(token_employee || "");
+
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
         let activeToken = accessTokenEmployee;
@@ -58,7 +60,7 @@ function FillInfoEmployee() {
     useEffect(() => {
         const loadDepartments = async () => {
             try {
-                const activeTokenAdmin = await ensureActiveTokenAmin();
+                const activeTokenAdmin = await ensureActiveTokenAdmin();
                 const departmentList = await getDepartments(activeTokenAdmin);
                 setDepartments(departmentList.results);
             } catch (err) {
@@ -86,7 +88,6 @@ function FillInfoEmployee() {
     const handleSaveInfo = async () => {
         setIsSubmitting(true);
         setError(null);
-        await ensureActiveTokenAmin();
         // Lấy ngày hiện tại
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để chỉ so sánh ngày

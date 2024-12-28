@@ -33,7 +33,6 @@ import EditDepartment from "./Components/Admin/ManagerDepartment/EditDepartment"
 import FillInfoEmployee from "./Components/Admin/RegisterEmployeeAccout/FillInfoEmployee";
 import ManageDepartment from "./Components/Admin/ManagerDepartment/ManageDepartment";
 import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeDashboard";
-import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
 import { isTokenExpired } from "./utils/tokenHelper.mjs";
@@ -44,6 +43,7 @@ import EmployeeReservation from "./Components/Employee/EmployeeReservation/Emplo
 import ManageTable from "./Components/Admin/ManageTable/ManageTable";
 import AddTable from "./Components/Admin/ManageTable/AddTable";
 import EditTable from "./Components/Admin/ManageTable/EditTable";
+import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 
 library.add(faEye, faEyeSlash);
 
