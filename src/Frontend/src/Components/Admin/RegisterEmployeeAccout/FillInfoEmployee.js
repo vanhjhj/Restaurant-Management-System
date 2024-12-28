@@ -43,7 +43,7 @@ function FillInfoEmployee() {
         onConfirm: null, // Hàm được gọi khi xác nhận
     });
     const {email, id, refresh_employee, token_employee}=location.state || {};
-    const { accessTokenEmployee, setaccessTokenEmployee } = useState(token_employee);
+    const [ accessTokenEmployee, setaccessTokenEmployee ] = useState(token_employee);
     // Đảm bảo token hợp lệ
     const ensureActiveToken = async () => {
         let activeToken = accessTokenEmployee;
