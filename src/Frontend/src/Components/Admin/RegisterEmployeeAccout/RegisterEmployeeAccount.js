@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import style from "./../../../Style/AuthStyle/SignUp.module.css";
+import style from "./../../../Style/AdminStyle/RegisterEmployeeAccount.module.css";
 import { account_check, sendOrResendOTP } from "./../../../API/authAPI";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { checkPasswordRequirements } from "./../../../utils/checkPasswordRequirements";
+import { ModalGeneral } from "../../ModalGeneral";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "./../../../API/authAPI";
+import { useAuth } from "../../Auth/AuthContext";
+import { getDepartments } from "../../../API/AdminAPI";
 
 function RegisterEmployeeAccount() {
+  const { accessToken, setAccessToken } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,10 +20,53 @@ function RegisterEmployeeAccount() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [requirement, setRequirement] = useState(null);
   const [errors, setErrors] = useState({});
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
 
   const navigate = useNavigate();
 
   const account_type = "Employee";
+  const handleNavigateToAddDepartment = () => {
+    setModal({ isOpen: false }); // Đóng modal
+    navigate("/add-department"); // Điều hướng sang trang thêm bộ phận
+  };
+
+  useEffect(() => {
+    const loadDepartments = async () => {
+      try {
+        const activeToken = await ensureActiveToken();
+        const departmentList = await getDepartments(activeToken);
+
+        if (!departmentList.results || departmentList.results.length === 0) {
+          setModal({
+            isOpen: true,
+            text: "Hiện tại chưa có bộ phận nào. Vui lòng thêm bộ phận trước khi thêm nhân viên!",
+            type: "error",
+            onConfirm: handleNavigateToAddDepartment,
+          });
+        }
+
+        // Nếu có bộ phận, tiếp tục
+      } catch (err) {}
+    };
+
+    loadDepartments();
+  }, []);
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      const refresh = localStorage.getItem("refreshToken");
+      const refreshed = await refreshToken(refresh);
+      activeToken = refreshed.access;
+      setAccessToken(activeToken);
+    }
+    return activeToken;
+  };
 
   const handlePasswordChange = (e) => {
     const inputPassword = e.target.value;
@@ -80,7 +129,7 @@ function RegisterEmployeeAccount() {
   return (
     <div className={style["signup-container"]}>
       <div className={style["signup-box"]}>
-        <h2 className={style["title"]}>Đăng ký</h2>
+        <h2 className={style["title"]}>Đăng ký tài khoản nhân viên</h2>
         <form onSubmit={handleSignUpSubmit} className={style["signup-form"]}>
           {errors.message && (
             <p className={style["error-message"]}>{errors.message}</p>
@@ -180,6 +229,16 @@ function RegisterEmployeeAccount() {
           </button>
         </form>
       </div>
+
+      {modal.isOpen && (
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
+          onConfirm={modal.onConfirm}
+        />
+      )}
     </div>
   );
 }

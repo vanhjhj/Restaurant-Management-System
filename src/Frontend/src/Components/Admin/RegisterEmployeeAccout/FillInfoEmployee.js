@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import style from "./../../../Style/AdminStyle/FillInfoEmployee.module.css";
 import { useAuth } from "../../Auth/AuthContext";
 import { refreshToken } from "../../../API/authAPI";
@@ -11,6 +13,28 @@ function FillInfoEmployee() {
   const { accessToken, setAccessToken } = useAuth();
   const refresh = localStorage.getItem("refreshToken");
   const { id } = useParams();
+  const [formData, setFormData] = useState({
+    full_name: "",
+    date_of_birth: "",
+    gender: "",
+    address: "",
+    start_working_date: "",
+    department: "",
+    phone_number: "",
+  });
+  const { accessToken, setAccessToken } = useAuth();
+  // Ensure token is valid
+  const ensureActiveTokenAdmin = async () => {
+    let activeTokenAdmin = accessToken;
+    const refresh = localStorage.getItem("refreshToken");
+    if (!accessToken || isTokenExpired(accessToken)) {
+      const refreshed1 = await refreshToken(refresh);
+      activeTokenAdmin = refreshed1.access;
+      setAccessToken(activeTokenAdmin);
+    }
+    return activeTokenAdmin;
+  };
+
   const [formData, setFormData] = useState({
     full_name: "",
     date_of_birth: "",
@@ -48,16 +72,41 @@ function FillInfoEmployee() {
     }
     return activeToken;
   };
+  const [departments, setDepartments] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [modal, setModal] = useState({
+    isOpen: false,
+    text: "",
+    type: "", // "confirm" hoặc "success"
+    onConfirm: null, // Hàm được gọi khi xác nhận
+  });
+  console.log("Location state:", location.state);
+  const { email, id, refresh_employee, token_employee } = location.state || {};
+  const [accessTokenEmployee, setaccessTokenEmployee] =
+    useState(token_employee);
+  // Đảm bảo token hợp lệ
+  const ensureActiveToken = async () => {
+    let activeToken = accessTokenEmployee;
+    if (!accessTokenEmployee || isTokenExpired(accessTokenEmployee)) {
+      const refreshed = await refreshToken(refresh_employee);
+      activeToken = refreshed.access;
+      setaccessTokenEmployee(activeToken);
+    }
+    return activeToken;
+  };
 
   useEffect(() => {
     const loadDepartments = async () => {
       try {
-        const activeToken = await ensureActiveToken();
-        const departmentList = await getDepartments(activeToken);
-        setDepartments(departmentList);
+        const activeTokenAdmin = await ensureActiveTokenAdmin();
+        const departmentList = await getDepartments(activeTokenAdmin);
+        setDepartments(departmentList.results);
       } catch (err) {
         console.error("Error fetching departments:", err);
-        setError("Không thể tải danh sách bộ phận.");
+        setError("Hiện tại chưa có bộ phận nào");
       }
     };
 
@@ -158,6 +207,106 @@ function FillInfoEmployee() {
       const activeToken = await ensureActiveToken();
       console.log("Dữ liệu gửi lên API:", sanitizedData);
       await FillInfoEmp(id, sanitizedData, activeToken);
+      setModal({
+        isOpen: true,
+        text: "Thông tin nhân viên đã được lưu thành công!",
+        type: "success",
+      });
+      setTimeout(() => {
+        handleCloseModal();
+      }, 15000);
+    } catch (error) {
+      console.error(
+        "Error filling employee info:",
+        error.response?.data || error.message
+      );
+      setError("Không thể cập nhật thông tin. Vui lòng thử lại.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const handleSaveInfo = async () => {
+    setIsSubmitting(true);
+    setError(null);
+    // Lấy ngày hiện tại
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để chỉ so sánh ngày
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!formData.full_name || formData.full_name.trim() === "") {
+      setError("Họ và tên không được để trống.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.date_of_birth) {
+      setError("Ngày sinh không được để trống.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Kiểm tra tuổi >= 18
+    const birthDate = new Date(formData.date_of_birth);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const ageCheck =
+      today < new Date(birthDate.setFullYear(birthDate.getFullYear() + age))
+        ? age - 1
+        : age;
+
+    if (ageCheck < 18) {
+      setError("Nhân viên chưa đủ 18 tuổi.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.gender) {
+      setError("Giới tính không được để trống.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.department) {
+      setError("Vui lòng chọn bộ phận.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.start_working_date) {
+      setError("Ngày bắt đầu làm việc không được để trống.");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.phone_number) {
+      setError("Số điện thoại không được để trống.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Kiểm tra ngày bắt đầu làm việc >= ngày hiện tại
+    const startDate = new Date(formData.start_working_date);
+    if (startDate < today) {
+      setError("Ngày bắt đầu làm việc đang là quá khứ.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Chuẩn bị dữ liệu gửi lên API
+    const sanitizedData = {
+      account_id: id,
+      full_name: formData.full_name.trim(),
+      date_of_birth: formData.date_of_birth,
+      gender: formData.gender,
+      email: email,
+      address: formData.address ? formData.address.trim() : "",
+      start_working_date: formData.start_working_date,
+      department: formData.department,
+      phone_number: formData.phone_number,
+    };
+
+    try {
+      const activeToken = await ensureActiveToken();
+      console.log("Dữ liệu gửi lên API:", sanitizedData);
+      await FillInfoEmp(sanitizedData, activeToken);
       setModal({
         isOpen: true,
         text: "Thông tin nhân viên đã được lưu thành công!",

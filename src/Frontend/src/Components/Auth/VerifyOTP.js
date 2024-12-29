@@ -4,7 +4,7 @@ import style from '../../Style/AuthStyle/VerifyOTP.module.css';
 import { verifyOTP, register, sendOrResendOTP,forgotPassword, refreshToken } from '../../API/authAPI';
 import { isTokenExpired } from '../../utils/tokenHelper.mjs';
 import { ModalGeneral } from '../ModalGeneral';
-import { ChangeInfoCus } from '../../API/FixInfoAPI';
+import { PostInfoCus } from '../../API/FixInfoAPI';
 
 function VerifyOTP() {
   const [otp, setOtp] = useState('');
@@ -82,15 +82,20 @@ function VerifyOTP() {
 
         // Đăng ký tài khoản
         const response= await register(userData, token);
-        await ChangeInfoCus(response.id,CusInfo,token);
+        const InfoCus ={
+          account_id: response.id,
+          full_name: CusInfo.full_name,
+          email: CusInfo.email,
+          gender: CusInfo.gender,
+          phone_number: CusInfo.phone_number
+        }
+        await PostInfoCus(InfoCus,token);
         setModal({
           isOpen: true,
           text: "Đăng ký tài khoản thành công!",
           type: "success",
+          onConfirm:handleCloseModalSignUp,
         });
-        setTimeout(() => {
-          handleCloseModalSignUp();
-        }, 15000);
 
       } else if (mode === 'forgotPassword') {
 
@@ -99,10 +104,8 @@ function VerifyOTP() {
           isOpen: true,
           text: "OTP xác minh thành công. Vui lòng đặt lại mật khẩu!",
           type: "success",
+          onConfirm:handleCloseModalForgotPassword,
         });
-        setTimeout(() => {
-          handleCloseModalForgotPassword(token);
-        }, 15000);
       }
     } catch (err) {
       const errorMessage = err.response?.data?.detail || 'Mã OTP không hợp lệ. Vui lòng thử lại.';
@@ -154,7 +157,7 @@ function VerifyOTP() {
                 isOpen={modal.isOpen} 
                 text={modal.text} 
                 type={modal.type} 
-                onClose={handleCloseModalForgotPassword} 
+                onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
                 onConfirm={modal.onConfirm}
             />
         )}
