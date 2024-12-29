@@ -33,7 +33,7 @@ function VerifyOtpAccount() {
 
   const handleCloseModal = (id, refresh_employee, token_employee) => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate("/fill-info-emp", {
+    navigate("/admin-dashboard/fill-info-emp", {
       state: { email, id, refresh_employee, token_employee },
     }); // Điều hướng
   };

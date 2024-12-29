@@ -32,7 +32,7 @@ function RegisterEmployeeAccount() {
   const account_type = "Employee";
   const handleNavigateToAddDepartment = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate("/add-department"); // Điều hướng sang trang thêm bộ phận
+    navigate("/admin-dashboard/add-department"); // Điều hướng sang trang thêm bộ phận
   };
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function RegisterEmployeeAccount() {
         const activeToken = await ensureActiveToken();
         const departmentList = await getDepartments(activeToken);
 
-        if (!departmentList.results || departmentList.results.length === 0) {
+        if (!departmentList || departmentList.length === 0) {
           setModal({
             isOpen: true,
             text: "Hiện tại chưa có bộ phận nào. Vui lòng thêm bộ phận trước khi thêm nhân viên!",
