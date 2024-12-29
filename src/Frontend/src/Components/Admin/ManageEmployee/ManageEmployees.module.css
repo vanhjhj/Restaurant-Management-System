@@ -1,85 +1,80 @@
-
-
 .manage-employees {
-    margin: 100px auto 0 auto;
-    max-width: 1200px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    margin-bottom: flex;
+  margin: 100px auto 0 auto;
+  max-width: 1200px;
+  border-radius: 8px;
+  margin-top: 20px;
+  margin-bottom: flex;
 }
 
-.header h2 {
-    text-align: center;
-    font-size: 40px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #333;
-    margin-bottom: 50px;
-    text-transform: uppercase;
+.manage-employees .header h2 {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #333;
+  margin-bottom: 50px;
+  text-transform: uppercase;
 }
 
-.name_container h2 {
-    font-size: 28px;
-    color: #1a1a1a;
+.manage-employees .name_container h2 {
+  font-size: 28px;
+  color: #1a1a1a;
 }
 
-h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
+.manage-employees h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-.employee-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+.manage-employees .employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
 }
 
-.employee-table th,
-.employee-table td {
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    text-align: center;
+.manage-employees .employee-table th,
+.manage-employees .employee-table td {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
 }
 
-.employee-table th {
-    background-color: #ffd7d7;
-    color: #333;
+.manage-employees .employee-table th {
+  background-color: #ffd7d7;
+  color: #333;
 }
 
-.employee-table td {
-    background-color: #ffe5e5;
+.manage-employees .employee-table td {
+  background-color: #ffe5e5;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
+.manage-employees .action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
-.delete-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
+.manage-employees .delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.delete-button {
-    color: #f44336; /* Red for delete */
+.manage-employees .delete-button {
+  color: #f44336; /* Red for delete */
 }
 
-
-.manage-employee-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #333;
-    background-color: #fbd2af;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-left: auto;
+.manage-employees .manage-employee-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fbd2af;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
 }

@@ -27,8 +27,11 @@
   text-transform: uppercase;
   display: inline-block;
   padding: 3px 20px;
-  color: #ff8243;
-  font-size: 32px;
+  font-family: "Playfair Display", serif;
+  color: #a38900;
+  font-size: 46px;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
 .section-title h2 {
@@ -38,6 +41,10 @@
   font-weight: 700;
   color: #333;
   margin-bottom: 20px;
+}
+
+.menu-container {
+  margin-top: 30px;
 }
 
 .menu-tab-row {

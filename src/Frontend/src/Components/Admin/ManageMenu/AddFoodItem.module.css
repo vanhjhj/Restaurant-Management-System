@@ -1,6 +1,12 @@
 .add-food {
-  margin-top: 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
 }
+
 .add-food h2 {
   text-align: center;
   font-size: 42px;
@@ -9,81 +15,62 @@
   margin-bottom: 30px;
 }
 
-.add-food .back-button {
-  position: absolute;
-  top: 120px;
-  left: 20px;
-  background-color: #f0f0f0;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.add-food form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 3px;
 }
 
-/* Căn giữa và định dạng các trường input */
 .add-food .form-group {
-  margin-bottom: 15px;
-  text-align: center; /* Căn giữa các label và input */
+  width: 48%;
+  margin-bottom: 20px;
+}
+
+.add-food .form-group.description {
+  width: 100%;
 }
 
 .add-food .form-group label {
-  font-size: 26px; /* Tăng kích thước chữ label */
+  font-size: 26px;
   display: block;
   margin-bottom: 5px;
 }
 
 .add-food .form-group input,
-.add-food select {
-  width: 20%; /* Giới hạn chiều rộng của các input */
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
+.add-food .form-group select,
+.add-food .form-group textarea {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  margin: 0 auto; /* Căn giữa */
-  display: block;
+}
+
+.add-food .form-group textarea {
+  height: 150px;
+  resize: vertical;
 }
 
 .add-food .submit-button {
   display: block;
+  width: auto;
   margin: 20px auto;
-  padding: 10px 20px;
+  padding: 10px 16px;
   background-color: #0f4758;
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 10px;
-  font-size: 20px;
+  border-radius: 8px;
+  font-size: 26px;
 }
 
-.submit-button:hover {
+.add-food .submit-button:hover {
   background-color: #7c9197;
 }
 
-.back-button:hover {
-  background-color: #0f4758;
-}
-
-/* Hiển thị lỗi */
 .add-food p {
   color: rgb(177, 92, 13);
   text-align: center;
   font-size: 16px;
-}
-
-/* Đặt form căn giữa */
-.add-food form {
-  width: 80%;
-  margin: 0 auto;
-  text-align: center; /* Căn giữa nội dung của form */
-}
-
-/* Tạo khoảng cách giữa các phần tử trong form */
-.add-food div.form-group {
-  margin-bottom: 20px;
-}
-
-.add-food .form-group select {
-  width: 10%;
 }

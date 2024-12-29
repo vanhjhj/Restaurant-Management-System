@@ -21,7 +21,7 @@ export const getMenuTabByID = async (id) => {
 export const getMenuTabs = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/menu/categories/`);
-    return response.data.results;
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -30,7 +30,7 @@ export const getMenuTabs = async () => {
 export const getFoodItems = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/menu/menuitems/`);
-    return response.data.results;
+    return response.data;
   } catch (error) {
     throw error;
   }

@@ -5,7 +5,21 @@ import { refreshToken } from "./authAPI";
 export const fetchPromotions = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/promotion/promotions/`);
-    return response.data.results;
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách ưu đãi:", error.message);
+    throw error;
+  }
+};
+
+export const fetchValidPromotions = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/promotion/promotions/`, {
+      params: {
+        valid: true,
+      },
+    });
+    return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách ưu đãi:", error.message);
     throw error;

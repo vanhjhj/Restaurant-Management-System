@@ -38,7 +38,7 @@ function ViewSalesReports() {
         setLoading(true); // Đặt trạng thái đang tải
         const token = await ensureActiveToken(); // Gọi hàm để lấy token
         let response = await getInvoice(token); // Truyền token vào hàm getInvoice
-        const data = response.results;
+        const data = response;
 
         // Lọc hóa đơn đã thanh toán
         const paidInvoices = data.filter((invoice) => invoice.status === "P");
@@ -150,19 +150,25 @@ function ViewSalesReports() {
       <h2 className={style["viewsalesreport-title"]}>Báo cáo doanh thu</h2>
       <div className={style["viewsalesreport-button-group"]}>
         <button
-          className={`${style["button"]} ${reportType === "Tháng" ? style["selected"] : ""}`}
+          className={`${style["button"]} ${
+            reportType === "Tháng" ? style["selected"] : ""
+          }`}
           onClick={() => setReportType("Tháng")}
         >
           Tháng
         </button>
         <button
-          className={`${style["button"]} ${reportType === "Quý" ? style["selected"] : ""}`}
+          className={`${style["button"]} ${
+            reportType === "Quý" ? style["selected"] : ""
+          }`}
           onClick={() => setReportType("Quý")}
         >
           Quý
         </button>
         <button
-          className={`${style["button"]} ${reportType === "Năm" ? style["selected"] : ""}`}
+          className={`${style["button"]} ${
+            reportType === "Năm" ? style["selected"] : ""
+          }`}
           onClick={() => setReportType("Năm")}
         >
           Năm
@@ -170,10 +176,14 @@ function ViewSalesReports() {
       </div>
 
       {loading ? (
-        <p className={style["viewsalesreport-error-message"]}>Đang tải dữ liệu...</p>
+        <p className={style["viewsalesreport-error-message"]}>
+          Đang tải dữ liệu...
+        </p>
       ) : error ? (
         <p className={style["viewsalesreport-error-message"]}>{error}</p>
-      ) : chartData.labels && chartData.datasets && chartData.datasets[0].data.some((value) => value > 0) ? (
+      ) : chartData.labels &&
+        chartData.datasets &&
+        chartData.datasets[0].data.some((value) => value > 0) ? (
         <Line
           data={chartData}
           options={{
@@ -192,14 +202,19 @@ function ViewSalesReports() {
                 },
                 ticks: {
                   callback: (value) =>
-                    value.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
+                    value.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }),
                 },
               },
             },
           }}
         />
       ) : (
-        <p className={style["viewsalesreport-message"]}>Cửa hàng chưa có doanh thu.</p>
+        <p className={style["viewsalesreport-message"]}>
+          Cửa hàng chưa có doanh thu.
+        </p>
       )}
     </div>
   );
