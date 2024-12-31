@@ -10,7 +10,11 @@ djangorestframework-simplejwt = "*"
 django-filter = "*"
 pillow = "*"
 djangorestframework = "*"
-mysqlclient = "*"
+pymysql = "*"
+gunicorn = "*"
+mysql-connector-python = "*"
+dj-database-url = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

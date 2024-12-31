@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os 
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_fs)v=zk8b$-_pms-ak*#9k1k07mc3i_^9zl*5qx(96k!-0lph'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -87,14 +92,9 @@ WSGI_APPLICATION = 'Restaurant.wsgi.application'
 
 # connect to mysql
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Restaurant_Management_System',
-        'HOST' : '127.0.0.1',
-        'PORT' : '3306',
-        'USER' : 'root',
-        'PASSWORD' : 'introse',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')
+    )
 }
 
 
@@ -133,7 +133,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+MEDIA_URL = '/media/' 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -154,21 +162,3 @@ REST_FRAMEWORK = {
 }
 
 PHONENUMBER_DEFAULT_REGION = 'VN'
-
-#send email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'citrusroyale.restaurant@gmail.com'
-EMAIL_HOST_PASSWORD = 'jmvh zrng eyqy zuwd'
-EMAIL_USE_TLS = True
-
-MEDIA_URL = '/media/' 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
-
-from datetime import timedelta
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),  # Thời gian sống của access token
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Thời gian sống của refresh token
-}
