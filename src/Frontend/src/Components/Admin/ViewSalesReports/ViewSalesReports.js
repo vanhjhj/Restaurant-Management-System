@@ -314,13 +314,13 @@ function ViewSalesReports() {
       Math.min(...paidInvoices.current.map((invoice) => new Date(invoice.datetime)))
     );
   
-    if (reportType === "Ngày" || reportType === "Quý") {
+    if (reportType === "Ngày") {
       return (
         currentDate.getFullYear() < minDate.getFullYear() ||
         (currentDate.getFullYear() === minDate.getFullYear() &&
           currentDate.getMonth() <= minDate.getMonth())
       );
-    } else if (reportType === "Tháng" || reportType === "Năm") {
+    } else if (reportType === "Tháng" || reportType === "Năm"||reportType==="Quý") {
       return currentDate.getFullYear() <= minDate.getFullYear();
     }
     return false;
