@@ -45,6 +45,7 @@ import ManageTable from "./Components/Admin/ManageTable/ManageTable";
 import AddTable from "./Components/Admin/ManageTable/AddTable";
 import EditTable from "./Components/Admin/ManageTable/EditTable";
 import Review from "./Components/Customer/Review"
+import Rating from "./Components/Customer/Rating"
 
 library.add(faEye, faEyeSlash);
 
@@ -88,9 +89,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/fooddetail/:id" element={<FoodDetail />} />
-          <Route path="/review" element={<Review />} />
-          <Route path="/review/rating/:invoiceID" element={<Review/>}/>
+          <Route path="/fooddetail/:id" element={<FoodDetail/>} />
+          <Route path="/review" element={<Review/>}/>
+          <Route path="/review/rating/:invoiceID" element={<Rating/>}/>
           <Route
             path="/reservation"
             element={<BookingTable isLoggedIn={isLoggedIn} />}

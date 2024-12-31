@@ -6,9 +6,102 @@
     composes: col-lg-6 from '../../Style/bootstrap.min.css';
 }
 
+
+.col-lg-3{
+    composes: col-lg-3 from '../../Style/bootstrap.min.css';
+}
+
 .row{
     composes: row from '../../Style/bootstrap.min.css';
 }
 .review-info-ctn{
-    
+    font-family: "Playfair Display", serif;
+}
+.display-end{
+    justify-content: end;
+}
+.filter-ctn{
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter-category{
+    display: flex;
+    gap:10px;
+    height: 30px;
+}
+
+.filter-category select{
+    font-size: 18px;
+}  
+
+.filter-select{
+    border:none;
+    outline: none;
+    appearance: none; /* Ẩn mũi tên trên hầu hết các trình duyệt */
+  -webkit-appearance: none; /* Ẩn mũi tên trên Safari và Chrome */
+  -moz-appearance: none; /* Ẩn mũi tên trên Firefox */
+}
+
+.filter-date{
+    display: flex;
+    gap:10px;
+    height: 30px;
+}
+
+.filter-date p{
+    font-size: 18px;
+}
+
+.my-input-date{
+    border:none;
+    font-size: 18px;
+}
+
+.review-title-ctn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+}
+
+.review-title-ctn h4{
+    font-size: 35px;
+    margin-top:30px;
+    margin-bottom: 30px;
+}
+
+.name-star{
+    display: flex;
+    justify-content: space-between;
+}
+
+.feedback-item{
+    border-radius: 10px;
+    background: linear-gradient(145deg, #ececec, #ffffff);
+    box-shadow: 8px 8px 15px #d4d4d4, -8px -8px 15px #ffffff;
+    display: flow-root;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 30px;
+    transition: 0.3s cubic-bezier(0.22, 0.78, 0.45, 1.02);
+    font-family: "Playfair Display", serif;
+}
+
+.feedback-item h4{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.feedback-item p{
+    font-size: 18px;
+}
+
+.comment-ctn{
+    margin-top: 10px;
+    border-top: 1px solid black;
+    padding:20px;
+    padding-bottom: 0px;
 }
