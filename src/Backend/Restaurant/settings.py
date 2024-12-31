@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-_fs)v=zk8b$-_pms-ak*#9k1k07mc3i_^9zl*5qx(96k!-0lph
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -59,9 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True 
 ROOT_URLCONF = 'Restaurant.urls'
 
@@ -87,12 +85,18 @@ WSGI_APPLICATION = 'Restaurant.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# connect to mysql
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Restaurant_Management_System',
+        'HOST' : '127.0.0.1',
+        'PORT' : '3306',
+        'USER' : 'root',
+        'PASSWORD' : 'introse',
     }
 }
+
 
 
 # Password validation
@@ -147,8 +151,6 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
 }
 
 PHONENUMBER_DEFAULT_REGION = 'VN'
@@ -157,8 +159,8 @@ PHONENUMBER_DEFAULT_REGION = 'VN'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dangtricoding@gmail.com'
-EMAIL_HOST_PASSWORD = 'gxxr hhxw ukil lmoo'
+EMAIL_HOST_USER = 'citrusroyale.restaurant@gmail.com'
+EMAIL_HOST_PASSWORD = 'jmvh zrng eyqy zuwd'
 EMAIL_USE_TLS = True
 
 MEDIA_URL = '/media/' 

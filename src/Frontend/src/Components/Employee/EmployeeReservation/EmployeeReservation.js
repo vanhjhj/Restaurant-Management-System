@@ -1,94 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import style from './EmployeeReservation.module.css';
-import { MdTableRestaurant  } from "react-icons/md"; // Sử dụng icon chỉnh sửa từ react-icons
-import { fetchTablesData, fetchReservationData, assignTableAPI, markDoneReservationAPI, markCancelReservationAPI, unsignTableAPI, createOrder } from '../../../API/EE_ReservationAPI';
-import { useAuth } from '../../Auth/AuthContext';
-import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
-import { refreshToken } from '../../../API/authAPI';
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'; // Import biểu tượng chỉnh sửa
-import TableIcon from './tableIcon';
-import Invoice from './Invoice'
+import React, { useEffect, useState } from "react";
+import style from "./EmployeeReservation.module.css";
+import { MdTableRestaurant } from "react-icons/md"; // Sử dụng icon chỉnh sửa từ react-icons
+import {
+  fetchTablesData,
+  fetchReservationData,
+  assignTableAPI,
+  markDoneReservationAPI,
+  markCancelReservationAPI,
+  unsignTableAPI,
+  createOrder,
+} from "../../../API/EE_ReservationAPI";
+import { useAuth } from "../../Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai"; // Import biểu tượng chỉnh sửa
+import TableIcon from "./tableIcon";
+import Invoice from "./Invoice";
 
 function EmployeeReservation() {
-    const { accessToken, setAccessToken } = useAuth();
-    const [ tables, setTables ] = useState([]);
-    const [reservations, setReservations] = useState([]);
-    const [searchName, setSearchName] = useState('');
-    const [searchStatus, setSearchStatus] = useState('All');
-    const [inputTable, setInputTable] = useState({ id: null, value: "" });
-    const [errorMessage, setErrorMessage] = useState();
+  const { accessToken, setAccessToken } = useAuth();
+  const [tables, setTables] = useState([]);
+  const [reservations, setReservations] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [searchStatus, setSearchStatus] = useState("All");
+  const [inputTable, setInputTable] = useState({ id: null, value: "" });
+  const [errorMessage, setErrorMessage] = useState();
 
-    const ensureActiveToken = async () => {
-        let activeToken = accessToken;
-        const refresh = localStorage.getItem('refreshToken');
-        if (!accessToken || isTokenExpired(accessToken)) {
-            const refreshed = await refreshToken(refresh);
-            activeToken = refreshed.access;
-            setAccessToken(activeToken);
-        }
-        return activeToken;
-    };
-
-    const getTableColor = (status) => {
-        if (status === 'A') {
-            return '#000000';
-        }
-        else if (status === 'R') {
-            return '#FFC107';
-        }
-        else if (status === 'S') {
-            return '#007BFF';
-        }
-        else if (status === 'D') {
-            return '#28A745';
-        }
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    const refresh = localStorage.getItem("refreshToken");
+    if (!accessToken || isTokenExpired(accessToken)) {
+      const refreshed = await refreshToken(refresh);
+      activeToken = refreshed.access;
+      setAccessToken(activeToken);
     }
+    return activeToken;
+  };
 
-    const checkReservationStatus = (status) => {
-        if (status === 'P') {
-            return 'yellow';
-        }
-        else if (status === 'A') {
-            return 'blue';
-        }
-        else if (status === 'C') {
-            return 'red';
-        }
-        else if (status === 'D') {
-            return 'green';
-        }
+  const getTableColor = (status) => {
+    if (status === "A") {
+      return "#000000";
+    } else if (status === "R") {
+      return "#FFC107";
+    } else if (status === "S") {
+      return "#007BFF";
+    } else if (status === "D") {
+      return "#28A745";
     }
+  };
 
-    const fetchData = async () => {
-        const activeToken = await ensureActiveToken();
-        try {
-            const tablesData = await fetchTablesData(activeToken);
-            setTables(tablesData.results.map((table) => ({
-                ...table,
-                isShowInvoice: false,
-            })));
-
-            const reservationsData = await fetchReservationData(activeToken);
-            setReservations(reservationsData.results.map((reser) => ({
-                ...reser,
-                isEditing: false,
-            })))
-        }
-        catch (error) {
-            console.log(error);
-        }
+  const checkReservationStatus = (status) => {
+    if (status === "P") {
+      return "yellow";
+    } else if (status === "A") {
+      return "blue";
+    } else if (status === "C") {
+      return "red";
+    } else if (status === "D") {
+      return "green";
     }
+  };
 
-    useEffect(() => {
-        fetchData()
-    }, []);
+  const fetchData = async () => {
+    const activeToken = await ensureActiveToken();
+    try {
+      const tablesData = await fetchTablesData(activeToken);
+      setTables(
+        tablesData.map((table) => ({
+          ...table,
+          isShowInvoice: false,
+        }))
+      );
 
-    const handleEdit = (id) => {
-        setReservations((preReser) =>
-            preReser.map((r) =>
-                r.id === id ? { ...r, isEditing: true } : r)
-        );
+      const reservationsData = await fetchReservationData(activeToken);
+      setReservations(
+        reservationsData.map((reser) => ({
+          ...reser,
+          isEditing: false,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
     }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleEdit = (id) => {
+    setReservations((preReser) =>
+      preReser.map((r) => (r.id === id ? { ...r, isEditing: true } : r))
+    );
+  };
 
     const handleCancelEdit = (id) => {
         setInputTable({ id: null, value: "" });
@@ -96,6 +100,7 @@ function EmployeeReservation() {
             preReser.map((r) =>
                 r.id === id ? { ...r, isEditing: false } : r)
         );
+        setErrorMessage();
     }
 
     const handleSave = () => {
@@ -104,8 +109,7 @@ function EmployeeReservation() {
         };
         const assignTable = async () => {
             if (!hasIdInTablesData()) {
-                console.log(inputTable);
-                console.log(tables);
+                setErrorMessage('Lỗi: Bàn trên không tồn tại hoặc không thể gán.')
                 return;
             }
             const activeToken = await ensureActiveToken();
@@ -113,6 +117,7 @@ function EmployeeReservation() {
                 const result = await assignTableAPI(activeToken, inputTable.id, inputTable.value);
                 fetchData();
                 setInputTable({ id: null, value: "" });
+                setErrorMessage();
             }
             catch (error) {
                 console.error(error);
@@ -121,17 +126,16 @@ function EmployeeReservation() {
         assignTable();
     }
 
-    const handleEraseTable = async (id) => {
-        const activeToken = await ensureActiveToken();
-        try {
-            const result = await unsignTableAPI(activeToken, id);
-            fetchData();
-            setInputTable({ id: null, value: "" });
-        }
-        catch (error) {
-                console.error(error);
-        }
+  const handleEraseTable = async (id) => {
+    const activeToken = await ensureActiveToken();
+    try {
+      const result = await unsignTableAPI(activeToken, id);
+      fetchData();
+      setInputTable({ id: null, value: "" });
+    } catch (error) {
+      console.error(error);
     }
+  };
 
     const handleDoneReservation = async (id, tID) => {
         const activeToken = await ensureActiveToken();
@@ -140,6 +144,7 @@ function EmployeeReservation() {
             createOrder(accessToken, tID);
             fetchData();
             setInputTable({ id: null, value: "" });
+            setErrorMessage();
         }
         catch (error) {
                 console.error(error);
@@ -152,26 +157,34 @@ function EmployeeReservation() {
                 const result = await markCancelReservationAPI(activeToken, id);
                 fetchData();
                 setInputTable({ id: null, value: "" });
+                setErrorMessage();
             }
             catch (error) {
                     console.error(error);
         }
     }
 
-    const filterReservation = (r, name, status) => {
-        if (status == 'All') return r.guest_name.toLowerCase().includes(name.toLowerCase());
-        return r.guest_name.toLowerCase().includes(name.toLowerCase()) && r.status === status;
-    };
+  const filterReservation = (r, name, status) => {
+    if (status == "All")
+      return r.guest_name.toLowerCase().includes(name.toLowerCase());
+    return (
+      r.guest_name.toLowerCase().includes(name.toLowerCase()) &&
+      r.status === status
+    );
+  };
 
-    const handleShowInvoice = (id, status) => {
-        setTables((preTable) =>
-            preTable.map((table) =>
-                table.id === id ? { ...table, isShowInvoice: status } : table)
-        );
-        if (!status) fetchData();
-    }
+  const handleShowInvoice = (id, status) => {
+    setTables((preTable) =>
+      preTable.map((table) =>
+        table.id === id ? { ...table, isShowInvoice: status } : table
+      )
+    );
+    if (!status) fetchData();
+  };
 
-    const reservationFilered = reservations.filter(r => filterReservation(r, searchName, searchStatus));
+  const reservationFilered = reservations.filter((r) =>
+    filterReservation(r, searchName, searchStatus)
+  );
 
     return (
         <div className={style['EER-container']}>
@@ -209,7 +222,7 @@ function EmployeeReservation() {
                                     <input type='text'  
                                         placeholder="Tìm theo tên..."
                                         value={searchName}
-                                        onChange={e => setSearchName(e.target.value) }
+                                        onChange={e => setSearchName(e.target.value)}
                                         className={style['input-search-cus']} />
                                     <button type="button" className={style["input-search-btn"]}>
                                         <i className="fas fa-search"></i>
@@ -246,6 +259,9 @@ function EmployeeReservation() {
                                         <p>Số điện thoại: {r.phone_number}</p>
                                         <p>Thời gian: {r.time}</p>
                                         <p>Ghi chú: {r.note}</p>
+                                        <div className={style['']}>
+                                                {errorMessage ? <p className={style['error-message']}>{errorMessage}</p> : <p></p>}
+                                            </div>
                                         <div className={style['input-table-ctn']}>
                                             
                                             {r.isEditing ? (
@@ -341,6 +357,6 @@ function EmployeeReservation() {
             
         </div>
     )
-}
+};
 
 export default EmployeeReservation;

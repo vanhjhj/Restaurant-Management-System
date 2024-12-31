@@ -28,7 +28,6 @@ const ManageMenu = () => {
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
 
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -89,26 +88,26 @@ const ManageMenu = () => {
       text: "Bạn có chắc chắn muốn xóa món ăn này không?",
       type: "confirm",
       onConfirm: async () => {
-          setModal({ isOpen: false });
-          try {
-            const activeToken = await ensureActiveToken();
-            await deleteFoodItem(id, activeToken);
-            setFoodItems((prevFoodItems) =>
-              prevFoodItems.filter((item) => item.id !== id)
-            );
-            setModal({
-              isOpen: true,
-              text: "Xóa món ăn thành công",
-              type: "success",
-            });
-          } catch (error) {
-            console.error("Lỗi khi xóa món ăn:", error);
-            setModal({
-              isOpen: true,
-              text: "Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.",
-              type: "error",
-            });
-          }
+        setModal({ isOpen: false });
+        try {
+          const activeToken = await ensureActiveToken();
+          await deleteFoodItem(id, activeToken);
+          setFoodItems((prevFoodItems) =>
+            prevFoodItems.filter((item) => item.id !== id)
+          );
+          setModal({
+            isOpen: true,
+            text: "Xóa món ăn thành công",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Lỗi khi xóa món ăn:", error);
+          setModal({
+            isOpen: true,
+            text: "Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.",
+            type: "error",
+          });
+        }
       },
     });
   };
@@ -165,12 +164,6 @@ const ManageMenu = () => {
   return (
     <div className={style["manage-menu-container"]}>
       <div className={style["menu-sidebar"]}>
-        <button
-          onClick={() => navigate("/admin-dashboard")}
-          className={style["back-button"]}
-        >
-          ← Back
-        </button>
         <h3>Thực đơn hiện tại</h3>
         <h4>Danh sách mục có sẵn</h4>
         {categories.length > 0 ? (
@@ -191,36 +184,12 @@ const ManageMenu = () => {
           </p>
         )}
 
-        {!showNewCategoryForm ? (
-          <button
-            className={style["add-category-button"]}
-            onClick={() => setShowNewCategoryForm(true)}
-          >
-            Tạo mục mới +
-          </button>
-        ) : (
-          <div className={style["new-category-form"]}>
-            <input
-              type="text"
-              placeholder="Tên mục mới"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              className={style["new-category-input"]}
-            />
-            <button
-              className={style["save-category-button"]}
-              onClick={handleCreateNewCategory}
-            >
-              Lưu
-            </button>
-            <button
-              className={style["cancel-category-button"]}
-              onClick={() => setShowNewCategoryForm(false)}
-            >
-              Hủy
-            </button>
-          </div>
-        )}
+        <button
+          className={style["add-category-button"]}
+          onClick={() => setShowNewCategoryForm(true)}
+        >
+          Tạo mục mới +
+        </button>
       </div>
 
       <div className={style["menu-content"]}>
@@ -243,7 +212,9 @@ const ManageMenu = () => {
                 <div className={style["food-card-buttons"]}>
                   <button
                     className={style["edit-button"]}
-                    onClick={() => navigate(`/edit-fooditem/${item.id}`)}
+                    onClick={() =>
+                      navigate(`/admin-dashboard/edit-fooditem/${item.id}`)
+                    }
                   >
                     Chỉnh sửa
                   </button>
@@ -263,20 +234,55 @@ const ManageMenu = () => {
           onClick={() => {
             if (categories.length === 0)
               alert("Vui lòng tạo ít nhất một mục trước khi thêm món ăn mới!");
-            else navigate("/add-food");
+            else navigate("/admin-dashboard/add-food");
           }}
         >
           Tạo món ăn mới +
         </button>
       </div>
+
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={() => setModal({ isOpen: false })} 
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={() => setModal({ isOpen: false })}
+          onConfirm={modal.onConfirm}
+        />
+      )}
+
+      {showNewCategoryForm && (
+        <div className={style["modal-overlay"]}>
+          <div className={style["modal-content"]}>
+            <h3>Tạo mục mới</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateNewCategory();
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Tên mục mới"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                required
+              />
+              <div>
+                <button className={style["save-button"]} type="submit">
+                  Lưu
+                </button>
+                <button
+                  className={style["cancel-button"]}
+                  type="button"
+                  onClick={() => setShowNewCategoryForm(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

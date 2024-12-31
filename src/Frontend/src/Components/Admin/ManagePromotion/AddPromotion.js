@@ -15,6 +15,8 @@ function AddPromotion() {
     discount: 0,
     startdate: "",
     enddate: "",
+    type: "KMTV",
+    min_order: 0,
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -26,7 +28,6 @@ function AddPromotion() {
     type: "", // "confirm" hoặc "success"
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
-
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
@@ -66,18 +67,21 @@ function AddPromotion() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate('/manage-promotions'); // Điều hướng
+    navigate("/admin-dashboard/manage-promotions"); // Điều hướng
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { code, title, description, image, discount, startdate, enddate } =
-      promotion;
-
-    // Validate input
-    if (!code || !title || !description || !image || !startdate || !enddate) {
-      setError("Tất cả các trường đều phải nhập.");
-      return;
-    }
+    const {
+      code,
+      title,
+      description,
+      image,
+      discount,
+      startdate,
+      enddate,
+      type,
+      min_order,
+    } = promotion;
 
     if (await checkCodeExistence(code)) {
       setError("Mã ưu đãi đã tồn tại.");
@@ -86,11 +90,6 @@ function AddPromotion() {
 
     if (code.length > 10) {
       setError("Mã ưu đãi không được quá 10 ký tự.");
-      return;
-    }
-
-    if (isNaN(discount) || discount < 0 || discount > 100) {
-      setError("Tỷ lệ giảm giá phải từ 0 đến 100.");
       return;
     }
 
@@ -129,7 +128,6 @@ function AddPromotion() {
       setTimeout(() => {
         handleCloseModal();
       }, 15000);
-      
     } catch (error) {
       if (error.response) {
         console.error("Lỗi từ server:", error.response.data);
@@ -144,14 +142,8 @@ function AddPromotion() {
 
   return (
     <div className={style["add-promotion"]}>
-      <button
-        onClick={() => navigate("/manage-promotions")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>Thêm ưu đãi mới</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
           <label htmlFor="code">Mã ưu đãi</label>
@@ -162,7 +154,15 @@ function AddPromotion() {
             value={promotion.code}
             onChange={handleChange}
             placeholder="Nhập mã ưu đãi"
+            required
           />
+        </div>
+        <div className={style["form-group"]}>
+          <label htmlFor="type">Loại ưu đãi</label>
+          <select name="type" value={promotion.type} onChange={handleChange}>
+            <option value="KMTV">Khuyến mãi thành viên</option>
+            <option value="KMT">Khuyến mãi thường</option>
+          </select>
         </div>
         <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
@@ -173,6 +173,7 @@ function AddPromotion() {
             value={promotion.title}
             onChange={handleChange}
             placeholder="Nhập tiêu đề"
+            required
           />
         </div>
 
@@ -184,6 +185,7 @@ function AddPromotion() {
             value={promotion.description}
             onChange={handleChange}
             placeholder="Nhập mô tả"
+            required
           />
         </div>
 
@@ -196,6 +198,25 @@ function AddPromotion() {
             value={promotion.discount}
             onChange={handleChange}
             placeholder="Nhập tỷ lệ giảm giá (0-100)"
+            required
+            min={1}
+            max={100}
+          />
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="min_order">
+            Tổng tiền tối thiểu để được áp dụng ưu đãi
+          </label>
+          <input
+            type="number"
+            id="min_order"
+            name="min_order"
+            value={promotion.min_order}
+            onChange={handleChange}
+            placeholder="Nhập tổng tiền tối thiểu"
+            required
+            min={0}
           />
         </div>
 
@@ -207,6 +228,7 @@ function AddPromotion() {
             name="startdate"
             value={promotion.startdate}
             onChange={handleChange}
+            required
           />
         </div>
 
@@ -218,26 +240,35 @@ function AddPromotion() {
             name="enddate"
             value={promotion.enddate}
             onChange={handleChange}
+            required
           />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          <input type="file" id="image" name="image" onChange={handleChange} />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <button className={style["submit-button"]} type="submit">
-          Thêm ưu đãi
-        </button>
+        <div className={style["submit-button-container"]}>
+          <button className={style["submit-button"]} type="submit">
+            Thêm ưu đãi
+          </button>
+        </div>
       </form>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={handleCloseModal}
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={handleCloseModal}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

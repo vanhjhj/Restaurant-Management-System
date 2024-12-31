@@ -10,7 +10,7 @@ djangorestframework-simplejwt = "*"
 django-filter = "*"
 pillow = "*"
 djangorestframework = "*"
-django = "*"
+mysqlclient = "*"
 
 [dev-packages]
 

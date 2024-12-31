@@ -8,7 +8,6 @@ import { useAuth } from "../../../Components/Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./EditPromotion.module.css";
-import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 import { ModalGeneral } from "../../ModalGeneral";
 
 function EditPromotion() {
@@ -20,8 +19,9 @@ function EditPromotion() {
     discount: 0,
     startdate: "",
     enddate: "",
+    type: "KMTV", // Loại ưu đãi, mặc định là "KMTV"
+    min_order: 0, // Thêm trường min_order
   });
-  const [editingField, setEditingField] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
@@ -41,7 +41,6 @@ function EditPromotion() {
         if (data) {
           setPromotion(data); // Gán dữ liệu từ API
           setOriginalPromotion(data);
-          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching promotion:", error);
@@ -80,20 +79,23 @@ function EditPromotion() {
     }));
   };
 
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate('/manage-promotions'); // Điều hướng
+    navigate("/admin-dashboard/manage-promotions"); // Điều hướng
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { title, description, discount, image, startdate, enddate } =
-      promotion;
+    const {
+      title,
+      description,
+      discount,
+      image,
+      startdate,
+      enddate,
+      type,
+      min_order,
+    } = promotion;
 
     if (discount < 0 || discount > 100) {
       setError("Giảm giá phải nằm trong khoảng 0-100%.");
@@ -111,6 +113,8 @@ function EditPromotion() {
     formData.append("discount", discount);
     formData.append("startdate", startdate);
     formData.append("enddate", enddate);
+    formData.append("type", type);
+    formData.append("min_order", min_order);
 
     // Nếu có ảnh mới, thêm vào formData
     if (promotion.image instanceof File) {
@@ -130,7 +134,9 @@ function EditPromotion() {
       new Date(promotion.enddate).getTime() !==
         new Date(originalPromotion.enddate).getTime() ||
       promotion.discount !== originalPromotion.discount ||
-      promotion.image instanceof File;
+      promotion.image instanceof File ||
+      promotion.type !== originalPromotion.type ||
+      promotion.min_order !== originalPromotion.min_order;
 
     if (!hasChanges) {
       setError("Chưa có thay đổi gì để cập nhật.");
@@ -158,143 +164,106 @@ function EditPromotion() {
     }
   };
 
-  const handleEdit = (field) => {
-    setEditingField(field);
-  };
-
   return (
     <div className={style["edit-promotion"]}>
-      <button
-        onClick={() => navigate("/manage-promotions")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
-      <h2>Chỉnh sửa ưu đãi {code}</h2>
+      <h2>Chỉnh sửa ưu đãi</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
+          <label htmlFor="type">Loại ưu đãi</label>
+          <select name="type" value={promotion.type} onChange={handleChange}>
+            <option value="KMTV">Khuyến mãi thành viên</option>
+            <option value="KMT">Khuyến mãi thường</option>
+          </select>
+        </div>
+        <div className={style["form-group"]}>
           <label htmlFor="title">Tiêu đề</label>
-          {editingField === "title" ? (
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={promotion.title}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {promotion.title}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("title")}
-              />
-            </p>
-          )}
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={promotion.title}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="startdate">Ngày bắt đầu</label>
-          {editingField === "startdate" ? (
-            <input
-              type="date"
-              id="startdate"
-              name="startdate"
-              value={promotion.startdate}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {formatDate(promotion.startdate)}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("startdate")}
-              />
-            </p>
-          )}
+          <input
+            type="date"
+            id="startdate"
+            name="startdate"
+            value={promotion.startdate}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="enddate">Ngày kết thúc</label>
-          {editingField === "enddate" ? (
-            <input
-              type="date"
-              id="enddate"
-              name="enddate"
-              value={promotion.enddate}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {formatDate(promotion.enddate)}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("enddate")}
-              />
-            </p>
-          )}
+          <input
+            type="date"
+            id="enddate"
+            name="enddate"
+            value={promotion.enddate}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
+          <label htmlFor="discount">Giảm giá(%)</label>
+          <input
+            type="number"
+            id="discount"
+            name="discount"
+            value={promotion.discount}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={style["form-group"]}>
+          <label htmlFor="min_order">Tổng tiền tối thiểu</label>
+          <input
+            type="number"
+            id="min_order"
+            name="min_order"
+            value={promotion.min_order}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={`${style["form-group"]} ${style.description}`}>
           <label htmlFor="description">Mô tả</label>
-          {editingField === "description" ? (
-            <textarea
-              id="description"
-              name="description"
-              value={promotion.description}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {promotion.description}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("description")}
-              />
-            </p>
-          )}
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="discount">Giảm giá</label>
-          {editingField === "discount" ? (
-            <input
-              type="number"
-              id="discount"
-              name="discount"
-              value={promotion.discount}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {promotion.discount}%{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("discount")}
-              />
-            </p>
-          )}
+          <textarea
+            id="description"
+            name="description"
+            value={promotion.description}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          {editingField === "image" ? (
+          <div className={style["image-preview"]}>
+            {promotion.image && !(promotion.image instanceof File) && (
+              <>
+                <p>Hình ảnh cũ:</p>
+                <img
+                  src={promotion.image}
+                  alt="Current promotion"
+                  className={style["current-image"]}
+                />
+              </>
+            )}
             <input
               type="file"
               id="image"
               name="image"
               onChange={handleChange}
             />
-          ) : (
-            <p>
-              {promotion.image ? promotion.image.name : "Chưa có hình ảnh"}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("image")}
-              />
-            </p>
-          )}
+          </div>
+          <p style={{ fontSize: "12px", color: "#888" }}>
+            Chọn tệp hình ảnh mới để thay đổi.
+          </p>
         </div>
 
         <button type="submit" className={style["submit-button"]}>
@@ -302,13 +271,13 @@ function EditPromotion() {
         </button>
       </form>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={handleCloseModal}
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={handleCloseModal}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

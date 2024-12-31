@@ -35,12 +35,6 @@ function FoodDetail() {
 
   return (
     <div className={style["food-detail-container"]}>
-      <button
-        onClick={() => navigate("/menu")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <div className={style["food-image"]}>
         <img src={food.image} alt={food.name} />
       </div>

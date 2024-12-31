@@ -13,6 +13,7 @@ from django.conf import settings
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.settings import api_settings
 import jwt
+from django.core.mail import EmailMessage
 
 # Create your views here.
 
@@ -57,12 +58,6 @@ class AccountListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             account = serializer.save()
-
-            #create employee or customer account base on account type
-            if account.account_type == 'Employee':
-                EmployeeAccount.objects.create(account=account)
-            elif account.account_type == 'Customer':
-                CustomerAccount.objects.create(account=account)
 
             response = {
                 'data': serializer.data,
@@ -130,10 +125,21 @@ class AccountRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         }
         return Response(response, status=status.HTTP_200_OK)
 
-class EmployeeAccountListAPIView(generics.ListAPIView):
+class EmployeeAccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = EmployeeAccount.objects.all()
     serializer_class = EmployeeAccountSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+    
+    def get_authenticators(self):
+        if self.request.method == 'POST':
+            return [CustomTokenAuthentication()]
+        return super().get_authenticators()
+        
     
 class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = EmployeeAccount.objects.all()
@@ -172,10 +178,20 @@ class EmployeeAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
             }
             return Response(response, status=status.HTTP_200_OK)
 
-class CustomerAccountListAPIView(generics.ListAPIView):
+class CustomerAccountListCreateAPIView(generics.ListCreateAPIView):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.AllowAny()]
+        return super().get_permissions()
+    
+    def get_authenticators(self):
+        if self.request.method == 'POST':
+            return [CustomTokenAuthentication()]
+        return super().get_authenticators()
     
 class CustomerAccountRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = CustomerAccount.objects.all()
@@ -245,13 +261,41 @@ def gernerate_otp_and_send_email(email):
         
     OTP.objects.create(email=email, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
 
-    send_mail(
-        'Your OTP Code',
-        f'Your OTP code is {otp}',
-        settings.EMAIL_HOST_USER,
-        [email],
-        fail_silently=False,
+    # HTML email content
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Xác minh tài khoản</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="text-align: center; color: #333;">Xác minh tài khoản của bạn</h2>
+            <p style="color: #333;">Chào bạn,</p>
+            <p style="color: #333;">Cảm ơn bạn đã đăng ký tài khoản tại <strong>Citrus Royale</strong>! Để hoàn tất quá trình đăng ký và kích hoạt tài khoản của bạn, vui lòng sử dụng mã OTP dưới đây để xác minh:</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <span style="display: inline-block; font-size: 24px; font-weight: bold; color: #ffffff; background-color: #0f6461; padding: 10px 20px; border-radius: 5px;">{otp}</span>
+            </div>
+            <p style="color: #333;">Mã OTP này sẽ hết hạn sau <strong>5 phút</strong>. Nếu bạn không yêu cầu mã OTP này, vui lòng bỏ qua email này hoặc liên hệ ngay với chúng tôi qua <a href="mailto:citrusroyale.restaurant@gmail.com" style="color: #0f6461;">citrusroyale.restaurant@gmail.com</a> hoặc gọi tới số <strong>0328840696</strong>.</p>
+            <p style="color: #333;">Chúng tôi rất mong được phục vụ bạn tại <strong>Citrus Royale</strong>!</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="text-align: center; font-size: 14px; color: #aaa;">Đội ngũ <strong>Citrus Royale</strong><br>0328840696<br><a href="[Website của Nhà Hàng]" style="color: #0f6461;">[Website của Nhà Hàng]</a></p>
+        </div>
+    </body>
+    </html>
+    """
+
+    # Sending the email with HTML content
+    email_message = EmailMessage(
+        subject='Xác minh tài khoản của bạn',
+        body=html_content,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[email],
     )
+    email_message.content_subtype = "html"  # Specify email as HTML content
+    email_message.send(fail_silently=False)
     return True
 
 class ForgotPasswordAPIView(generics.CreateAPIView):

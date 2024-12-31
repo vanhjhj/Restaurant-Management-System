@@ -42,7 +42,7 @@ function AddTable() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate("/manage-table"); // Điều hướng
+    navigate("/admin-dashboard/manage-table"); // Điều hướng
   };
 
   const handleAddTable = async () => {
@@ -94,7 +94,9 @@ function AddTable() {
 
       <div className={style["buttons"]}>
         <button onClick={handleAddTable}>Thêm bàn</button>
-        <button onClick={() => navigate("/manage-table")}>Hủy</button>
+        <button onClick={() => navigate("/admin-dashboard/manage-table")}>
+          Hủy
+        </button>
       </div>
       {modal.isOpen && (
         <ModalGeneral

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import style from "./Promotion.module.css";
 import { useNavigate } from "react-router-dom";
-import { fetchPromotions } from "../../../API/PromotionAPI";
+import { fetchValidPromotions } from "../../../API/PromotionAPI";
 import PromotionDetail from "./PromotionDetail";
 
 function Promotion() {
@@ -13,7 +13,7 @@ function Promotion() {
   useEffect(() => {
     const loadPromotions = async () => {
       try {
-        const data = await fetchPromotions();
+        const data = await fetchValidPromotions();
         setPromotions(data);
       } catch (err) {
         setError(err);
@@ -26,7 +26,13 @@ function Promotion() {
     <div className={style["promotions-container"]}>
       <div className={style["content"]}>
         <div className={style["title-row"]}>
-          <h1>Danh sách khuyến mãi</h1>
+          <h1>Khuyến mãi</h1>
+        </div>
+        <div className={style["image"]}>
+          <img
+            src="assets/images/chuong-trinh-khuyen-mai-trong-kinh-doanh-scaled.jpg"
+            alt=""
+          />
         </div>
         {error ? (
           <div className={style["error-message"]}>
@@ -37,7 +43,7 @@ function Promotion() {
           </div>
         ) : promotions.length === 0 ? (
           <div className={style["no-promotions-message"]}>
-            <p>Chưa có khuyến mãi nào!</p>
+            <p>Oops...Hiện tại chưa có khuyến mãi!</p>
           </div>
         ) : (
           <div className={style["promotions-list"]}>

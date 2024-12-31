@@ -1,7 +1,7 @@
 // src/components/Header.js
 import React, { useState, useRef, useEffect } from "react";
 import style from "./Header.module.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faL, faUser } from "@fortawesome/free-solid-svg-icons";
 import { refreshToken, logout } from "../../../API/authAPI";
@@ -15,6 +15,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
   const { accessToken, setAccessToken } = useAuth();
   const refresh = localStorage.getItem("refreshToken");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const userRole = localStorage.getItem("userRole");
 
@@ -94,28 +95,78 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
               <nav className={style["header-menu"]}>
                 <ul className={style["food-nav-menu"]}>
                   <li>
-                    <Link to="/about">Giới Thiệu</Link>
+                    <Link
+                      to="/about"
+                      className={
+                        location.pathname === "/about" ? style.active : ""
+                      }
+                    >
+                      Giới Thiệu
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/menu">Thực Đơn</Link>
+                    <Link
+                      to="/menu"
+                      className={
+                        location.pathname.startsWith("/menu")
+                          ? style.active
+                          : ""
+                      }
+                    >
+                      Thực Đơn
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/reservation">Đặt Bàn</Link>
+                    <Link
+                      to="/reservation"
+                      className={
+                        location.pathname === "/reservation" ? style.active : ""
+                      }
+                    >
+                      Đặt Bàn
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/promotion">Khuyến mãi</Link>
+                    <Link
+                      to="/promotion"
+                      className={
+                        location.pathname.startsWith("/promotion")
+                          ? style.active
+                          : ""
+                      }
+                    >
+                      Khuyến Mãi
+                    </Link>
                   </li>
 
                   {/* Điều kiện hiển thị các trang dựa trên userRole */}
                   {userRole === "Admin" && (
                     <li>
-                      <Link to="/admin-dashboard">Quản Trị</Link>
+                      <Link
+                        to="/admin-dashboard"
+                        className={
+                          location.pathname.startsWith("/admin-dashboard")
+                            ? style.active
+                            : ""
+                        }
+                      >
+                        Quản Trị
+                      </Link>
                     </li>
                   )}
                   {userRole === "Employee" && (
                     <>
                       <li>
-                        <Link to="/employee-dashboard">Trang Nhân Viên</Link>
+                        <Link
+                          to="/employee-dashboard"
+                          className={
+                            location.pathname.startsWith("/employee-dashboard")
+                              ? style.active
+                              : ""
+                          }
+                        >
+                          Trang Nhân Viên
+                        </Link>
                       </li>
                     </>
                   )}
@@ -148,9 +199,14 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                                 </li>
                                 <li>
                                   {" "}
-                                  <button onClick={handleLogoutBtn}>
-                                    Đăng xuất
-                                  </button>
+                                  <div className={style["logout-section"]}>
+                                    <button
+                                      onClick={handleLogoutBtn}
+                                      className={style["logout-button"]}
+                                    >
+                                      Đăng xuất
+                                    </button>
+                                  </div>
                                 </li>
                               </>
                             ) : (
@@ -185,11 +241,18 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       )}
                     </li>
                   ) : (
-                    <li>
-                      <Link to="/login" className={style["login-btn"]}>
-                        Đăng Nhập
-                      </Link>
-                    </li>
+                    <div className={style["login-signup"]}>
+                      <li>
+                        <Link to="/login" className={style["login-btn"]}>
+                          Đăng Nhập
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/signup" className={style["signup-btn"]}>
+                          Đăng ký
+                        </Link>
+                      </li>
+                    </div>
                   )}
                 </ul>
               </nav>

@@ -6,23 +6,6 @@
   margin-bottom: 50px;
 }
 
-.manage-Promotions .back-button {
-  position: absolute;
-  top: 120px;
-  left: 20px;
-  background-color: #f0f0f0;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.manage-Promotions .back-button:hover {
-  background-color: #0f4758; /* Màu nền khi hover */
-}
-
 .manage-Promotions .add-discount-button:hover {
   background-color: #6b8288;
 }
