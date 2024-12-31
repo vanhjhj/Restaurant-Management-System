@@ -1,3 +1,12 @@
+.edit-fooditem {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
 .edit-fooditem h2 {
   text-align: center;
   font-size: 42px;
@@ -6,77 +15,75 @@
   margin-bottom: 30px;
 }
 
-.edit-fooditem .back-button {
-  position: absolute;
-  top: 120px;
-  left: 20px;
-  background-color: #f0f0f0;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.edit-fooditem form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 3px;
 }
 
-/* Căn giữa và định dạng các trường input */
 .edit-fooditem .form-group {
-  margin-bottom: 15px;
-  text-align: center; /* Căn giữa các label và input */
+  width: 48%;
+  margin-bottom: 20px;
+}
+
+.edit-fooditem .form-group.description {
+  width: 100%;
 }
 
 .edit-fooditem .form-group label {
-  font-size: 26px; /* Tăng kích thước chữ label */
+  font-size: 26px;
   display: block;
   margin-bottom: 5px;
 }
 
 .edit-fooditem .form-group input,
-.edit-fooditem .form-group select {
-  width: 20%; /* Giới hạn chiều rộng của các input */
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
+.edit-fooditem .form-group select,
+.edit-fooditem .form-group textarea {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  margin: 0 auto; /* Căn giữa */
-  display: block;
 }
 
-.edit-fooditem submit-button {
+.edit-fooditem .form-group textarea {
+  height: 250px;
+  resize: vertical;
+}
+.edit-fooditem .submit-button {
   display: block;
+  width: auto;
   margin: 20px auto;
-  padding: 10px 20px;
+  padding: 10px 16px;
   background-color: #0f4758;
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 10px;
-  font-size: 20px;
+  border-radius: 8px;
+  font-size: 26px;
 }
 
-.edit-fooditem submit-button:hover {
-  background-color: #0f4758; /* Màu nền khi hover */
+.edit-fooditem .submit-button:hover {
+  background-color: #7c9197;
 }
 
-/* Hiển thị lỗi */
 .edit-fooditem p {
   color: rgb(177, 92, 13);
   text-align: center;
   font-size: 16px;
 }
 
-/* Đặt form căn giữa */
-.edit-fooditem form {
-  width: 80%;
-  margin: 0 auto;
-  text-align: center; /* Căn giữa nội dung của form */
+.edit-fooditem .current-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Tạo khoảng cách giữa các phần tử trong form */
-.edit-fooditem div.form-group {
-  margin-bottom: 20px;
-}
-
-.edit-fooditem .form-group select {
-  width: 10%;
+.edit-fooditem .preview-image {
+  max-width: 150px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgb(255, 255, 255);
 }

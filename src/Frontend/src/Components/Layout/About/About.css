@@ -1,111 +1,113 @@
 /* Tổng quan cho section */
 .about-sec {
-    max-width: 1000px; /* Tăng độ rộng tối đa */
-    margin: 0 auto;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column; /* Để chữ "THƯƠNG HIỆU" ở giữa */
-    align-items: center;
-    justify-content:space-between;
+  max-width: 1000px; /* Tăng độ rộng tối đa */
+  margin: 0 auto;
+  margin-top: 30px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* Để chữ "THƯƠNG HIỆU" ở giữa */
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Định dạng tiêu đề */
 .about-sec h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 42px; /* Tăng kích thước chữ */
-    color: #a38900;
-    margin-bottom: 30px;
-    text-transform: uppercase;
-    text-align: center;
-    letter-spacing: 1px;
+  font-family: "Playfair Display", serif;
+  color: #a38900;
+  font-size: 46px; /* Tăng kích thước chữ */
+  margin-bottom: 30px;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
 /* Định dạng phần nội dung văn bản */
 .about-sec .text-content {
-    flex: 1;
-    padding-right: 20px;
-    font-size: 18px;
-    line-height: 1.6;
-    color: #333;
-    font-family: 'Lora', serif;
-    text-align: justify; /* Căn đều chữ */
+  flex: 1;
+  padding-right: 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+  font-family: "Lora", serif;
+  text-align: justify; /* Căn đều chữ */
 }
 
 /* Định dạng hình ảnh */
 .about-sec .image-content {
-    width: 100%; /* Để ảnh to hơn */
-    max-width: 1000px; /* Giới hạn độ rộng tối đa của ảnh */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 30px;
+  width: 100%; /* Để ảnh to hơn */
+  max-width: 1000px; /* Giới hạn độ rộng tối đa của ảnh */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
 }
 
 .about-sec .image-content img {
-    width: 100%;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Tăng độ đổ bóng cho ảnh */
-    transition: transform 0.3s ease;
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Tăng độ đổ bóng cho ảnh */
+  transition: transform 0.3s ease;
 }
 
 /* Hiệu ứng nổi nhẹ khi di chuột vào hình ảnh */
 .about-sec .image-content img:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 /* Định dạng vị trí */
 .location-info {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-    font-size: 16px;
-    color: #555;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #555;
 }
 
 .location-info img {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
 }
 
 .location-info a {
-    color: #333;
-    text-decoration: none;
-    font-size: 16px;
+  color: #333;
+  text-decoration: none;
+  font-size: 16px;
 }
 
 .location-info a:hover {
-    color: #ff8243;
-    text-decoration: underline;
+  color: #ff8243;
+  text-decoration: underline;
 }
 
 /* Định dạng liên hệ */
 .contact-info {
-    font-size: 16px;
-    color: #555;
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
+  font-size: 16px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .contact-info img {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
 }
 
 /* Media Query để hiển thị tốt trên màn hình nhỏ */
 @media (max-width: 768px) {
-    .about-sec {
-        padding: 40px 10px;
-        text-align: center;
-    }
+  .about-sec {
+    padding: 40px 10px;
+    text-align: center;
+  }
 
-    .about-sec h2 {
-        font-size: 32px; /* Giảm kích thước chữ trên thiết bị nhỏ */
-    }
+  .about-sec h2 {
+    font-size: 32px; /* Giảm kích thước chữ trên thiết bị nhỏ */
+  }
 
-    .about-sec .image-content img {
-        max-width: 100%;
-    }
+  .about-sec .image-content img {
+    max-width: 100%;
+  }
 }

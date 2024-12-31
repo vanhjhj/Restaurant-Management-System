@@ -1,26 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../Auth/AuthContext';
-import { isTokenExpired } from '../../../utils/tokenHelper.mjs';
-import { refreshToken } from '../../../API/authAPI';
-import style from './Invoice.module.css';
-import { addFood, createOrder, fetchOrderData, fetchOrderItemData, removeItem, updateItem, updateItemStatus } from '../../../API/EE_ReservationAPI';
-import { getFoodItems, getMenuTabs } from '../../../API/MenuAPI';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
+import style from "./Invoice.module.css";
+import {
+  addFood,
+  createOrder,
+  fetchOrderData,
+  fetchOrderItemData,
+  removeItem,
+  updateItem,
+  updateItemStatus,
+} from "../../../API/EE_ReservationAPI";
+import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
 
 function Invoice({ tableID, setShowInvoice }) {
-    const { accessToken, setAccessToken } = useAuth();
-    const [invoiceData, setInvoiceData] = useState({id: 0, datetime: '', total_price: '', total_discount: '', final_price: '', status:'',table:0});
-    const [itemsData, setItemsData] = useState([]);
-    const [menuData, setMenuData] = useState([]);
-    const [menuTabs, setMenuTabs] = useState([]);
-    const [noteData, setNoteData] = useState('');
-    const [quantity, setQuantity] = useState(0)
-    
-    const [searchItem, setSearchItem] = useState('');
-    const [searchPriceMin, setSearchPriceMin] = useState('');
-    const [searchPriceMax, setSearchPriceMax] = useState('');
-    const [searchTab, setSearchTab] = useState(0);
-    const [errorTableMessage, setErrorTableMessage] = useState();
-    const [errorType, setErrorType] = useState();
+  const { accessToken, setAccessToken } = useAuth();
+  const [invoiceData, setInvoiceData] = useState({
+    id: 0,
+    datetime: "",
+    total_price: "",
+    total_discount: "",
+    final_price: "",
+    status: "",
+    table: 0,
+  });
+  const [itemsData, setItemsData] = useState([]);
+  const [menuData, setMenuData] = useState([]);
+  const [menuTabs, setMenuTabs] = useState([]);
+  const [noteData, setNoteData] = useState("");
+  const [quantity, setQuantity] = useState(0);
+
+  const [searchItem, setSearchItem] = useState("");
+  const [searchPriceMin, setSearchPriceMin] = useState("");
+  const [searchPriceMax, setSearchPriceMax] = useState("");
+  const [searchTab, setSearchTab] = useState(0);
+  const [errorTableMessage, setErrorTableMessage] = useState();
+  const [errorType, setErrorType] = useState();
 
     const handleError = (error, type) => {
         if (error === 404) {
@@ -39,89 +55,96 @@ function Invoice({ tableID, setShowInvoice }) {
         }
         return ''
     }
+    return "";
+  };
 
-    const errorMessage = handleError(errorTableMessage, errorType);
+  const errorMessage = handleError(errorTableMessage, errorType);
 
-    const NumberWithSpaces = ({ number }) => {
-        const formattedNumber = new Intl.NumberFormat('en-US', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(number).replace(/,/g, ' ');
-      
-        return <p>{formattedNumber} .VNĐ</p>;
-    };
-    
-    const handlePriceMin = (value) => {
-        // Allow only positive numbers or empty string (to handle backspacing)
-        if (/^\d*$/.test(value)) {
-          setSearchPriceMin(value);
-        }
-      } 
-    
-      const handlePriceMax = (value) => {
-        // Allow only positive numbers or empty string (to handle backspacing)
-        // if (value === '' || /^[+]?\d+(\.\d+)?$/.test(value)) {
-        //   setSearchPriceMax(value);
-        // }
-        if (/^\d*$/.test(value)) {
-          setSearchPriceMax(value);
-        }
+  const NumberWithSpaces = ({ number }) => {
+    const formattedNumber = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+      .format(number)
+      .replace(/,/g, " ");
+
+    return <p>{formattedNumber} .VNĐ</p>;
+  };
+
+  const handlePriceMin = (value) => {
+    // Allow only positive numbers or empty string (to handle backspacing)
+    if (/^\d*$/.test(value)) {
+      setSearchPriceMin(value);
     }
+  };
 
-    const filterMenu = (item, name, category, priceMin, priceMax) => {
-        let addCondition = item.name.toLowerCase().includes(name.toLowerCase())
-          && item.price >= priceMin;
-        if (priceMax > 0) {
-            addCondition = addCondition && item.price <= priceMax;
-        }
-        if (category != 0) {
-            addCondition = addCondition && item.category == category;
-        }
-        return addCondition;
-      }
-    
-    const filteredItems = menuData.filter(item => filterMenu(item, searchItem, searchTab, searchPriceMin, searchPriceMax));    
-    
-    const ensureActiveToken = async () => {
-            let activeToken = accessToken;
-            const refresh = localStorage.getItem('refreshToken');
-            if (!accessToken || isTokenExpired(accessToken)) {
-                const refreshed = await refreshToken(refresh);
-                activeToken = refreshed.access;
-                setAccessToken(activeToken);
-            }
-            return activeToken;
-    };
-
-    const fetchMenuData = async () => {
-        try {
-            const menu = await getFoodItems();
-            setMenuData(menu);
-            const tab = await getMenuTabs();
-            setMenuTabs(tab);
-        }
-        catch (error) {
-            setErrorTableMessage(error.response.status);
-            setErrorType('menu');
-        }
+  const handlePriceMax = (value) => {
+    // Allow only positive numbers or empty string (to handle backspacing)
+    // if (value === '' || /^[+]?\d+(\.\d+)?$/.test(value)) {
+    //   setSearchPriceMax(value);
+    // }
+    if (/^\d*$/.test(value)) {
+      setSearchPriceMax(value);
     }
-    const fetchData = async () => {
-        const activeToken = await ensureActiveToken();
-        try {
-            const orderData = await fetchOrderData(activeToken, tableID);
-            setInvoiceData(orderData);
+  };
 
-            const itemData = await fetchOrderItemData(activeToken, orderData.id);
-            setItemsData(itemData.results.map((item) => ({
-                ...item,
-                isEditing: false,
-                changeQuantity: false,
-            })));
-        }
-        catch (error) {
-            setErrorTableMessage(error.response.status);
-        }
+  const filterMenu = (item, name, category, priceMin, priceMax) => {
+    let addCondition =
+      item.name.toLowerCase().includes(name.toLowerCase()) &&
+      item.price >= priceMin;
+    if (priceMax > 0) {
+      addCondition = addCondition && item.price <= priceMax;
     }
+    if (category != 0) {
+      addCondition = addCondition && item.category == category;
+    }
+    return addCondition;
+  };
+
+  const filteredItems = menuData.filter((item) =>
+    filterMenu(item, searchItem, searchTab, searchPriceMin, searchPriceMax)
+  );
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    const refresh = localStorage.getItem("refreshToken");
+    if (!accessToken || isTokenExpired(accessToken)) {
+      const refreshed = await refreshToken(refresh);
+      activeToken = refreshed.access;
+      setAccessToken(activeToken);
+    }
+    return activeToken;
+  };
+
+  const fetchMenuData = async () => {
+    try {
+      const menu = await getFoodItems();
+      setMenuData(menu);
+      const tab = await getMenuTabs();
+      setMenuTabs(tab);
+    } catch (error) {
+      setErrorTableMessage(error.response.status);
+      setErrorType("menu");
+    }
+  };
+  const fetchData = async () => {
+    const activeToken = await ensureActiveToken();
+    try {
+      const orderData = await fetchOrderData(activeToken, tableID);
+      setInvoiceData(orderData);
+
+      const itemData = await fetchOrderItemData(activeToken, orderData.id);
+      setItemsData(
+        itemData.map((item) => ({
+          ...item,
+          isEditing: false,
+          changeQuantity: false,
+        }))
+      );
+    } catch (error) {
+      setErrorTableMessage(error.response.status);
+    }
+  };
 
     useEffect(() => {
         fetchData();
@@ -137,7 +160,7 @@ function Invoice({ tableID, setShowInvoice }) {
                 const orderData = await fetchOrderData(activeToken, tableID);
                 setInvoiceData(orderData);
 
-                const tablesData = await addFood(activeToken, orderData.id, fID, 1, "");
+        const tablesData = await addFood(activeToken, orderData.id, fID, 1, "");
 
                 const itemData = await fetchOrderItemData(activeToken, orderData.id);
                 setItemsData(itemData.results.map((item) => ({
@@ -161,13 +184,14 @@ function Invoice({ tableID, setShowInvoice }) {
             setErrorType('addItem');
         }
     }
+  };
 
-    const handleEditing = (itemID, itemNote) => {
-        setItemsData((preItem) => (
-            preItem.map((i) => i.id === itemID ? { ...i, isEditing: true } : i)
-        ))
-        setNoteData(itemNote);
-    }
+  const handleEditing = (itemID, itemNote) => {
+    setItemsData((preItem) =>
+      preItem.map((i) => (i.id === itemID ? { ...i, isEditing: true } : i))
+    );
+    setNoteData(itemNote);
+  };
 
     const handleErase = async (itemID, fID) => {
         const activeToken = await ensureActiveToken();
@@ -186,23 +210,22 @@ function Invoice({ tableID, setShowInvoice }) {
             setErrorType('delete');
         }
     }
+  };
 
-    const handleCancel = () => {
+  const handleCancel = () => {};
 
+  const handleChangeQuantity = (value) => {
+    if (value === "" || /^[1-9]\d*$/.test(value)) {
+      setQuantity(value);
     }
+  };
 
-    const handleChangeQuantity = (value) => {
-        if (value === "" || /^[1-9]\d*$/.test(value)) {
-            setQuantity(value);
-          }
-    }
-
-    const handleEditingQuantity = (itemQuantity, itemID) => {
-        setItemsData((preItem) => (
-            preItem.map((i) => i.id === itemID ? { ...i, changeQuantity: true } : i)
-        ))
-        setQuantity(itemQuantity);
-    }
+  const handleEditingQuantity = (itemQuantity, itemID) => {
+    setItemsData((preItem) =>
+      preItem.map((i) => (i.id === itemID ? { ...i, changeQuantity: true } : i))
+    );
+    setQuantity(itemQuantity);
+  };
 
     const handleSave = async (itemID, q, note, change) => {
         const activeToken = await ensureActiveToken();
@@ -226,28 +249,28 @@ function Invoice({ tableID, setShowInvoice }) {
                 setErrorType('editItem');
             }
     }
+  };
 
-    const handleKeyDown = async (event, itemID, q, note, change) => {
-        if (event.key === 'Enter') {
-            const activeToken = await ensureActiveToken();
-            handleSave(itemID, q, note, change);
-        }
-    };
-
-    const handleChangeStatus = async (itemID) => {
-        const activeToken = await ensureActiveToken();
-        try {
-            const result = await updateItemStatus(activeToken, itemID);
-            setItemsData((preItem) => (
-                preItem.map((i) => i.id === itemID ? result.data : i)
-            ));
-        }
-        catch (error) {
-            if (error.response.status === 404) {
-                setErrorTableMessage('Mất kết nối')
-            }
-        }
+  const handleKeyDown = async (event, itemID, q, note, change) => {
+    if (event.key === "Enter") {
+      const activeToken = await ensureActiveToken();
+      handleSave(itemID, q, note, change);
     }
+  };
+
+  const handleChangeStatus = async (itemID) => {
+    const activeToken = await ensureActiveToken();
+    try {
+      const result = await updateItemStatus(activeToken, itemID);
+      setItemsData((preItem) =>
+        preItem.map((i) => (i.id === itemID ? result.data : i))
+      );
+    } catch (error) {
+      if (error.response.status === 404) {
+        setErrorTableMessage("Mất kết nối");
+      }
+    }
+  };
 
     return (
         <div className={style['ctn']}>

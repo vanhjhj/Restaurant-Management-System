@@ -68,19 +68,13 @@ function AddFoodItem() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate('/manage-menu'); // Điều hướng
+    navigate("/admin-dashboard/manage-menu"); // Điều hướng
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { name, price, description, image, category } = menu;
-
-    // Validate input
-    if (!name || !price || !description || !image || !category) {
-      setError("Tất cả các trường đều phải nhập.");
-      return;
-    }
 
     if (name.length > 255) {
       setError("Tên món ăn không được quá 255 ký tự.");
@@ -122,12 +116,6 @@ function AddFoodItem() {
 
   return (
     <div className={style["add-food"]}>
-      <button
-        onClick={() => navigate("/manage-menu")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>Thêm món ăn mới</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
@@ -140,6 +128,7 @@ function AddFoodItem() {
             value={menu.name}
             onChange={handleChange}
             placeholder="Nhập tên món ăn"
+            required
           />
         </div>
 
@@ -152,24 +141,20 @@ function AddFoodItem() {
             value={menu.price}
             onChange={handleChange}
             placeholder="Nhập giá (>0)"
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="description">Mô tả</label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            value={menu.description}
-            onChange={handleChange}
-            placeholder="Nhập mô tả"
+            min={0}
+            required
           />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          <input type="file" id="image" name="image" onChange={handleChange} />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className={style["form-group"]}>
@@ -179,6 +164,7 @@ function AddFoodItem() {
             name="category"
             value={menu.category}
             onChange={handleChange}
+            required
           >
             <option value="">Chọn danh mục</option>
             {categories.map((cat) => (
@@ -189,18 +175,30 @@ function AddFoodItem() {
           </select>
         </div>
 
+        <div className={`${style["form-group"]} ${style.description}`}>
+          <label htmlFor="description">Mô tả</label>
+          <textarea
+            id="description"
+            name="description"
+            value={menu.description}
+            onChange={handleChange}
+            placeholder="Nhập mô tả"
+            required
+          />
+        </div>
+
         <button className={style["submit-button"]} type="submit">
           Thêm món ăn
         </button>
       </form>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={handleCloseModal}
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={handleCloseModal}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

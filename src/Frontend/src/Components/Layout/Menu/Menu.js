@@ -233,7 +233,7 @@ function Menu() {
               <div
                 key={item.id}
                 className={style["col-lg-3"]}
-                onClick={() => navigate(`/fooddetail/${item.id}`)}
+                onClick={() => navigate(`/menu/${item.id}`)}
               >
                 <div className={style["menu-item"]}>
                   <img src={item.image} alt={item.name} />

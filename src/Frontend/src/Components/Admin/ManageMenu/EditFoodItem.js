@@ -9,7 +9,6 @@ import { useAuth } from "../../../Components/Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./EditFoodItem.module.css";
-import { FaEdit } from "react-icons/fa"; // Sử dụng icon chỉnh sửa từ react-icons
 import { ModalGeneral } from "../../ModalGeneral";
 
 function EditFoodItem() {
@@ -39,8 +38,16 @@ function EditFoodItem() {
     const fetchFoodItem = async () => {
       try {
         const data = await getFoodItemByID(id);
-        setFoodItem({ ...data, category: data.category || "" });
-        setOriginalFoodItem({ ...data, category: data.category || "" });
+        setFoodItem({
+          ...data,
+          category: data.category || "",
+          image: data.image,
+        });
+        setOriginalFoodItem({
+          ...data,
+          category: data.category || "",
+          image: data.image,
+        });
       } catch (error) {
         console.error("Error fetching food item:", error);
         setError("Không thể tải dữ liệu món ăn.");
@@ -88,7 +95,7 @@ function EditFoodItem() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false }); // Đóng modal
-    navigate('/manage-menu'); // Điều hướng
+    navigate("/admin-dashboard/manage-menu"); // Điều hướng
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -166,96 +173,57 @@ function EditFoodItem() {
 
   return (
     <div className={style["edit-fooditem"]}>
-      <button
-        onClick={() => navigate("/manage-menu")}
-        className={style["back-button"]}
-      >
-        ← Back
-      </button>
       <h2>Chỉnh sửa món ăn</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className={style["form-group"]}>
           <label htmlFor="name">Tên món ăn</label>
-          {editingField === "name" ? (
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={fooditem.name}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {fooditem.name}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("name")}
-              />
-            </p>
-          )}
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={fooditem.name}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="price">Giá</label>
-          {editingField === "price" ? (
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={fooditem.price}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {fooditem.price}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("price")}
-              />
-            </p>
-          )}
+          <input
+            type="number"
+            id="price"
+            name="price"
+            value={fooditem.price}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="description">Mô tả</label>
-          {editingField === "description" ? (
-            <input
-              type="text"
-              id="description"
-              name="description"
-              value={fooditem.description}
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {fooditem.description}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("description")}
-              />
-            </p>
-          )}
+          <textarea
+            id="description"
+            name="description"
+            value={fooditem.description}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={style["form-group"]}>
           <label htmlFor="image">Hình ảnh</label>
-          {editingField === "image" ? (
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleChange}
-            />
-          ) : (
-            <p>
-              {fooditem.image ? fooditem.image.name : "Chưa có hình ảnh"}{" "}
-              <FaEdit
-                className={style.editIcon}
-                onClick={() => handleEdit("image")}
+          {fooditem.image && (
+            <div className={style["current-image"]}>
+              <p>Hình ảnh cũ:</p>
+              <img
+                src={fooditem.image}
+                alt="Current Food Item"
+                className={style["preview-image"]}
               />
-            </p>
+            </div>
           )}
+          <input type="file" id="image" name="image" onChange={handleChange} />
+          <p style={{ fontSize: "12px", color: "#888" }}>
+            Chọn tệp hình ảnh mới để thay đổi.
+          </p>
         </div>
 
         <div className={style["form-group"]}>
@@ -280,13 +248,13 @@ function EditFoodItem() {
         </button>
       </form>
       {modal.isOpen && (
-          <ModalGeneral 
-              isOpen={modal.isOpen} 
-              text={modal.text} 
-              type={modal.type} 
-              onClose={handleCloseModal}
-              onConfirm={modal.onConfirm}
-          />
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={handleCloseModal}
+          onConfirm={modal.onConfirm}
+        />
       )}
     </div>
   );

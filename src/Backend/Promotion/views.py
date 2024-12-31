@@ -3,6 +3,7 @@ from .models import Promotion
 from .serializers import PromotionSerializer
 from rest_framework import generics,permissions, status
 from rest_framework.response import Response
+from django.utils import timezone
 
 # Create your views here.
 class PromotionListCreateAPIView(generics.ListCreateAPIView):
@@ -14,6 +15,26 @@ class PromotionListCreateAPIView(generics.ListCreateAPIView):
         if self.request.method == 'GET':
             self.permission_classes = [permissions.AllowAny]
         return super().get_permissions()
+    
+    def get(self, request, *args, **kwargs):
+        promotions = Promotion.objects.all()
+        serializer = self.serializer_class(promotions, many=True)
+
+        type = request.query_params.get('type', None)
+        if type is not None:
+            promotions = promotions.filter(type=type)
+            serializer = self.serializer_class(promotions, many=True)
+
+        isValid = request.query_params.get('valid', None)
+        if isValid is not None and isValid == 'true':
+            promotions = promotions.filter(startdate__lte=timezone.now(), enddate__gte=timezone.now())
+            serializer = self.serializer_class(promotions, many=True)
+
+        #build absolute url for image field
+        for promotion in serializer.data:
+            promotion['image'] = request.build_absolute_uri(promotion['image'])
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, *args, **kwargs):
         promotion_data = request.data

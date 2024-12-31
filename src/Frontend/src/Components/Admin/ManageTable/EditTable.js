@@ -47,7 +47,7 @@ function EditTable() {
 
   const handleCloseModal = () => {
     setModal({ isOpen: false });
-    navigate("/manage-table");
+    navigate("/admin-dashboard/manage-table");
   };
 
   const handleUpdateTable = async () => {
@@ -115,7 +115,9 @@ function EditTable() {
 
       <div className={style["buttons"]}>
         <button onClick={handleUpdateTable}>Lưu</button>
-        <button onClick={() => navigate("/manage-table")}>Hủy</button>
+        <button onClick={() => navigate("/admin-dashboard/manage-table")}>
+          Hủy
+        </button>
       </div>
 
       {modal.isOpen && (

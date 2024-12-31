@@ -23,6 +23,22 @@ function SignUp() {
 
     const account_type = "Customer";
 
+    const validatePhoneNumber = (phone) => {
+        if (phone.length === 0) {
+          return "Số điện thoại không được để trống.";
+        }
+        if (!/^[0-9]+$/.test(phone)) {
+          return "Số điện thoại chỉ được chứa chữ số.";
+        }
+        if (phone.length !== 10) {
+          return "Số điện thoại phải đủ 10 chữ số.";
+        }
+        if (!/^03/.test(phone)) {
+          return "Số điện thoại phải bắt đầu bằng số 03.";
+        }
+        return null; // Hợp lệ
+    };
+
     const handlePasswordChange = (e) => {
         const inputPassword = e.target.value;
         setPassword(inputPassword);
@@ -41,6 +57,15 @@ function SignUp() {
 
         // Reset lỗi trước khi kiểm tra
         setErrors({});
+        // Kiểm tra tính hợp lệ của số điện thoại
+        const phoneError = validatePhoneNumber(phone_number);
+        if (phoneError) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                phone_number: phoneError,
+            }));
+            return; // Dừng nếu có lỗi
+        }
 
         if (password !== confirmPassword) {
             setErrors((prevErrors) => ({
@@ -59,6 +84,7 @@ function SignUp() {
 
         const CusInfo={
             full_name,
+            email,
             gender,
             phone_number,
         };
@@ -90,145 +116,160 @@ function SignUp() {
     return (
         <div className={style["signup-container"]}>
             <div className={style["signup-box"]}>
-                <h2 className={style["title"]}>Đăng ký</h2>
+                <h2 className={style["title"]}>ĐĂNG KÝ</h2>
                 <form onSubmit={handleSignUpSubmit} className={style["signup-form"]}>
                     {errors.message && (
                         <p className={style["error-message"]}>{errors.message}</p>
                     )}
 
-                    <label htmlFor="username" className={style["form-title"]}>
-                        Tài khoản
-                    </label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder="Nhập tài khoản"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    {errors.username && (
-                        <p className={style["error-message"]}>{'Tên đăng nhập đã tồn tại'}</p>
-                    )}
-
-                    <label htmlFor="email" className={style["form-title"]}>
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Nhập email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-
-                    {errors.username && (
-                        <p className={style["error-message"]}>{'Tên đăng nhập đã tồn tại'}</p>
-                    )}
-
-                    <label htmlFor="full_name" className={style["form-title"]}>
-                        Họ và Tên
-                    </label>
-                    <input
-                        type="text"
-                        id="full_name"
-                        name="Tên đầy đủ"
-                        placeholder="Nhập họ và tên"
-                        required
-                        value={full_name}
-                        onChange={(e) => setfull_name(e.target.value)}
-                    />
-
-                    {errors.username && (
-                        <p className={style["error-message"]}>{'Tên đăng nhập đã tồn tại'}</p>
-                    )}
-
-                    <label htmlFor="gender" className={style["form-title"]}>
-                        Giới tính
-                    </label>
-                    <select
-                        id="gender"
-                        value={gender}
-                        onChange={(e) => setgender(e.target.value)}
-                    >
-                        <option value="" disabled>Chọn giới tính</option>
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                    </select>
-
-                    <label htmlFor="phone-number">Số Điện Thoại:</label>
-                    <input
-                        id="phone-number"
-                        type="text"
-                        value={phone_number}
-                        onChange={(e) => setphone_number(e.target.value)}
-                    />
-
-                    {errors.email && (
-                        <p className={style["error-message"]}>{errors.email}</p>
-                    )}
-
-                    <label htmlFor="password" className={style["form-title"]}>
-                        Mật khẩu
-                    </label>
-                    <div className={style["password-input-container"]}>
+                    <div className={style["form-column"]}>
+                        <label htmlFor="username" className={style["form-title"]}>
+                            Tên đăng nhập
+                        </label>
                         <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            name="password"
-                            placeholder="Nhập mật khẩu"
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Nhập tài khoản"
                             required
-                            value={password}
-                            onChange={handlePasswordChange}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
-                        <span
-                            className={style["password-toggle-icon"]}
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            <FontAwesomeIcon
-                                icon={showPassword ? "eye-slash" : "eye"}
-                            />
-                        </span>
+                        {errors.username && (
+                            <p className={style["error-message"]}>{'Tên đăng nhập đã tồn tại'}</p>
+                        )}
                     </div>
-                    {errors.password && (
-                        <p className={style["error-message"]}>{errors.password[0]}</p>
-                    )}
-                    {requirement && (
-                        <div className={style["password-requirement"]}>
-                            <p style={{ color: "red" }}>• {requirement.text}</p>
+
+                    <div className={style["form-column"]}>
+
+                        <label htmlFor="email" className={style["form-title"]}>
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Nhập email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        {errors.email && (
+                            <p className={style["error-message"]}>{errors.message}</p>
+                        )}
+                    </div>
+                    
+                    <div className={style["form-column"]}>
+                        <label htmlFor="password" className={style["form-title"]}>
+                            Mật khẩu
+                        </label>
+                        <div className={style["password-input-container"]}>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                name="password"
+                                placeholder="Nhập mật khẩu"
+                                required
+                                value={password}
+                                onChange={handlePasswordChange}
+                            />
+                            <span
+                                className={style["password-toggle-icon"]}
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                <FontAwesomeIcon
+                                    icon={showPassword ? "eye-slash" : "eye"}
+                                />
+                            </span>
                         </div>
-                    )}
 
-                    <label htmlFor="confirm-password" className={style["form-title"]}>
-                        Xác nhận mật khẩu
-                    </label>
-                    <div className={style["password-input-container"]}>
-                        <input
-                            type={showConfirmPassword ? "text" : "password"}
-                            id="confirm-password"
-                            name="confirm-password"
-                            placeholder="Xác nhận mật khẩu"
-                            required
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                        <span
-                            className={style["password-toggle-icon"]}
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
-                            <FontAwesomeIcon
-                                icon={showConfirmPassword ? "eye-slash" : "eye"}
-                            />
-                        </span>
+                        {errors.password && (
+                            <p className={style["error-message"]}>{errors.password[0]}</p>
+                        )}
+                        {requirement && (
+                            <div className={style["password-requirement"]}>
+                                <p style={{ color: "red" }}>• {requirement.text}</p>
+                            </div>
+                        )}
                     </div>
-                    {errors.confirmPassword && (
-                        <p className={style["error-message"]}>
-                            {errors.confirmPassword}
-                        </p>
-                    )}
+
+                    <div className={style["form-column"]}>
+                        <label htmlFor="full_name" className={style["form-title"]}>
+                            Họ và Tên
+                        </label>
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="Tên đầy đủ"
+                            placeholder="Nhập họ và tên"
+                            required
+                            value={full_name}
+                            onChange={(e) => setfull_name(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={style["form-column"]}>
+                        <label htmlFor="confirm-password" className={style["form-title"]}>
+                            Xác nhận mật khẩu
+                        </label>
+                        <div className={style["password-input-container"]}>
+                            <input
+                                type={showConfirmPassword ? "text" : "password"}
+                                id="confirm-password"
+                                name="confirm-password"
+                                placeholder="Xác nhận mật khẩu"
+                                required
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            <span
+                                className={style["password-toggle-icon"]}
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                                <FontAwesomeIcon
+                                    icon={showConfirmPassword ? "eye-slash" : "eye"}
+                                />
+                            </span>
+                        </div>
+                        {errors.confirmPassword && (
+                            <p className={style["error-message"]}>
+                                {errors.confirmPassword}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className={style["form-column"]}>
+                        <label htmlFor="gender" className={style["form-title"]}>
+                            Giới tính
+                        </label>
+                        <select
+                            id="gender"
+                            value={gender}
+                            onChange={(e) => setgender(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+
+
+                    <div className={style["form-column"]}>
+                        <label htmlFor="phone-number" className={style["form-title"]}>
+                            Số Điện Thoại
+                        </label>
+                        <input
+                            id="phone-number"
+                            type="text"
+                            value={phone_number}
+                            onChange={(e) => setphone_number(e.target.value)}
+                            required
+                        />
+                        {errors.phone_number && (
+                            <p className={style["error-message"]}>{errors.phone_number}</p>
+                        )}
+                    </div>
 
                     <button type="submit" className={style["signup-btn"]}>
                         Đăng ký

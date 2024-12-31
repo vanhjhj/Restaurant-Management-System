@@ -1,127 +1,156 @@
 .password-input-container input[type="password"]::-ms-reveal,
-.password-input-container input[type="password"]::-ms-clear, 
-.password-input-container input[type="password"]::-webkit-clear-button, 
+.password-input-container input[type="password"]::-ms-clear,
+.password-input-container input[type="password"]::-webkit-clear-button,
 .password-input-container input[type="password"]::-webkit-reveal-button {
   display: none; /* Ẩn icon mặc định */
 }
 
 /* Toàn bộ container */
 .signup-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 100px;
-    font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
 }
 
 /* Hộp chứa form */
 .signup-box {
-    padding: 20px 70px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 400px;
-    text-align: center;
-    margin-bottom: 70px;
+  padding: 30px 50px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 800px;
+  text-align: center;
+  margin-bottom: 70px;
 }
 
-.signup-form{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 5px;
+.signup-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Chia form thành 2 cột */
+  gap: 20px 30px; /* Khoảng cách giữa các phần tử */
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Khoảng cách giữa label và input */
 }
 
 /* Tiêu đề */
-.signup-form .title {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 24px;
-    font-weight: bold;
+.title {
+  margin-bottom: 20px;
+  color: #35737d;
+  font-size: 45px;
 }
 
-/* Label */
-.signup-form .form-title {
-    display: block;
-    margin-bottom: 8px;
-    text-align: left;
-    color: #555;
-    font-size: 14px;
+.form-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+  margin-right: auto;
+  margin-bottom: 6px;
 }
 
 /* Input chung */
-.signup-form input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
+.form-column input,
+.form-column select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.form-column select {
+  appearance: none; /* Loại bỏ kiểu mặc định của trình duyệt */
+  background-image: none; /* Loại bỏ mũi tên mặc định */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.signup-form input:focus,
+.signup-form select:focus {
+  border-color: #35737d;
+  box-shadow: 0 0 5px rgba(53, 115, 125, 0.5);
+  outline: none;
+}
+
+.signup-form input:hover,
+.signup-form select:hover {
+  border-color: #28585f;
 }
 
 /* Vùng chứa input và icon */
 .password-input-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.3s ease-in-out;
-}
-
-.password-requirement {
-    font-size: 14px;
-    margin-right: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Icon "mắt" */
 .password-toggle-icon {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #666;
-    transition: color 0.3s ease;
-    top:20%;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+  transition: color 0.3s ease;
 }
 
+.password-toggle-icon:hover {
+  color: #35737d;
+}
+
+/* Yêu cầu mật khẩu */
+.password-requirement {
+  font-size: 13px;
+  color: red;
+  margin-top: -5px;
+  text-align: left;
+}
 
 /* Nút đăng ký */
-.signup-form .signup-btn {
-    width: 60%;
-    padding: 10px;
-    margin:auto;
-    background: #35737d;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+.signup-btn {
+  width: 100%;
+  padding: 15px;
+  background: #35737d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  grid-column: span 2; /* Chiếm toàn bộ chiều ngang */
 }
 
-.signup-box .signup-btn:hover {
-    background:  #2c5e64;
+.signup-btn:hover {
+  background: #28585f;
+  transform: scale(1.05); /* Tăng kích thước khi hover */
 }
 
 /* Nút chuyển sang đăng nhập */
 .login-btn {
-    background: none;
-    border: none;
-    color: black;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 10px;
-    text-decoration: underline;
+  background: none;
+  border: none;
+  color: #35737d;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  text-decoration: underline;
+  grid-column: span 2; /* Chiếm toàn bộ chiều ngang */
 }
 
 .login-btn:hover {
-    color: #76abe3;
+  color: #28585f;
 }
 
 /* Lỗi */
 .error-message {
-    color: red;
-    font-size: 14px;
-    margin-bottom: 10px;
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: left;
 }
