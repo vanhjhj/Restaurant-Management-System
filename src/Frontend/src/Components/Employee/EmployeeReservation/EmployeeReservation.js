@@ -150,7 +150,6 @@ function EmployeeReservation() {
                 console.error(error);
         }
     }
-  };
 
     const handleCancelReservation = async (id) => {
         const activeToken = await ensureActiveToken();
@@ -164,7 +163,6 @@ function EmployeeReservation() {
                     console.error(error);
         }
     }
-  };
 
   const filterReservation = (r, name, status) => {
     if (status == "All")
@@ -359,6 +357,6 @@ function EmployeeReservation() {
             
         </div>
     )
-}
+};
 
 export default EmployeeReservation;
