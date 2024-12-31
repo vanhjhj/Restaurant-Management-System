@@ -148,9 +148,14 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                                 </li>
                                 <li>
                                   {" "}
-                                  <button onClick={handleLogoutBtn}>
-                                    Đăng xuất
-                                  </button>
+                                  <div className={style["logout-section"]}>
+                                    <button
+                                      onClick={handleLogoutBtn}
+                                      className={style["logout-button"]}
+                                    >
+                                      Đăng xuất
+                                    </button>
+                                  </div>
                                 </li>
                               </>
                             ) : (

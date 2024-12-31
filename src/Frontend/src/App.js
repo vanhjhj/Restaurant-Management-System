@@ -381,22 +381,10 @@ function App() {
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
-                allowedRoles={["Employee"]}
-                userRole={userRole}
-              >
-                <EmployeeDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/table"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
                 allowedRoles={["Employee", "Admin"]}
                 userRole={userRole}
               >
-                <EmployeeReservation />
+                <EmployeeReservation/>
               </ProtectedRoute>
             }
           />

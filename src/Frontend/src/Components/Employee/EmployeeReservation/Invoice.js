@@ -33,6 +33,9 @@ function Invoice({ tableID, setShowInvoice }) {
             if (type === 'editItem') {
                 return 'Chỉnh sửa không hợp lệ';
             }
+            if (type === 'delete') {
+                return 'Không thể xóa';
+            }
         }
         return ''
     }
@@ -130,7 +133,7 @@ function Invoice({ tableID, setShowInvoice }) {
         try {
             if (errorTableMessage === 404) {
                 await createOrder(activeToken, tableID);
-                setErrorTableMessage(0);
+
                 const orderData = await fetchOrderData(activeToken, tableID);
                 setInvoiceData(orderData);
 
@@ -143,11 +146,15 @@ function Invoice({ tableID, setShowInvoice }) {
                     changeQuantity: false,
                 })));
 
+                const newData = await fetchOrderData(activeToken, tableID);
+                setInvoiceData(newData);
             }
             else {
                 const tablesData = await addFood(activeToken, oID, fID, 1, "");
                 fetchData();
             }
+            setErrorTableMessage();
+            setErrorType();
         }
         catch (error) {
             setErrorTableMessage(error.response.status);
@@ -171,9 +178,12 @@ function Invoice({ tableID, setShowInvoice }) {
             ))
             const orderData = await fetchOrderData(activeToken, tableID);
             setInvoiceData(orderData);
+            setErrorTableMessage();
+            setErrorType();
         }
         catch (error) {
             setErrorTableMessage(error.response.status);
+            setErrorType('delete');
         }
     }
 
@@ -208,6 +218,8 @@ function Invoice({ tableID, setShowInvoice }) {
                 change === 'quantity' ? setQuantity(0) : setNoteData('');
                 const orderData = await fetchOrderData(activeToken, tableID);
                 setInvoiceData(orderData);
+                setErrorTableMessage();
+                setErrorType();
             }
             catch (error) {
                 setErrorTableMessage(error.response.status);
@@ -303,7 +315,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                                         }        
                                                         <li className={style['change-status']}
                                                         onClick={() => handleChangeStatus(item.id)}>{item.status}</li>
-                                                        <li>{item.total}.VND</li>
+                                                        <li>{item.total} .VND</li>
                                                     </ul>
                                                     <div className={style['more-content']}>
                                                         <p className={style['mc-title']}>Note: </p>

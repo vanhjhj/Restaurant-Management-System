@@ -10,3 +10,33 @@ export const fetchFeedbacksData = async () => {
         throw error;
     }
 }
+
+export const getFeedBackFilter = async (positive, date) => {
+    try {
+        let rate = '';
+        let isFilter = '?';
+        if (positive === 'a' && date === 'a') {
+            isFilter = '';
+        }
+        if (positive === 'a') {
+            rate = '';
+        }
+        else if (positive === 'p') {
+            rate = 'min_ovrpoint=3.5&'
+        }
+        else if (positive === 'n'){
+            rate = 'max_ovrpoint=3&'
+        }
+        if (date === 'a') {
+            date = '';
+        }
+        else {
+            date = `date=${date}`;
+        }
+        const response = await axios.get(`${API_BASE_URL}/booking/feedbacks/${isFilter}${rate}${date}`);
+        return response.data;
+    }
+    catch(error) {
+        throw error;
+    }
+}

@@ -96,6 +96,7 @@ function EmployeeReservation() {
             preReser.map((r) =>
                 r.id === id ? { ...r, isEditing: false } : r)
         );
+        setErrorMessage();
     }
 
     const handleSave = () => {
@@ -104,8 +105,7 @@ function EmployeeReservation() {
         };
         const assignTable = async () => {
             if (!hasIdInTablesData()) {
-                console.log(inputTable);
-                console.log(tables);
+                setErrorMessage('Lỗi: Bàn trên không tồn tại hoặc không thể gán.')
                 return;
             }
             const activeToken = await ensureActiveToken();
@@ -113,6 +113,7 @@ function EmployeeReservation() {
                 const result = await assignTableAPI(activeToken, inputTable.id, inputTable.value);
                 fetchData();
                 setInputTable({ id: null, value: "" });
+                setErrorMessage();
             }
             catch (error) {
                 console.error(error);
@@ -140,6 +141,7 @@ function EmployeeReservation() {
             createOrder(accessToken, tID);
             fetchData();
             setInputTable({ id: null, value: "" });
+            setErrorMessage();
         }
         catch (error) {
                 console.error(error);
@@ -152,6 +154,7 @@ function EmployeeReservation() {
                 const result = await markCancelReservationAPI(activeToken, id);
                 fetchData();
                 setInputTable({ id: null, value: "" });
+                setErrorMessage();
             }
             catch (error) {
                     console.error(error);
@@ -209,7 +212,7 @@ function EmployeeReservation() {
                                     <input type='text'  
                                         placeholder="Tìm theo tên..."
                                         value={searchName}
-                                        onChange={e => setSearchName(e.target.value) }
+                                        onChange={e => setSearchName(e.target.value)}
                                         className={style['input-search-cus']} />
                                     <button type="button" className={style["input-search-btn"]}>
                                         <i className="fas fa-search"></i>
@@ -246,6 +249,9 @@ function EmployeeReservation() {
                                         <p>Số điện thoại: {r.phone_number}</p>
                                         <p>Thời gian: {r.time}</p>
                                         <p>Ghi chú: {r.note}</p>
+                                        <div className={style['']}>
+                                                {errorMessage ? <p className={style['error-message']}>{errorMessage}</p> : <p></p>}
+                                            </div>
                                         <div className={style['input-table-ctn']}>
                                             
                                             {r.isEditing ? (
