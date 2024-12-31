@@ -103,7 +103,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Feedback
-        fields = ('id', 'order', 'serve_point', 'food_point', 'price_point', 'space_point', 'overall_point', 'comment')
+        fields = ('id', 'order', 'name', 'date', 'serve_point', 'food_point', 'price_point', 'space_point', 'overall_point', 'comment')
         extra_kwargs = {
             'order': {'read_only': True},
             'overall_point': {'read_only': True}

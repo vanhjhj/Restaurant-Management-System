@@ -9,7 +9,6 @@ django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
 django-filter = "*"
 pillow = "*"
-django = "*"
 djangorestframework = "*"
 mysqlclient = "*"
 

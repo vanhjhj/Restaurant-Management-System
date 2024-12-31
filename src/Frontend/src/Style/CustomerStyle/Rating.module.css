@@ -1,0 +1,11 @@
+.review-info-ctn{
+    text-align: center;
+}
+
+.rating-text-ctn{
+}
+
+.rating-text-ctn textarea{
+    display: block;
+    margin:auto;
+}

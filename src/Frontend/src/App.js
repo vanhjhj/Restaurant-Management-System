@@ -44,6 +44,8 @@ import AddTable from "./Components/Admin/ManageTable/AddTable";
 import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
+import Review from "./Components/Customer/Review"
+import Rating from "./Components/Customer/Rating"
 
 library.add(faEye, faEyeSlash);
 
@@ -87,7 +89,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:id" element={<FoodDetail />} />
+          <Route path="/menu/:id" element={<FoodDetail/>} />
+          <Route path="/review" element={<Review/>}/>
+          <Route path="/review/rating/:invoiceID" element={<Rating/>}/>
           <Route
             path="/reservation"
             element={<BookingTable isLoggedIn={isLoggedIn} />}
@@ -378,22 +382,10 @@ function App() {
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
-                allowedRoles={["Employee"]}
-                userRole={userRole}
-              >
-                <EmployeeDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/table"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
                 allowedRoles={["Employee", "Admin"]}
                 userRole={userRole}
               >
-                <EmployeeReservation />
+                <EmployeeReservation/>
               </ProtectedRoute>
             }
           />

@@ -628,6 +628,7 @@ class OrderItemListAPIView(generics.ListAPIView):
 class FeedbackListCreateAPIView(generics.ListCreateAPIView):
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
+    filterset_class = FeedbackFilterSet
     ordering_fields = ['serve_point', 'food_point', 'price_point', 'space_point', 'overall_point']
     permission_classes = [permissions.AllowAny]
 
