@@ -55,9 +55,6 @@ function Invoice({ tableID, setShowInvoice }) {
         }
         return ''
     }
-    return "";
-  };
-
   const errorMessage = handleError(errorTableMessage, errorType);
 
   const NumberWithSpaces = ({ number }) => {
@@ -184,7 +181,6 @@ function Invoice({ tableID, setShowInvoice }) {
             setErrorType('addItem');
         }
     }
-  };
 
   const handleEditing = (itemID, itemNote) => {
     setItemsData((preItem) =>
@@ -210,7 +206,7 @@ function Invoice({ tableID, setShowInvoice }) {
             setErrorType('delete');
         }
     }
-  };
+
 
   const handleCancel = () => {};
 
@@ -249,7 +245,6 @@ function Invoice({ tableID, setShowInvoice }) {
                 setErrorType('editItem');
             }
     }
-  };
 
   const handleKeyDown = async (event, itemID, q, note, change) => {
     if (event.key === "Enter") {
