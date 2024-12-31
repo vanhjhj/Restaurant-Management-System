@@ -57,8 +57,10 @@ class OrderItemFilterSet(django_filters.FilterSet):
         fields = ['order', 'menu_item']
 
 class FeedbackFilterSet(django_filters.FilterSet):
-    date = django_filters.DateFilter(field_name="date")
+    date = django_filters.DateFilter(field_name="date", lookup_expr='date')
+    max_ovrpoint = django_filters.NumberFilter(field_name="overall_point", lookup_expr='lte')
+    min_ovrpoint = django_filters.NumberFilter(field_name="overall_point", lookup_expr='gte')
 
     class Meta:
         model = Feedback
-        fields = ['date']
+        fields = ['date', 'overall_point']

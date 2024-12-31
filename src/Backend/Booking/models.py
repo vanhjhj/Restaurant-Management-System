@@ -105,7 +105,7 @@ class OrderItem(models.Model):
 class Feedback(models.Model):
     order = models.ForeignKey(Order, related_name='feedback', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True, null=True)
-    date = models.DateField(default=datetime.datetime.now)
+    date = models.DateTimeField(default=datetime.datetime.now)
     serve_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
     food_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
     price_point = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], default=5)
