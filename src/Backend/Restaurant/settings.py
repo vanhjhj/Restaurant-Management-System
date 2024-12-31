@@ -92,9 +92,14 @@ WSGI_APPLICATION = 'Restaurant.wsgi.application'
 
 # connect to mysql
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Restaurant_Management_System',
+        'HOST' : '127.0.0.1',
+        'PORT' : '3306',
+        'USER' : 'root',
+        'PASSWORD' : 'introse',
+    }
 }
 
 
