@@ -258,9 +258,7 @@ function ViewSalesReports() {
       newDate.setMonth(newDate.getMonth() - 1);
     } else if (reportType === "Tháng") {
       newDate.setFullYear(newDate.getFullYear() - 1);
-    } else if (reportType === "Quý") {
-      newDate.setMonth(newDate.getMonth() - 3); // Giảm 3 tháng
-    } else if (reportType === "Năm") {
+    } else if (reportType === "Năm"||reportType === "Quý") {
       newDate.setFullYear(newDate.getFullYear() - 1);
     }
     setCurrentDate(newDate);
@@ -284,15 +282,7 @@ function ViewSalesReports() {
         return;
       }
       newDate.setFullYear(newDate.getFullYear() + 1);
-    } else if (reportType === "Quý") {
-      if (
-        newDate.getFullYear() === today.getFullYear() &&
-        Math.floor(newDate.getMonth() / 3) >= Math.floor(today.getMonth() / 3)
-      ) {
-        return;
-      }
-      newDate.setMonth(newDate.getMonth() + 3); // Tăng 3 tháng
-    } else if (reportType === "Năm") {
+    }  else if (reportType === "Năm"||reportType === "Quý") {
       if (newDate.getFullYear() >= today.getFullYear()) {
         return;
       }
