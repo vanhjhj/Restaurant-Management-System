@@ -11,6 +11,9 @@ import { useAuth } from "../../../Components/Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
 const ManageMenu = () => {
   const [categories, setCategories] = useState([]);
@@ -125,16 +128,6 @@ const ManageMenu = () => {
   };
 
   const handleCreateNewCategory = async () => {
-    if (!newCategoryName.trim()) {
-      setError("Tên mục không được để trống!");
-      return;
-    }
-
-    if (newCategoryName.length > 255) {
-      setError("Tên mục không được quá 255 ký tự.");
-      return;
-    }
-
     try {
       const activeToken = await ensureActiveToken();
       const newCategory = await createNewMenuTab(
@@ -158,6 +151,18 @@ const ManageMenu = () => {
         text: "Tạo mục mới thất bại. Vui lòng thử lại!",
         type: "error",
       });
+    }
+  };
+
+  const handleAddFoodClick = () => {
+    if (categories.length === 0) {
+      setModal({
+        isOpen: true,
+        text: "Chưa có danh mục nào. Bạn cần tạo ít nhất một danh mục trước khi thêm món ăn.",
+        type: "error",
+      });
+    } else {
+      navigate("/admin-dashboard/add-food");
     }
   };
 
@@ -188,12 +193,12 @@ const ManageMenu = () => {
           className={style["add-category-button"]}
           onClick={() => setShowNewCategoryForm(true)}
         >
-          Tạo mục mới +
+          Tạo mục mới <FontAwesomeIcon icon={faPlus} />
         </button>
       </div>
 
       <div className={style["menu-content"]}>
-        <h2>Quản lý thực đơn</h2>
+        <h2>QUẢN LÝ THỰC ĐƠN</h2>
         {foodItems.length === 0 ? (
           <p className={style["no-food-message"]}>
             Chưa có món ăn nào, hãy thêm mới!
@@ -216,13 +221,13 @@ const ManageMenu = () => {
                       navigate(`/admin-dashboard/edit-fooditem/${item.id}`)
                     }
                   >
-                    Chỉnh sửa
+                    <AiOutlineEdit size={20} /> Chỉnh sửa
                   </button>
                   <button
                     className={style["delete-button"]}
                     onClick={() => handleDelete(item.id)}
                   >
-                    Xóa
+                    <AiOutlineDelete size={20} /> Xóa
                   </button>
                 </div>
               </div>
@@ -231,11 +236,7 @@ const ManageMenu = () => {
         )}
         <button
           className={style["add-food-button"]}
-          onClick={() => {
-            if (categories.length === 0)
-              alert("Vui lòng tạo ít nhất một mục trước khi thêm món ăn mới!");
-            else navigate("/admin-dashboard/add-food");
-          }}
+          onClick={handleAddFoodClick}
         >
           Tạo món ăn mới +
         </button>

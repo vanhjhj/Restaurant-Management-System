@@ -129,82 +129,86 @@ function ManageDepartment() {
   }, [accessToken]);
 
   return (
-    <div className={style["manage-department-container"]}>
-      <h2 className={style["manage-department-header"]}>Quản lý bộ phận</h2>
+    <div className={style["manage-department"]}>
+      <div className={style["manage-department-container"]}>
+        <h2 className={style["manage-department-header"]}>Quản lý bộ phận</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {loading ? (
-        <p>Đang tải dữ liệu...</p>
-      ) : departments.length === 0 ? (
-        <div>
-          <p>Hiện tại chưa có bộ phận nào!</p>
-          <div className={style["button-container"]}>
-            <button
-              className={style["manage-department-button"]}
-              onClick={() => navigate("/admin-dashboard/add-department")}
-            >
-              Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
-            </button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {loading ? (
+          <p>Đang tải dữ liệu...</p>
+        ) : departments.length === 0 ? (
+          <div className={style["no-department"]}>
+            <p>Hiện tại chưa có bộ phận nào!</p>
+            <div className={style["button-container"]}>
+              <button
+                className={style["manage-department-button"]}
+                onClick={() => navigate("/admin-dashboard/add-department")}
+              >
+                Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <>
-          <table className={style["department-table"]}>
-            <thead>
-              <tr>
-                <th>Tên bộ phận</th>
-                <th>Lương</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {departments.map((dept) => (
-                <tr key={dept.id}>
-                  <td>{dept.name}</td>
-                  <td>
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(dept.salary)}
-                  </td>
-                  <td>
-                    <button
-                      className={style["edit-button"]}
-                      onClick={() => handleEditDepartment(dept.id)}
-                    >
-                      Sửa <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                    <button
-                      className={style["delete-button"]}
-                      onClick={() => handleDeleteDepartment(dept.id)}
-                    >
-                      Xóa <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        ) : (
+          <>
+            <div className={style["department-table-content"]}>
+              <table className={style["department-table"]}>
+                <thead>
+                  <tr>
+                    <th>Tên bộ phận</th>
+                    <th>Lương</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {departments.map((dept) => (
+                    <tr key={dept.id}>
+                      <td>{dept.name}</td>
+                      <td>
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(dept.salary)}
+                      </td>
+                      <td>
+                        <button
+                          className={style["edit-button"]}
+                          onClick={() => handleEditDepartment(dept.id)}
+                        >
+                          Sửa <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                        <button
+                          className={style["delete-button"]}
+                          onClick={() => handleDeleteDepartment(dept.id)}
+                        >
+                          Xóa <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-          <div className={style["button-container"]}>
-            <button
-              className={style["manage-department-button"]}
-              onClick={() => navigate("/admin-dashboard/add-department")}
-            >
-              Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
-            </button>
-          </div>
-        </>
-      )}
-      {modal.isOpen && (
-        <ModalGeneral
-          isOpen={modal.isOpen}
-          text={modal.text}
-          type={modal.type}
-          onClose={() => setModal({ isOpen: false })}
-          onConfirm={modal.onConfirm}
-        />
-      )}
+              <div className={style["button-container"]}>
+                <button
+                  className={style["manage-department-button"]}
+                  onClick={() => navigate("/admin-dashboard/add-department")}
+                >
+                  Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+        {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={() => setModal({ isOpen: false })}
+            onConfirm={modal.onConfirm}
+          />
+        )}
+      </div>
     </div>
   );
 }

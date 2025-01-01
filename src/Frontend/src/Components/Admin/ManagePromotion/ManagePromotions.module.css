@@ -1,21 +1,29 @@
+.manage-Promotions {
+  margin-top: 30px;
+  font-size: 20px;
+  font-family: "Times New Roman", Times, serif;
+}
+
 .manage-Promotions h2 {
-  text-align: center;
-  font-size: 42px;
   font-weight: bold;
+  font-size: 42px;
   color: #514f00;
-  margin-bottom: 50px;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .manage-Promotions .add-discount-button:hover {
-  background-color: #6b8288;
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
 }
 
 .manage-Promotions .no-promotions {
-  text-align: center;
+  text-align: left;
   margin-top: 20px;
-  font-size: 28px;
+  font-size: 22px;
   color: #000000;
-  font-weight: bold;
+  font-style: italic;
   padding: 15px;
 }
 
@@ -23,12 +31,13 @@
   display: block;
   margin: 40px auto;
   padding: 10px 20px;
-  background-color: #0f4758;
+  background-color: #116169;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .manage-Promotions .discount-cards {
@@ -44,7 +53,7 @@
   flex-direction: column;
   justify-content: space-between;
   width: 250px;
-  padding: 15px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -54,56 +63,48 @@
 
 .manage-Promotions .discount-image {
   width: 100%;
-  height: 250px;
+  height: 175px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 15px;
 }
 
-.manage-Promotions .discount-title {
-  font-size: 1.4rem;
+.manage-Promotions .discount-code {
   color: #333;
   margin: 10px 0;
   font-weight: bold;
   transition: text-decoration 0.3s ease;
-}
-
-.manage-Promotions .discount-description {
-  font-size: 1rem;
-  color: #666;
-  margin: 0 10px 10px;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: text-decoration 0.3s ease;
+  font-size: 18px;
 }
 
 .manage-Promotions .button-group {
   display: flex;
-  justify-content: space-evenly; /* Căn đều khoảng cách giữa các nút */
-  width: 100%;
+  justify-content: space-around;
   margin-top: 10px;
+  border: none;
 }
 
 .manage-Promotions .edit-button,
 .delete-button {
-  padding: 8px 12px;
-  font-size: 14px;
+  display: block;
+  margin: 5px auto;
+  padding: 5px 5px;
+  color: white;
   border: none;
   cursor: pointer;
   border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .manage-Promotions .edit-button {
-  background-color: #0f4758;
+  background-color: #116169;
   color: white;
 }
 
 .manage-Promotions .edit-button:hover {
-  background-color: #6b8288;
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
 }
 
 .manage-Promotions .delete-button {
@@ -113,4 +114,5 @@
 
 .manage-Promotions .delete-button:hover {
   background-color: #d32f2f;
+  transform: translateY(-2px);
 }

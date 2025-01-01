@@ -108,7 +108,9 @@ function TableManagement() {
 
       <div className={style["content"]}>
         {tables.length === 0 ? (
-          <p className={style["no-tables"]}>Hiện tại chưa có bàn nào.</p>
+          <div className={style["no-tables"]}>
+            <p>Hiện tại chưa có bàn nào!</p>
+          </div>
         ) : (
           // Table List
           <div className={style["table-list"]}>

@@ -187,127 +187,129 @@ function FillInfoEmployee() {
   };
 
   return (
-    <div className={style["fill-info-employee-container"]}>
-      <h2 className={style["fill-info-employee-header"]}>
-        Thông tin nhân viên
-      </h2>
-      {error && <p className={style["error-message"]}>{error}</p>}
-      <form
-        className={style["fill-info-employee-form"]}
-        onSubmit={(e) => e.preventDefault()}
-      >
-        {/* Họ và tên */}
-        <div className={style["form-group"]}>
-          <label>Họ và Tên</label>
-          <input
-            type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleInputChange}
-            placeholder="Nhập họ và tên"
-            required
-          />
-        </div>
-
-        {/* Ngày sinh */}
-        <div className={style["form-group"]}>
-          <label>Ngày sinh</label>
-          <input
-            type="date"
-            name="date_of_birth"
-            value={formData.date_of_birth}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-
-        {/* Giới tính */}
-        <div className={style["form-group"]}>
-          <label>Giới tính</label>
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Chọn giới tính</option>
-            <option value="Nam">Nam</option>
-            <option value="Nữ">Nữ</option>
-          </select>
-        </div>
-
-        {/* Ngày bắt đầu làm việc */}
-        <div className={style["form-group"]}>
-          <label>Ngày bắt đầu làm việc</label>
-          <input
-            type="date"
-            name="start_working_date"
-            value={formData.start_working_date}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-
-        {/* Số điện thoại */}
-        <div className={style["form-group"]}>
-          <label>Số Điện Thoại</label>
-          <input
-            type="text"
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={handleInputChange}
-            placeholder="Nhập số điện thoại"
-          />
-        </div>
-
-        {/* Bộ phận */}
-        <div className={style["form-group"]}>
-          <label>Bộ phận</label>
-          <select
-            name="department"
-            value={formData.department}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Chọn bộ phận</option>
-            {departments.map((dept) => (
-              <option key={dept.id} value={dept.id}>
-                {dept.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Địa chỉ */}
-        <div className={style["form-group"]}>
-          <label>Địa chỉ</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            placeholder="Nhập địa chỉ"
-          />
-        </div>
-
-        <button
-          className={style["submit-button"]}
-          onClick={handleSaveInfo}
-          disabled={isSubmitting}
+    <div className={style["fill-info-employee"]}>
+      <div className={style["fill-info-employee-container"]}>
+        <h2 className={style["fill-info-employee-header"]}>
+          Thông tin nhân viên
+        </h2>
+        {error && <p className={style["error-message"]}>{error}</p>}
+        <form
+          className={style["fill-info-employee-form"]}
+          onSubmit={(e) => e.preventDefault()}
         >
-          {isSubmitting ? "Đang lưu..." : "Lưu Thông Tin"}
-        </button>
-      </form>
+          {/* Họ và tên */}
+          <div className={style["form-group"]}>
+            <label>Họ và Tên</label>
+            <input
+              type="text"
+              name="full_name"
+              value={formData.full_name}
+              onChange={handleInputChange}
+              placeholder="Nhập họ và tên"
+              required
+            />
+          </div>
 
-      {modal.isOpen && (
-        <ModalGeneral
-          isOpen={modal.isOpen}
-          text={modal.text}
-          type={modal.type}
-          onClose={handleCloseModal}
-          onConfirm={modal.onConfirm}
-        />
-      )}
+          {/* Ngày sinh */}
+          <div className={style["form-group"]}>
+            <label>Ngày sinh</label>
+            <input
+              type="date"
+              name="date_of_birth"
+              value={formData.date_of_birth}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+
+          {/* Giới tính */}
+          <div className={style["form-group"]}>
+            <label>Giới tính</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Chọn giới tính</option>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+            </select>
+          </div>
+
+          {/* Ngày bắt đầu làm việc */}
+          <div className={style["form-group"]}>
+            <label>Ngày bắt đầu làm việc</label>
+            <input
+              type="date"
+              name="start_working_date"
+              value={formData.start_working_date}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+
+          {/* Số điện thoại */}
+          <div className={style["form-group"]}>
+            <label>Số Điện Thoại</label>
+            <input
+              type="text"
+              name="phone_number"
+              value={formData.phone_number}
+              onChange={handleInputChange}
+              placeholder="Nhập số điện thoại"
+            />
+          </div>
+
+          {/* Bộ phận */}
+          <div className={style["form-group"]}>
+            <label>Bộ phận</label>
+            <select
+              name="department"
+              value={formData.department}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Chọn bộ phận</option>
+              {departments.map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Địa chỉ */}
+          <div className={style["form-group"]}>
+            <label>Địa chỉ</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              placeholder="Nhập địa chỉ"
+            />
+          </div>
+
+          <button
+            className={style["submit-button"]}
+            onClick={handleSaveInfo}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Đang lưu..." : "Lưu Thông Tin"}
+          </button>
+        </form>
+
+        {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={handleCloseModal}
+            onConfirm={modal.onConfirm}
+          />
+        )}
+      </div>
     </div>
   );
 }

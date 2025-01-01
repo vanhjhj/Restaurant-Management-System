@@ -133,7 +133,7 @@ function ManageEmployees() {
       {loading ? (
         <p>Đang tải dữ liệu...</p>
       ) : employees.length === 0 ? (
-        <div>
+        <div className={style["no-employee"]}>
           <p>Hiện tại chưa có nhân viên nào!</p>
           <div className={style["button-container"]}>
             <button

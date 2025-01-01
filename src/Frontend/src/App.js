@@ -44,6 +44,7 @@ import AddTable from "./Components/Admin/ManageTable/AddTable";
 import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
+import AdminDashboard from "./Components/Admin/AdminDashboard";
 
 library.add(faEye, faEyeSlash);
 
@@ -146,6 +147,18 @@ function App() {
               </ProtectedRoute>
             }
           >
+            <Route
+              path="main"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Admin"]}
+                  userRole={userRole}
+                >
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="manage-restaurant-info"
               element={

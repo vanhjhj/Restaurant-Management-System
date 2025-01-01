@@ -121,19 +121,19 @@ function EditDepartment() {
   }
 
   return (
-    <div className={style["EditDepartment-container"]}>
-      <h2 className={style["header"]}>Sửa Bộ Phận</h2>
-      <label htmlFor="department-name">Tên bộ phận:</label>
-      <input
-        type="text"
-        name="name"
-        className={style["input"]}
-        value={department.name}
-        onChange={handleInputChange}
-        placeholder="Tên bộ phận"
-        required
-      />
-      <div className={style["form-group"]}>
+    <div className={style["edit-department"]}>
+      <div className={style["EditDepartment-container"]}>
+        <h2 className={style["header"]}>Sửa Bộ Phận</h2>
+        <label htmlFor="department-name">Tên bộ phận:</label>
+        <input
+          type="text"
+          name="name"
+          className={style["input"]}
+          value={department.name}
+          onChange={handleInputChange}
+          placeholder="Tên bộ phận"
+          required
+        />
         <label htmlFor="salary">Lương của bộ phận:</label>
         <input
           type="text"
@@ -146,32 +146,23 @@ function EditDepartment() {
             setDepartment({ ...department, salary: rawValue });
           }}
         />
-      </div>
 
-      <div className={style["buttons"]}>
         <button
           className={style["save-button"]}
           onClick={handleUpdateDepartment}
         >
-          Cập nhật
+          Cập nhật bộ phận
         </button>
-        <button
-          className={style["cancel-button"]}
-          onClick={() => navigate("/admin-dashboard/manage-department")}
-        >
-          Hủy
-        </button>
+        {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={handleCloseModal}
+            onConfirm={modal.onConfirm}
+          />
+        )}
       </div>
-
-      {modal.isOpen && (
-        <ModalGeneral
-          isOpen={modal.isOpen}
-          text={modal.text}
-          type={modal.type}
-          onClose={handleCloseModal}
-          onConfirm={modal.onConfirm}
-        />
-      )}
     </div>
   );
 }

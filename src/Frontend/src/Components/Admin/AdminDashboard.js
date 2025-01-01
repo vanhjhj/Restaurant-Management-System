@@ -1,13 +1,13 @@
 import React from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import style from "./../../Style/AdminStyle/AdminLayout.module.css";
+import style from "./../../Style/AdminStyle/AdminDashboard.module.css";
 
-function AdminDashBoard() {
+function AdminDashboard() {
   return (
     <div className={style["content"]}>
       <h3>Chào mừng tới với trang của admin!</h3>
+      <p>Hãy chọn một chức năng từ menu bên trái để bắt đầu.</p>
     </div>
   );
 }
 
-export default AdminDashBoard;
+export default AdminDashboard;
