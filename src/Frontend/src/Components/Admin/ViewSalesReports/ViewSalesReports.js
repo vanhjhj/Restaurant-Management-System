@@ -126,7 +126,7 @@ function ViewSalesReports() {
     
       // Chỉ hiển thị nhãn cách 2 ngày và luôn hiển thị "Hôm nay"
       return isToday
-        ? "Hôm nay"
+        ? `${date.toLocaleDateString("vi-VN", { day: "numeric", month: "numeric" })} (Hôm nay)`
         : i % 2 === 0
         ? date.toLocaleDateString("vi-VN", { day: "numeric", month: "numeric" })
         : "";
@@ -182,7 +182,7 @@ function ViewSalesReports() {
 
     const labels = Array.from({ length: 12 }, (_, i) =>
       i === new Date().getMonth() && currentYear === new Date().getFullYear()
-        ? "Tháng này"
+        ? `Tháng ${i+1} (Tháng này)`
         : `Tháng ${i + 1}`
     );
 
@@ -201,6 +201,7 @@ function ViewSalesReports() {
 
   const generateQuarterlyData = (invoices) => {
     const currentYear = currentDate.getFullYear();
+    const currentQuarter = Math.floor(new Date().getMonth() / 3);
     const revenueByQuarter = Array(4).fill(0);
 
     invoices.forEach((invoice) => {
@@ -215,19 +216,26 @@ function ViewSalesReports() {
     });
 
     setChartData({
-      labels: ["Quý 1", "Quý 2", "Quý 3", "Quý 4"],
+      labels: ["Quý 1", "Quý 2", "Quý 3", "Quý 4"].map((label, index) =>
+        index === currentQuarter && currentYear === new Date().getFullYear()
+          ? `${label} (Quý này)`
+          : label
+      ),
       datasets: [
         {
           label: "Doanh thu (VNĐ)",
           data: revenueByQuarter,
           backgroundColor: "rgba(142, 94, 162, 0.8)",
-          borderWidth: 1,
+          borderWidth: 2,
+          borderColor: "rgba(142, 94, 162, 0.8)",
         },
       ],
     });
   };
 
   const generateYearlyData = (invoices) => {
+    const today = new Date(); // Lấy ngày hiện tại thực tế
+    const currentYear = today.getFullYear(); // Lấy năm thực tế hiện tại
     const revenueByYear = {};
     invoices.forEach((invoice) => {
       const invoiceDate = new Date(invoice.datetime);
@@ -240,7 +248,9 @@ function ViewSalesReports() {
     });
 
     setChartData({
-      labels: Object.keys(revenueByYear),
+      labels: Object.keys(revenueByYear).map((year) =>
+        parseInt(year) === currentYear ? `${year} (Năm nay)` : year
+      ),
       datasets: [
         {
           label: "Doanh thu (VNĐ)",
