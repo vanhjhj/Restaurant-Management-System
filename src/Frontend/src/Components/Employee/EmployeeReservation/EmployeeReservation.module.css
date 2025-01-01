@@ -302,3 +302,12 @@
     margin-bottom: 0px;
 }
 
+.error-message{
+    color: red; 
+    font-weight: bold; 
+    font-size: 16px; 
+    margin-top: 8px; 
+    border-left: 4px solid red; 
+    padding-left: 8px;
+  }
+  

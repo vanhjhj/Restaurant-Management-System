@@ -9,9 +9,13 @@ django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
 django-filter = "*"
 pillow = "*"
-django = "*"
 djangorestframework = "*"
-mysqlclient = "*"
+gunicorn = "*"
+mysql-connector-python = "*"
+pymysql = "*"
+dj-database-url = "*"
+python-dotenv = "*"
+whitenoise = "*"
 
 [dev-packages]
 

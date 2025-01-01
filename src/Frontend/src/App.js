@@ -45,6 +45,8 @@ import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
+import Review from "./Components/Customer/Review";
+import Rating from "./Components/Customer/Rating";
 
 library.add(faEye, faEyeSlash);
 
@@ -89,6 +91,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/menu/:id" element={<FoodDetail />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/review/rating/:invoiceID" element={<Rating />} />
           <Route
             path="/reservation"
             element={<BookingTable isLoggedIn={isLoggedIn} />}
@@ -388,18 +392,6 @@ function App() {
           {/* Trang nhân viên */}
           <Route
             path="/employee-dashboard"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Employee"]}
-                userRole={userRole}
-              >
-                <EmployeeDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/table"
             element={
               <ProtectedRoute
                 isLoggedIn={isLoggedIn}
