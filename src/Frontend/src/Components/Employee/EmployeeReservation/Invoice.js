@@ -13,6 +13,7 @@ import {
   updateItemStatus,
 } from "../../../API/EE_ReservationAPI";
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
+import ApplyPromotion from "./ApplyPromotion";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -37,6 +38,7 @@ function Invoice({ tableID, setShowInvoice }) {
   const [searchTab, setSearchTab] = useState(0);
   const [errorTableMessage, setErrorTableMessage] = useState();
   const [errorType, setErrorType] = useState();
+  const [isShowPromotion, setIsShowPromotion] = useState(false);
 
     const handleError = (error, type) => {
         if (error === 404) {
@@ -382,9 +384,10 @@ function Invoice({ tableID, setShowInvoice }) {
                                     </div> 
                                 </div>
                                 <div className={style['btn-ctn']}>
-                                    <button className={style['edit-btn']}>Thêm ưu đãi</button>
+                                    <button className={style['edit-btn']} onClick={() => setIsShowPromotion(true)}>Thêm ưu đãi</button>
                                     <button className={style['edit-btn']}>Xuất hóa đơn</button>    
-                                </div>
+                  </div>
+                  {isShowPromotion && <ApplyPromotion setShow={setIsShowPromotion}></ApplyPromotion>}
                             </div>
                         </div>
                         <div className={style['col-lg-6']}>

@@ -85,6 +85,7 @@ function AddDepartment() {
         value={newDepartment.name}
         onChange={handleInputChange}
         placeholder="Tên bộ phận"
+        className={style['add-department-input']}
         required
       />
       <input
@@ -93,6 +94,7 @@ function AddDepartment() {
         value={newDepartment.salary}
         onChange={handleInputChange}
         placeholder="Lương"
+        className={style['add-department-input']}
         required
       />
       <button
