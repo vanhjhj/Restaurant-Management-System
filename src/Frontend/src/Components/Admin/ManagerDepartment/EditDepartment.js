@@ -37,7 +37,6 @@ function EditDepartment() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng nếu refresh token thất bại
         throw error;
       }
     }

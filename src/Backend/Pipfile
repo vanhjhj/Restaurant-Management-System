@@ -12,10 +12,10 @@ pillow = "*"
 djangorestframework = "*"
 gunicorn = "*"
 mysql-connector-python = "*"
-pymysql = "*"
 dj-database-url = "*"
 python-dotenv = "*"
 whitenoise = "*"
+pymysql = "*"
 
 [dev-packages]
 

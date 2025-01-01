@@ -34,7 +34,6 @@ function ManageDepartment() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -97,6 +96,10 @@ function ManageDepartment() {
         }
       },
     });
+  };
+
+  const formatPrice = (price) => {
+    return `${price.toLocaleString("vi-VN")} VND`;
   };
 
   // Tự động tải danh sách bộ phận khi component được render
@@ -163,12 +166,7 @@ function ManageDepartment() {
                   {departments.map((dept) => (
                     <tr key={dept.id}>
                       <td>{dept.name}</td>
-                      <td>
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(dept.salary)}
-                      </td>
+                      <td>{formatPrice(dept.salary)}</td>
                       <td>
                         <button
                           className={style["edit-button"]}

@@ -42,7 +42,6 @@ function AddPromotion() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login");
         throw error;
       }
     }

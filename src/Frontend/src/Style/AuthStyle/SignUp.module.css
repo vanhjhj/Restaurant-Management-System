@@ -39,7 +39,7 @@
 .title {
   margin-bottom: 20px;
   color: #35737d;
-  font-size: 45px;
+  font-size: 40px;
 }
 
 .form-title {
@@ -50,6 +50,10 @@
   margin-bottom: 6px;
 }
 
+.form-column label {
+  font-size: 1.1rem;
+}
+
 /* Input chung */
 .form-column input,
 .form-column select {
@@ -57,7 +61,7 @@
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 1rem;
   box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -120,7 +124,7 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1.2rem;
   font-weight: bold;
   transition: background-color 0.3s ease, transform 0.2s ease;
   grid-column: span 2; /* Chiếm toàn bộ chiều ngang */
@@ -137,14 +141,14 @@
   border: none;
   color: #35737d;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 1rem;
   margin-top: 10px;
-  text-decoration: underline;
   grid-column: span 2; /* Chiếm toàn bộ chiều ngang */
 }
 
 .login-btn:hover {
   color: #28585f;
+  text-decoration: underline;
 }
 
 /* Lỗi */
