@@ -141,6 +141,10 @@
   text-align: center;
   width: 200px;
   padding: 5px 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 290px;
 }
 
 .manage-menu-container .food-image {
