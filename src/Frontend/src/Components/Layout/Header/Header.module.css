@@ -46,7 +46,7 @@ a {
 }
 
 .logo-text:hover {
-  color: #b22222;
+  color: #ad6d4d;
 }
 
 .main-navigation {
@@ -87,7 +87,6 @@ a {
   transition: color 0.3s;
 }
 
-
 /* Hiệu ứng gạch chân */
 .header-menu a::after {
   content: "";
@@ -97,7 +96,7 @@ a {
   transform: translateX(-50%);
   width: 0;
   height: 2px;
-  background-color: #b22222; /* Màu gạch chân */
+  background-color: #ad6d4d; /* Màu gạch chân */
   transition: width 0.3s ease;
 }
 
@@ -109,11 +108,7 @@ a {
 
 .header-menu a:hover,
 .header-menu a.active {
-  color: #b22222;
-}
-
-.header-menu a:hover {
-  color: #b22222;
+  color: #ad6d4d;
 }
 
 .header-menu .login-btn {
@@ -132,15 +127,15 @@ a {
 
 .header-menu .login-btn:hover {
   background-color: white;
-  color: #b22222;
+  color: #a56f6f;
   border-color: #0d0d25;
   box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
   text-decoration: none !important;
 }
 
 .header-menu .signup-btn {
-  background-color: #b22222;
-  color:#ffffff;
+  background-color: #c1b8b8;
+  color: #ffffff;
   padding: 10px 18px; /* Giảm padding */
   text-align: center;
   justify-content: center;

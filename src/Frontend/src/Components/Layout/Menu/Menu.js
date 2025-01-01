@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import style from "./Menu.module.css";
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
 import { useNavigate } from "react-router-dom";
-import {FaArrowLeft, FaArrowRight} from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 function Menu() {
   const [foodItems, setFoodItems] = useState([]);
@@ -33,23 +33,23 @@ function Menu() {
       const { scrollLeft, scrollWidth, clientWidth } = tabListRef.current;
       setShowArrows({
         left: scrollLeft > 0,
-        right: scrollLeft < scrollWidth - clientWidth
+        right: scrollLeft < scrollWidth - clientWidth,
       });
     }
   };
 
   useEffect(() => {
     checkScrollPosition();
-    window.addEventListener('resize', checkScrollPosition);
-    return () => window.removeEventListener('resize', checkScrollPosition);
+    window.addEventListener("resize", checkScrollPosition);
+    return () => window.removeEventListener("resize", checkScrollPosition);
   }, []);
 
   const scroll = (direction) => {
     if (tabListRef.current) {
       const scrollAmount = tabListRef.current.offsetWidth / 3; // Scroll một khoảng bằng 1/3 chiều rộng container
       tabListRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
       });
       setTimeout(checkScrollPosition, 300);
     }
@@ -103,12 +103,13 @@ function Menu() {
     return addCondition;
   };
 
- 
-
   const filteredItems = foodItems.filter((item) =>
     filter(item, searchItem, selectedType, searchPriceMin, searchPriceMax)
   );
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredItems.length / itemsPerPage)
+  );
   const currentItems = filteredItems.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -138,7 +139,10 @@ function Menu() {
                 type="text"
                 placeholder="Tìm kiếm..."
                 value={searchItem}
-                onChange={(e) => { setSearchItem(e.target.value); setCurrentPage(1); }}
+                onChange={(e) => {
+                  setSearchItem(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className={style["input-search-menuitem"]}
               />
               <button type="button" className={style["input-search-btn"]}>
@@ -178,20 +182,24 @@ function Menu() {
         <div className={style["menu-tab-row"]}>
           <div className={style["row"]}>
             <div className={style["col-lg-12"]}>
-              
               <div className={style["menu-tab"]}>
-              <button 
-                  onClick={() => scroll('left')}
-                  className={style['scroll-btn']}
-              >
-                <FaArrowLeft/>
-              </button>
-                <ul ref={tabListRef}
-                className={style['scroll-menu-tab']}
-                onScroll={checkScrollPosition}>
+                <button
+                  onClick={() => scroll("left")}
+                  className={style["scroll-btn"]}
+                >
+                  <FaArrowLeft />
+                </button>
+                <ul
+                  ref={tabListRef}
+                  className={style["scroll-menu-tab"]}
+                  onScroll={checkScrollPosition}
+                >
                   <li key={0}>
                     <button
-                      onClick={() => { setSelectedType(0); setCurrentPage(1); }}
+                      onClick={() => {
+                        setSelectedType(0);
+                        setCurrentPage(1);
+                      }}
                       className={
                         style["menu-tab-btn"] +
                         " " +
@@ -204,7 +212,10 @@ function Menu() {
                   {menuTabs.map((tab) => (
                     <li key={tab.id}>
                       <button
-                        onClick={() => { setSelectedType(tab.id); setCurrentPage(1); }}
+                        onClick={() => {
+                          setSelectedType(tab.id);
+                          setCurrentPage(1);
+                        }}
                         className={
                           style["menu-tab-btn"] +
                           " " +
@@ -216,14 +227,13 @@ function Menu() {
                     </li>
                   ))}
                 </ul>
-                <button 
-                  onClick={() => scroll('right')}
-                  className={style['scroll-btn']}
-              >
-                <FaArrowRight/>
-              </button>
+                <button
+                  onClick={() => scroll("right")}
+                  className={style["scroll-btn"]}
+                >
+                  <FaArrowRight />
+                </button>
               </div>
-              
             </div>
           </div>
         </div>
@@ -238,37 +248,36 @@ function Menu() {
                 <div className={style["menu-item"]}>
                   <img src={item.image} alt={item.name} />
                   <h3>{item.name}</h3>
-                  <div className={style['item-description']}>
-                  <h6>{item.description}</h6>
-                  </div>
-                  
+
                   <p>{formatPrice(item.price)}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className={style['row']}>
-          <div className={style['btn-ctn']}>
-            <button 
+        <div className={style["row"]}>
+          <div className={style["btn-ctn"]}>
+            <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              >
-            <FaArrowLeft></FaArrowLeft>
+            >
+              <FaArrowLeft></FaArrowLeft>
             </button>
-        
-            <button 
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
-            <FaArrowRight></FaArrowRight>
+              <FaArrowRight></FaArrowRight>
             </button>
           </div>
         </div>
-        <div className={style['page-num']}>
-            <span>
-              Trang {currentPage}/{totalPages}
-            </span>
+        <div className={style["page-num"]}>
+          <span>
+            Trang {currentPage}/{totalPages}
+          </span>
         </div>
       </div>
     </div>

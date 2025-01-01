@@ -11,7 +11,6 @@
   transition: 0.3s; /* Hiệu ứng mượt mà khi chuyển */
 }
 
-
 .about-container {
   font-family: Arial, sans-serif;
 }
@@ -36,11 +35,13 @@
 }
 
 .gallery-section h1 {
-  font-size: 2.5rem; /* Kích thước chữ lớn */
-  font-weight: bold; /* Chữ đậm */
-  color: #b22222; /* Màu đỏ */
-  text-align: center; /* Canh giữa */
-  margin-bottom: 10px;
+  font-size: 46px;
+  line-height: 56px;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-family: "Playfair Display", serif;
+  color: #a38900;
+  margin-bottom: 20px;
 }
 
 .gallery-tabs {
@@ -54,26 +55,28 @@
   background-color: transparent;
   border: none;
   font-size: 1.2rem;
-  color: #b22222;
+  color: #a38900;
   cursor: pointer;
   padding: 10px 20px;
   border-bottom: 2px solid transparent;
 }
 
 .tab.active {
-  border-bottom: 2px solid #b22222;
+  border-bottom: 2px solid #a38900;
   font-weight: bold;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(300px, 1fr)); /* Chia đều cột, mỗi cột tối thiểu 300px */
+  grid-template-columns: repeat(
+    3,
+    minmax(300px, 1fr)
+  ); /* Chia đều cột, mỗi cột tối thiểu 300px */
   gap: 15px; /* Khoảng cách giữa các ảnh nhỏ hơn */
   padding: 20px; /* Thêm khoảng cách với viền ngoài */
   justify-content: center; /* Căn giữa grid */
   /* grid-template-columns: repeat(3, 1fr); */
 }
-
 
 .gallery-thumbnail {
   width: 100%; /* Chiếm toàn bộ chiều rộng cột */
