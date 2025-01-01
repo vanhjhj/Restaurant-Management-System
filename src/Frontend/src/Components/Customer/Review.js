@@ -54,7 +54,7 @@ function Review({ iID }) {
             try {
                 const data = await fetchFeedbacksData();
                 console.log(data);
-                setFeedbacks(data.results);
+                setFeedbacks(data);
             }
             catch (error) {
                 console.log(error);
@@ -64,7 +64,7 @@ function Review({ iID }) {
     const fetchFilterData = async (p, d) => {
         try {
             const data = await getFeedBackFilter(p, d);
-            setFeedbacks(data.results);
+            setFeedbacks(data);
         }
         catch (error) {
             console.log(error);

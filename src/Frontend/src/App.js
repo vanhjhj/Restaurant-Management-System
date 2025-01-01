@@ -46,6 +46,7 @@ import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import Review from "./Components/Customer/Review"
 import Rating from "./Components/Customer/Rating"
+import SnowEffect from "./Components/UI/SnowEffect";
 
 library.add(faEye, faEyeSlash);
 
@@ -84,6 +85,7 @@ function App() {
       <Router>
         <ScrollToTop />
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <SnowEffect /> 
         <Routes>
           {/* Trang công khai */}
           <Route path="/" element={<HomePage />} />
