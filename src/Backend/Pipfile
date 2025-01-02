@@ -16,6 +16,8 @@ pymysql = "*"
 dj-database-url = "*"
 python-dotenv = "*"
 whitenoise = "*"
+django-storages = "*"
+boto3 = "*"
 
 [dev-packages]
 
