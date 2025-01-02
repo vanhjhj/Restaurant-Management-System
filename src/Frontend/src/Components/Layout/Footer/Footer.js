@@ -13,7 +13,7 @@ function Footer() {
               <div className={style["footer-info"]}>
                 <div className={style["footer-logo"]}>
                   <Link to="/">
-                    <img src="assets/images/logo.png" alt="Home" />
+                    <img src="assets/images/logo.jpg" alt="Home" />
                   </Link>
                 </div>
                 <div className={style["social-icon"]}>
