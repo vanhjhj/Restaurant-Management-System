@@ -69,10 +69,8 @@ function EditTable() {
         isOpen: true,
         text: "Chỉnh sửa bàn thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       setErrorMessage("Không thể cập nhật bàn. Vui lòng thử lại!");
       console.error("Error updating table:", error);
@@ -122,7 +120,7 @@ function EditTable() {
           isOpen={modal.isOpen}
           text={modal.text}
           type={modal.type}
-          onClose={handleCloseModal}
+          onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
           onConfirm={modal.onConfirm}
         />
       )}

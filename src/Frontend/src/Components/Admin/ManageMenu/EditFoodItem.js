@@ -142,7 +142,6 @@ function EditFoodItem() {
       }));
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, price, description, image, category } = fooditem;
@@ -189,11 +188,8 @@ function EditFoodItem() {
         isOpen: true,
         text: "Món ăn được cập nhật thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        setModal({ isOpen: false });
-        navigate("/admin-dashboard/manage-menu");
-      }, 15000);
     } catch (error) {
       console.error("Lỗi khi cập nhật món ăn:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -308,7 +304,7 @@ function EditFoodItem() {
           isOpen={modal.isOpen}
           text={modal.text}
           type={modal.type}
-          onClose={handleCloseModal}
+          onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
           onConfirm={modal.onConfirm}
         />
       )}

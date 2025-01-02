@@ -200,10 +200,8 @@ function EditPromotion() {
         isOpen: true,
         text: "Cập nhật ưu đãi thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       console.error("Lỗi khi cập nhật ưu đãi:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -359,7 +357,7 @@ function EditPromotion() {
             isOpen={modal.isOpen}
             text={modal.text}
             type={modal.type}
-            onClose={handleCloseModal}
+            onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
             onConfirm={modal.onConfirm}
           />
         )}
