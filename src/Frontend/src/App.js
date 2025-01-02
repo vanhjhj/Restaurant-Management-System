@@ -31,7 +31,6 @@ import AddDepartment from "./Components/Admin/ManageDepartment/AddDepartment";
 import EditDepartment from "./Components/Admin/ManageDepartment/EditDepartment";
 import FillInfoEmployee from "./Components/Admin/RegisterEmployeeAccout/FillInfoEmployee";
 import ManageDepartment from "./Components/Admin/ManageDepartment/ManageDepartment";
-import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeDashboard";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
 import { isTokenExpired } from "./utils/tokenHelper.mjs";
@@ -40,8 +39,6 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
 import ManageTable from "./Components/Admin/ManageTable/ManageTable";
-import AddTable from "./Components/Admin/ManageTable/AddTable";
-import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
@@ -361,31 +358,6 @@ function App() {
                   userRole={userRole}
                 >
                   <ManageTable />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="add-table"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddTable />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="edit-table/:id"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditTable />
                 </ProtectedRoute>
               }
             />

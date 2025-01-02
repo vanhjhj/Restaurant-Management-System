@@ -1,0 +1,138 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #f44336;
+}
+
+.modal-content H3 {
+  margin-bottom: 30px;
+  font-size: 30px;
+  color: #6d753e;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  font-size: 16px;
+  color: #555;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input:focus {
+  border-color: #116169;
+  box-shadow: 0 0 5px rgba(17, 97, 105, 0.5);
+  outline: none;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-button {
+  padding: 10px 20px;
+  background-color: #116169;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background-color: #0d4d52;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  background-color: #d3d3d3;
+  color: black;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: #b3b3b3; 
+}
+.form-group {
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 10px; /* Khoảng cách giữa nhãn và ô input */
+  margin-bottom: 20px; /* Khoảng cách giữa các nhóm */
+}
+
+label {
+  font-size: 20px;
+  color: #555;
+  min-width: 100px; /* Đảm bảo nhãn có chiều rộng cố định */
+  text-align: right; /* Căn phải nội dung nhãn */
+}
+
+input {
+  flex: 1; /* Cho phép ô input chiếm toàn bộ không gian còn lại */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input:focus {
+  border-color: #116169;
+  box-shadow: 0 0 5px rgba(17, 97, 105, 0.5);
+  outline: none;
+}

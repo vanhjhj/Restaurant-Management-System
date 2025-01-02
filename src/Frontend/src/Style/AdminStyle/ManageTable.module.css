@@ -1,5 +1,5 @@
-.TableManagement-container {
-  padding: 20px;
+.ManageTable-container {
+  padding: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,13 +30,14 @@
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-left: auto;
-  justify-content: space-between;
+  justify-content: flex-end; /* Căn các phần tử về bên phải */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  margin-top: 20px;
+  width: 100%; /* Đảm bảo vùng phủ toàn bộ chiều ngang */
 }
+
 .header-controls p {
   font-size: 20px;
-  padding: auto;
   margin-top: 20px;
 }
 
@@ -114,13 +115,13 @@
   border-radius: 5px;
   font-size: 16px;
   font-weight: bold;
-  background-color: #f44336;
+  background-color: #d75d54;
 }
 .table-actions-edit {
   display: block;
   margin: 5px auto;
   padding: 5px 5px;
-  background-color: #116169;
+  background-color: #4e6986;
   color: white;
   border: none;
   cursor: pointer;
@@ -134,5 +135,74 @@
 }
 
 .table-actions-delete:hover {
+  transform: translateY(-2px);
+}
+/* Quản lý vị trí của ô chỉnh sửa */
+.edit-seats-container {
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  gap: 10px; /* Khoảng cách giữa label và input */
+  margin: 10px 0; /* Khoảng cách phía trên và dưới */
+}
+
+/* Style cho nhãn */
+.edit-seats-container label {
+  font-size: 16px;
+  color: #333;
+  margin: 0; /* Bỏ khoảng cách mặc định */
+  text-align: left;
+}
+
+/* Style cho ô input */
+.edit-seats-container input {
+  width: 60px; /* Đặt chiều rộng hợp lý */
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  text-align: center; /* Căn giữa nội dung */
+}
+
+.edit-seats-container input:focus {
+  border-color: #116169; /* Đổi màu viền khi tập trung */
+  box-shadow: 0 0 5px rgba(17, 97, 105, 0.5); /* Hiệu ứng viền sáng */
+}
+.table-actions-save {
+  display: inline-block;
+  margin: 5px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #6cccc6; /* Màu xanh cho nút Lưu */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.table-actions-save:hover {
+  background-color: #549c9f; /* Màu đậm hơn khi hover */
+  transform: translateY(-2px);
+}
+
+.table-actions-cancel {
+  display: inline-block;
+  margin: 5px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  background-color: #d49797; /* Màu xám nhẹ cho nút Hủy */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.table-actions-cancel:hover {
+  background-color: #e2e2e2; /* Màu đậm hơn khi hover */
   transform: translateY(-2px);
 }
