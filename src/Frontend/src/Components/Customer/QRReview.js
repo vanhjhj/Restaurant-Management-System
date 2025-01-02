@@ -6,9 +6,7 @@ const QRCodeGenerator = ({ invoiceID }) => {
 
   return (
     <div>
-      <h1>QR Code for Invoice</h1>
-      <QRCodeSVG value={qrData} size={256} />
-      <p>Scan this QR code to review the invoice</p>
+      <QRCodeSVG value={qrData} size={128} />
     </div>
   );
 };

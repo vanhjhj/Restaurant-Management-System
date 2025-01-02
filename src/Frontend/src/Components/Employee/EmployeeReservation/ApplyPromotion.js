@@ -3,13 +3,17 @@ import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./ApplyPromotion.module.css";
-import { fetchValidPromotions } from "../../../API/PromotionAPI";
+import { addPromotion, fetchValidPromotions } from "../../../API/PromotionAPI";
 import {IoAdd, IoRemove} from 'react-icons/io5';
+import { addPromotionToInvoice, checkPhoneNumber } from "../../../API/EE_ReservationAPI";
 
-function ApplyPromotion({setShow}) {
+function ApplyPromotion({setShow, setInvoice, invoice}) {
       const { accessToken, setAccessToken } = useAuth();
-    const [promotionData, setPromotionData] = useState([]);
-    const [choosenPromotion, setChoosenPromotion] = useState([]);
+    const [promotionData, setPromotionData] = useState([{isSelected: false}]);
+    const [choosenPromotion, setChoosenPromotion] = useState({code:null});
+    const [canSelected, setCanSelected] = useState(true);
+    const [errorMessage, setErrorMessage] = useState();
+    const [successMessage, setSuccessMessage] = useState();
     const ensureActiveToken = async () => {
         let activeToken = accessToken;
         const refresh = localStorage.getItem("refreshToken");
@@ -19,12 +23,28 @@ function ApplyPromotion({setShow}) {
           setAccessToken(activeToken);
         }
         return activeToken;
-      };
+    };
+    
+    function sortPromotions(promotions) {
+        return promotions.sort((a, b) => {
+          // So sánh theo loại (KMT trước KMTV)
+          if (a.type !== b.type) {
+            return a.type === "KMT" ? -1 : 1;
+          }
+          // Nếu cùng loại, sắp xếp theo ngày hết hạn (enddate)
+          const dateA = new Date(a.enddate);
+          const dateB = new Date(b.enddate);
+          return dateA - dateB;
+        });
+      }
+      
     const fetchData = async () => {
         try {
             const data = await fetchValidPromotions();
-            console.log(data);
-            setPromotionData(data);
+            data.map((item) => ({...item, isSelected:false}))
+            setPromotionData(sortPromotions(data));
+
+
         } catch (error) {
             console.log(error);
         }
@@ -33,12 +53,58 @@ function ApplyPromotion({setShow}) {
         fetchData();
     }, [])
     
-    const handleAddPromotion = (item) => {
-        setChoosenPromotion([...choosenPromotion, item])
+    const handleAddPromotion = (promotion) => {
+        if (promotion.isSelected) {
+            setChoosenPromotion({code:null});
+            setCanSelected(true);
+            console.log(canSelected);
+            setPromotionData((preItem) =>
+                preItem.map((i) => (i.code === promotion.code ? { ...i, isSelected: false } : i))
+            );
+        }
+        else {
+            setChoosenPromotion(promotion);
+            setCanSelected(false);
+            console.log(canSelected);
+            setPromotionData((preItem) =>
+                preItem.map((i) => (i.code === promotion.code ? { ...i, isSelected: true } : i))
+            );
+        }
     }
 
-    const handleRemovePromotion = (code) => {
-        setChoosenPromotion(choosenPromotion.filter((item) => item.code != code));
+    const handleDisable = (promotion) => {
+        if (!canSelected && promotion.code !== choosenPromotion.code) {
+            return true;
+        }
+        return false;
+    }
+
+    const handleSavePromotion = async (number) => {
+        try {
+            const activeToken = await ensureActiveToken();
+            if (choosenPromotion.type === "KMTV") {
+                const checkPhoneNum = await checkPhoneNumber(activeToken, number);
+            }
+            const newInvoice = await addPromotionToInvoice(activeToken, invoice.id, choosenPromotion.code);
+            setInvoice(newInvoice.data);
+            setErrorMessage();
+            setSuccessMessage("Áp dụng khuyễn mãi thành công");
+        }
+        catch (error) {
+            setSuccessMessage();
+            if (error.response.data.status === "error") {
+                setErrorMessage("Vui lòng nhập số điện thoại khi sử dụng KMTV");
+            }
+            else if (error.response.data.status === "invalid") {
+                setErrorMessage("Số điện thoại không hợp lệ");
+            }
+            else if (error.response.data.status === "not_exists") {
+                setErrorMessage("Số điện thoại không tồn tại");
+            }
+            else if (error.response.data.status === "not_meet_requirement") {
+                setErrorMessage("Hóa đơn không đủ điều kiện");
+            }
+        }
     }
 
     return (
@@ -51,7 +117,7 @@ function ApplyPromotion({setShow}) {
                                 <h2>Khuyễn mãi</h2>
                                 <p>Danh sách các khuyễn mãi</p>   
                                 <div className={style['promotion-table']}>
-                                    <div className={style['my-row'] + ' ' + style['my-title-row']}>
+                                    <div className={style['my-row'] + ' ' + style['my-title-row']} key='-9999'>
                                         <ul>
                                             <li className={style['my-col-1']}>Mã KH</li>   
                                             <li className={style['my-col-2']}>Tên khuyễn mãi</li>
@@ -61,42 +127,14 @@ function ApplyPromotion({setShow}) {
                                         </ul>
                                     </div>
                                     {promotionData.map(item => (
-                                        <div className={style['my-row']} key={item.code}>
+                                        <div className={style['my-row'] + ' ' + style[handleDisable(item) ? 'row-inactive' : '']} key={item.code}>
                                             <ul>
                                                 <li className={style['my-col-1']}>{item.code}</li>   
                                                 <li className={style['my-col-2']}>{item.title}</li>
                                                 <li className={style['my-col-3']}>{item.type}</li>
                                                 <li className={style['my-col-4']}>{item.enddate}</li>
                                                 <li className={style['my-col-5']}>{item.min_order}</li>
-                                                <li className={style['add-button']}><button onClick={() => handleAddPromotion(item)}><IoAdd/></button></li>
-                                            </ul>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={style['col-lg-12']}>
-                            <div className={style['promotion-list']}>
-                                <p>Các khuyễn mãi đã chọn: </p>
-                                <div className={style['choosen-promotion-table']}>
-                                    <div className={style['my-row'] + ' ' + style['my-title-row']}>
-                                        <ul>
-                                            <li className={style['my-col-1']}>Mã KH</li>   
-                                            <li className={style['my-col-2']}>Tên khuyễn mãi</li>
-                                            <li className={style['my-col-3']}>Loại</li>
-                                            <li className={style['my-col-4']}>Ngày kết thúc</li>
-                                            <li className={style['my-col-5']}>Điều kiện</li>
-                                        </ul>
-                                    </div>
-                                    {choosenPromotion.map(item => (
-                                        <div className={style['my-row']} key={item.code}>
-                                            <ul>
-                                                <li className={style['my-col-1']}>{item.code}</li>   
-                                                <li className={style['my-col-2']}>{item.title}</li>
-                                                <li className={style['my-col-3']}>{item.type}</li>
-                                                <li className={style['my-col-4']}>{item.enddate}</li>
-                                                <li className={style['my-col-5']}>{item.min_order}</li>
-                                                <li className={style['add-button']}><button onClick={() => {handleRemovePromotion(item.code)}}><IoRemove/></button></li>
+                                                <li className={style['add-button']}><label><input type='checkbox' checked={item.isSelected} disabled={handleDisable(item)} onChange={() => handleAddPromotion(item) }></input></label></li>
                                             </ul>
                                         </div>
                                     ))}
@@ -105,13 +143,17 @@ function ApplyPromotion({setShow}) {
                         </div>
                         <div className={style['col-lg-12']}>
                             <div className={style['sdt-input']}>
-                                <label for="sdt">Nhập số điện thoại:</label>
+                                <label for="sdt">SĐT đăng ký tài khoản:</label>
                                 <input type="text" name="sdt" id="sdt"></input>
                             </div>
                         </div>
                         <div className={style['col-lg-12']}>
+                            <div className={style['error-ctn']}>
+                                {errorMessage ? <p className={style['error']}>{errorMessage}</p> : <p></p>}
+                                {successMessage ? <p className={style['success']}>{ successMessage}</p> : <p></p>}
+                            </div>
                             <div className={style['btn-ctn']}>
-                                <button className={style['my-btn']}>Lưu</button>
+                                <button className={style['my-btn']} onClick={() => handleSavePromotion()}>Lưu</button>
                                 <button className={style['my-btn']} onClick={() => setShow(false)}>Thoát</button>
                             </div>
                         </div>

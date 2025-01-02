@@ -1,0 +1,124 @@
+.container{
+    composes: container from '../../../Style/bootstrap.min.css';
+}
+
+.row{
+    composes: row from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-12{
+    composes: col-lg-12 from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-6{
+    composes: col-lg-6 from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-4{
+    composes: col-lg-4 from '../../../Style/bootstrap.min.css';
+}
+
+.col-lg-9{
+  composes: col-lg-9 from '../../../Style/bootstrap.min.css';
+}
+
+
+.col-lg-3{
+  composes: col-lg-3 from '../../../Style/bootstrap.min.css';
+}
+
+
+.ctn{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 101; 
+}
+
+.export-invoice-ctn{
+    width: 60%;
+    height: 800px;
+    padding: 10px 20px;
+    background-color: white;
+    overflow: auto;
+    margin: 0px 20px;
+    border-radius: 5px;
+    margin:auto;
+}
+
+.ordered-food-ctn{
+}
+
+.table-food{
+  width: 100%;
+  margin:20px auto 50px auto;
+  padding-right: 16px;
+  height: 200px;
+  overflow-y: auto;
+}
+
+.table-food::-webkit-scrollbar {
+  width: 0; /* Ẩn thanh cuộn ngang */
+  background: transparent; /* Nền trong suốt */
+}
+
+.my-row ul {
+  margin:0;
+  padding:0px;
+}
+.my-row ul li  {
+  margin:0;
+  font-size: 18px;
+  list-style:none;
+  display:inline-block;
+  width:25%;
+  box-sizing:border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.my-row{
+  border-bottom: 1px solid black;
+}
+
+.my-title-row{
+  background-color:#a3c6cb;
+  position: sticky;
+  top:0;
+  z-index: 1;
+  font-weight: bold;
+}
+
+.total-money-ctn{
+    justify-content: end;
+    font-size: 18px;
+    padding:5px
+}
+
+.width-50{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.money-format{
+  display: flex;
+  justify-content: space-between;
+}
+
+.money-format p{
+  align-items: end;
+}
+
+.final_price{
+  margin-top: 15px;
+  border-top: 5px double #b2b2b3;
+}

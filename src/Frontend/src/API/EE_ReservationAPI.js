@@ -267,3 +267,45 @@ export const removeItem = async (token, iID) => {
     throw error;
   }
 };
+
+export const checkPhoneNumber = async (token,number) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/auth/account-exists-check/`,
+      {
+        phone_number: {number},
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const addPromotionToInvoice = async (token, iID, pID) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/booking/orders/${iID}/`,
+      {
+        promotion: pID,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

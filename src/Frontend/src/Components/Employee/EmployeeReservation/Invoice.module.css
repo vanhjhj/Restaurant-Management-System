@@ -282,6 +282,10 @@
   display:inline-block;
   width:25%;
   box-sizing:border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .my-row{
