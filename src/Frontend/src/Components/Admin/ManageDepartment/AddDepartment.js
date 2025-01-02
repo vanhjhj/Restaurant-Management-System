@@ -61,10 +61,8 @@ function AddDepartment() {
         isOpen: true,
         text: "Thêm bộ phận thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       console.error("Error adding department:", error);
       setError("Không thể thêm bộ phận. Vui lòng thử lại.");
@@ -115,7 +113,7 @@ function AddDepartment() {
             isOpen={modal.isOpen}
             text={modal.text}
             type={modal.type}
-            onClose={handleCloseModal}
+            onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
             onConfirm={modal.onConfirm}
           />
         )}
