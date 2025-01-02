@@ -79,7 +79,7 @@
 }
 
 .menu-tab-btn.active {
-  background-color: #ff8243; /* distinct color */
+  background-color: #ad6d4d; /* distinct color */
   color: white;
 }
 
@@ -240,13 +240,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap:20px;
+  gap: 20px;
 }
 
-.btn-ctn button{
+.btn-ctn button {
   background-color: transparent;
-  color:black;
-  border: 2px solid #1A1A1A;
+  color: black;
+  border: 2px solid #1a1a1a;
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
   box-sizing: border-box;
@@ -268,18 +268,18 @@
   transition: all 0.3s ease;
 }
 
-.btn-ctn button:hover{
+.btn-ctn button:hover {
   color: #fff;
-  background-color: #1A1A1A;
+  background-color: #1a1a1a;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
 }
 
-.page-num{
+.page-num {
   font-size: 18px;
   align-items: center;
   justify-content: center;
   display: flex;
-  margin-top:10px;
+  margin-top: 10px;
   font-family: "Playfair Display", serif;
 }
 

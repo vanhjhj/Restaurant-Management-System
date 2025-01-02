@@ -261,7 +261,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       </li>
                       <li>
                         <Link to="/signup" className={style["signup-btn"]}>
-                          Đăng ký
+                          Đăng Ký
                         </Link>
                       </li>
                     </div>

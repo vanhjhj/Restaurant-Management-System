@@ -6,6 +6,9 @@ import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
@@ -29,7 +32,6 @@ function ManagePromotions() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -94,7 +96,7 @@ function ManagePromotions() {
 
   return (
     <div className={style["manage-Promotions"]}>
-      <h2>Quản lý ưu đãi</h2>
+      <h2>QUẢN LÝ ƯU ĐÃI</h2>
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
         <div className={style["no-promotions"]}>
@@ -109,22 +111,19 @@ function ManagePromotions() {
                 alt={discount.title}
                 className={style["discount-image"]}
               />
-              <h3 className={style["discount-title"]}>{discount.title}</h3>
-              <p className={style["discount-description"]}>
-                {discount.description}
-              </p>
+              <h3 className={style["discount-code"]}>{discount.code}</h3>
               <div className={style["button-group"]}>
                 <button
                   onClick={() => handleEdit(discount.code)}
                   className={style["edit-button"]}
                 >
-                  Chỉnh sửa
+                  <AiOutlineEdit size={20} /> Chỉnh sửa
                 </button>
                 <button
                   onClick={() => handleDelete(discount.code)}
                   className={style["delete-button"]}
                 >
-                  Xóa
+                  <AiOutlineDelete size={20} /> Xóa
                 </button>
               </div>
             </div>
@@ -136,7 +135,7 @@ function ManagePromotions() {
         onClick={handleAddDiscount}
         className={style["add-discount-button"]}
       >
-        Tạo ưu đãi mới +
+        Tạo ưu đãi mới <FontAwesomeIcon icon={faPlus} />
       </button>
 
       {modal.isOpen && (

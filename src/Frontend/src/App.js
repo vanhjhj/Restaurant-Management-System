@@ -25,13 +25,12 @@ import AddPromotion from "./Components/Admin/ManagePromotion/AddPromotion";
 import EditPromotion from "./Components/Admin/ManagePromotion/EditPromotion";
 import RegisterEmployeeAccount from "./Components/Admin/RegisterEmployeeAccout/RegisterEmployeeAccount";
 import ViewSalesReports from "./Components/Admin/ViewSalesReports/ViewSalesReports";
-import ManageRestaurantInfo from "./Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo";
+import ManageRestaurantInfo from "./Components/Admin/ManageRestaurantInfo/ManageRestaurantInfo";
 import ReservationHistory from "./Components/Customer/ReservationHistory";
-import AddDepartment from "./Components/Admin/ManagerDepartment/AddDepartment";
-import EditDepartment from "./Components/Admin/ManagerDepartment/EditDepartment";
+import AddDepartment from "./Components/Admin/ManageDepartment/AddDepartment";
+import EditDepartment from "./Components/Admin/ManageDepartment/EditDepartment";
 import FillInfoEmployee from "./Components/Admin/RegisterEmployeeAccout/FillInfoEmployee";
-import ManageDepartment from "./Components/Admin/ManagerDepartment/ManageDepartment";
-import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeDashboard";
+import ManageDepartment from "./Components/Admin/ManageDepartment/ManageDepartment";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
 import { isTokenExpired } from "./utils/tokenHelper.mjs";
@@ -40,12 +39,13 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
 import ManageTable from "./Components/Admin/ManageTable/ManageTable";
-import AddTable from "./Components/Admin/ManageTable/AddTable";
-import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
-import Review from "./Components/Customer/Review"
-import Rating from "./Components/Customer/Rating"
+import AdminDashboard from "./Components/Admin/AdminDashboard";
+import Review from "./Components/Customer/Review";
+import Rating from "./Components/Customer/Rating";
+import SnowEffect from "./Components/UI/SnowEffect";
+import HotlineIcon from "./Components/UI/HotLineIcon";
 
 library.add(faEye, faEyeSlash);
 
@@ -84,14 +84,16 @@ function App() {
       <Router>
         <ScrollToTop />
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <SnowEffect />
+        <HotlineIcon/>
         <Routes>
           {/* Trang công khai */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:id" element={<FoodDetail/>} />
-          <Route path="/review" element={<Review/>}/>
-          <Route path="/review/rating/:invoiceID" element={<Rating/>}/>
+          <Route path="/menu/:id" element={<FoodDetail />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/review/rating/:invoiceID" element={<Rating />} />
           <Route
             path="/reservation"
             element={<BookingTable isLoggedIn={isLoggedIn} />}
@@ -150,6 +152,18 @@ function App() {
               </ProtectedRoute>
             }
           >
+            <Route
+              path="main"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Admin"]}
+                  userRole={userRole}
+                >
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="manage-restaurant-info"
               element={
@@ -349,31 +363,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
-            <Route
-              path="add-table"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddTable />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="edit-table/:id"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditTable />
-                </ProtectedRoute>
-              }
-            />
           </Route>
 
           {/* Trang nhân viên */}
@@ -385,7 +374,7 @@ function App() {
                 allowedRoles={["Employee", "Admin"]}
                 userRole={userRole}
               >
-                <EmployeeReservation/>
+                <EmployeeReservation />
               </ProtectedRoute>
             }
           />

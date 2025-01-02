@@ -1,3 +1,8 @@
+.edit-department {
+  font-family: "Times New Roman", Times, serif;
+  margin-top: 10px;
+}
+
 .EditDepartment-container {
   padding: 20px;
   max-width: 600px;
@@ -5,22 +10,29 @@
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Arial", sans-serif;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
 .EditDepartment-container .header {
+  font-weight: bold;
+  font-size: 42px;
+  color: #514f00;
   text-align: center;
-  font-size: 40px;
-  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.EditDepartment-container label {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .EditDepartment-container .input {
   width: 100%;
   padding: 12px;
-  font-size: 16px;
+  font-size: 18px;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
@@ -32,40 +44,22 @@
   outline: none;
 }
 
-.EditDepartment-container .buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
 .EditDepartment-container .save-button {
-  background-color: #ffcc80;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
+  display: block;
+  margin: 40px auto;
+  padding: 10px 20px;
+  background-color: #116169;
+  color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-  width: 48%;
-  padding: 12px;
+  border-radius: 5px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-.EditDepartment-container .cancel-button {
-  background-color: #ef9a9a;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 48%;
-  padding: 12px;
-}
-
-.EditDepartment-container .save-button:hover,
-.EditDepartment-container .cancel-button:hover {
-  opacity: 0.9;
-  transform: scale(1.03);
+.EditDepartment-container .save-button:hover {
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
 }
 
 .EditDepartment-container .error-message {
@@ -73,9 +67,12 @@
   font-size: 14px;
   text-align: center;
 }
-.salary-display {
-  font-size: 16px;
-  color: #333;
-  font-weight: bold;
-  margin-top: 5px;
+.salary-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }

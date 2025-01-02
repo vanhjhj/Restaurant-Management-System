@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import style from "./../../Style/AdminStyle/AdminLayout.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,18 +11,30 @@ import {
   faBuilding,
   faTable,
   faChartLine,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 
 function AdminLayout() {
   const navigate = useNavigate();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
 
   return (
     <div className={style["admin-dashboard"]}>
       {/* Header */}
       <div className={style["dashboard-header"]}>
         <div className={style["header-content"]}>
+          <button
+            onClick={toggleSidebar}
+            className={style["menu-toggle-button"]}
+          >
+            <FontAwesomeIcon icon={faBars} />
+          </button>
           <h1
-            onClick={() => navigate("/admin-dashboard")}
+            onClick={() => navigate("/admin-dashboard/main")}
             className={style["admin-dashboard-title"]}
           >
             AdminDashboard
@@ -32,7 +44,11 @@ function AdminLayout() {
 
       <div className={style["dashboard-container"]}>
         {/* Sidebar Navigation */}
-        <div className={style["sidebar"]}>
+        <div
+          className={`${style["sidebar"]} ${
+            isSidebarVisible ? style["visible"] : style["hidden"]
+          }`}
+        >
           <ul className={style["menu-list"]}>
             <li
               onClick={() =>
