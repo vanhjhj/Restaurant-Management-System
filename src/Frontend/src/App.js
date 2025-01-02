@@ -44,8 +44,10 @@ import AddTable from "./Components/Admin/ManageTable/AddTable";
 import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
-import Review from "./Components/Customer/Review"
-import Rating from "./Components/Customer/Rating"
+import AdminDashboard from "./Components/Admin/AdminDashboard";
+import Review from "./Components/Customer/Review";
+import Rating from "./Components/Customer/Rating";
+import SnowEffect from "./Components/UI/SnowEffect";
 
 library.add(faEye, faEyeSlash);
 
@@ -84,14 +86,15 @@ function App() {
       <Router>
         <ScrollToTop />
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <SnowEffect />
         <Routes>
           {/* Trang công khai */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:id" element={<FoodDetail/>} />
-          <Route path="/review" element={<Review/>}/>
-          <Route path="/review/rating/:invoiceID" element={<Rating/>}/>
+          <Route path="/menu/:id" element={<FoodDetail />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/review/rating/:invoiceID" element={<Rating />} />
           <Route
             path="/reservation"
             element={<BookingTable isLoggedIn={isLoggedIn} />}
@@ -150,6 +153,18 @@ function App() {
               </ProtectedRoute>
             }
           >
+            <Route
+              path="main"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Admin"]}
+                  userRole={userRole}
+                >
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="manage-restaurant-info"
               element={
@@ -385,7 +400,7 @@ function App() {
                 allowedRoles={["Employee", "Admin"]}
                 userRole={userRole}
               >
-                <EmployeeReservation/>
+                <EmployeeReservation />
               </ProtectedRoute>
             }
           />

@@ -46,7 +46,7 @@ a {
 }
 
 .logo-text:hover {
-  color: #ff8243;
+  color: #ad6d4d;
 }
 
 .main-navigation {
@@ -87,12 +87,28 @@ a {
   transition: color 0.3s;
 }
 
-.header-menu a.active {
-  text-decoration: underline;
+/* Hiệu ứng gạch chân */
+.header-menu a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px; /* Gạch chân cách chữ 5px */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: #ad6d4d; /* Màu gạch chân */
+  transition: width 0.3s ease;
 }
 
-.header-menu a:hover {
-  color: #ff8243;
+/* Khi hover hoặc active */
+.header-menu a:hover:not(.login-btn):not(.signup-btn)::after,
+.header-menu a.active::after {
+  width: 100%; /* Gạch chân mở rộng toàn bộ chữ */
+}
+
+.header-menu a:hover,
+.header-menu a.active {
+  color: #ad6d4d;
 }
 
 .header-menu .login-btn {
@@ -105,18 +121,21 @@ a {
   margin-left: 15px; /* Tạo khoảng cách với menu */
   line-height: 1;
   box-shadow: 9px 9px 12px #b2b2b3, -9px -9px 12px #ffffff;
+  text-decoration: none !important;
   transition: all 0.3s ease;
 }
 
 .header-menu .login-btn:hover {
   background-color: white;
-  color: #ff8243;
+  color: #a56f6f;
   border-color: #0d0d25;
   box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
+  text-decoration: none !important;
 }
 
 .header-menu .signup-btn {
-  background-color: #b8b6b4;
+  background-color: #c1b8b8;
+  color: #ffffff;
   padding: 10px 18px; /* Giảm padding */
   text-align: center;
   justify-content: center;
@@ -126,6 +145,7 @@ a {
   line-height: 1;
   box-shadow: 9px 9px 12px #b2b2b3, -9px -9px 12px #ffffff;
   transition: all 0.3s ease;
+  text-decoration: none !important;
 }
 
 .header-menu .signup-btn:hover {
@@ -133,6 +153,7 @@ a {
   color: #a0592a;
   border-color: #0d0d25;
   box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
+  text-decoration: none !important;
 }
 
 .user-dropdown {
@@ -173,5 +194,5 @@ a {
 }
 
 .logout-section .logout-button:hover {
-  color: #ff8243;
+  color: #b22222;
 }

@@ -113,12 +113,9 @@ function EditTable() {
 
       {errorMessage && <p className={style["error-message"]}>{errorMessage}</p>}
 
-      <div className={style["buttons"]}>
-        <button onClick={handleUpdateTable}>Lưu</button>
-        <button onClick={() => navigate("/admin-dashboard/manage-table")}>
-          Hủy
-        </button>
-      </div>
+      <button className={style["submit-button"]} onClick={handleUpdateTable}>
+        Lưu
+      </button>
 
       {modal.isOpen && (
         <ModalGeneral

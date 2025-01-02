@@ -1,80 +1,73 @@
 .EditTable-container {
-    max-width: 600px;
-    margin: 50px auto; /* Căn giữa trang */
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 50px auto; /* Căn giữa trang */
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: "Times New Roman", Times, serif;
 }
 
 .EditTable-container h2 {
-    text-align: center;
-    font-size: 40px;
-    margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 42px;
+  color: #514f00;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .EditTable-container label {
-    display: block;
-    font-weight: bold;
-    margin-top: 15px;
-    color: #555;
+  display: block;
+  font-weight: bold;
+  margin-top: 15px;
+  font-size: 20px;
+  color: #555;
 }
 
 .EditTable-container input,
 .EditTable-container select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px;
+  box-sizing: border-box;
 }
 
 .EditTable-container input:disabled {
-    background-color: #f5f5f5;
-    cursor: not-allowed;
+  background-color: #f5f5f5;
+  cursor: not-allowed;
 }
 
 .EditTable-container select {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-.EditTable-container .buttons {
-    display: flex;
-    justify-content: space-between; /* Tạo khoảng cách giữa các nút */
-    margin-top: 20px;
-}
-
-.EditTable-container button {
-    flex: 1; /* Chia đều chiều rộng nút */
-    max-width: 48%; /* Giới hạn chiều rộng nút */
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.EditTable-container button:last-of-type {
-    background-color: #ef9a9a; /* Nút "Lưu" */
-}
-
-.EditTable-container button:first-of-type {
-    background-color: #ffcc80;; /* Nút "Hủy" */
+.EditTable-container .submit-button {
+  display: block;
+  margin: 5px auto;
+  padding: 10px 20px;
+  background-color: #116169;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .EditTable-container button:hover {
-    opacity: 0.9;
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
 }
 
 .EditTable-container .error-message {
-    color: #d9534f;
-    font-size: 14px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    text-align: center;
+  color: #d9534f;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  text-align: center;
 }

@@ -33,7 +33,6 @@ function AddTable() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -92,12 +91,10 @@ function AddTable() {
 
       {errorMessage && <p className={style["error-message"]}>{errorMessage}</p>}
 
-      <div className={style["buttons"]}>
-        <button onClick={handleAddTable}>Thêm bàn</button>
-        <button onClick={() => navigate("/admin-dashboard/manage-table")}>
-          Hủy
-        </button>
-      </div>
+      <button className={style["submit-button"]} onClick={handleAddTable}>
+        Thêm bàn
+      </button>
+
       {modal.isOpen && (
         <ModalGeneral
           isOpen={modal.isOpen}

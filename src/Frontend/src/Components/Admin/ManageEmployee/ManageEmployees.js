@@ -36,7 +36,6 @@ function ManageEmployees() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -95,6 +94,14 @@ function ManageEmployees() {
     });
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   // Tự động tải danh sách nhân viên khi component được render
   useEffect(() => {
     const controller = new AbortController();
@@ -133,7 +140,7 @@ function ManageEmployees() {
       {loading ? (
         <p>Đang tải dữ liệu...</p>
       ) : employees.length === 0 ? (
-        <div>
+        <div className={style["no-employee"]}>
           <p>Hiện tại chưa có nhân viên nào!</p>
           <div className={style["button-container"]}>
             <button
@@ -147,7 +154,7 @@ function ManageEmployees() {
           </div>
         </div>
       ) : (
-        <>
+        <div className={style["employee-table-container"]}>
           <table className={style["employee-table"]}>
             <thead>
               <tr>
@@ -156,7 +163,7 @@ function ManageEmployees() {
                 <th>Ngày sinh</th>
                 <th>Số điện thoại</th>
                 <th>Địa chỉ</th>
-                <th>Ngày bắt đầu làm việc</th>
+                <th>Ngày bắt đầu</th>
                 <th></th>
               </tr>
             </thead>
@@ -165,10 +172,10 @@ function ManageEmployees() {
                 <tr key={emps.account_id}>
                   <td>{id + 1}</td>
                   <td>{emps.full_name}</td>
-                  <td>{emps.date_of_birth}</td>
+                  <td>{formatDate(emps.date_of_birth)}</td>
                   <td>{emps.phone_number}</td>
                   <td>{emps.address}</td>
-                  <td>{emps.start_working_date}</td>
+                  <td>{formatDate(emps.start_working_date)}</td>
                   <td>
                     <button
                       className={style["delete-button"]}
@@ -192,7 +199,7 @@ function ManageEmployees() {
               Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
             </button>
           </div>
-        </>
+        </div>
       )}
       {modal.isOpen && (
         <ModalGeneral

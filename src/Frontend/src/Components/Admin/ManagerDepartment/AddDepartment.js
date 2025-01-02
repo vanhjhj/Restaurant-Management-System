@@ -40,7 +40,6 @@ function AddDepartment() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login");
         throw error;
       }
     }
@@ -75,42 +74,52 @@ function AddDepartment() {
   };
 
   return (
-    <div className={style["add-department-container"]}>
-      <h2 className={style["add-department-header"]}>Thêm bộ phận</h2>
-      {error && <p className={style["error-message"]}>{error}</p>}{" "}
-      {/* Hiển thị lỗi nếu có */}
-      <input
-        type="text"
-        name="name"
-        value={newDepartment.name}
-        onChange={handleInputChange}
-        placeholder="Tên bộ phận"
-        required
-      />
-      <input
-        type="number"
-        name="salary"
-        value={newDepartment.salary}
-        onChange={handleInputChange}
-        placeholder="Lương"
-        required
-      />
-      <button
-        className={style["add-department-button"]}
-        onClick={handleAddDepartment}
-        disabled={loading}
-      >
-        {loading ? "Đang thêm..." : "Thêm mới"}
-      </button>
-      {modal.isOpen && (
-        <ModalGeneral
-          isOpen={modal.isOpen}
-          text={modal.text}
-          type={modal.type}
-          onClose={handleCloseModal}
-          onConfirm={modal.onConfirm}
-        />
-      )}
+    <div className={style["add-department"]}>
+      <div className={style["add-department-container"]}>
+        <h2 className={style["add-department-header"]}>Thêm bộ phận</h2>
+        {error && <p className={style["error-message"]}>{error}</p>}{" "}
+        {/* Hiển thị lỗi nếu có */}
+        <div>
+          <label htmlFor="name">Tên bộ phận:</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            value={newDepartment.name}
+            onChange={handleInputChange}
+            placeholder="Tên bộ phận"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="salary">Lương:</label>
+          <input
+            type="number"
+            name="salary"
+            id="salary"
+            value={newDepartment.salary}
+            onChange={handleInputChange}
+            placeholder="Lương"
+            required
+          />
+        </div>
+        <button
+          className={style["add-department-button"]}
+          onClick={handleAddDepartment}
+          disabled={loading}
+        >
+          {loading ? "Đang thêm..." : "Thêm mới"}
+        </button>
+        {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={handleCloseModal}
+            onConfirm={modal.onConfirm}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@
   overflow: hidden;
   margin: auto; /* Đảm bảo căn giữa */
   margin-top: 100px;
+  margin-bottom: 50px;
 }
 
 .login-box {
@@ -29,6 +30,7 @@
   font-size: 40px;
   color: #35737d;
   margin-bottom: 20px;
+  text-transform: uppercase;
 }
 
 .login-form {
@@ -39,8 +41,9 @@
 }
 
 .login-form-label {
-  font-size: 16px;
+  font-size: 1.1rem;
   color: #666;
+  font-weight: bold;
 }
 
 .login-form-input {
@@ -50,7 +53,7 @@
   margin: 5x 0 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 1rem;
   background-color: #f7f7f7;
 }
 
@@ -72,17 +75,19 @@
 
 .button {
   padding: 10px;
-  background-color: #35737d;
+  background-color: #116169;
   color: white;
-  font-size: 16px;
+  font-size: 1.2rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   justify-content: center;
+  font-weight: bold;
 }
 
 .button:hover {
+  background-color: #1e7f8b;
   opacity: 0.95;
   transform: scale(1.02);
 }
@@ -95,7 +100,7 @@
   margin-top: 10px;
   color: #35737d;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 1rem;
   margin: auto;
 }
 

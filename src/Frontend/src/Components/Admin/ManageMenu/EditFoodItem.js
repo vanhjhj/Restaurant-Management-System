@@ -17,15 +17,12 @@ function EditFoodItem() {
     name: "",
     price: "",
     description: "",
-    image: 0,
+    image: null,
     category: "",
   });
-  const [editingField, setEditingField] = useState(null);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { accessToken, setAccessToken } = useAuth();
   const [originalFoodItem, setOriginalFoodItem] = useState({});
   const [categories, setCategories] = useState([]);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
@@ -33,6 +30,9 @@ function EditFoodItem() {
     type: "", // "confirm" hoặc "success"
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
+  const [previewImage, setPreviewImage] = useState(null);
+  const navigate = useNavigate();
+  const { accessToken, setAccessToken } = useAuth();
 
   useEffect(() => {
     const fetchFoodItem = async () => {
@@ -78,30 +78,76 @@ function EditFoodItem() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
     return activeToken;
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFoodItem((prevPromotion) => ({
-      ...prevPromotion,
-      [name]: files ? files[0] : value, // Nếu có file, lấy file, không thì lấy giá trị input
-    }));
+  // Hàm kiểm tra ảnh
+  const handleImageChange = (file) => {
+    const allowedExtensions = /(\.jpg|\.png)$/i;
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    if (!allowedExtensions.exec(file.name)) {
+      setError("Chỉ chấp nhận file ảnh với định dạng jpg và png.");
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      setError("Ảnh quá lớn. Vui lòng chọn ảnh dưới 2MB.");
+      return false;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.src = reader.result;
+
+      img.onload = () => {
+        const aspectRatio = img.width / img.height;
+
+        if (aspectRatio < 0.5 || aspectRatio > 2) {
+          setError(
+            "Ảnh phải có tỷ lệ chiều rộng/chiều cao trong khoảng 1:2 và 2:1."
+          );
+          return false;
+        }
+
+        setError(""); // Clear any errors
+        setPreviewImage(reader.result); // Set preview image
+        return true;
+      };
+    };
+    reader.readAsDataURL(file);
+
+    return true; // Continue after validation
   };
 
-  const handleCloseModal = () => {
-    setModal({ isOpen: false }); // Đóng modal
-    navigate("/admin-dashboard/manage-menu"); // Điều hướng
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "image" && files.length > 0) {
+      const file = files[0];
+      if (!handleImageChange(file)) {
+        return; // Nếu ảnh không hợp lệ, ngừng tiếp tục
+      }
+      setFoodItem((prevFoodItem) => ({
+        ...prevFoodItem,
+        image: file,
+      }));
+    } else {
+      setFoodItem((prevFoodItem) => ({
+        ...prevFoodItem,
+        [name]: value,
+      }));
+    }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, price, description, image, category } = fooditem;
 
-    // Kiểm tra các thay đổi
+    // Kiểm tra thay đổi
     const hasChanges =
       fooditem.name !== originalFoodItem.name ||
       fooditem.price !== originalFoodItem.price ||
@@ -125,27 +171,15 @@ function EditFoodItem() {
     }
 
     const formData = new FormData();
-    if (fooditem.name !== originalFoodItem.name) {
-      formData.append("name", name);
-    }
-    if (fooditem.price !== originalFoodItem.price) {
+    if (fooditem.name !== originalFoodItem.name) formData.append("name", name);
+    if (fooditem.price !== originalFoodItem.price)
       formData.append("price", price);
-    }
-    if (fooditem.description !== originalFoodItem.description) {
+    if (fooditem.description !== originalFoodItem.description)
       formData.append("description", description);
-    }
-    if (fooditem.category !== originalFoodItem.category) {
+    if (fooditem.category !== originalFoodItem.category)
       formData.append("category", category);
-    }
-
-    if (fooditem.image instanceof File) {
-      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
-      if (!allowedExtensions.exec(fooditem.image.name)) {
-        setError("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, png.");
-        return;
-      }
+    if (fooditem.image instanceof File)
       formData.append("image", fooditem.image);
-    }
 
     setLoading(true);
     try {
@@ -157,7 +191,8 @@ function EditFoodItem() {
         type: "success",
       });
       setTimeout(() => {
-        handleCloseModal();
+        setModal({ isOpen: false });
+        navigate("/admin-dashboard/manage-menu");
       }, 15000);
     } catch (error) {
       console.error("Lỗi khi cập nhật món ăn:", error.message);
@@ -167,86 +202,107 @@ function EditFoodItem() {
     }
   };
 
-  const handleEdit = (field) => {
-    setEditingField(field);
+  const handleCloseModal = () => {
+    setModal({ isOpen: false }); // Đóng modal
+    navigate("/admin-dashboard/manage-menu"); // Điều hướng
   };
 
   return (
     <div className={style["edit-fooditem"]}>
-      <h2>Chỉnh sửa món ăn</h2>
+      <h2>CHỈNH SỬA MÓN ĂN</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div className={style["form-group"]}>
-          <label htmlFor="name">Tên món ăn</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={fooditem.name}
-            onChange={handleChange}
-          />
-        </div>
+        <div className={style["left-side"]}>
+          <div className={style["form-img"]}>
+            {previewImage ? (
+              <img src={previewImage} alt="Preview" />
+            ) : fooditem.image ? (
+              <img src={fooditem.image} alt="Preview" />
+            ) : null}
 
-        <div className={style["form-group"]}>
-          <label htmlFor="price">Giá</label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={fooditem.price}
-            onChange={handleChange}
-          />
-        </div>
+            {!previewImage && fooditem.image && (
+              <p className={style["placeholder"]}>Ảnh cũ</p>
+            )}
 
-        <div className={style["form-group"]}>
-          <label htmlFor="description">Mô tả</label>
-          <textarea
-            id="description"
-            name="description"
-            value={fooditem.description}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="image">Hình ảnh</label>
-          {fooditem.image && (
-            <div className={style["current-image"]}>
-              <p>Hình ảnh cũ:</p>
-              <img
-                src={fooditem.image}
-                alt="Current Food Item"
-                className={style["preview-image"]}
+            <label htmlFor="image" className={style["image-upload-button"]}>
+              Chọn ảnh mới
+              <input
+                type="file"
+                id="image"
+                name="image"
+                style={{ display: "none" }}
+                onChange={handleChange}
               />
-            </div>
-          )}
-          <input type="file" id="image" name="image" onChange={handleChange} />
-          <p style={{ fontSize: "12px", color: "#888" }}>
-            Chọn tệp hình ảnh mới để thay đổi.
-          </p>
+            </label>
+            <p className={style["instructions"]}>
+              Dung lượng file tối đa 2MB <br />
+              Định dạng: JPEG, PNG <br />
+              Nên sử dụng hình ảnh có tỉ lệ 1:1 <br />
+              Ảnh cần có tỉ lệ kích thước chiều rộng và chiều cao không quá 1:2
+              và không nhỏ hơn 2:1
+            </p>
+          </div>
         </div>
 
-        <div className={style["form-group"]}>
-          <label htmlFor="category">Danh mục</label>
-          <select
-            id="category"
-            name="category"
-            value={fooditem.category}
-            onChange={handleChange}
-          >
-            <option value="">Chọn danh mục</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className={style["right-side"]}>
+          <div className={style["form-group"]}>
+            <label htmlFor="name">Tên món ăn</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={fooditem.name}
+              onChange={handleChange}
+              maxLength={255}
+            />
+          </div>
 
-        <button type="submit" className={style["submit-button"]}>
-          Cập nhật món ăn
-        </button>
+          <div className={style["form-group"]}>
+            <label htmlFor="price">Giá</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={fooditem.price}
+              onChange={handleChange}
+              min={0}
+            />
+          </div>
+
+          <div className={style["form-group"]}>
+            <label htmlFor="description">Mô tả</label>
+            <textarea
+              id="description"
+              name="description"
+              value={fooditem.description}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={style["form-group"]}>
+            <label htmlFor="category">Danh mục</label>
+            <select
+              id="category"
+              name="category"
+              value={fooditem.category}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Chọn danh mục</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button type="submit" className={style["submit-button"]}>
+            Cập nhật món ăn
+          </button>
+        </div>
       </form>
+
       {modal.isOpen && (
         <ModalGeneral
           isOpen={modal.isOpen}
