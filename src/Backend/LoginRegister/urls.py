@@ -7,6 +7,7 @@ urlpatterns = [
     path('accounts/', views.AccountListCreateAPIView.as_view(), name='account'),
     path('account-check/', views.AccountCheckAPIView.as_view(), name='account_check'),
     path('password-check/', views.CheckPasswordAPIView.as_view(), name='password_check'),
+    path('account-exists-check/', views.CheckAccountExistsAPIView.as_view(), name='account_exists'),
     path('register-otp/', views.RegisterOTPAPIView.as_view(), name='register_otp'),
     path('accounts/<int:pk>/', views.AccountRetrieveUpdateDestroyAPIView.as_view(), name='account'),
     path('employees/', views.EmployeeAccountListCreateAPIView.as_view(), name='employees'),
