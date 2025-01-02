@@ -295,23 +295,24 @@ function Invoice({ tableID, setShowInvoice }) {
                                     <div className={style['table-food']}>
                                         <div className={style["my-row"] + ' ' + style['my-title-row']}>
                                             <ul>
-                                                <li>Tên món ăn</li>   
-                                                <li>Số lượng</li>
-                                                <li>Trạng thái</li>
-                                                <li>Tổng tiền</li>
+                                                <li className={style['my-food-col-1']}>Tên món ăn</li>   
+                                                <li className={style['my-food-col-2']}>Số lượng</li>
+                                                <li className={style['my-food-col-3']}>Trạng thái</li>
+                                                <li className={style['my-food-col-4']}>Tổng tiền</li>
                                             </ul>
                                         </div>
                                         {itemsData.map(item => (
                                             <section className={style['content-row-section']} key={item.id}>
                                                 <article className={style["my-row"] + ' ' + style['my-content-row'] +' ' +style[(item.isEditing || item.changeQuantity) ? 'new-height':'']}>
                                                     <ul>
-                                                        <li>{item.menu_item_details.name}</li>   
-                                                        {!item.changeQuantity ? <li
-                                                            className={style['change-quantity']}
+                                                        <li className={style['my-food-col-1']}>{item.menu_item_details.name}</li>   
+                                                {!item.changeQuantity ? <li
+                                                  
+                                                            className={style['change-quantity'] +' ' +style['my-food-col-2']}
                                                             onClick={() => handleEditingQuantity(item.quantity,item.id)}>
                                                             {item.quantity}
                                                         </li>
-                                                            : <li>
+                                                            : <li className={style['my-food-col-2']}>
                                                                 <div className={style['quantity-input-ctn']}>
                                                                     <label className={style['quantity-label']}>
                                                                     <input
@@ -336,9 +337,9 @@ function Invoice({ tableID, setShowInvoice }) {
                                                             
                                                         </li>
                                                         }        
-                                                        <li className={style['change-status']}
+                                                        <li className={style['change-status'] + ' '+ style['my-food-col-3']}
                                                         onClick={() => handleChangeStatus(item.id)}>{item.status}</li>
-                                                        <li>{item.total} .VND</li>
+                                                        <li className={style['my-food-col-4']}>{item.total} .VND</li>
                                                     </ul>
                                                     <div className={style['more-content']}>
                                                         <p className={style['mc-title']}>Note: </p>

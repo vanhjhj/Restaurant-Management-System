@@ -126,6 +126,22 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       Đặt Bàn
                     </Link>
                   </li>
+                  {(userRole === "Employee" || userRole==='Admin')&& (
+                    <>
+                      <li>
+                        <Link
+                          to="/employee-dashboard"
+                          className={
+                            location.pathname.startsWith("/employee-dashboard")
+                              ? style.active
+                              : ""
+                          }
+                        >
+                          Trang Nhân Viên
+                        </Link>
+                      </li>
+                    </>
+                  )}
                   <li>
                     <Link
                       to="/review"
@@ -164,22 +180,8 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       </Link>
                     </li>
                   )}
-                  {userRole === "Employee" && (
-                    <>
-                      <li>
-                        <Link
-                          to="/employee-dashboard"
-                          className={
-                            location.pathname.startsWith("/employee-dashboard")
-                              ? style.active
-                              : ""
-                          }
-                        >
-                          Trang Nhân Viên
-                        </Link>
-                      </li>
-                    </>
-                  )}
+                  
+                  
                   {userRole === "Customer" && (
                     <li>
                       <Link to="/"></Link>
