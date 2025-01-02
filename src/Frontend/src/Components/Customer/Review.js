@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import style from '../../Style/CustomerStyle/Review.module.css';
 import { BsFilterLeft } from 'react-icons/bs';
 import {FaArrowLeft, FaArrowRight} from 'react-icons/fa'
@@ -10,6 +10,7 @@ import StarDisplay from './StarDisplay';
 function Review({ iID }) {
     const itemsPerPage = 10; // Số món ăn trên mỗi trang
     const [currentPage, setCurrentPage] = useState(1);
+    const selectRef = useRef(null);
 
     const [feedbacks, setFeedbacks] = useState([]); 
     const [filterType, setFilterType] = useState('Tất cả');
@@ -78,7 +79,13 @@ function Review({ iID }) {
     const currentItems = feedbacks.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
-      );
+    );
+    
+    const handleIconClick = () => {
+        if (selectRef.current) {
+          selectRef.current.focus(); // Hoặc selectRef.current.click();
+        }
+      };
     
     return (
         <div className={style['review-info-ctn']}>
@@ -91,7 +98,8 @@ function Review({ iID }) {
                 <div className={style['row'] + ' ' +style['display-end']}>
                     <div className={style['col-lg-3'] + ' ' + style['filter-ctn']}>
                         <div className={style['filter-category']}>
-                        <select
+                            <select
+                                ref={selectRef}
                             id="filter-type"
                             value={filterType}
                             onChange={handleFilterStatusChange}
@@ -101,7 +109,7 @@ function Review({ iID }) {
                             <option value="Tích cực">Tích cực</option>
                             <option value="Tiêu cực">Tiêu cực</option>
                         </select>
-                            <BsFilterLeft size={30}></BsFilterLeft>
+                            <BsFilterLeft size={30} onClick={handleIconClick}></BsFilterLeft>
                         </div>
                         <div className={style['filter-date']}>
                             <input type="date" id="date-input" name="date" className={style['my-input-date']} onChange={handleFilterDateChange}/>

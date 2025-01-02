@@ -13,6 +13,8 @@ import {
   updateItemStatus,
 } from "../../../API/EE_ReservationAPI";
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
+import ApplyPromotion from "./ApplyPromotion";
+import ExportInvoice from "./ExportInvoice";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -37,6 +39,8 @@ function Invoice({ tableID, setShowInvoice }) {
   const [searchTab, setSearchTab] = useState(0);
   const [errorTableMessage, setErrorTableMessage] = useState();
   const [errorType, setErrorType] = useState();
+  const [isShowPromotion, setIsShowPromotion] = useState(false);
+  const [isExportInvoice, setIsExportInvoice] = useState(false);
 
     const handleError = (error, type) => {
         if (error === 404) {
@@ -125,8 +129,8 @@ function Invoice({ tableID, setShowInvoice }) {
     }
   };
   const fetchData = async () => {
-    const activeToken = await ensureActiveToken();
     try {
+      const activeToken = await ensureActiveToken();
       const orderData = await fetchOrderData(activeToken, tableID);
       setInvoiceData(orderData);
 
@@ -150,7 +154,8 @@ function Invoice({ tableID, setShowInvoice }) {
     
     const handleAddFood = async (oID, fID) => {
         const activeToken = await ensureActiveToken();
-        try {
+      try {
+          console.log(errorTableMessage)
             if (errorTableMessage === 404) {
                 await createOrder(activeToken, tableID);
 
@@ -160,7 +165,7 @@ function Invoice({ tableID, setShowInvoice }) {
         const tablesData = await addFood(activeToken, orderData.id, fID, 1, "");
 
                 const itemData = await fetchOrderItemData(activeToken, orderData.id);
-                setItemsData(itemData.results.map((item) => ({
+                setItemsData(itemData.map((item) => ({
                     ...item,
                     isEditing: false,
                     changeQuantity: false,
@@ -176,7 +181,7 @@ function Invoice({ tableID, setShowInvoice }) {
             setErrorTableMessage();
             setErrorType();
         }
-        catch (error) {
+      catch (error) {
             setErrorTableMessage(error.response.status);
             setErrorType('addItem');
         }
@@ -190,8 +195,8 @@ function Invoice({ tableID, setShowInvoice }) {
   };
 
     const handleErase = async (itemID, fID) => {
+      try {
         const activeToken = await ensureActiveToken();
-        try {
             const result = await removeItem(activeToken, itemID);
             setItemsData((preItem) => (
                 preItem.filter((i) => i.id !== itemID)
@@ -290,23 +295,24 @@ function Invoice({ tableID, setShowInvoice }) {
                                     <div className={style['table-food']}>
                                         <div className={style["my-row"] + ' ' + style['my-title-row']}>
                                             <ul>
-                                                <li>Tên món ăn</li>   
-                                                <li>Số lượng</li>
-                                                <li>Trạng thái</li>
-                                                <li>Tổng tiền</li>
+                                                <li className={style['my-food-col-1']}>Tên món ăn</li>   
+                                                <li className={style['my-food-col-2']}>Số lượng</li>
+                                                <li className={style['my-food-col-3']}>Trạng thái</li>
+                                                <li className={style['my-food-col-4']}>Tổng tiền</li>
                                             </ul>
                                         </div>
                                         {itemsData.map(item => (
                                             <section className={style['content-row-section']} key={item.id}>
                                                 <article className={style["my-row"] + ' ' + style['my-content-row'] +' ' +style[(item.isEditing || item.changeQuantity) ? 'new-height':'']}>
                                                     <ul>
-                                                        <li>{item.menu_item_details.name}</li>   
-                                                        {!item.changeQuantity ? <li
-                                                            className={style['change-quantity']}
+                                                        <li className={style['my-food-col-1']}>{item.menu_item_details.name}</li>   
+                                                {!item.changeQuantity ? <li
+                                                  
+                                                            className={style['change-quantity'] +' ' +style['my-food-col-2']}
                                                             onClick={() => handleEditingQuantity(item.quantity,item.id)}>
                                                             {item.quantity}
                                                         </li>
-                                                            : <li>
+                                                            : <li className={style['my-food-col-2']}>
                                                                 <div className={style['quantity-input-ctn']}>
                                                                     <label className={style['quantity-label']}>
                                                                     <input
@@ -331,9 +337,9 @@ function Invoice({ tableID, setShowInvoice }) {
                                                             
                                                         </li>
                                                         }        
-                                                        <li className={style['change-status']}
+                                                        <li className={style['change-status'] + ' '+ style['my-food-col-3']}
                                                         onClick={() => handleChangeStatus(item.id)}>{item.status}</li>
-                                                        <li>{item.total} .VND</li>
+                                                        <li className={style['my-food-col-4']}>{item.total} .VND</li>
                                                     </ul>
                                                     <div className={style['more-content']}>
                                                         <p className={style['mc-title']}>Note: </p>
@@ -382,9 +388,11 @@ function Invoice({ tableID, setShowInvoice }) {
                                     </div> 
                                 </div>
                                 <div className={style['btn-ctn']}>
-                                    <button className={style['edit-btn']}>Thêm ưu đãi</button>
-                                    <button className={style['edit-btn']}>Xuất hóa đơn</button>    
-                                </div>
+                                    <button className={style['edit-btn']} onClick={() => setIsShowPromotion(true)}>Thêm ưu đãi</button>
+                                    <button className={style['edit-btn']} onClick={() => setIsExportInvoice(true)} >Xuất hóa đơn</button>    
+                  </div>
+                  {isShowPromotion && <ApplyPromotion setShow={setIsShowPromotion} setInvoice={setInvoiceData} invoice={invoiceData}></ApplyPromotion>}
+                  {isExportInvoice && <ExportInvoice setShowInvoice={setShowInvoice} setShow={setIsExportInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></ExportInvoice>}
                             </div>
                         </div>
                         <div className={style['col-lg-6']}>

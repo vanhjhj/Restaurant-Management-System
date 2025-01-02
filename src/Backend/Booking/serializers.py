@@ -60,11 +60,13 @@ class ReservationAssignTableSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all())
+    promotion = serializers.PrimaryKeyRelatedField(
+        queryset=Promotion.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Order
         fields = ('id', 'datetime', 'total_price', 'total_discount',
-                  'final_price', 'status', 'table')
+                  'final_price', 'status', 'table', 'promotion')
         extra_kwargs = {
             'datetime': {'read_only': True},
             'total_price': {'read_only': True},

@@ -14,6 +14,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.settings import api_settings
 import jwt
 from django.core.mail import EmailMessage
+from Booking.permissions import IsEmployeeOrAdmin
+from phonenumbers import NumberParseException
+from phonenumber_field.phonenumber import PhoneNumber
 
 # Create your views here.
 
@@ -22,6 +25,38 @@ def generate_otp(length=6):
     digits = "0123456789"
     otp = ''.join(random.choice(digits) for _ in range(length))
     return otp
+
+class CheckAccountExistsAPIView(generics.CreateAPIView):
+    permission_classes = [IsEmployeeOrAdmin]
+    queryset = CustomerAccount.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        phone_number = request.data.get('phone_number')
+        if not phone_number:
+            return Response({'status': 'error','phone_number': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            #cast phone_number to PhoneNumber type
+            phone_number = PhoneNumber.from_string(phone_number, region= 'VN')
+            if not phone_number.is_valid():
+                return Response({'status': 'invalid', 'phone_number': 'Invalid phone number'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            #check if phone number exists
+            if CustomerAccount.objects.filter(phone_number=phone_number).exists():
+                response = {
+                    'status': 'exists',
+                    'message': 'Phone number exists'
+                }
+                return Response(response, status=status.HTTP_200_OK)
+            response = {
+                'status': 'not_exists',
+                'message': 'Phone number does not exist'
+            }
+            return Response(response, status=status.HTTP_200_OK)
+
+        except NumberParseException:
+            return Response({'phone_number': 'Invalid phone number'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AccountCheckAPIView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]

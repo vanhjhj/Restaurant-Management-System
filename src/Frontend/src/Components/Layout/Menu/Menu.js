@@ -25,15 +25,24 @@ function Menu() {
   const [showArrows, setShowArrows] = useState({ left: false, right: false });
 
   const navigate = useNavigate();
-
+  const targetRef = useRef(null);
   const tabListRef = useRef(null);
-
+  const [hasPageChanged, setHasPageChanged] = useState(false);
   const checkScrollPosition = () => {
     if (tabListRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = tabListRef.current;
       setShowArrows({
         left: scrollLeft > 0,
-        right: scrollLeft < scrollWidth - clientWidth,
+        right: scrollLeft < scrollWidth - clientWidth
+      });
+    }
+  };
+
+  const scrollToTarget = () => {
+    if (targetRef.current) {
+      targetRef.current.scrollIntoView({
+        behavior: "smooth", // Cuộn mượt mà
+        block: "start", // Căn phần tử ở đầu vùng hiển thị
       });
     }
   };
@@ -89,6 +98,15 @@ function Menu() {
     };
     loadData();
   }, []);
+
+  useEffect(() => {
+    // Chỉ cuộn khi currentPage thực sự thay đổi sau khi vào trang
+    if (hasPageChanged) {
+      scrollToTarget();
+    } else {
+      setHasPageChanged(true); // Đánh dấu lần đầu tiên currentPage được thay đổi
+    }
+  }, [currentPage]);
 
   const filter = (item, name, category, priceMin, priceMax) => {
     let addCondition =
@@ -179,7 +197,7 @@ function Menu() {
             </div>
           </div>
         )}
-        <div className={style["menu-tab-row"]}>
+        <div className={style["menu-tab-row"]} ref={targetRef}> 
           <div className={style["row"]}>
             <div className={style["col-lg-12"]}>
               <div className={style["menu-tab"]}>
@@ -237,6 +255,28 @@ function Menu() {
             </div>
           </div>
         </div>
+        
+        <div className={style['row']}>
+          <div className={style['btn-ctn']}>
+            <button 
+              onClick={() => { setCurrentPage((prev) => Math.max(prev - 1, 1));}}
+              disabled={currentPage === 1}
+              >
+            <FaArrowLeft></FaArrowLeft>
+            </button>
+            <div className={style['page-num']}>
+            <span>
+              Trang {currentPage}/{totalPages}
+            </span>
+        </div>
+            <button
+              onClick={() => {setCurrentPage((prev) => Math.min(prev + 1, totalPages)); }}
+              disabled={currentPage === totalPages}
+            >
+            <FaArrowRight></FaArrowRight>
+            </button>
+          </div>
+        </div>
         <div className={style["menu-list-row"]}>
           <div className={style["row"]}>
             {currentItems.map((item) => (
@@ -248,37 +288,34 @@ function Menu() {
                 <div className={style["menu-item"]}>
                   <img src={item.image} alt={item.name} />
                   <h3>{item.name}</h3>
-
                   <p>{formatPrice(item.price)}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className={style["row"]}>
-          <div className={style["btn-ctn"]}>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        <div className={style['row']}>
+          <div className={style['btn-ctn']}>
+            <button 
+              onClick={() => { setCurrentPage((prev) => Math.max(prev - 1, 1));}}
               disabled={currentPage === 1}
             >
               <FaArrowLeft></FaArrowLeft>
             </button>
-
+            <div className={style['page-num']}>
+            <span>
+              Trang {currentPage}/{totalPages}
+            </span>
+        </div>
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              onClick={() => {setCurrentPage((prev) => Math.min(prev + 1, totalPages)); }}
               disabled={currentPage === totalPages}
             >
               <FaArrowRight></FaArrowRight>
             </button>
           </div>
         </div>
-        <div className={style["page-num"]}>
-          <span>
-            Trang {currentPage}/{totalPages}
-          </span>
-        </div>
+        
       </div>
     </div>
   );
