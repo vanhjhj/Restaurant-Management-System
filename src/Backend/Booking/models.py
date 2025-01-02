@@ -39,25 +39,21 @@ class Order(models.Model):
     
     def add_item(self, menu_item: MenuItem, quantity):
         self.total_price += menu_item.price * quantity
-        self.final_price += menu_item.price * quantity
         self.save()
     
     def remove_item(self, order_item):
         self.total_price -= order_item.total
-        self.final_price -= order_item.total
         self.save()
 
     def update_total_when_change_quantity(self, order_item, new_quantity):
         #remove old total
         self.total_price -= order_item.total
-        self.final_price -= order_item.total
 
         #update new total
         order_item.quantity = new_quantity
         order_item.save()
 
         self.total_price += order_item.total
-        self.final_price += order_item.total
         self.save()
 
     def update_table_status(self):
@@ -74,15 +70,14 @@ class Order(models.Model):
         
     def apply_discount(self, discount): #discount is percentage
         self.total_discount = self.total_price * discount / 100
-        self.final_price -= self.total_discount
         self.save()
 
     def remove_discount(self):
-        self.final_price += self.total_discount
         self.total_discount = 0
         self.save()
     
     def save(self, *args, **kwargs):
+        self.total_discount = Promotion.objects.get(pk=self.promotion.code).discount * self.total_price / 100 if self.promotion else 0
         self.final_price = self.total_price - self.total_discount
         super().save(*args, **kwargs)
     
