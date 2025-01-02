@@ -384,6 +384,48 @@ class OrderRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
         order.delete()
         return Response({'message': 'Order deleted successfully'}, status=status.HTTP_200_OK)
     
+    def put(self, request, *args, **kwargs):
+        return Response({'message': 'PUT method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def patch(self, request, *args, **kwargs):
+        if 'id' in request.data:
+            return Response({'message': 'Cannot update id field'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        order = self.get_object()
+        serializers = OrderSerializer(order, data=request.data, partial=True)
+
+        if serializers.is_valid():
+            if 'table' in serializers.validated_data:
+                return Response({'message': 'Cannot update table in this API endpoint'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if 'status' in serializers.validated_data:
+                return Response({'message': 'Cannot update status in this API endpoint'}, status=status.HTTP_400_BAD_REQUEST)
+
+            for key, value in serializers.validated_data.items():
+                if key == 'promotion':
+                    if value:
+                        promotion = Promotion.objects.get(pk=value.code)
+                        min_order = promotion.min_order
+
+                        if order.total_price < min_order:
+                            return Response({'message': f'Minimum order for this promotion is {min_order}'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        order.apply_discount(promotion.discount)
+                    else:
+                        order.remove_discount()
+
+                setattr(order, key, value)
+            
+            order.save()
+
+            response = {
+                'message': 'Order updated successfully',
+                'data': OrderSerializer(order).data
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class OrderMarkPaidAPIView(generics.UpdateAPIView):
     queryset = Order.objects.all()
     permission_classes = [IsEmployeeOrAdmin]
@@ -412,8 +454,6 @@ class OrderMarkPaidAPIView(generics.UpdateAPIView):
             'data': OrderSerializer(order).data
         }
         return Response(response, status=status.HTTP_200_OK)
-        
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ChangeTableOrderAPIView(generics.UpdateAPIView):
     queryset = Order.objects.all()
