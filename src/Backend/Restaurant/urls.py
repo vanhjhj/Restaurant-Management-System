@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/menu/', include('Menu.urls')),
     path('api/booking/', include('Booking.urls')),
     path('api/promotion/', include('Promotion.urls')),
+    path('api/config/', include('Config.urls')),
 ]
 
