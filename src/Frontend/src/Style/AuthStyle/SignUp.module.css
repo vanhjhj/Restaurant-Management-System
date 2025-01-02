@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 /* Hộp chứa form */
@@ -68,8 +68,6 @@
 .form-column select {
   appearance: none; /* Loại bỏ kiểu mặc định của trình duyệt */
   background-image: none; /* Loại bỏ mũi tên mặc định */
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 .signup-form input:focus,

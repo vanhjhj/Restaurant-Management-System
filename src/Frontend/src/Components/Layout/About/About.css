@@ -73,7 +73,7 @@
     minmax(300px, 1fr)
   ); /* Chia đều cột, mỗi cột tối thiểu 300px */
   gap: 15px; /* Khoảng cách giữa các ảnh nhỏ hơn */
-  padding: 20px; /* Thêm khoảng cách với viền ngoài */
+  padding: 30px; /* Thêm khoảng cách với viền ngoài */
   justify-content: center; /* Căn giữa grid */
   /* grid-template-columns: repeat(3, 1fr); */
 }
