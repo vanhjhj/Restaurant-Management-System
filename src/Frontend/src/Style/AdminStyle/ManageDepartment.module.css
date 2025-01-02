@@ -65,16 +65,17 @@
   align-items: center;
   padding: 8px 12px;
   font-size: 18px;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .department-table .edit-button {
-  background-color: #116169;
-  color: white;
+  background-color: #fff;
+  color: #116169;
+  margin-right: 10px;
+  border-color:#116169;
 }
 
 .department-table .edit-button:hover {
@@ -82,8 +83,9 @@
 }
 
 .department-table .delete-button {
-  background-color: #f44336;
-  color: white;
+  background-color: #ffff;
+  color: #f44336;
+  border-color: #f44336;
 }
 
 .department-table .delete-button:hover {

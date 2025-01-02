@@ -171,10 +171,8 @@ function FillInfoEmployee() {
         isOpen: true,
         text: "Thông tin nhân viên đã được lưu thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       console.error(
         "Error filling employee info:",
@@ -305,7 +303,7 @@ function FillInfoEmployee() {
             isOpen={modal.isOpen}
             text={modal.text}
             type={modal.type}
-            onClose={handleCloseModal}
+            onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
             onConfirm={modal.onConfirm}
           />
         )}

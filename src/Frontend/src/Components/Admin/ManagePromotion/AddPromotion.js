@@ -177,10 +177,8 @@ function AddPromotion() {
         isOpen: true,
         text: "Thêm ưu đãi thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       if (error.response) {
         console.error("Lỗi từ server:", error.response.data);
@@ -348,7 +346,7 @@ function AddPromotion() {
             isOpen={modal.isOpen}
             text={modal.text}
             type={modal.type}
-            onClose={handleCloseModal}
+            onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
             onConfirm={modal.onConfirm}
           />
         )}

@@ -56,10 +56,8 @@ function AddTable() {
         isOpen: true,
         text: "Thêm bàn thành công!",
         type: "success",
+        onConfirm: handleCloseModal
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       setErrorMessage("Không thể thêm bàn. Vui lòng thử lại!");
       console.error("Error adding table:", error);
@@ -100,7 +98,7 @@ function AddTable() {
           isOpen={modal.isOpen}
           text={modal.text}
           type={modal.type}
-          onClose={handleCloseModal}
+          onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
           onConfirm={modal.onConfirm}
         />
       )}
