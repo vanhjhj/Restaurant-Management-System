@@ -8,12 +8,12 @@
 .login-container {
   display: flex;
   width: 1000px;
-  height: 600px;
+  height: 550px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 50px;
   overflow: hidden;
   margin: auto; /* Đảm bảo căn giữa */
-  margin-top: 100px;
+  margin-top: 40px;
   margin-bottom: 50px;
 }
 
@@ -55,6 +55,7 @@
   border-radius: 5px;
   font-size: 1rem;
   background-color: #f7f7f7;
+  margin-bottom: 15px;
 }
 
 .password-input-container {
@@ -140,6 +141,7 @@
 .login-box .button {
   width: 50%;
   margin: auto;
+  margin-top: 5px;
 }
 
 .register-box .button {

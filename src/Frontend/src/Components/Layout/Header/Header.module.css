@@ -46,7 +46,7 @@ a {
 }
 
 .logo-text:hover {
-  color: #ad6d4d;
+  color: #a38900;
 }
 
 .main-navigation {
@@ -134,7 +134,7 @@ a {
 }
 
 .header-menu .signup-btn {
-  background-color: #c1b8b8;
+  background-color: #a38900;
   color: #ffffff;
   padding: 10px 18px; /* Giảm padding */
   text-align: center;
