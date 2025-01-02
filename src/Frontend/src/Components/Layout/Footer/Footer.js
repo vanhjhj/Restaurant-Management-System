@@ -72,6 +72,9 @@ function Footer() {
                       <li>
                         <Link to="/promotion">Khuyến Mãi</Link>
                       </li>
+                      <li>
+                        <Link to="/review">Đánh giá</Link>
+                      </li>
                     </ul>
                   </div>
                   <div className={style["footer-menu"]}>

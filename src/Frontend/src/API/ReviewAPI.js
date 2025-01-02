@@ -40,3 +40,21 @@ export const getFeedBackFilter = async (positive, date) => {
         throw error;
     }
 }
+
+export const createFeedBack = async (oID, name, servep, foodp, pricep,spacep,comment) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/booking/feedbacks/`, {
+            order: oID,
+            name: name,
+            serve_point: servep,
+            food_point: foodp,
+            price_point: pricep,
+            space_point: spacep,
+            comment: comment,
+        });
+        return response.data;
+    }
+    catch(error) {
+        throw error;
+    }
+}

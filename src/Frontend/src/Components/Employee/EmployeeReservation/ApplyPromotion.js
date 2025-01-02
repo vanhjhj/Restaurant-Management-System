@@ -88,7 +88,13 @@ function ApplyPromotion({setShow, setInvoice, invoice}) {
             const newInvoice = await addPromotionToInvoice(activeToken, invoice.id, choosenPromotion.code);
             setInvoice(newInvoice.data);
             setErrorMessage();
-            setSuccessMessage("Áp dụng khuyễn mãi thành công");
+            if (choosenPromotion.code === null) {
+                setSuccessMessage("Hủy khuyễn mãi thành công");
+            }
+            else {
+                setSuccessMessage("Áp dụng khuyễn mãi thành công");
+            }
+            
         }
         catch (error) {
             setSuccessMessage();
@@ -113,6 +119,12 @@ function ApplyPromotion({setShow, setInvoice, invoice}) {
                 <div className={style['promotion-ctn']}>
                     <div className={style['row']}>
                         <div className={style['col-lg-12']}>
+                            <div className={style['close-ctn']}>
+                                                            <button className={style["close-modal"]} onClick={() => setShow(false)}>
+                                                                &times;
+                                                            </button>
+                                                            </div>
+                                                        <div></div>
                             <div className={style['promotion-list']}>
                                 <h2>Khuyễn mãi</h2>
                                 <p>Danh sách các khuyễn mãi</p>   
@@ -154,7 +166,6 @@ function ApplyPromotion({setShow, setInvoice, invoice}) {
                             </div>
                             <div className={style['btn-ctn']}>
                                 <button className={style['my-btn']} onClick={() => handleSavePromotion()}>Lưu</button>
-                                <button className={style['my-btn']} onClick={() => setShow(false)}>Thoát</button>
                             </div>
                         </div>
                     </div>

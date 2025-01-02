@@ -161,7 +161,7 @@
   align-items: center;
   justify-content: center;
   display: flex;
-  height: 30px;
+  height: 20px;
   margin-top:10px;
 }
 
@@ -184,4 +184,24 @@
 
 .promotion-list p {
   font-size: 18px;
+}
+
+.close-ctn{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  height:30px;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+  color: #333;
 }

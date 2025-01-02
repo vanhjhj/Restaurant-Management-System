@@ -129,8 +129,8 @@ function Invoice({ tableID, setShowInvoice }) {
     }
   };
   const fetchData = async () => {
-    const activeToken = await ensureActiveToken();
     try {
+      const activeToken = await ensureActiveToken();
       const orderData = await fetchOrderData(activeToken, tableID);
       setInvoiceData(orderData);
 
@@ -154,7 +154,8 @@ function Invoice({ tableID, setShowInvoice }) {
     
     const handleAddFood = async (oID, fID) => {
         const activeToken = await ensureActiveToken();
-        try {
+      try {
+          console.log(errorTableMessage)
             if (errorTableMessage === 404) {
                 await createOrder(activeToken, tableID);
 
@@ -164,7 +165,7 @@ function Invoice({ tableID, setShowInvoice }) {
         const tablesData = await addFood(activeToken, orderData.id, fID, 1, "");
 
                 const itemData = await fetchOrderItemData(activeToken, orderData.id);
-                setItemsData(itemData.results.map((item) => ({
+                setItemsData(itemData.map((item) => ({
                     ...item,
                     isEditing: false,
                     changeQuantity: false,
@@ -180,7 +181,7 @@ function Invoice({ tableID, setShowInvoice }) {
             setErrorTableMessage();
             setErrorType();
         }
-        catch (error) {
+      catch (error) {
             setErrorTableMessage(error.response.status);
             setErrorType('addItem');
         }
@@ -390,7 +391,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                     <button className={style['edit-btn']} onClick={() => setIsExportInvoice(true)} >Xuất hóa đơn</button>    
                   </div>
                   {isShowPromotion && <ApplyPromotion setShow={setIsShowPromotion} setInvoice={setInvoiceData} invoice={invoiceData}></ApplyPromotion>}
-                  {isExportInvoice && <ExportInvoice setShow={setIsExportInvoice} foodData={itemsData} invoiceData={invoiceData}></ExportInvoice>}
+                  {isExportInvoice && <ExportInvoice setShowInvoice={setShowInvoice} setShow={setIsExportInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></ExportInvoice>}
                             </div>
                         </div>
                         <div className={style['col-lg-6']}>

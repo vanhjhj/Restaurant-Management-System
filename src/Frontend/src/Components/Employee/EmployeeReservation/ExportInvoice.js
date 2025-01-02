@@ -4,9 +4,16 @@ import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./ExportInvoice.module.css";
 import QRCodeGenerator from "../../Customer/QRReview";
+import { fetchPromotionByCode, fetchPromotions } from "../../../API/PromotionAPI";
+import { markPaid } from "../../../API/EE_ReservationAPI";
+import SuccessMessage from "./SuccessMessage";
 
 
-function ExportInvoice({ setShow, foodData, invoiceData }) {
+function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice }) {
+    const { accessToken, setAccessToken } = useAuth();
+    const [promotion, setPromotion] = useState({ code: null, title: null, type: null, min_order: null, enddate: null });
+    const [success, setSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState();
     const NumberWithSpaces = ({ number }) => {
         const formattedNumber = new Intl.NumberFormat("en-US", {
           minimumFractionDigits: 2,
@@ -16,14 +23,64 @@ function ExportInvoice({ setShow, foodData, invoiceData }) {
           .replace(/,/g, " ");
     
         return <p>{formattedNumber} .VNĐ</p>;
-      };
+    };
+       const ensureActiveToken = async () => {
+            let activeToken = accessToken;
+            const refresh = localStorage.getItem("refreshToken");
+            if (!accessToken || isTokenExpired(accessToken)) {
+              const refreshed = await refreshToken(refresh);
+              activeToken = refreshed.access;
+              setAccessToken(activeToken);
+            }
+            return activeToken;
+        };
+        
+    
+    const fetchData = async () => {
+        try {
+            const data = await fetchPromotions();
+            console.log(data);
+            const filteredData = data.filter(item => item.code === pID);
+            setPromotion(filteredData[0]);
+            setErrorMessage();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const handlePay = async () => {
+            try {
+                const activeToken = await ensureActiveToken();
+                await markPaid(activeToken, iID);
+                setSuccess(true);
+            }
+            catch (error) {
+                if (error.status === 404) {
+                    setErrorMessage('Lỗi kết nối với server');
+                }
+                else if (error.response.data.message === "Cannot mark order as paid because there are items are preparing") {
+                    setErrorMessage('Không thể thanh toán vì có món đang phục vụ');
+                }
+            }
+        }
+
     return (
         <div className={style['ctn']}>
             <div className={style['container']}>
                 <div className={style['export-invoice-ctn']}>
                     <div className={style['row']}>
                         <div className={style['col-lg-12']}>
-                            <div>
+                            <div className={style['close-ctn']}>
+                                <button className={style["close-modal"]} onClick={() => setShow(false)}>
+                                    &times;
+                                </button>
+                                </div>
+                            <div className={style['title']}>
                                 <h2>Hóa đơn</h2>    
                             </div>
                             <div className={style['order-food-ctn']}>
@@ -31,43 +88,81 @@ function ExportInvoice({ setShow, foodData, invoiceData }) {
                                 <div className={style['table-food']}>
                                     <div className={style["my-row"] + ' ' + style['my-title-row']}>
                                         <ul>
-                                            <li>Tên món ăn</li> 
-                                            <li>Số lượng</li>   
-                                            <li>Tổng tiền</li>
+                                            <li className={style['food-col-1']}>Tên món ăn</li> 
+                                            <li className={style['food-col-2']}>Số lượng</li>   
+                                            <li className={style['food-col-3']}>Tổng tiền</li>
                                         </ul>
                                     </div>
                                     {foodData.map(item => (
                                         <div className={style['content-row-section']} key={item.id}>
                                             <article className={style["my-row"] + ' ' + style['my-content-row']}>
                                                 <ul>
-                                                    <li>{item.menu_item_details.name}</li>
-                                                    <li>{item.quantity}</li>
-                                                    <li>{item.total}</li>
+                                                    <li className={style['food-col-1']}>{item.menu_item_details.name}</li>
+                                                    <li className={style['food-col-2']}>{item.quantity}</li>
+                                                    <li className={style['food-col-3']}>{item.total} .VNĐ</li>
                                                 </ul>
                                             </article>
                                         </div>
                                     ))}
                                 </div>
                             </div>
-                            <div className={style['total-money-ctn']}>
-                                <div className={style['width-50']}>
-                                    <div className={style['money-format']}>
-                                        <label>Tổng tiền:</label>
-                                            <NumberWithSpaces number={invoiceData.total_price}></NumberWithSpaces>
-                                    </div>
-                                    <div className={style['money-format']}>
-                                        <label>Ưu đãi:</label>
-                                        <NumberWithSpaces number={invoiceData.total_discount}></NumberWithSpaces>    
-                                    </div>
-                                    <div className={style['money-format'] +' ' + style['final_price']}>
-                                        <label>Tổng thanh toán:</label>
-                                        <NumberWithSpaces number={invoiceData.final_price}></NumberWithSpaces>    
-                                    </div>
-                                </div> 
-                            </div>
                             <div>
-                                <QRCodeGenerator invoiceID={invoiceData.id}></QRCodeGenerator>
+                                <h4>Khuyễn mãi</h4>
+                                <div className={style['promotion-table']}>
+                                                                    <div className={style['my-row'] + ' ' + style['my-title-row']}>
+                                                                        <ul>
+                                                                            <li className={style['my-col-1']}>Mã KH</li>   
+                                                                            <li className={style['my-col-2']}>Tên khuyễn mãi</li>
+                                                                            <li className={style['my-col-3']}>Loại</li>
+                                                                            <li className={style['my-col-4']}>Ngày kết thúc</li>
+                                                                            <li className={style['my-col-5']}>Điều kiện</li>
+                                                                        </ul>
+                                                                    </div>
+                                    {promotion && <div className={style['my-row']}>
+                                                                            <ul>
+                                                                                <li className={style['my-col-1']}>{promotion.code}</li>   
+                                                                                <li className={style['my-col-2']}>{promotion.title}</li>
+                                                                                <li className={style['my-col-3']}>{promotion.type}</li>
+                                                                                <li className={style['my-col-4']}>{promotion.enddate}</li>
+                                                                                <li className={style['my-col-5']}>{promotion.min_order} .VNĐ</li>
+                                                                            </ul>
+                                                                        </div>}
+                                                                </div>
                             </div>
+                            <div className={style['row']}>
+                                <div className={style['col-lg-6']}>
+                                    <div className={style['total-money-ctn']}>
+                                        <div className={style['width-100']}>
+                                            <div className={style['money-format']}>
+                                                <label>Tổng tiền:</label>
+                                                <NumberWithSpaces number={invoiceData.total_price}></NumberWithSpaces>
+                                            </div>
+                                            <div className={style['money-format']}>
+                                                <label>Ưu đãi:</label>
+                                                <NumberWithSpaces number={invoiceData.total_discount}></NumberWithSpaces>    
+                                            </div>
+                                            <div className={style['money-format'] +' ' + style['final_price']}>
+                                                <label>Tổng thanh toán:</label>
+                                                <NumberWithSpaces number={invoiceData.final_price}></NumberWithSpaces>    
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div className={style['col-lg-6']}>
+                                    <div>
+                                        <QRCodeGenerator invoiceID={invoiceData.id}></QRCodeGenerator>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={style['col-lg-12']}>
+                                <div className={style['error-ctn']}>
+                                                                {errorMessage ? <p className={style['error']}>{errorMessage}</p> : <p></p>}
+                                                            </div>
+                                <div className={style['btn-ctn']}>
+                                    <button className={style['my-btn']} onClick={() => handlePay()}>Thanh toán</button>
+                                </div>
+                            </div>
+                            {success && <SuccessMessage setShow={setSuccess} setShowExInvoice={setShow} setShowInvoice={setShowInvoice}></SuccessMessage>}
                         </div>
                     </div>
                 </div>

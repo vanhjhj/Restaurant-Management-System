@@ -309,3 +309,24 @@ export const addPromotionToInvoice = async (token, iID, pID) => {
     throw error;
   }
 };
+
+
+export const markPaid = async (token, iID) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/booking/orders/mark-paid/${iID}/`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+

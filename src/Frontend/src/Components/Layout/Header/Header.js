@@ -128,6 +128,16 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   </li>
                   <li>
                     <Link
+                      to="/review"
+                      className={
+                        location.pathname === "/reservation" ? style.active : ""
+                      }
+                    >
+                      Đánh giá
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       to="/promotion"
                       className={
                         location.pathname.startsWith("/promotion")
