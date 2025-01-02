@@ -48,7 +48,7 @@
 }
 
 .menu-tab-row {
-  margin-bottom: 80px;
+  margin-bottom: 1px;
 }
 
 .menu-tab {
@@ -163,7 +163,7 @@
 
 .search-row {
   display: flex;
-  margin-top: 100px;
+  margin-top: 50px;
   padding-top: 20px;
   border-top: 3px solid rgba(0, 0, 0, 0.4);
 }
@@ -236,6 +236,7 @@
 
 .btn-ctn{
   margin-top:20px;
+  margin-bottom: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -289,9 +290,13 @@
 }
 
 .scroll-menu-tab{
-  max-width: 400px;
+  max-width: 600px;
   overflow: hidden;
   scroll-behavior: smooth;
+}
+
+.scroll-menu-tab li{
+  white-space: nowrap;
 }
 
 .scroll-btn{
