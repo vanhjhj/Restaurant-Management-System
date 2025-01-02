@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate để điều hướng
+import { useNavigate } from "react-router-dom";
 import style from "./../../../Style/AdminStyle/ManageTable.module.css";
-import { GetTable, DeleteTable } from "../../../API/AdminAPI";
+import { GetTable, DeleteTable, UpdateTable, addTable } from "../../../API/AdminAPI";
 import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
-import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai"; // Import icons
-import TableIcon from "./../../Employee/EmployeeReservation/tableIcon"; // Import TableIcon component
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import TableIcon from "./../../Employee/EmployeeReservation/tableIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ModalGeneral } from "../../ModalGeneral";
-function TableManagement() {
+import AddTableModal from "./AddTableModal";
+
+function ManageTable() {
   const { accessToken, setAccessToken } = useAuth();
-  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
+  const navigate = useNavigate();
   const [tables, setTables] = useState([]);
+  const [editingTableId, setEditingTableId] = useState(null);
+  const [editedSeats, setEditedSeats] = useState({});
   const [modal, setModal] = useState({
     isOpen: false,
     text: "",
-    type: "", // "confirm" hoặc "success"
-    onConfirm: null, // Hàm được gọi khi xác nhận
+    type: "",
+    onConfirm: null,
   });
+  const [isAddTableModalOpen, setAddTableModalOpen] = useState(false);
 
   // Ensure token is valid
   const ensureActiveToken = async () => {
@@ -33,7 +38,6 @@ function TableManagement() {
     return activeToken;
   };
 
-  // Fetch table data
   const fetchData = async () => {
     const activeToken = await ensureActiveToken();
     try {
@@ -48,31 +52,76 @@ function TableManagement() {
     fetchData();
   }, []);
 
-  // Edit an existing table
-  const handleEditTable = async (id) => {
-    setModal({ isOpen: false });
-    navigate(`/admin-dashboard/edit-table/${id}`);
+  const handleAddTable = async (newTable) => {
+    try {
+      const activeToken = await ensureActiveToken();
+      await addTable(newTable, activeToken);
+      fetchData(); // Cập nhật lại danh sách bàn sau khi thêm thành công
+      setAddTableModalOpen(false); // Đóng modal thêm bàn
+      setModal({
+        isOpen: true,
+        text: "Thêm bàn thành công!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error adding table:", error);
+      setModal({
+        isOpen: true,
+        text: "Không thể thêm bàn. Vui lòng thử lại!",
+        type: "error",
+      });
+    }
+  };
+  
+  
+
+  const handleEditTable = (id, currentSeats) => {
+    setEditingTableId(id); // Chuyển sang chế độ chỉnh sửa
+    setEditedSeats({ [id]: currentSeats }); // Lưu số ghế hiện tại
   };
 
-  // Delete a table
+  const handleCancelEdit = () => {
+    setEditingTableId(null); // Thoát chế độ chỉnh sửa
+    setEditedSeats({});
+  };
+
+  const handleSaveEdit = async (id) => {
+    try {
+      const activeToken = await ensureActiveToken();
+      await UpdateTable(id, { number_of_seats: editedSeats[id] }, activeToken);
+      setEditingTableId(null); // Thoát chế độ chỉnh sửa
+      setEditedSeats({});
+      fetchData(); // Làm mới danh sách bàn
+      setModal({
+        isOpen: true,
+        text: "Chỉnh sửa bàn thành công!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error updating table:", error);
+      setModal({
+        isOpen: true,
+        text: "Không thể chỉnh sửa bàn. Vui lòng thử lại sau!",
+        type: "error",
+      });
+    }
+  };
+
   const handleDeleteTable = async (id) => {
     setModal({
       isOpen: true,
       text: "Bạn có chắc chắn muốn xóa bàn này không?",
       type: "confirm",
       onConfirm: async () => {
-        console.log("Confirmed delete!");
-        setModal({ isOpen: false });
         try {
           const activeToken = await ensureActiveToken();
           await DeleteTable(id, activeToken);
-          setTables(tables.filter((dept) => dept.id !== id));
+          setTables(tables.filter((table) => table.id !== id));
           setModal({
             isOpen: true,
             text: "Xóa bàn thành công!",
             type: "success",
           });
-          await fetchData();
         } catch (error) {
           console.error("Error deleting Table:", error);
           setModal({
@@ -85,13 +134,12 @@ function TableManagement() {
     });
   };
 
-  // Handle "Thêm bàn mới" button click
   const handleAddTableClick = () => {
-    navigate("/admin-dashboard/add-table"); // Chuyển đến trang thêm bàn
+    setAddTableModalOpen(true);
   };
-
+  
   return (
-    <div className={style["TableManagement-container"]}>
+    <div className={style["ManageTable-container"]}>
       {/* Header Section */}
       <div className={style["header"]}>
         <h2>Quản lý bàn</h2>
@@ -112,7 +160,6 @@ function TableManagement() {
             <p>Hiện tại chưa có bàn nào!</p>
           </div>
         ) : (
-          // Table List
           <div className={style["table-list"]}>
             {tables.map((table) => (
               <div key={table.id} className={style["table-item"]}>
@@ -132,7 +179,26 @@ function TableManagement() {
                   }
                 />
                 <p>Bàn số: {table.id}</p>
-                <p>Số ghế: {table.number_of_seats}</p>
+                {editingTableId === table.id ? (
+                  <div className={style["edit-seats-container"]}>
+                    <label htmlFor={`edit-seats-${table.id}`}>Số ghế:</label>
+                    <input
+                      id={`edit-seats-${table.id}`}
+                      type="number"
+                      value={editedSeats[table.id]}
+                      onChange={(e) =>
+                        setEditedSeats({
+                          ...editedSeats,
+                          [table.id]: e.target.value,
+                        })
+                      }
+                    />
+                    <AiOutlineEdit size={20}/>
+
+                  </div>
+                ) : (
+                  <p>Số ghế: {table.number_of_seats}</p>
+                )}
                 <p>
                   Trạng thái:{" "}
                   {table.status === "A"
@@ -146,24 +212,53 @@ function TableManagement() {
                     : "Không xác định"}
                 </p>
                 <div className={style["table-actions"]}>
-                  <button
-                    className={style["table-actions-edit"]}
-                    onClick={() => handleEditTable(table.id)}
-                  >
-                    <AiOutlineEdit size={20} /> Chỉnh sửa
-                  </button>
-                  <button
-                    className={style["table-actions-delete"]}
-                    onClick={() => handleDeleteTable(table.id)}
-                  >
-                    <AiOutlineDelete size={20} /> Xóa
-                  </button>
+                  {editingTableId === table.id ? (
+                    <>
+                      <button
+                        className={style["table-actions-save"]}
+                        onClick={() => handleSaveEdit(table.id)}
+                      >
+                        Lưu
+                      </button>
+                      <button
+                        className={style["table-actions-cancel"]}
+                        onClick={handleCancelEdit}
+                      >
+                        Hủy
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className={style["table-actions-edit"]}
+                        onClick={() =>
+                          handleEditTable(table.id, table.number_of_seats)
+                        }
+                      >
+                        <AiOutlineEdit size={20} /> Chỉnh sửa
+                      </button>
+                      <button
+                        className={style["table-actions-delete"]}
+                        onClick={() => handleDeleteTable(table.id)}
+                      >
+                        <AiOutlineDelete size={20} /> Xóa
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Hiển thị modal thêm bàn */}
+      <AddTableModal
+        isOpen={isAddTableModalOpen}
+        onClose={() => setAddTableModalOpen(false)}
+        onAddTable={handleAddTable}
+      />
+
       {modal.isOpen && (
         <ModalGeneral
           isOpen={modal.isOpen}
@@ -177,4 +272,4 @@ function TableManagement() {
   );
 }
 
-export default TableManagement;
+export default ManageTable;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./../../../Style/AdminStyle/ManageDepartment.module.css";
-import { useAuth } from "./../../Auth/AuthContext";
+import { useAuth } from "../../Auth/AuthContext";
 import { getDepartments, deleteDepartment } from "../../../API/AdminAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
