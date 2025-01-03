@@ -240,3 +240,28 @@ export const DeleteTable = async (id, token) => {
     throw error;
   }
 };
+
+
+//Lấy thông tin nhà hàng
+
+export const GetResInfo = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/config/restaurant-configs/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error get restaurant info:", error);
+    throw error;
+  }
+};
+
+//chỉnh sửa thông tin nhà hàng
+
+export const UpdateResInfo = async () => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error get restaurant info:", error);
+    throw error;
+  }
+};
