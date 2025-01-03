@@ -1,124 +1,336 @@
-// src/Components/ManageRestaurantInfo.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './ManageRestaurantInfo.css';
+import React, { useContext, useState } from "react";
+import { RestaurantContext } from "../../../Config/RestaurantContext"; // Import Context
+import { UpdateResInfo } from "../../../API/AdminAPI"; // Hàm cập nhật thông tin API
+import style from "./ManageRestaurantInfo.module.css";
+import { AiOutlineEdit } from "react-icons/ai";
+import { useAuth } from "../../../Components/Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
+import { ModalGeneral } from "../../ModalGeneral";
 
 function ManageRestaurantInfo() {
-    const navigate = useNavigate();
-    const [restaurantInfo, setRestaurantInfo] = useState({
-        name: '',
-        phone: '',
-        address: '',
-        info: '',
-        openTime: '',
-        closeTime: '',
+  const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext); // Sử dụng context
+  const [editMode, setEditMode] = useState(false); // Quản lý trạng thái chỉnh sửa
+  const [updatedInfo, setUpdatedInfo] = useState({}); // Thông tin cập nhật
+  const { accessToken, setAccessToken } = useAuth();
+  const [modal, setModal] = useState({
+      isOpen: false,
+      text: "",
+      type: "",
+      onConfirm: null,
     });
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        throw error;
+      }
+    }
+    return activeToken;
+  };
 
-    // Fetch current restaurant info when component mounts
-    useEffect(() => {
-        async function fetchRestaurantInfo() {
-            try {
-                const response = await fetch('/api/restaurant-info');
-                const data = await response.json();
-                setRestaurantInfo(data);
-            } catch (error) {
-                console.error('Error fetching restaurant info:', error);
-            }
-        }
-        fetchRestaurantInfo();
-    }, []);
+  // Khi bật chế độ chỉnh sửa, đồng bộ dữ liệu từ context vào updatedInfo
+  const enableEditMode = () => {
+    setUpdatedInfo(restaurantInfo); // Lấy dữ liệu từ context
+    setEditMode(true); // Bật chế độ chỉnh sửa
+  };
 
-    // Handle form change
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setRestaurantInfo((prevInfo) => ({
-            ...prevInfo,
-            [name]: value,
-        }));
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-    // Submit updated restaurant info
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('/api/restaurant-info', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(restaurantInfo),
-            });
-            if (response.ok) {
-                alert('Thông tin nhà hàng đã được cập nhật.');
-            } else {
-                alert('Lỗi khi cập nhật thông tin.');
-            }
-        } catch (error) {
-            console.error('Error updating restaurant info:', error);
-        }
-    };
+  const handleNestedChange = (e, parentKey) => {
+    const { name, value } = e.target;
+    setUpdatedInfo((prev) => ({
+      ...prev,
+      [parentKey]: {
+        ...prev[parentKey],
+        [name]: value,
+      },
+    }));
+  };
 
-    return (
-        <div className="manage-restaurant-info">
-            <h2>Quản lý thông tin của nhà hàng</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Tên nhà hàng</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={restaurantInfo.name}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Số điện thoại</label>
-                    <input
-                        type="text"
-                        name="phone"
-                        value={restaurantInfo.phone}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Địa chỉ</label>
-                    <input
-                        type="text"
-                        name="address"
-                        value={restaurantInfo.address}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Thông tin nhà hàng</label>
-                    <textarea
-                        name="info"
-                        value={restaurantInfo.info}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Giờ mở cửa</label>
-                    <input
-                        type="time"
-                        name="openTime"
-                        value={restaurantInfo.openTime}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Giờ đóng cửa</label>
-                    <input
-                        type="time"
-                        name="closeTime"
-                        value={restaurantInfo.closeTime}
-                        onChange={handleChange}
-                    />
-                </div>
-                <button type="submit" className="save-button">Lưu thay đổi</button>
-            </form>
+  const handleSave = async () => {
+    try {
+      const activeToken = await ensureActiveToken();
+
+      await UpdateResInfo(activeToken, updatedInfo); // Gửi dữ liệu cập nhật đến API
+      setRestaurantInfo(updatedInfo); // Cập nhật lại context
+      setEditMode(false); // Tắt chế độ chỉnh sửa
+      setModal({
+        isOpen: true,
+        text: "Cập nhật thông tin nhà hàng thành công!",
+        type: "success",
+      });
+    } catch (err) {
+      console.error("Cập nhật thông tin thất bại:", err);
+    }
+  };
+
+  if (loading) return <p className={style["ManageRes"]}>Loading...</p>;
+  if (error) return <p className={style["ManageRes"]}>{error}</p>;
+
+  return (
+    <div className={style["ManageRes-container"]}>
+        {editMode ?(
+            <h1>CHỈNH SỬA THÔNG TIN NHÀ HÀNG</h1>
+        ):(
+            <h1>QUẢN LÝ THÔNG TIN NHÀ HÀNG</h1>
+        )}
+      <div className={style["ManageRes-form"]}>
+        <div className={style["ManageRes-field"]}>
+          <label>Tên nhà hàng:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <input
+                type="text"
+                name="name"
+                value={updatedInfo.name || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+            </div>
+          ) : (
+            <p>{restaurantInfo.name}</p>
+          )}
         </div>
-    );
+
+        <div className={style["ManageRes-field"]}>
+          <label>Giờ mở trong tuần:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="onweek_openhour"
+                value={updatedInfo.onweek_openhour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+              <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="onweek_closehour"
+                value={updatedInfo.onweek_closehour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+            </div>
+          ) : (
+            <p>{restaurantInfo.onweek_openhour} - {restaurantInfo.onweek_closehour}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Giờ mở cuối tuần:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+              <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="weekend_openhour"
+                value={updatedInfo.weekend_openhour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+              <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="weekend_closehour"
+                value={updatedInfo.weekend_closehour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+            </div>
+          ) : (
+            <p>{restaurantInfo.weekend_openhour} -  {restaurantInfo.weekend_closehour}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Địa chỉ:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <input
+                type="text"
+                name="address"
+                value={updatedInfo.address || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+            </div>
+          ) : (
+            <p>{restaurantInfo.address}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Số điện thoại:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <input
+                type="text"
+                name="phone"
+                value={updatedInfo.phone || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+            </div>
+          ) : (
+            <p>{restaurantInfo.phone}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Google Map:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <input
+                type="text"
+                name="google_map"
+                value={updatedInfo.google_map || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+            </div>
+          ) : (
+            <a href={restaurantInfo.google_map} target="_blank" rel="noopener noreferrer">
+              {restaurantInfo.google_map}
+            </a>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Email:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <input
+                type="text"
+                name="email"
+                value={updatedInfo.email || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+            </div>
+          ) : (
+            <p>{restaurantInfo.email}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field-social"]}>
+            <label>Social Links:</label>
+            {editMode ? (
+                <div className={style["social-links"]}>
+                <div className={style["social-item"]}>
+                    <label>Facebook:</label>
+                    <input
+                    type="text"
+                    name="facebook"
+                    value={updatedInfo.social?.facebook || ""}
+                    onChange={(e) => handleNestedChange(e, "social")}
+                    />
+                    <AiOutlineEdit size={20}/>
+                </div>
+                <div className={style["social-item"]}>
+                    <label>Instagram:</label>
+                    <input
+                    type="text"
+                    name="instagram"
+                    value={updatedInfo.social?.instagram || ""}
+                    onChange={(e) => handleNestedChange(e, "social")}
+                    />
+                    <AiOutlineEdit size={20}/>
+                </div>
+                <div className={style["social-item"]}>
+                    <label>YouTube:</label>
+                    <input
+                    type="text"
+                    name="youtube"
+                    value={updatedInfo.social?.youtube || ""}
+                    onChange={(e) => handleNestedChange(e, "social")}
+                    />
+                    <AiOutlineEdit size={20}/>
+                </div>
+                <div className={style["social-item"]}>
+                    <label>Chat Box:</label>
+                    <input
+                    type="text"
+                    name="chatbox"
+                    value={updatedInfo.social?.chatbox || ""}
+                    onChange={(e) => handleNestedChange(e, "social")}
+                    />
+                    <AiOutlineEdit size={20}/>
+                </div>
+                </div>
+            ) : (
+                <div className={style["social-links"]}>
+                <div className={style["social-item"]}>
+                    <label>Facebook:</label>
+                    <a href={restaurantInfo.social.facebook} target="_blank" rel="noopener noreferrer">
+                    {restaurantInfo.social.facebook}
+                    </a>
+                </div>
+                <div className={style["social-item"]}>
+                    <label>Instagram:</label>
+                    <a href={restaurantInfo.social.instagram} target="_blank" rel="noopener noreferrer">
+                    {restaurantInfo.social.instagram}
+                    </a>
+                </div>
+                <div className={style["social-item"]}>
+                    <label>YouTube:</label>
+                    <a href={restaurantInfo.social.youtube} target="_blank" rel="noopener noreferrer">
+                    {restaurantInfo.social.youtube}
+                    </a>
+                </div>
+                <div className={style["social-item"]}>
+                    <label>Chat Box:</label>
+                    <a href={restaurantInfo.social.chatbox} target="_blank" rel="noopener noreferrer">
+                    {restaurantInfo.social.chatbox}
+                    </a>
+                </div>
+                </div>
+            )}
+            </div>
+
+
+        <div className={style["ManageRes-actions"]}>
+          {editMode ? (
+            <>
+              <button onClick={handleSave}>Lưu</button>
+              <button onClick={() => setEditMode(false)}>Hủy</button>
+            </>
+          ) : (
+            <button onClick={enableEditMode}>Chỉnh Sửa</button>
+          )}
+        </div>
+      </div>
+
+      {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={() => setModal({ isOpen: false })}
+            onConfirm={modal.onConfirm}
+          />
+        )}
+    </div>
+  );
 }
 
 export default ManageRestaurantInfo;

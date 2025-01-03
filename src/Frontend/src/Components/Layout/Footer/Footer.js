@@ -1,8 +1,15 @@
-import React from "react";
+import React, {useContext }from "react";
 import style from "./Footer.module.css";
 import { Link } from "react-router-dom";
+import { RestaurantContext } from "../../../Config/RestaurantContext";
 
 function Footer() {
+  const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!restaurantInfo) return <p>No restaurant info available.</p>; // Xử lý nếu dữ liệu trống
+
   return (
     <footer className={style["site-footer"]} id="contact">
       <div className={style["top-footer"] + " " + style["section"]}>
@@ -14,7 +21,7 @@ function Footer() {
                 <div className={style["footer-logo"]}>
                   <Link to="/">
                     <img
-                      src="http://localhost:3000/assets/images/logo.jpg"
+                      src="/assets/images/logo.jpg"
                       alt="Home"
                     />
                   </Link>
@@ -22,22 +29,17 @@ function Footer() {
                 <div className={style["social-icon"]}>
                   <ul>
                     <li>
-                      <a href="#">
+                      <a href={restaurantInfo.social.facebook}>
                         <i className="uil uil-facebook-f"></i>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href={restaurantInfo.social.instagram}>
                         <i className="uil uil-instagram"></i>
                       </a>
                     </li>
                     <li>
-                      <a href="#">
-                        <i className="uil uil-github-alt"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
+                      <a href={restaurantInfo.social.youtube}>
                         <i className="uil uil-youtube"></i>
                       </a>
                     </li>
@@ -54,10 +56,10 @@ function Footer() {
                 <h3 className={style["h3-title"]}>Open Hours</h3>
                 <ul>
                   <li>
-                    <i className="uil uil-clock"></i> Mon-Thurs : 9am - 22pm
+                    <i className="uil uil-clock"></i> Mon-Thurs : {restaurantInfo.onweek_openhour}-{restaurantInfo.onweek_closehour}
                   </li>
                   <li>
-                    <i className="uil uil-clock"></i> Fri-Sun : 11am - 22pm
+                    <i className="uil uil-clock"></i> Fri-Sun : {restaurantInfo.weekend_openhour}-{restaurantInfo.weekend_closehour}
                   </li>
                 </ul>
               </div>
@@ -92,24 +94,24 @@ function Footer() {
                 <ul>
                   <li>
                     <a
-                      href="https://maps.app.goo.gl/tVjxCtjfyR5DkKXL8"
+                      href={restaurantInfo.google_map}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <i className="uil uil-location-point"></i>
-                      227 Đ. Nguyễn Văn Cừ, Phường 4, Quận 5, Hồ Chí Minh
+                      {restaurantInfo.address}
                     </a>
                   </li>
                   <li>
-                    <a href="tel:0123456789">
+                    <a href={`tel:${restaurantInfo.phone}`}>
                       <i className="uil uil-phone"></i>
-                      0123456789
+                      {restaurantInfo.phone}
                     </a>
                   </li>
                   <li>
-                    <a href="mailto:citrusroyale.restaurant@gmail.com">
+                    <a href={`mailto:${restaurantInfo.email}`}>
                       <i className="uil uil-envelope"></i>
-                      citrusroyale.restaurant@gmail.com
+                      {restaurantInfo.email}
                     </a>
                   </li>
                 </ul>
@@ -124,7 +126,7 @@ function Footer() {
             <div className={style["copyright-text"]}>
               <p>
                 Copyright &copy; 2024{" "}
-                <span className={style["name"]}>Citrus Royale.</span> All Rights
+                <span className={style["name"]}>{restaurantInfo.name}.</span> All Rights
                 Reserved.
               </p>
             </div>
