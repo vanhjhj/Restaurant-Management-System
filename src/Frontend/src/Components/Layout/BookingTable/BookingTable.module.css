@@ -49,7 +49,7 @@
 }
 
 /* Thông báo lỗi */
-.error-message {
+.errorbooking-message {
   color: red;
   font-size: 14px;
   margin-bottom: 10px;
@@ -129,6 +129,14 @@
   opacity: 0.95;
   transform: scale(1.02);
 }
+
+.opening-hours {
+  font-weight: bold;
+  margin-top: 10px;
+  color: #2a6d0c;
+  font-size: 16px;
+}
+
 
 /* Responsive: Chuyển đổi sang 1 cột trên màn hình nhỏ */
 @media (max-width: 768px) {
