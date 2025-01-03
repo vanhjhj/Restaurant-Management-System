@@ -4,11 +4,32 @@ import { UpdateResInfo } from "../../../API/AdminAPI"; // Hàm cập nhật thô
 import style from "./ManageRestaurantInfo.module.css";
 import { AiOutlineEdit } from "react-icons/ai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAuth } from "../../../Components/Auth/AuthContext";
+import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
+import { refreshToken } from "../../../API/authAPI";
 
 function ManageRestaurantInfo() {
   const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext); // Sử dụng context
   const [editMode, setEditMode] = useState(false); // Quản lý trạng thái chỉnh sửa
   const [updatedInfo, setUpdatedInfo] = useState({}); // Thông tin cập nhật
+  const { accessToken, setAccessToken } = useAuth();
+
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    if (isTokenExpired(accessToken)) {
+      try {
+        const refreshed = await refreshToken(
+          localStorage.getItem("refreshToken")
+        );
+        activeToken = refreshed.access;
+        setAccessToken(activeToken);
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        throw error;
+      }
+    }
+    return activeToken;
+  };
 
   // Khi bật chế độ chỉnh sửa, đồng bộ dữ liệu từ context vào updatedInfo
   const enableEditMode = () => {
@@ -37,7 +58,9 @@ function ManageRestaurantInfo() {
 
   const handleSave = async () => {
     try {
-      await UpdateResInfo(updatedInfo); // Gửi dữ liệu cập nhật đến API
+      const activeToken = await ensureActiveToken();
+
+      await UpdateResInfo(activeToken, updatedInfo); // Gửi dữ liệu cập nhật đến API
       setRestaurantInfo(updatedInfo); // Cập nhật lại context
       setEditMode(false); // Tắt chế độ chỉnh sửa
     } catch (err) {

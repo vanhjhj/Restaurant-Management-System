@@ -256,9 +256,13 @@ export const GetResInfo = async () => {
 
 //chỉnh sửa thông tin nhà hàng
 
-export const UpdateResInfo = async () => {
+export const UpdateResInfo = async (token, restaurantInfor) => {
   try {
-    const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`);
+    const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`, restaurantInfor, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error get restaurant info:", error);
