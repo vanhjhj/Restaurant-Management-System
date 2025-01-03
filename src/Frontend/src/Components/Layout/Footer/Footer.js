@@ -13,7 +13,10 @@ function Footer() {
               <div className={style["footer-info"]}>
                 <div className={style["footer-logo"]}>
                   <Link to="/">
-                    <img src="assets/images/logo.png" alt="Home" />
+                    <img
+                      src="http://localhost:3000/assets/images/logo.jpg"
+                      alt="Home"
+                    />
                   </Link>
                 </div>
                 <div className={style["social-icon"]}>
@@ -43,7 +46,11 @@ function Footer() {
               </div>
 
               {/* Open Hours */}
-              <div className={style["footer-table-info"]+ " " + style["footer-open"]}>
+              <div
+                className={
+                  style["footer-table-info"] + " " + style["footer-open"]
+                }
+              >
                 <h3 className={style["h3-title"]}>Open Hours</h3>
                 <ul>
                   <li>
@@ -56,7 +63,9 @@ function Footer() {
               </div>
 
               {/* Links */}
-              <div className={style["footer-menu"]+ " " + style["footer-links"]}>
+              <div
+                className={style["footer-menu"] + " " + style["footer-links"]}
+              >
                 <h3 className={style["h3-title"]}>Links</h3>
                 <ul>
                   <li>
@@ -70,6 +79,9 @@ function Footer() {
                   </li>
                   <li>
                     <Link to="/promotion">Khuyến Mãi</Link>
+                  </li>
+                  <li>
+                    <Link to="/review">Đánh giá</Link>
                   </li>
                 </ul>
               </div>

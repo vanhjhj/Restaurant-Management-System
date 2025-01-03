@@ -45,6 +45,7 @@ import AdminDashboard from "./Components/Admin/AdminDashboard";
 import Review from "./Components/Customer/Review";
 import Rating from "./Components/Customer/Rating";
 import SnowEffect from "./Components/UI/SnowEffect";
+import HotlineIcon from "./Components/UI/HotLineIcon";
 
 library.add(faEye, faEyeSlash);
 
@@ -84,6 +85,7 @@ function App() {
         <ScrollToTop />
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
         <SnowEffect />
+        <HotlineIcon/>
         <Routes>
           {/* Trang công khai */}
           <Route path="/" element={<HomePage />} />
