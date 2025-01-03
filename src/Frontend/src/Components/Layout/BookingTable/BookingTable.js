@@ -215,6 +215,23 @@ function BookingTable() {
     }
     const now = new Date();
     const bookingDate = new Date(bookingInfo.date); // Khởi tạo `bookingDate` từ `bookingInfo.date`
+    const nowDateOnly = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const bookingDateOnly = new Date(
+      bookingDate.getFullYear(),
+      bookingDate.getMonth(),
+      bookingDate.getDate()
+    );
+  
+    if (bookingDateOnly < nowDateOnly) {
+      seterrorbooking(
+        "Không thể đặt bàn vào ngày trong quá khứ. Vui lòng sửa lại ngày đến!"
+      );
+      return;
+    }
 
     const day = bookingDate.getDay(); // 0 -> Chủ nhật, 1 -> Thứ 2, ..., 6 -> Thứ 7
     const { open, close } = getOpeningHours(day);
