@@ -343,8 +343,7 @@ function BookingTable() {
     <div className={style["booking-form-container"]}>
       <h2>Đặt Bàn</h2>
       {loadingbooking && <p>Đang tải...</p>}
-      {errorbooking && <p className={style["errorbooking-message"]}>{errorbooking}</p>}
-
+      
       <p className={style["opening-hours"]}>
         {bookingInfo.date
           ? `Giờ mở cửa ngày bạn đặt: ${openingHours.open} - ${openingHours.close}`
@@ -361,6 +360,8 @@ function BookingTable() {
             onChange={handlePhoneChange}
             required
           />
+          {errorbooking && <p className={style["errorbooking-message"]}>{errorbooking}</p>}
+
         </label>
         <label>
           Họ và Tên:
