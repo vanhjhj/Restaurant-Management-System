@@ -87,8 +87,9 @@ class TableRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response({'message': 'Table deleted successfully'}, status=status.HTTP_200_OK)
 
 def send_confirmation_email(reservation):
-        #get config
-    with open(os.path.join(settings.BASE_DIR, 'Config', 'restaurant_configs.json')) as f:
+    _file_path = os.path.join(settings.BASE_DIR, 'Config', 'restaurant_configs.json')
+    #get config
+    with open(_file_path, encoding='utf-8') as f:
         config = json.load(f)
 
     #get reservation info, reservation is serializer.validated_data
@@ -99,6 +100,9 @@ def send_confirmation_email(reservation):
     gio = reservation['time']
     so_khach = reservation['number_of_guests']
     ghi_chu = reservation['note']
+
+    #change date format from yyyy-mm-dd to dd-mm-yyyy
+    ngay = ngay.strftime('%d-%m-%Y')
 
     html_content = f"""
     <!DOCTYPE html>
@@ -124,14 +128,14 @@ def send_confirmation_email(reservation):
                 <p style="margin: 10px 0;"><strong style="color: #0f6461;">Ghi chú:</strong> {ghi_chu}</p>
             </div>
 
-            <p style="color: #333;">Nếu quý khách cần thay đổi thông tin đặt bàn, vui lòng liên hệ với chúng tôi qua <a href="mailto:citrusroyale.restaurant@gmail.com" style="color: #0f6461;">citrusroyale.restaurant@gmail.com</a> hoặc gọi tới số <strong>0328840696</strong>.</p>
+            <p style="color: #333;">Nếu quý khách cần thay đổi thông tin đặt bàn, vui lòng liên hệ với chúng tôi qua <a href=`mailto:{config['email']}` style="color: #0f6461;">{config['email']}</a> hoặc gọi tới số <strong>{config['phone']}</strong>.</p>
 
             <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
             <p style="text-align: center; font-size: 14px; color: #aaa;">
-                <strong>{config['name']}</strong><br>
+                Đội ngũ <strong>{config['name']}</strong><br>
                 {config['address']}<br>
-                {config['phone']}<br>
-                <a href=`mailto:${config['email']}` style="color: #0f6461;">{config['email']}</a>
+                <strong>{config['phone']}</strong><br>
+                <a href="mailto:{config['email']}" style="color: #0f6461;">{config['email']}</a>
             </p>
         </div>
     </body>

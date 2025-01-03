@@ -298,8 +298,9 @@ def gernerate_otp_and_send_email(email):
         
     OTP.objects.create(email=email, otp=otp, expired_at=timezone.now() + timezone.timedelta(minutes=5))
 
+    _file_path = os.path.join(settings.BASE_DIR, 'Config', 'restaurant_configs.json')
     #get config
-    with open(os.path.join(settings.BASE_DIR, 'Config', 'restaurant_configs.json')) as f:
+    with open(_file_path, encoding='utf-8') as f:
         config = json.load(f)
 
     # HTML email content
@@ -319,10 +320,15 @@ def gernerate_otp_and_send_email(email):
             <div style="text-align: center; margin: 20px 0;">
                 <span style="display: inline-block; font-size: 24px; font-weight: bold; color: #ffffff; background-color: #0f6461; padding: 10px 20px; border-radius: 5px;">{otp}</span>
             </div>
-            <p style="color: #333;">Mã OTP này sẽ hết hạn sau <strong>5 phút</strong>. Nếu bạn không yêu cầu mã OTP này, vui lòng bỏ qua email này hoặc liên hệ ngay với chúng tôi qua <a href=`mailto:${config['email']}` style="color: #0f6461;">{config['email']}</a> hoặc gọi tới số <strong>{config['phone']}</strong>.</p>
+            <p style="color: #333;">Mã OTP này sẽ hết hạn sau <strong>5 phút</strong>. Nếu bạn không yêu cầu mã OTP này, vui lòng bỏ qua email này hoặc liên hệ ngay với chúng tôi qua <a href=`mailto:{config['email']}` style="color: #0f6461;">{config['email']}</a> hoặc gọi tới số <strong>{config['phone']}</strong></strong>.</p>
             <p style="color: #333;">Chúng tôi rất mong được phục vụ bạn tại <strong>{config['name']}</strong>!</p>
             <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-            <p style="text-align: center; font-size: 14px; color: #aaa;">Đội ngũ <strong>{config['name']}</strong><br>{config['phone']}</p>
+            <p style="text-align: center; font-size: 14px; color: #aaa;">
+                Đội ngũ <strong>{config['name']}</strong><br>
+                {config['address']}<br>
+                <strong>{config['phone']}</strong><br>
+                <a href="mailto:{config['email']}" style="color: #0f6461;">{config['email']}</a>
+            </p>
         </div>
     </body>
     </html>
