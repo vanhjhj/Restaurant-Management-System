@@ -3,17 +3,22 @@ import { RestaurantContext } from "../../../Config/RestaurantContext"; // Import
 import { UpdateResInfo } from "../../../API/AdminAPI"; // Hàm cập nhật thông tin API
 import style from "./ManageRestaurantInfo.module.css";
 import { AiOutlineEdit } from "react-icons/ai";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
+import { ModalGeneral } from "../../ModalGeneral";
 
 function ManageRestaurantInfo() {
   const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext); // Sử dụng context
   const [editMode, setEditMode] = useState(false); // Quản lý trạng thái chỉnh sửa
   const [updatedInfo, setUpdatedInfo] = useState({}); // Thông tin cập nhật
   const { accessToken, setAccessToken } = useAuth();
-
+  const [modal, setModal] = useState({
+      isOpen: false,
+      text: "",
+      type: "",
+      onConfirm: null,
+    });
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
@@ -63,6 +68,11 @@ function ManageRestaurantInfo() {
       await UpdateResInfo(activeToken, updatedInfo); // Gửi dữ liệu cập nhật đến API
       setRestaurantInfo(updatedInfo); // Cập nhật lại context
       setEditMode(false); // Tắt chế độ chỉnh sửa
+      setModal({
+        isOpen: true,
+        text: "Cập nhật thông tin nhà hàng thành công!",
+        type: "success",
+      });
     } catch (err) {
       console.error("Cập nhật thông tin thất bại:", err);
     }
@@ -93,6 +103,62 @@ function ManageRestaurantInfo() {
             </div>
           ) : (
             <p>{restaurantInfo.name}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Giờ mở trong tuần:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+                <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="onweek_openhour"
+                value={updatedInfo.onweek_openhour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+              <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="onweek_closehour"
+                value={updatedInfo.onweek_closehour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+            </div>
+          ) : (
+            <p>{restaurantInfo.onweek_openhour} - {restaurantInfo.onweek_closehour}</p>
+          )}
+        </div>
+
+        <div className={style["ManageRes-field"]}>
+          <label>Giờ mở cuối tuần:</label>
+          {editMode ? (
+            <div className={style["ManageRes-input"]}>
+              <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="weekend_openhour"
+                value={updatedInfo.weekend_openhour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+              <div className={style["ManageRes-input-input"]}>
+                <input
+                type="text"
+                name="weekend_closehour"
+                value={updatedInfo.weekend_closehour || ""}
+                onChange={handleChange}
+                />
+                <AiOutlineEdit size={20}/>
+              </div>
+            </div>
+          ) : (
+            <p>{restaurantInfo.weekend_openhour} -  {restaurantInfo.weekend_closehour}</p>
           )}
         </div>
 
@@ -253,6 +319,16 @@ function ManageRestaurantInfo() {
           )}
         </div>
       </div>
+
+      {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={() => setModal({ isOpen: false })}
+            onConfirm={modal.onConfirm}
+          />
+        )}
     </div>
   );
 }

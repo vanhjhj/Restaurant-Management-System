@@ -27,7 +27,7 @@
     gap: 20px;
 }
 
-/* Field cho mỗi mục */
+/* Container cho từng mục (label + inputs) */
 .ManageRes-field {
     display: flex;
     flex-direction: row;
@@ -36,45 +36,65 @@
     gap: 15px;
 }
 
+/* Nhãn (label) */
 .ManageRes-field label {
     font-weight: bold;
     color: #555;
-    flex: 0 0 150px;;
+    flex: 0 0 250px; /* Đặt độ rộng cố định cho label */
     text-align: left;
-    margin-right: 10px;
 }
 
 .ManageRes-field p,
 .ManageRes-field a {
     flex: 2;
-    font-size: 14px;
+    font-size: 18px;
     color: #333;
-    margin-top: 15px;
+    margin-top: 17px;
 }
-
-.ManageRes-input{
+/* Container cho inputs + icon */
+.ManageRes-input {
     display: flex;
     align-items: center;
-    flex: 1; /* Input chiếm toàn bộ không gian còn lại */
-    gap: 5px; /* Khoảng cách giữa input và icon chỉnh sửa */
+    flex: 1; /* Chiếm hết không gian còn lại */
+    gap: 5px; /* Khoảng cách giữa input và icon */
 }
+
+/* Container từng input riêng biệt */
+.ManageRes-input-input {
+    display: flex;
+    align-items: center; /* Đảm bảo input và icon ở cùng hàng */
+    gap: 5px; /* Khoảng cách giữa input và icon */
+    width: 100%; /* Đặt chiều ngang toàn bộ */
+}
+
+/* Input */
 .ManageRes-input input {
-    width: 100%; /* Input chiếm hết chiều ngang còn lại */
+    flex: 1; /* Input chiếm không gian chính */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     outline: none;
     font-size: 16px;
 }
+
+/* Hiệu ứng khi input được focus */
 .ManageRes-input input:focus {
     border-color: #257581;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
-.ManageRes-field a {
+/* Icon chỉnh sửa */
+.ManageRes-input .edit-icon {
+    cursor: pointer; /* Thêm con trỏ để biểu thị có thể click */
     color: #257581;
+    font-size: 20px;
+}
+
+
+.ManageRes-field a {
+    color: #333;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .ManageRes-field a:hover {
@@ -119,7 +139,7 @@
 .social-item input,
 .social-item a {
     flex: 3;
-    font-size: 14px;
+    font-size: 18px;
     color: #333;
 }
 
@@ -128,7 +148,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     outline: none;
-    font-size:16px;
+    font-size:18px;
 }
 
 .social-item input:focus {
@@ -137,7 +157,7 @@
 }
 
 .social-item a {
-    color: #257581;
+    color: #333;
     text-decoration: none;
 }
 
