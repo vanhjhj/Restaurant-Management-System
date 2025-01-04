@@ -1,9 +1,13 @@
-import React from "react";
+import React,{useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useEffect } from "react";
 import style from "./HomePage.module.css";
+import { RestaurantContext } from "../../../Config/RestaurantContext";
+
 
 function HomePage() {
+  
+  const { restaurantInfo, loading, error } = useContext(RestaurantContext);
   const navigate = useNavigate(); // Khởi tạo hook useNavigate
 
   const handleNavigate = () => {
@@ -35,6 +39,13 @@ function HomePage() {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
+  
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!restaurantInfo) return <p>No restaurant info available.</p>; // Xử lý nếu dữ liệu trống
+  
   return (
     <div className={style["viewport"]}>
       <div className={style["scroll-content"]}>
