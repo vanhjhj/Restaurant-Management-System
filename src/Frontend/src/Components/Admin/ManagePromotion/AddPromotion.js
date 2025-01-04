@@ -177,7 +177,7 @@ function AddPromotion() {
         isOpen: true,
         text: "Thêm ưu đãi thành công!",
         type: "success",
-        onConfirm: handleCloseModal
+        onConfirm: handleCloseModal,
       });
     } catch (error) {
       if (error.response) {
@@ -336,9 +336,17 @@ function AddPromotion() {
               />
             </div>
 
-            <button className={style["submit-button"]} type="submit">
-              Thêm ưu đãi
-            </button>
+            <div className={style["button-container"]}>
+              <button className={style["submit-button"]} type="submit">
+                Thêm ưu đãi
+              </button>
+              <button
+                className={style["cancel-button"]}
+                onClick={() => navigate("/admin-dashboard/manage-promotions")}
+              >
+                Hủy
+              </button>
+            </div>
           </div>
         </form>
         {modal.isOpen && (

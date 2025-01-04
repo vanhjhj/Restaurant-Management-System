@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./../../../Style/AdminStyle/ManageTable.module.css";
-import { GetTable, DeleteTable, UpdateTable, addTable } from "../../../API/AdminAPI";
+import {
+  GetTable,
+  DeleteTable,
+  UpdateTable,
+  addTable,
+} from "../../../API/AdminAPI";
 import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
-import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { faEdit, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
 import TableIcon from "./../../Employee/EmployeeReservation/tableIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ModalGeneral } from "../../ModalGeneral";
 import AddTableModal from "./AddTableModal";
 
@@ -72,8 +76,6 @@ function ManageTable() {
       });
     }
   };
-  
-  
 
   const handleEditTable = (id, currentSeats) => {
     setEditingTableId(id); // Chuyển sang chế độ chỉnh sửa
@@ -137,7 +139,7 @@ function ManageTable() {
   const handleAddTableClick = () => {
     setAddTableModalOpen(true);
   };
-  
+
   return (
     <div className={style["ManageTable-container"]}>
       {/* Header Section */}
@@ -193,8 +195,7 @@ function ManageTable() {
                         })
                       }
                     />
-                    <AiOutlineEdit size={20}/>
-
+                    <FontAwesomeIcon icon={faEdit} />
                   </div>
                 ) : (
                   <p>Số ghế: {table.number_of_seats}</p>
@@ -229,20 +230,29 @@ function ManageTable() {
                     </>
                   ) : (
                     <>
-                      <button
-                        className={style["table-actions-edit"]}
-                        onClick={() =>
-                          handleEditTable(table.id, table.number_of_seats)
-                        }
-                      >
-                        <AiOutlineEdit size={20} /> Chỉnh sửa
-                      </button>
-                      <button
-                        className={style["table-actions-delete"]}
-                        onClick={() => handleDeleteTable(table.id)}
-                      >
-                        <AiOutlineDelete size={20} /> Xóa
-                      </button>
+                      <div className={style["button-container"]}>
+                        <div className={style["tooltip-container"]}>
+                          <button
+                            className={style["table-actions-edit"]}
+                            onClick={() =>
+                              handleEditTable(table.id, table.number_of_seats)
+                            }
+                          >
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>
+                          <span className={style["tooltip"]}>Chỉnh sửa</span>
+                        </div>
+
+                        <div className={style["tooltip-container"]}>
+                          <button
+                            className={style["table-actions-delete"]}
+                            onClick={() => handleDeleteTable(table.id)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                          <span className={style["tooltip"]}>Xóa</span>
+                        </div>
+                      </div>
                     </>
                   )}
                 </div>

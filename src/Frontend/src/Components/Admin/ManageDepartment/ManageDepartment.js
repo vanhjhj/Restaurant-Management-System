@@ -154,6 +154,14 @@ function ManageDepartment() {
         ) : (
           <>
             <div className={style["department-table-content"]}>
+              <div className={style["button-container"]}>
+                <button
+                  className={style["manage-department-button"]}
+                  onClick={() => navigate("/admin-dashboard/add-department")}
+                >
+                  Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
+                </button>
+              </div>
               <table className={style["department-table"]}>
                 <thead>
                   <tr>
@@ -168,32 +176,29 @@ function ManageDepartment() {
                       <td>{dept.name}</td>
                       <td>{formatPrice(dept.salary)}</td>
                       <td>
-                        <button
-                          className={style["edit-button"]}
-                          onClick={() => handleEditDepartment(dept.id)}
-                        >
-                          Sửa <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button
-                          className={style["delete-button"]}
-                          onClick={() => handleDeleteDepartment(dept.id)}
-                        >
-                          Xóa <FontAwesomeIcon icon={faTrash} />
-                        </button>
+                        <div className={style["tooltip-container"]}>
+                          <button
+                            className={style["edit-button"]}
+                            onClick={() => handleEditDepartment(dept.id)}
+                          >
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>
+                          <span className={style["tooltip"]}>Chỉnh sửa</span>
+                        </div>
+                        <div className={style["tooltip-container"]}>
+                          <button
+                            className={style["delete-button"]}
+                            onClick={() => handleDeleteDepartment(dept.id)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                          <span className={style["tooltip"]}>Xóa</span>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-
-              <div className={style["button-container"]}>
-                <button
-                  className={style["manage-department-button"]}
-                  onClick={() => navigate("/admin-dashboard/add-department")}
-                >
-                  Thêm bộ phận <FontAwesomeIcon icon={faPlus} />
-                </button>
-              </div>
             </div>
           </>
         )}
