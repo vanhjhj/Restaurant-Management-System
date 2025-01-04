@@ -7,6 +7,7 @@ import QRCodeGenerator from "../../Customer/QRReview";
 import { fetchPromotionByCode, fetchPromotions } from "../../../API/PromotionAPI";
 import { markPaid } from "../../../API/EE_ReservationAPI";
 import SuccessMessage from "./SuccessMessage";
+import {QRCodeSVG}  from "qrcode.react"; 
 
 
 function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice }) {
@@ -14,6 +15,7 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
     const [promotion, setPromotion] = useState({ code: null, title: null, type: null, min_order: null, enddate: null });
     const [success, setSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState();
+    const momoQRUrl = `https://momo.vn/qr/${invoiceData?.id || "defaultID"}`;
     const NumberWithSpaces = ({ number }) => {
         const formattedNumber = new Intl.NumberFormat("en-US", {
           minimumFractionDigits: 2,
@@ -54,20 +56,24 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
     }, [])
 
     const handlePay = async () => {
-            try {
-                const activeToken = await ensureActiveToken();
-                await markPaid(activeToken, iID);
-                setSuccess(true);
+        try {
+            const activeToken = await ensureActiveToken();
+            await markPaid(activeToken, iID);
+            setSuccess(true);
+        }
+        catch (error) {
+            if (error.status === 404) {
+                setErrorMessage('Lỗi kết nối với server');
             }
-            catch (error) {
-                if (error.status === 404) {
-                    setErrorMessage('Lỗi kết nối với server');
-                }
-                else if (error.response.data.message === "Cannot mark order as paid because there are items are preparing") {
-                    setErrorMessage('Không thể thanh toán vì có món đang phục vụ');
-                }
+            else if (error.response.data.message === "Cannot mark order as paid because there are items are preparing") {
+                setErrorMessage('Không thể thanh toán vì có món đang phục vụ');
             }
         }
+    }
+    const handlePrint = () => {
+        window.print(); // Thực hiện in
+    };
+
 
     return (
         <div className={style['ctn']}>
@@ -152,6 +158,10 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
                                     <div>
                                         <QRCodeGenerator invoiceID={invoiceData.id}></QRCodeGenerator>
                                     </div>
+                                    <div className={style['momo-qr']}>
+                                        <h4>Chuyển khoản MoMo</h4>
+                                        <QRCodeSVG  value={momoQRUrl} size={200} />
+                                    </div>
                                 </div>
                             </div>
                             <div className={style['col-lg-12']}>
@@ -160,7 +170,10 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
                                                             </div>
                                 <div className={style['btn-ctn']}>
                                     <button className={style['my-btn']} onClick={() => handlePay()}>Thanh toán</button>
+                                    <button className={style['my-btn']} onClick={() => handlePrint()}>In hóa đơn</button>
                                 </div>
+
+                                
                             </div>
                             {success && <SuccessMessage setShow={setSuccess} setShowExInvoice={setShow} setShowInvoice={setShowInvoice}></SuccessMessage>}
                         </div>

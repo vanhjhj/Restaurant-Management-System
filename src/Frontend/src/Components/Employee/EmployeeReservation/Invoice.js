@@ -14,7 +14,7 @@ import {
 } from "../../../API/EE_ReservationAPI";
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
 import ApplyPromotion from "./ApplyPromotion";
-import ExportInvoice from "./ExportInvoice";
+import PrintInvoice from "./PrintInvoice";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -40,7 +40,7 @@ function Invoice({ tableID, setShowInvoice }) {
   const [errorTableMessage, setErrorTableMessage] = useState();
   const [errorType, setErrorType] = useState();
   const [isShowPromotion, setIsShowPromotion] = useState(false);
-  const [isExportInvoice, setIsExportInvoice] = useState(false);
+  const [isPrintInvoice, setIsPrintInvoice] = useState(false);
 
     const handleError = (error, type) => {
         if (error === 404) {
@@ -389,10 +389,10 @@ function Invoice({ tableID, setShowInvoice }) {
                                 </div>
                                 <div className={style['btn-ctn']}>
                                     <button className={style['edit-btn']} onClick={() => setIsShowPromotion(true)}>Thêm ưu đãi</button>
-                                    <button className={style['edit-btn']} onClick={() => setIsExportInvoice(true)} >Xuất hóa đơn</button>    
+                                    <button className={style['edit-btn']} onClick={() => setIsPrintInvoice(true)} >Xuất hóa đơn</button>    
                   </div>
                   {isShowPromotion && <ApplyPromotion setShow={setIsShowPromotion} setInvoice={setInvoiceData} invoice={invoiceData}></ApplyPromotion>}
-                  {isExportInvoice && <ExportInvoice setShowInvoice={setShowInvoice} setShow={setIsExportInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></ExportInvoice>}
+                  {isPrintInvoice && <PrintInvoice setShowInvoice={setShowInvoice} setShow={setIsPrintInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></PrintInvoice>}
                             </div>
                         </div>
                         <div className={style['col-lg-6']}>
