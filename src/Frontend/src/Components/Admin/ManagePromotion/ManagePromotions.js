@@ -7,8 +7,8 @@ import { useAuth } from "../../../Components/Auth/AuthContext";
 import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { faEdit, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
@@ -97,6 +97,14 @@ function ManagePromotions() {
   return (
     <div className={style["manage-Promotions"]}>
       <h2>QUẢN LÝ ƯU ĐÃI</h2>
+      <div className={style["button-container"]}>
+        <button
+          onClick={handleAddDiscount}
+          className={style["add-discount-button"]}
+        >
+          Tạo ưu đãi mới <FontAwesomeIcon icon={faPlus} />
+        </button>
+      </div>
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
         <div className={style["no-promotions"]}>
@@ -113,30 +121,29 @@ function ManagePromotions() {
               />
               <h3 className={style["discount-code"]}>{discount.code}</h3>
               <div className={style["button-group"]}>
-                <button
-                  onClick={() => handleEdit(discount.code)}
-                  className={style["edit-button"]}
-                >
-                  <AiOutlineEdit size={20} /> Chỉnh sửa
-                </button>
-                <button
-                  onClick={() => handleDelete(discount.code)}
-                  className={style["delete-button"]}
-                >
-                  <AiOutlineDelete size={20} /> Xóa
-                </button>
+                <div className={style["tooltip-container"]}>
+                  <button
+                    onClick={() => handleEdit(discount.code)}
+                    className={style["edit-button"]}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                  <span className={style["tooltip"]}>Chỉnh sửa</span>
+                </div>
+                <div className={style["tooltip-container"]}>
+                  <button
+                    onClick={() => handleDelete(discount.code)}
+                    className={style["delete-button"]}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                  <span className={style["tooltip"]}>Xóa</span>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
-
-      <button
-        onClick={handleAddDiscount}
-        className={style["add-discount-button"]}
-      >
-        Tạo ưu đãi mới <FontAwesomeIcon icon={faPlus} />
-      </button>
 
       {modal.isOpen && (
         <ModalGeneral

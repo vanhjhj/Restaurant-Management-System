@@ -97,7 +97,7 @@ function EditDepartment() {
         isOpen: true,
         text: "Chỉnh sửa bộ phận thành công!",
         type: "success",
-        onConfirm: handleCloseModal
+        onConfirm: handleCloseModal,
       });
     } catch (error) {
       console.error(
@@ -142,13 +142,20 @@ function EditDepartment() {
             setDepartment({ ...department, salary: rawValue });
           }}
         />
-
-        <button
-          className={style["save-button"]}
-          onClick={handleUpdateDepartment}
-        >
-          Cập nhật bộ phận
-        </button>
+        <div className={style["button-container"]}>
+          <button
+            className={style["save-button"]}
+            onClick={handleUpdateDepartment}
+          >
+            Cập nhật bộ phận
+          </button>
+          <button
+            className={style["cancel-button"]}
+            onClick={() => navigate("/admin-dashboard/manage-department")}
+          >
+            Hủy
+          </button>
+        </div>
         {modal.isOpen && (
           <ModalGeneral
             isOpen={modal.isOpen}

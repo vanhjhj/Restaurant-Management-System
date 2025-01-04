@@ -41,7 +41,6 @@ import EmployeeReservation from "./Components/Employee/EmployeeReservation/Emplo
 import ManageTable from "./Components/Admin/ManageTable/ManageTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
-import AdminDashboard from "./Components/Admin/AdminDashboard";
 import Review from "./Components/Customer/Review";
 import Rating from "./Components/Customer/Rating";
 import SnowEffect from "./Components/UI/SnowEffect";
@@ -87,7 +86,7 @@ function App() {
           <ScrollToTop />
           <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
           <SnowEffect />
-          <HotlineIcon/>
+          <HotlineIcon />
           <Routes>
             {/* Trang công khai */}
             <Route path="/" element={<HomePage />} />
@@ -107,7 +106,10 @@ function App() {
             <Route
               path="/login"
               element={
-                <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserRole={setUserRole}
+                />
               }
             />
             <Route path="/signup" element={<SignUp />} />
@@ -154,18 +156,6 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route
-                path="main"
-                element={
-                  <ProtectedRoute
-                    isLoggedIn={isLoggedIn}
-                    allowedRoles={["Admin"]}
-                    userRole={userRole}
-                  >
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
               <Route
                 path="manage-restaurant-info"
                 element={

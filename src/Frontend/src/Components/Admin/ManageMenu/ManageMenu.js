@@ -12,8 +12,7 @@ import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { faEdit, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const ManageMenu = () => {
   const [categories, setCategories] = useState([]);
@@ -170,6 +169,13 @@ const ManageMenu = () => {
       <div className={style["menu-sidebar"]}>
         <h3>Thực đơn hiện tại</h3>
         <h4>Danh sách mục có sẵn</h4>
+
+        <button
+          className={style["add-category-button"]}
+          onClick={() => setShowNewCategoryForm(true)}
+        >
+          Tạo mục mới <FontAwesomeIcon icon={faPlus} />
+        </button>
         {categories.length > 0 ? (
           categories.map((category) => (
             <button
@@ -187,17 +193,18 @@ const ManageMenu = () => {
             Chưa có mục nào, hãy thêm mới!
           </p>
         )}
-
-        <button
-          className={style["add-category-button"]}
-          onClick={() => setShowNewCategoryForm(true)}
-        >
-          Tạo mục mới <FontAwesomeIcon icon={faPlus} />
-        </button>
       </div>
 
       <div className={style["menu-content"]}>
         <h2>QUẢN LÝ THỰC ĐƠN</h2>
+        <div className={style["button-container"]}>
+          <button
+            className={style["add-food-button"]}
+            onClick={handleAddFoodClick}
+          >
+            Tạo món ăn mới +
+          </button>
+        </div>
         {foodItems.length === 0 ? (
           <p className={style["no-food-message"]}>
             Chưa có món ăn nào, hãy thêm mới!
@@ -211,34 +218,34 @@ const ManageMenu = () => {
                   alt={item.name}
                   className={style["food-image"]}
                 />
-                <h4>{item.name}</h4>
+                <h5>{item.name}</h5>
                 <p className={style["food-price"]}>{formatPrice(item.price)}</p>
                 <div className={style["food-card-buttons"]}>
-                  <button
-                    className={style["edit-button"]}
-                    onClick={() =>
-                      navigate(`/admin-dashboard/edit-fooditem/${item.id}`)
-                    }
-                  >
-                    <AiOutlineEdit size={20} /> Chỉnh sửa
-                  </button>
-                  <button
-                    className={style["delete-button"]}
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    <AiOutlineDelete size={20} /> Xóa
-                  </button>
+                  <div className={style["tooltip-container"]}>
+                    <button
+                      className={style["edit-button"]}
+                      onClick={() =>
+                        navigate(`/admin-dashboard/edit-fooditem/${item.id}`)
+                      }
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <span className={style["tooltip"]}>Chỉnh sửa</span>
+                  </div>
+                  <div className={style["tooltip-container"]}>
+                    <button
+                      className={style["delete-button"]}
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                    <span className={style["tooltip"]}>Xóa</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
-        <button
-          className={style["add-food-button"]}
-          onClick={handleAddFoodClick}
-        >
-          Tạo món ăn mới +
-        </button>
       </div>
 
       {modal.isOpen && (

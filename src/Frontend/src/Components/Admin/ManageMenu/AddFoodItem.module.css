@@ -65,25 +65,6 @@
   height: 180px;
 }
 
-.add-food .submit-button {
-  display: block;
-  margin: 30px 0 20px auto;
-  padding: 14px;
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-  background-color: #116169;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.add-food .submit-button:hover {
-  background-color: #1e7f8b;
-  transform: translateY(-2px);
-}
-
 .add-food .image-upload-button {
   padding: 10px;
   border: 1px solid #ddd;
@@ -124,4 +105,55 @@
   font-size: 14px;
   color: #666;
   margin-top: 10px;
+}
+
+.add-food .button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.add-food .submit-button,
+.add-food .cancel-button {
+  flex: 1;
+  max-width: 200px;
+  text-align: center;
+}
+
+.add-food .submit-button {
+  display: block;
+  margin: 30px 0 20px auto;
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-color: #116169;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-food .submit-button:hover {
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
+}
+
+.add-food .cancel-button {
+  display: block;
+  margin: 30px 0 20px auto;
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-color: #d3d3d3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-food .cancel-button:hover {
+  background-color: #b3b3b3;
+  transform: translateY(-2px);
 }
