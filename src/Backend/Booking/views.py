@@ -103,6 +103,8 @@ def send_confirmation_email(reservation):
 
     #change date format from yyyy-mm-dd to dd-mm-yyyy
     ngay = ngay.strftime('%d-%m-%Y')
+    #change time format from HH:MM:SS to HH:MM
+    gio = gio.strftime('%H:%M')
 
     html_content = f"""
     <!DOCTYPE html>
