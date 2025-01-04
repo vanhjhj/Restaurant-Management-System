@@ -22,7 +22,7 @@ function EmployeeReservation() {
   const [tables, setTables] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [searchName, setSearchName] = useState("");
-  const [searchStatus, setSearchStatus] = useState("All");
+  const [searchStatus, setSearchStatus] = useState("Tất cả");
   const [inputTable, setInputTable] = useState({ id: null, value: "" });
   const [errorMessage, setErrorMessage] = useState();
 
@@ -165,7 +165,7 @@ function EmployeeReservation() {
     }
 
   const filterReservation = (r, name, status) => {
-    if (status == "All")
+    if (status == "Tất cả")
       return r.guest_name.toLowerCase().includes(name.toLowerCase());
     return (
       r.guest_name.toLowerCase().includes(name.toLowerCase()) &&

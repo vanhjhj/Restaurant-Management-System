@@ -112,7 +112,7 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
                                                                     <div className={style['my-row'] + ' ' + style['my-title-row']}>
                                                                         <ul>
                                                                             <li className={style['my-col-1']}>Mã KH</li>   
-                                                                            <li className={style['my-col-2']}>Tên khuyễn mãi</li>
+                                                                            <li className={style['my-col-2']}>Tên khuyến mãi</li>
                                                                             <li className={style['my-col-3']}>Loại</li>
                                                                             <li className={style['my-col-4']}>Ngày kết thúc</li>
                                                                             <li className={style['my-col-5']}>Điều kiện</li>
