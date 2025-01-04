@@ -1,5 +1,5 @@
 // src/components/Header.js
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import style from "./Header.module.css";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,8 +8,11 @@ import { refreshToken, logout } from "../../../API/authAPI";
 import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useNavigate } from "react-router-dom";
+import { RestaurantContext } from "../../../Config/RestaurantContext";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
+  const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null); // Tham chiếu đến dropdown menu
   const { accessToken, setAccessToken } = useAuth();
@@ -79,6 +82,10 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
     };
   }, []);
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!restaurantInfo) return <p>No restaurant info available.</p>; // Xử lý nếu dữ liệu trống
+
   return (
     <header className={style["site-header"]}>
       <div className={style["container"]}>
@@ -86,7 +93,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
           <div className={style["col-lg-2"]}>
             <div className={style["header-logo"]}>
               <Link to="/" className={style["logo-text"]}>
-                Citrus Royale
+                {restaurantInfo.name}
               </Link>
             </div>
           </div>
