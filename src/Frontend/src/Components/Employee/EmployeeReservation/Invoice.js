@@ -14,7 +14,7 @@ import {
 } from "../../../API/EE_ReservationAPI";
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
 import ApplyPromotion from "./ApplyPromotion";
-import ExportInvoice from "./ExportInvoice";
+import PrintInvoice from "./PrintInvoice";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -41,7 +41,7 @@ function Invoice({ tableID, setShowInvoice }) {
   const [errorType, setErrorType] = useState();
   const [ems, setEms] = useState();
   const [isShowPromotion, setIsShowPromotion] = useState(false);
-  const [isExportInvoice, setIsExportInvoice] = useState(false);
+  const [isPrintInvoice, setIsPrintInvoice] = useState(false);
 
     const handleError = (error, type) => {
         if (error === 400) {
@@ -403,7 +403,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                     <button className={style['edit-btn']} onClick={() => handleInvoice(true)} >Xuất hóa đơn</button>    
                   </div>
                   {isShowPromotion && <ApplyPromotion setShow={setIsShowPromotion} setInvoice={setInvoiceData} invoice={invoiceData}></ApplyPromotion>}
-                  {isExportInvoice && <ExportInvoice setShowInvoice={setShowInvoice} setShow={setIsExportInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></ExportInvoice>}
+                  {isPrintInvoice && <PrintInvoice setShowInvoice={setShowInvoice} setShow={setIsPrintInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></PrintInvoice>}
                             </div>
                         </div>
                         <div className={style['col-lg-6']}>

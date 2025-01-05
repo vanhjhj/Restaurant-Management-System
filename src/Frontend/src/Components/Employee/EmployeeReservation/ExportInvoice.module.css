@@ -43,7 +43,7 @@
 
 .export-invoice-ctn{
     width: 60%;
-    max-height:  750px;
+    height: 600px;
     padding: 10px 20px;
     background-color: white;
     overflow: auto;
@@ -155,7 +155,7 @@
 }
 
 .qr-ctn{
-    border-left: 1px solid black;
+    /* border-left: 1px solid black; */
     display: flex;
     flex-direction: column;
     justify-content: center;
