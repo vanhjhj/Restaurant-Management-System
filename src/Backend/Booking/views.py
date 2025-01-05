@@ -9,6 +9,10 @@ from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from Menu.models import MenuItem
+import json
+import os
+from django.conf import settings
+from django.core.mail import EmailMessage
 
 # Create your views here.
 
@@ -82,6 +86,74 @@ class TableRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         table.delete()
         return Response({'message': 'Table deleted successfully'}, status=status.HTTP_200_OK)
 
+def send_confirmation_email(reservation):
+    _file_path = os.path.join(settings.BASE_DIR, 'Config', 'restaurant_configs.json')
+    #get config
+    with open(_file_path, encoding='utf-8') as f:
+        config = json.load(f)
+
+    #get reservation info, reservation is serializer.validated_data
+    ten_khach = reservation['guest_name']
+    so_dien_thoai = reservation['phone_number']
+    email = reservation['email']
+    ngay = reservation['date']
+    gio = reservation['time']
+    so_khach = reservation['number_of_guests']
+    ghi_chu = reservation['note']
+
+    #change date format from yyyy-mm-dd to dd-mm-yyyy
+    ngay = ngay.strftime('%d-%m-%Y')
+    #change time format from HH:MM:SS to HH:MM
+    gio = gio.strftime('%H:%M')
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Xác nhận đặt bàn</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="text-align: center; color: #333;">Xác Nhận Đặt Bàn</h2>
+            <p style="color: #333;">Chào quý khách,</p>
+            <p style="color: #333;">Cảm ơn quý khách đã đặt bàn tại <strong>{config['name']}</strong>! Chúng tôi xin xác nhận thông tin đặt bàn của quý khách như sau:</p>
+
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Tên khách:</strong> {ten_khach}</p>
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Số điện thoại:</strong> {so_dien_thoai}</p>
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Email:</strong> {email}</p>
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Ngày:</strong> {ngay}</p>
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Giờ:</strong> {gio}</p>
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Số khách:</strong> {so_khach}</p>
+                <p style="margin: 10px 0;"><strong style="color: #0f6461;">Ghi chú:</strong> {ghi_chu}</p>
+            </div>
+
+            <p style="color: #333;">Nếu quý khách cần thay đổi thông tin đặt bàn, vui lòng liên hệ với chúng tôi qua <a href=`mailto:{config['email']}` style="color: #0f6461;">{config['email']}</a> hoặc gọi tới số <strong>{config['phone']}</strong>.</p>
+
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="text-align: center; font-size: 14px; color: #aaa;">
+                Đội ngũ <strong>{config['name']}</strong><br>
+                {config['address']}<br>
+                <strong>{config['phone']}</strong><br>
+                <a href="mailto:{config['email']}" style="color: #0f6461;">{config['email']}</a>
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+
+    # Sending the email with HTML content
+    email_message = EmailMessage(
+        subject='Xác nhận đặt bàn tại Citrus Royale',
+        body=html_content,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[email],
+    )
+    email_message.content_subtype = "html"  # Specify email as HTML content
+    email_message.send(fail_silently=False)
+    return True
 
 class ReservationListCreateAPIView(generics.ListCreateAPIView):
     queryset = Reservation.objects.all()
@@ -117,6 +189,9 @@ class ReservationListCreateAPIView(generics.ListCreateAPIView):
             if 'table' in serializer.validated_data:
                 return Response({'message': 'Cannot create reservation with table'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
+
+            #reserve success, send confirmation email
+            send_confirmation_email(serializer.validated_data)
 
             response = {
                 'message': 'Reservation created successfully',

@@ -15,6 +15,7 @@ class Table(models.Model):
 class Reservation(models.Model):
     guest_name = models.CharField(max_length=100, blank=False, null=False)
     phone_number = PhoneNumberField()
+    email = models.EmailField()
     date = models.DateField()
     time = models.TimeField()
     number_of_guests = models.IntegerField(validators=[MinValueValidator(1)])

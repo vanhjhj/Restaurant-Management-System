@@ -19,7 +19,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ('id', 'guest_name', 'phone_number', 'date', 'time',
+        fields = ('id', 'guest_name', 'phone_number', 'email', 'date', 'time',
                   'number_of_guests', 'note', 'status', 'table')
 
     def to_representation(self, instance):
