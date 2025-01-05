@@ -7,47 +7,15 @@ import { markPaid } from "../../../API/EE_ReservationAPI";
 import SuccessMessage from "./SuccessMessage";
 import InvoicePrintable from "./InvoicePrintable";
 import style from "./PrintInvoice.module.css";
-import { createPaymentRequest } from "../../../API/MoMoAPI";
-import axios from "axios";
 
 function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice }) {
-    const [momoQRUrl, setMomoQRUrl] = useState(""); 
     const { restaurantInfo } = useContext(RestaurantContext);
     const { accessToken, setAccessToken } = useAuth();
     const [success, setSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const printRef = useRef();
-
-    // Hàm gọi API MoMo để tạo URL thanh toán
-    const handleGenerateMomoPayment = async () => {
-        if (!invoiceData) return;
     
-        const amount = invoiceData?.final_price || 0; // Amount to be paid
-        const orderId = `HD-${invoiceData?.id || "N/A"}`; // Unique order ID
-        const orderInfo = `Thanh toán hóa đơn ${invoiceData?.id}`; // Order details
-    
-        try {
-          // Send request to the backend server to create a MoMo payment URL
-          const response = await axios.post("http://localhost:5000/api/momo/create", {
-            amount,
-            orderId,
-            orderInfo,
-          });
-    
-          if (response.data.resultCode === 0) {
-            console.log("Pay URL:", response.data.payUrl);
-            setMomoQRUrl(response.data.payUrl); // Set the MoMo QR URL for rendering
-          } else {
-            console.error("Error from MoMo API:", response.data);
-            setErrorMessage("Có lỗi xảy ra từ MoMo. Vui lòng thử lại.");
-          }
-        } catch (error) {
-          console.error("Error calling MoMo API:", error.message);
-          setErrorMessage("Không thể tạo URL thanh toán. Vui lòng thử lại.");
-        }
-      };
-    
-
+  const momoQRUrl = "https://me.momo.vn/WEI5TAs7FJU4u6idCZfmfX" ;
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
@@ -104,12 +72,6 @@ function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice
       setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
     }
   };
-
-  useEffect(() => {
-    if (invoiceData) {
-      handleGenerateMomoPayment();
-    }
-  }, [invoiceData]);
 
   return (
     <div className={style["Invoice-modal"]}>
