@@ -61,7 +61,7 @@ function AddDepartment() {
         isOpen: true,
         text: "Thêm bộ phận thành công!",
         type: "success",
-        onConfirm: handleCloseModal
+        onConfirm: handleCloseModal,
       });
     } catch (error) {
       console.error("Error adding department:", error);
@@ -101,13 +101,21 @@ function AddDepartment() {
             required
           />
         </div>
-        <button
-          className={style["add-department-button"]}
-          onClick={handleAddDepartment}
-          disabled={loading}
-        >
-          {loading ? "Đang thêm..." : "Thêm mới"}
-        </button>
+        <div className={style["button-container"]}>
+          <button
+            className={style["add-department-button"]}
+            onClick={handleAddDepartment}
+            disabled={loading}
+          >
+            {loading ? "Đang thêm..." : "Thêm mới"}
+          </button>
+          <button
+            className={style["cancel-button"]}
+            onClick={() => navigate("/admin-dashboard/manage-department")}
+          >
+            Hủy
+          </button>
+        </div>
         {modal.isOpen && (
           <ModalGeneral
             isOpen={modal.isOpen}

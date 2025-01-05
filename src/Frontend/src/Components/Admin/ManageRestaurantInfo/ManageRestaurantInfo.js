@@ -9,16 +9,17 @@ import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
 
 function ManageRestaurantInfo() {
-  const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext); // Sử dụng context
+  const { restaurantInfo, loading, error, setRestaurantInfo } =
+    useContext(RestaurantContext); // Sử dụng context
   const [editMode, setEditMode] = useState(false); // Quản lý trạng thái chỉnh sửa
   const [updatedInfo, setUpdatedInfo] = useState({}); // Thông tin cập nhật
   const { accessToken, setAccessToken } = useAuth();
   const [modal, setModal] = useState({
-      isOpen: false,
-      text: "",
-      type: "",
-      onConfirm: null,
-    });
+    isOpen: false,
+    text: "",
+    type: "",
+    onConfirm: null,
+  });
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
@@ -83,23 +84,42 @@ function ManageRestaurantInfo() {
 
   return (
     <div className={style["ManageRes-container"]}>
-        {editMode ?(
-            <h1>CHỈNH SỬA THÔNG TIN NHÀ HÀNG</h1>
-        ):(
-            <h1>QUẢN LÝ THÔNG TIN NHÀ HÀNG</h1>
+      {editMode ? (
+        <h1>CHỈNH SỬA THÔNG TIN NHÀ HÀNG</h1>
+      ) : (
+        <h1>QUẢN LÝ THÔNG TIN NHÀ HÀNG</h1>
+      )}
+      <div className={style["ManageRes-actions"]}>
+        {editMode ? (
+          <>
+            <button className={style["save-button"]} onClick={handleSave}>
+              Lưu
+            </button>
+            <button
+              className={style["cancel-button"]}
+              onClick={() => setEditMode(false)}
+            >
+              Hủy
+            </button>
+          </>
+        ) : (
+          <button className={style["edit-button"]} onClick={enableEditMode}>
+            Chỉnh Sửa
+          </button>
         )}
+      </div>
       <div className={style["ManageRes-form"]}>
         <div className={style["ManageRes-field"]}>
           <label>Tên nhà hàng:</label>
           {editMode ? (
             <div className={style["ManageRes-input"]}>
-                <input
+              <input
                 type="text"
                 name="name"
                 value={updatedInfo.name || ""}
                 onChange={handleChange}
-                />
-                <AiOutlineEdit size={20}/>
+              />
+              <AiOutlineEdit size={20} />
             </div>
           ) : (
             <p>{restaurantInfo.name}</p>
@@ -110,27 +130,30 @@ function ManageRestaurantInfo() {
           <label>Giờ mở trong tuần:</label>
           {editMode ? (
             <div className={style["ManageRes-input"]}>
-                <div className={style["ManageRes-input-input"]}>
+              <div className={style["ManageRes-input-input"]}>
                 <input
-                type="text"
-                name="onweek_openhour"
-                value={updatedInfo.onweek_openhour || ""}
-                onChange={handleChange}
+                  type="text"
+                  name="onweek_openhour"
+                  value={updatedInfo.onweek_openhour || ""}
+                  onChange={handleChange}
                 />
-                <AiOutlineEdit size={20}/>
+                <AiOutlineEdit size={20} />
               </div>
               <div className={style["ManageRes-input-input"]}>
                 <input
-                type="text"
-                name="onweek_closehour"
-                value={updatedInfo.onweek_closehour || ""}
-                onChange={handleChange}
+                  type="text"
+                  name="onweek_closehour"
+                  value={updatedInfo.onweek_closehour || ""}
+                  onChange={handleChange}
                 />
-                <AiOutlineEdit size={20}/>
+                <AiOutlineEdit size={20} />
               </div>
             </div>
           ) : (
-            <p>{restaurantInfo.onweek_openhour} - {restaurantInfo.onweek_closehour}</p>
+            <p>
+              {restaurantInfo.onweek_openhour} -{" "}
+              {restaurantInfo.onweek_closehour}
+            </p>
           )}
         </div>
 
@@ -140,25 +163,28 @@ function ManageRestaurantInfo() {
             <div className={style["ManageRes-input"]}>
               <div className={style["ManageRes-input-input"]}>
                 <input
-                type="text"
-                name="weekend_openhour"
-                value={updatedInfo.weekend_openhour || ""}
-                onChange={handleChange}
+                  type="text"
+                  name="weekend_openhour"
+                  value={updatedInfo.weekend_openhour || ""}
+                  onChange={handleChange}
                 />
-                <AiOutlineEdit size={20}/>
+                <AiOutlineEdit size={20} />
               </div>
               <div className={style["ManageRes-input-input"]}>
                 <input
-                type="text"
-                name="weekend_closehour"
-                value={updatedInfo.weekend_closehour || ""}
-                onChange={handleChange}
+                  type="text"
+                  name="weekend_closehour"
+                  value={updatedInfo.weekend_closehour || ""}
+                  onChange={handleChange}
                 />
-                <AiOutlineEdit size={20}/>
+                <AiOutlineEdit size={20} />
               </div>
             </div>
           ) : (
-            <p>{restaurantInfo.weekend_openhour} -  {restaurantInfo.weekend_closehour}</p>
+            <p>
+              {restaurantInfo.weekend_openhour} -{" "}
+              {restaurantInfo.weekend_closehour}
+            </p>
           )}
         </div>
 
@@ -166,13 +192,13 @@ function ManageRestaurantInfo() {
           <label>Địa chỉ:</label>
           {editMode ? (
             <div className={style["ManageRes-input"]}>
-                <input
+              <input
                 type="text"
                 name="address"
                 value={updatedInfo.address || ""}
                 onChange={handleChange}
-                />
-                <AiOutlineEdit size={20}/>
+              />
+              <AiOutlineEdit size={20} />
             </div>
           ) : (
             <p>{restaurantInfo.address}</p>
@@ -183,13 +209,13 @@ function ManageRestaurantInfo() {
           <label>Số điện thoại:</label>
           {editMode ? (
             <div className={style["ManageRes-input"]}>
-                <input
+              <input
                 type="text"
                 name="phone"
                 value={updatedInfo.phone || ""}
                 onChange={handleChange}
-                />
-                <AiOutlineEdit size={20}/>
+              />
+              <AiOutlineEdit size={20} />
             </div>
           ) : (
             <p>{restaurantInfo.phone}</p>
@@ -200,16 +226,20 @@ function ManageRestaurantInfo() {
           <label>Google Map:</label>
           {editMode ? (
             <div className={style["ManageRes-input"]}>
-                <input
+              <input
                 type="text"
                 name="google_map"
                 value={updatedInfo.google_map || ""}
                 onChange={handleChange}
-                />
-                <AiOutlineEdit size={20}/>
+              />
+              <AiOutlineEdit size={20} />
             </div>
           ) : (
-            <a href={restaurantInfo.google_map} target="_blank" rel="noopener noreferrer">
+            <a
+              href={restaurantInfo.google_map}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {restaurantInfo.google_map}
             </a>
           )}
@@ -219,13 +249,13 @@ function ManageRestaurantInfo() {
           <label>Email:</label>
           {editMode ? (
             <div className={style["ManageRes-input"]}>
-                <input
+              <input
                 type="text"
                 name="email"
                 value={updatedInfo.email || ""}
                 onChange={handleChange}
-                />
-                <AiOutlineEdit size={20}/>
+              />
+              <AiOutlineEdit size={20} />
             </div>
           ) : (
             <p>{restaurantInfo.email}</p>
@@ -233,102 +263,106 @@ function ManageRestaurantInfo() {
         </div>
 
         <div className={style["ManageRes-field-social"]}>
-            <label>Social Links:</label>
-            {editMode ? (
-                <div className={style["social-links"]}>
-                <div className={style["social-item"]}>
-                    <label>Facebook:</label>
-                    <input
-                    type="text"
-                    name="facebook"
-                    value={updatedInfo.social?.facebook || ""}
-                    onChange={(e) => handleNestedChange(e, "social")}
-                    />
-                    <AiOutlineEdit size={20}/>
-                </div>
-                <div className={style["social-item"]}>
-                    <label>Instagram:</label>
-                    <input
-                    type="text"
-                    name="instagram"
-                    value={updatedInfo.social?.instagram || ""}
-                    onChange={(e) => handleNestedChange(e, "social")}
-                    />
-                    <AiOutlineEdit size={20}/>
-                </div>
-                <div className={style["social-item"]}>
-                    <label>YouTube:</label>
-                    <input
-                    type="text"
-                    name="youtube"
-                    value={updatedInfo.social?.youtube || ""}
-                    onChange={(e) => handleNestedChange(e, "social")}
-                    />
-                    <AiOutlineEdit size={20}/>
-                </div>
-                <div className={style["social-item"]}>
-                    <label>Chat Box:</label>
-                    <input
-                    type="text"
-                    name="chatbox"
-                    value={updatedInfo.social?.chatbox || ""}
-                    onChange={(e) => handleNestedChange(e, "social")}
-                    />
-                    <AiOutlineEdit size={20}/>
-                </div>
-                </div>
-            ) : (
-                <div className={style["social-links"]}>
-                <div className={style["social-item"]}>
-                    <label>Facebook:</label>
-                    <a href={restaurantInfo.social.facebook} target="_blank" rel="noopener noreferrer">
-                    {restaurantInfo.social.facebook}
-                    </a>
-                </div>
-                <div className={style["social-item"]}>
-                    <label>Instagram:</label>
-                    <a href={restaurantInfo.social.instagram} target="_blank" rel="noopener noreferrer">
-                    {restaurantInfo.social.instagram}
-                    </a>
-                </div>
-                <div className={style["social-item"]}>
-                    <label>YouTube:</label>
-                    <a href={restaurantInfo.social.youtube} target="_blank" rel="noopener noreferrer">
-                    {restaurantInfo.social.youtube}
-                    </a>
-                </div>
-                <div className={style["social-item"]}>
-                    <label>Chat Box:</label>
-                    <a href={restaurantInfo.social.chatbox} target="_blank" rel="noopener noreferrer">
-                    {restaurantInfo.social.chatbox}
-                    </a>
-                </div>
-                </div>
-            )}
-            </div>
-
-
-        <div className={style["ManageRes-actions"]}>
+          <label>Social Links:</label>
           {editMode ? (
-            <>
-              <button onClick={handleSave}>Lưu</button>
-              <button onClick={() => setEditMode(false)}>Hủy</button>
-            </>
+            <div className={style["social-links"]}>
+              <div className={style["social-item"]}>
+                <label>Facebook:</label>
+                <input
+                  type="text"
+                  name="facebook"
+                  value={updatedInfo.social?.facebook || ""}
+                  onChange={(e) => handleNestedChange(e, "social")}
+                />
+                <AiOutlineEdit size={20} />
+              </div>
+              <div className={style["social-item"]}>
+                <label>Instagram:</label>
+                <input
+                  type="text"
+                  name="instagram"
+                  value={updatedInfo.social?.instagram || ""}
+                  onChange={(e) => handleNestedChange(e, "social")}
+                />
+                <AiOutlineEdit size={20} />
+              </div>
+              <div className={style["social-item"]}>
+                <label>YouTube:</label>
+                <input
+                  type="text"
+                  name="youtube"
+                  value={updatedInfo.social?.youtube || ""}
+                  onChange={(e) => handleNestedChange(e, "social")}
+                />
+                <AiOutlineEdit size={20} />
+              </div>
+              <div className={style["social-item"]}>
+                <label>Chat Box:</label>
+                <input
+                  type="text"
+                  name="chatbox"
+                  value={updatedInfo.social?.chatbox || ""}
+                  onChange={(e) => handleNestedChange(e, "social")}
+                />
+                <AiOutlineEdit size={20} />
+              </div>
+            </div>
           ) : (
-            <button onClick={enableEditMode}>Chỉnh Sửa</button>
+            <div className={style["social-links"]}>
+              <div className={style["social-item"]}>
+                <label>Facebook:</label>
+                <a
+                  href={restaurantInfo.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {restaurantInfo.social.facebook}
+                </a>
+              </div>
+              <div className={style["social-item"]}>
+                <label>Instagram:</label>
+                <a
+                  href={restaurantInfo.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {restaurantInfo.social.instagram}
+                </a>
+              </div>
+              <div className={style["social-item"]}>
+                <label>YouTube:</label>
+                <a
+                  href={restaurantInfo.social.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {restaurantInfo.social.youtube}
+                </a>
+              </div>
+              <div className={style["social-item"]}>
+                <label>Chat Box:</label>
+                <a
+                  href={restaurantInfo.social.chatbox}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {restaurantInfo.social.chatbox}
+                </a>
+              </div>
+            </div>
           )}
         </div>
       </div>
 
       {modal.isOpen && (
-          <ModalGeneral
-            isOpen={modal.isOpen}
-            text={modal.text}
-            type={modal.type}
-            onClose={() => setModal({ isOpen: false })}
-            onConfirm={modal.onConfirm}
-          />
-        )}
+        <ModalGeneral
+          isOpen={modal.isOpen}
+          text={modal.text}
+          type={modal.type}
+          onClose={() => setModal({ isOpen: false })}
+          onConfirm={modal.onConfirm}
+        />
+      )}
     </div>
   );
 }

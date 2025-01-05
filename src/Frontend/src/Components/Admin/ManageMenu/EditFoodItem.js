@@ -188,7 +188,7 @@ function EditFoodItem() {
         isOpen: true,
         text: "Món ăn được cập nhật thành công!",
         type: "success",
-        onConfirm: handleCloseModal
+        onConfirm: handleCloseModal,
       });
     } catch (error) {
       console.error("Lỗi khi cập nhật món ăn:", error.message);
@@ -293,9 +293,17 @@ function EditFoodItem() {
             </select>
           </div>
 
-          <button type="submit" className={style["submit-button"]}>
-            Cập nhật món ăn
-          </button>
+          <div className={style["button-container"]}>
+            <button type="submit" className={style["submit-button"]}>
+              Cập nhật
+            </button>
+            <button
+              className={style["cancel-button"]}
+              onClick={() => navigate("/admin-dashboard/manage-menu")}
+            >
+              Hủy
+            </button>
+          </div>
         </div>
       </form>
 

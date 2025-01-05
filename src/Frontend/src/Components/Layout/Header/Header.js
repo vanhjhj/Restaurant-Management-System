@@ -11,7 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { RestaurantContext } from "../../../Config/RestaurantContext";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
-  const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext);
+  const { restaurantInfo, loading, error, setRestaurantInfo } =
+    useContext(RestaurantContext);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null); // Tham chiếu đến dropdown menu
@@ -133,7 +134,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       Đặt Bàn
                     </Link>
                   </li>
-                  {(userRole === "Employee" || userRole==='Admin')&& (
+                  {(userRole === "Employee" || userRole === "Admin") && (
                     <>
                       <li>
                         <Link
@@ -176,7 +177,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   {userRole === "Admin" && (
                     <li>
                       <Link
-                        to="/admin-dashboard"
+                        to="/admin-dashboard/manage-restaurant-info"
                         className={
                           location.pathname.startsWith("/admin-dashboard")
                             ? style.active
@@ -187,8 +188,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       </Link>
                     </li>
                   )}
-                  
-                  
+
                   {userRole === "Customer" && (
                     <li>
                       <Link to="/"></Link>

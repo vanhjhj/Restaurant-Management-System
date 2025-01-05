@@ -33,12 +33,7 @@ function AdminLayout() {
           >
             <FontAwesomeIcon icon={faBars} />
           </button>
-          <h1
-            onClick={() => navigate("/admin-dashboard/main")}
-            className={style["admin-dashboard-title"]}
-          >
-            AdminDashboard
-          </h1>
+          <h1>AdminDashboard</h1>
         </div>
       </div>
 

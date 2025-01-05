@@ -200,7 +200,7 @@ function EditPromotion() {
         isOpen: true,
         text: "Cập nhật ưu đãi thành công!",
         type: "success",
-        onConfirm: handleCloseModal
+        onConfirm: handleCloseModal,
       });
     } catch (error) {
       console.error("Lỗi khi cập nhật ưu đãi:", error.message);
@@ -347,9 +347,17 @@ function EditPromotion() {
               />
             </div>
 
-            <button className={style["submit-button"]} type="submit">
-              Cập nhật ưu đãi
-            </button>
+            <div className={style["button-container"]}>
+              <button className={style["submit-button"]} type="submit">
+                Cập nhật
+              </button>
+              <button
+                className={style["cancel-button"]}
+                onClick={() => navigate("/admin-dashboard/manage-promotions")}
+              >
+                Hủy
+              </button>
+            </div>
           </div>
         </form>
         {modal.isOpen && (

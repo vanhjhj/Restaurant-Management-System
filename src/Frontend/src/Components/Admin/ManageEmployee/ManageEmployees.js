@@ -155,6 +155,16 @@ function ManageEmployees() {
         </div>
       ) : (
         <div className={style["employee-table-container"]}>
+          <div className={style["button-container"]}>
+            <button
+              className={style["manage-employee-button"]}
+              onClick={() =>
+                navigate("/admin-dashboard/register-employee-account")
+              }
+            >
+              Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
+            </button>
+          </div>
           <table className={style["employee-table"]}>
             <thead>
               <tr>
@@ -177,28 +187,20 @@ function ManageEmployees() {
                   <td>{emps.address}</td>
                   <td>{formatDate(emps.start_working_date)}</td>
                   <td>
-                    <button
-                      className={style["delete-button"]}
-                      onClick={() => handleDeleteEmployee(emps.account_id)}
-                    >
-                      Xóa <FontAwesomeIcon icon={faTrash} />
-                    </button>
+                    <div className={style["tooltip-container"]}>
+                      <button
+                        className={style["delete-button"]}
+                        onClick={() => handleDeleteEmployee(emps.account_id)}
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                      <span className={style["tooltip"]}>Xóa</span>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          <div className={style["button-container"]}>
-            <button
-              className={style["manage-employee-button"]}
-              onClick={() =>
-                navigate("/admin-dashboard/register-employee-account")
-              }
-            >
-              Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
-            </button>
-          </div>
         </div>
       )}
       {modal.isOpen && (
