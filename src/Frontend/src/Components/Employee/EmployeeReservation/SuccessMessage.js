@@ -10,7 +10,6 @@ import { FaCheck } from 'react-icons/fa';
 
 
 function SuccessMessage({ setShow, setShowExInvoice, setShowInvoice}) {
-    
     const closeAll = () => {
         setShow(false);
         setShowInvoice(false);
@@ -28,7 +27,6 @@ function SuccessMessage({ setShow, setShowExInvoice, setShowInvoice}) {
                                     &times;
                                 </button>
                             </div>
-                            
                             <div className={style['title']}>
                                 <FaCheck color='green' size={40}></FaCheck>
                                 <h2>Thanh toán hoàn tất</h2>

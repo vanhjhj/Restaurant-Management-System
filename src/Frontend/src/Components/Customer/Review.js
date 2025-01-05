@@ -3,6 +3,7 @@ import style from '../../Style/CustomerStyle/Review.module.css';
 import { BsFilterLeft } from 'react-icons/bs';
 import {FaArrowLeft, FaArrowRight, FaStar} from 'react-icons/fa'
 import QRCodeGenerator from './QRReview';
+import Select from 'react-select';
 import { fetchFeedbacksData, getFeedBackFilter } from '../../API/ReviewAPI';
 import StarDisplay from './StarDisplay';
 
@@ -20,31 +21,31 @@ function Review({ iID }) {
         1,
         Math.ceil(feedbacks.length / itemsPerPage)
       );
-    function formatDate(isoString) {
-        const date = new Date(isoString); // Chuyển đổi chuỗi ISO thành đối tượng Date
-        const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và thêm số 0 nếu cần
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Lấy tháng (tháng bắt đầu từ 0) và thêm số 0 nếu cần
-        const year = date.getFullYear(); // Lấy năm
+      function formatDate(isoString) {
+        const date = new Date(isoString); // Tạo đối tượng Date từ chuỗi ISO
+        const day = String(date.getUTCDate()).padStart(2, '0'); // Lấy ngày (UTC) và thêm số 0 nếu cần
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Lấy tháng (UTC) và thêm số 0 nếu cần
+        const year = date.getUTCFullYear(); // Lấy năm (UTC)
         return `${day}-${month}-${year}`; // Trả về chuỗi định dạng dd-mm-yyyy
-      }
-
-    const handleFilterStatusChange = (event) => {
-        const selectedValue = event.target.value;
-        setFilterType(selectedValue);
-
-        let newPositive = '';
-        if (selectedValue === 'Tất cả') {
-            newPositive = 'a';
-        } else if (selectedValue === 'Tích cực') {
-            newPositive = 'p';
-        } else {
-            newPositive = 'n';
-        }
-
+    }
+    
+    
+    const options = [
+        { value: '0', label: <><FaStar size={20} color="#FFD700" /> Tất cả</> },
+        { value: '1', label: <><FaStar size={20} color="#FFD700" /> 0-1</> },
+        { value: '2', label: <><FaStar size={20} color="#FFD700" /> 1-2</> },
+        { value: '3', label: <><FaStar size={20} color="#FFD700" /> 2-3</> },
+        { value: '4', label: <><FaStar size={20} color="#FFD700" /> 3-4</> },
+        { value: '5', label: <><FaStar size={20} color="#FFD700" /> 4-5</> },
+    ];
+    
+    const handleChange = (selectedOption) => {
+        console.log(`Selected: ${selectedOption.value}`);
+        const newPositive = selectedOption.value;
         setPositive(newPositive);
         fetchFilterData(newPositive, date);
         setCurrentPage(1);
-    };
+      };
 
     const handleFilterDateChange = (event) => {
         let selectedValue = event.target.value;
@@ -102,18 +103,7 @@ function Review({ iID }) {
                 <div className={style['row'] + ' ' +style['display-end']}>
                     <div className={style['col-lg-3'] + ' ' + style['filter-ctn']}>
                         <div className={style['filter-category']}>
-                            <select
-                                ref={selectRef}
-                            id="filter-type"
-                            value={filterType}
-                            onChange={handleFilterStatusChange}
-                            className={style['filter-select']}
-                        >
-                            <option value="Tất cả">Tất cả</option>
-                            <option value="5"><FaStar size={24} color="#FFD700"></FaStar></option>
-                            <option value="Tiêu cực">Tiêu cực</option>
-                        </select>
-                            <BsFilterLeft size={30} onClick={handleIconClick}></BsFilterLeft>
+                            <Select options={options} onChange={handleChange}  defaultValue={options[0]} />
                         </div>
                         <div className={style['filter-date']}>
                             <input type="date" id="date-input" name="date" className={style['my-input-date']} onChange={handleFilterDateChange}/>

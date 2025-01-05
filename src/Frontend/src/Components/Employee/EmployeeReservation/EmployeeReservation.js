@@ -9,6 +9,7 @@ import {
   markCancelReservationAPI,
   unsignTableAPI,
   createOrder,
+  fetchDateData,
 } from "../../../API/EE_ReservationAPI";
 import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
@@ -16,6 +17,9 @@ import { refreshToken } from "../../../API/authAPI";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai"; // Import biểu tượng chỉnh sửa
 import TableIcon from "./tableIcon";
 import Invoice from "./Invoice";
+import EditReservation from "./EditReservation";
+
+import Select from 'react-select';
 
 function EmployeeReservation() {
   const { accessToken, setAccessToken } = useAuth();
@@ -26,7 +30,28 @@ function EmployeeReservation() {
   const [inputTable, setInputTable] = useState({ id: null, value: "" });
   const [errorMessage, setErrorMessage] = useState();
   const [errorPos, setErrorPos] = useState();
+  const [editReservation, setEditReservation] = useState();
+  const [filterStatus, setFilterStatus] = useState('0');
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(now.getDate()).padStart(2, "0")}`;
 
+  const [filterDate, setFilterDate] = useState();
+
+  function formatDate(dateString) {
+    const [year, month, day] = dateString.split("-");
+    return `${day}-${month}-${year}`;
+  }
+  
+const options = [
+        { value: '0', label: <>Tất cả</> },
+        { value: 'P', label: <>Chờ</> },
+        { value: 'A', label: <>Gán</> },
+        { value: 'C', label: <>Hủy</> },
+        { value: 'D', label: <>Xong</> },
+    ];
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
@@ -63,8 +88,9 @@ function EmployeeReservation() {
   };
 
   const fetchData = async () => {
-    const activeToken = await ensureActiveToken();
+    
     try {
+      const activeToken = await ensureActiveToken();
       const tablesData = await fetchTablesData(activeToken);
       setTables(
         tablesData.map((table) => ({
@@ -80,14 +106,46 @@ function EmployeeReservation() {
           isEditing: false,
         }))
       );
+      console.log(reservationsData);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const getDateData = async(date) =>{
+    try {
+      const activeToken = await ensureActiveToken()
+
+      const reservationsData = await fetchDateData(activeToken, filterDate);
+      setReservations(
+        reservationsData.map((reser) => ({
+          ...reser,
+          isEditing: false,
+        }))
+      );
+      console.log(reservationsData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getDateData();
+  }, [filterDate]);
+
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  function formatInputDate(inputDate) {
+    const date = new Date(inputDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+    const day = String(date.getDate()).padStart(2, "0");
+  
+    return `${year}-${month}-${day}`;
+  }
 
   const handleEdit = (id) => {
     setReservations((preReser) =>
@@ -166,12 +224,17 @@ function EmployeeReservation() {
         }
     }
 
-  const filterReservation = (r, name, status) => {
-    if (status == "Tất cả")
-      return r.guest_name.toLowerCase().includes(name.toLowerCase());
+  const filterReservation = (r, name, date, status) => {
+    const formattedDate = new Date(r.date).toISOString().split("T")[0];
+
+    // Kiểm tra theo ngày (nếu filterDate được cung cấp)
+    const isDateMatch = !filterDate || formattedDate === filterDate;
+
+    if (status == "0")
+      return r.guest_name.toLowerCase().includes(name.toLowerCase()) && isDateMatch
     return (
       r.guest_name.toLowerCase().includes(name.toLowerCase()) &&
-      r.status === status
+      r.status === status && isDateMatch
     );
   };
 
@@ -185,13 +248,12 @@ function EmployeeReservation() {
   };
 
   const reservationFilered = reservations.filter((r) =>
-    filterReservation(r, searchName, searchStatus)
+    filterReservation(r, searchName, filterReservation, filterStatus)
   ); 
 
   const calNumberOfEmptyTable = (t) => {
     return t.filter((table) => table.status === "A").length;
   }
-
     return (
         <div className={style['EER-container']}>
             <div className={style['body-EER']}> 
@@ -236,37 +298,38 @@ function EmployeeReservation() {
                                         <i className="fas fa-search"></i>
                                     </button>
                                 </div>
-                            </div>
-                        </div>    
-                        {/* <div className={style["status-search-row"]}>
-                            <div className={style["row"]}>
-                                <div className={style['col-lg-12']}>
-                                    <div className={style["status-search"]}>
-                                        <ul>
-                                          <li key ={0}>
-                                            <button
-                                                  onClick={() => setSearchStatus('All')}
-                                                  className={style['status-search-btn'] + ' ' + style[searchStatus === 'All' ? 'active' : '']}
-                                                >
-                                                  All
-                                            </button>
-                                          </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
+                </div>
+                
+              </div>    
+              <div className={style['row'] + ' '+ style['my-input-row']}>
+                <div className={style['col-lg-6']}>
+                    <label><input type="date" id="date-input" name="date" className={style['my-input-date']} defaultValue={today} onChange={(e) => setFilterDate(e.target.value)}/></label>
+                </div>
+                <div className={style['col-lg-6']}>
+                  <div className={style['filter-category']}>
+                              <Select options={options} onChange={(selectedOption) => setFilterStatus(selectedOption.value)}  defaultValue={options[0]} />
+                          </div>
+                </div>
+              </div>
+              
+                        
                         <div className={style['row']}>
                             {reservationFilered.map(r => (
                                 <div key={r.id} className={style['col-lg-12']}>
                                     <div className={style['reservation-info']}>
-                                        <div className={style[checkReservationStatus(r.status)]}>
-                                            <h5>Mã phiếu đặt: {r.id}</h5> 
+                                        <div className={style[checkReservationStatus(r.status)] +' '+ style['reservation-header']}>
+                                    <h5>Mã phiếu đặt: {r.id}</h5> 
+                                    <div className={style['edit-reservation']} onClick={() => setEditReservation(r)}>
+                                    <AiOutlineEdit size={20}/>
+                                    </div>
+                                          
                                         </div>
                                         <p>Tên KH: {r.guest_name}</p>
-                                        <p>Số điện thoại: {r.phone_number}</p>
+                                  <p>Số điện thoại: {r.phone_number}</p>
+                                  <p>Số lượng khách:{r.number_of_guests} </p>
+                                  <p>Ngày: {formatDate(r.date)}</p>
                                         <p>Thời gian: {r.time}</p>
-                                        <p>Ghi chú: {r.note}</p>
+                                        <p className={style['my-note']}>Ghi chú: {r.note}</p>
                                         <div className={style['']}>
                                                 {errorMessage && r.id === errorPos? <p className={style['error-message']}>{errorMessage}</p> : <p></p>}
                                             </div>
@@ -314,7 +377,7 @@ function EmployeeReservation() {
                                 </div>
                             ))}
                         </div>
-                        
+
                     </div>
                 </div> 
                 <div className={style['Table-container']}>
@@ -347,7 +410,8 @@ function EmployeeReservation() {
                                      
                                 </div>
                             </div>
-                        </div>
+              </div>
+              {editReservation && <EditReservation setShow={setEditReservation} info={editReservation}></EditReservation>}
                         <div className={style['table-info-ctn']}>
                             <div className={style['row']}>
                                 {tables.map(table => (
@@ -357,7 +421,8 @@ function EmployeeReservation() {
                                             <p>Bàn số: {table.id}</p>
                                             <p>Số lượng ghế: {table.number_of_seats}</p>
                                         </div>
-                                        {table.isShowInvoice && <Invoice tableID={table.id} setShowInvoice={handleShowInvoice}/>}
+                                    {table.isShowInvoice && <Invoice tableID={table.id} setShowInvoice={handleShowInvoice} />}
+                                  
                                     </div>
                                 ))}
                             </div>

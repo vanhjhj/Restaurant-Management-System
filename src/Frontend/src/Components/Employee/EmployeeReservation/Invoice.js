@@ -276,7 +276,7 @@ function Invoice({ tableID, setShowInvoice }) {
       return;
     }
     setEms();
-    setIsExportInvoice(true);
+    setIsPrintInvoice(true);
   }
 
     return (
@@ -368,7 +368,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                                         <div className={style['my-btn']}>
                                                             <button className={style['edit-btn']} onClick={() => item.isEditing ? handleSave(item.id, item.quantity, noteData, 'note') :
                                                                 handleEditing(item.id, item.note)}>
-                                                                {item.isEditing ? 'Lưu': 'Chỉnh sửa'}</button>
+                                                                {item.isEditing ? 'Lưu': 'Chỉnh sửa ghi chú'}</button>
                                                             <button className={style['erase-btn']} onClick={()=>handleErase(item.id)}>Xóa</button>
                                                         </div>
                                                     </div>
@@ -403,7 +403,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                     <button className={style['edit-btn']} onClick={() => handleInvoice(true)} >Xuất hóa đơn</button>    
                   </div>
                   {isShowPromotion && <ApplyPromotion setShow={setIsShowPromotion} setInvoice={setInvoiceData} invoice={invoiceData}></ApplyPromotion>}
-                  {isPrintInvoice && <PrintInvoice setShowInvoice={setShowInvoice} setShow={setIsPrintInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></PrintInvoice>}
+                  {isPrintInvoice && <PrintInvoice setIsPrintInvoice={setShowInvoice} setShow={setIsPrintInvoice} foodData={itemsData} invoiceData={invoiceData} pID={invoiceData.promotion} iID={invoiceData.id}></PrintInvoice>}
                             </div>
                         </div>
                         <div className={style['col-lg-6']}>
@@ -427,7 +427,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                     <div className={style['col-lg-3']}>
                                         <div className={style['search-tab']}>
                                             <select value={searchTab} onChange={(e) => setSearchTab(e.target.value)} >
-                                                <option value={0}>All</option>
+                                                <option value={0}>Tất cả</option>
                                                 {menuTabs.map(item => (
                                                     <option value={item.id} key={item.id}>{item.name}</option>
                                                 ))}

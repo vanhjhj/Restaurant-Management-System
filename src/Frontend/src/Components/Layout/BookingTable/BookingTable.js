@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { GetInfoCus } from "../../../API/FixInfoAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
@@ -13,13 +13,14 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { RestaurantContext } from "../../../Config/RestaurantContext";
 
-
 function BookingTable() {
-  const { restaurantInfo, loading, error, setRestaurantInfo } = useContext(RestaurantContext);
+  const { restaurantInfo, loading, error, setRestaurantInfo } =
+    useContext(RestaurantContext);
   const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
   const [islogin, setIslogin] = useState(false);
   const [bookingInfo, setBookingInfo] = useState({
     guest_name: "",
+    email: "",
     date: "",
     time: "",
     phone_number: "",
@@ -31,7 +32,7 @@ function BookingTable() {
     open: "8:00", // Giá trị mặc định
     close: "23:00", // Giá trị mặc định
   });
-  
+
   // Cập nhật `openingHours` sau khi `restaurantInfo` sẵn sàng
   useEffect(() => {
     if (restaurantInfo) {
@@ -40,10 +41,11 @@ function BookingTable() {
       setOpeningHours(hours);
     }
   }, [restaurantInfo, bookingInfo.date]);
-  
+
   const navigate = useNavigate();
   let userName;
   let userPhone;
+  let userEmail;
 
   const [modal, setModal] = useState({
     isOpen: false,
@@ -55,7 +57,6 @@ function BookingTable() {
   const [loadingbooking, setloadingbooking] = useState(false); // loadingbooking trạng thái
   const UserID = localStorage.getItem("userId");
 
-  
   useEffect(() => {
     const accountType = localStorage.getItem("accountType");
     if (accountType) {
@@ -100,6 +101,7 @@ function BookingTable() {
       if (response) {
         userPhone = response.phone_number;
         userName = response.full_name;
+        userEmail = response.email;
 
         // Nếu người dùng có số điện thoại, tự động điền vào form
         if (userPhone) {
@@ -117,6 +119,7 @@ function BookingTable() {
           setBookingInfo((prevInfo) => ({
             ...prevInfo,
             guest_name: userName, // Chỉ điền tên
+            email: userEmail,
           }));
         }
       }
@@ -126,6 +129,8 @@ function BookingTable() {
       setBookingInfo((prevInfo) => ({
         ...prevInfo,
         phone_number: "",
+        guest_name: "",
+        email: "",
       }));
     }
   };
@@ -157,6 +162,7 @@ function BookingTable() {
           guest_name: response.guest_name,
           date: today,
           time: "",
+          email: response.email,
           phone_number: phone,
           number_of_guests: response.number_of_guests,
           note: response.note,
@@ -225,7 +231,7 @@ function BookingTable() {
       bookingDate.getMonth(),
       bookingDate.getDate()
     );
-  
+
     if (bookingDateOnly < nowDateOnly) {
       seterrorbooking(
         "Không thể đặt bàn vào ngày trong quá khứ. Vui lòng sửa lại ngày đến!"
@@ -241,7 +247,7 @@ function BookingTable() {
         isOpen: true,
         text: `Vui lòng chọn thời gian đặt bàn trong khung giờ mở cửa: ${open} - ${close}`,
         type: "error",
-        onConfirm: setModal({ isOpen: false })
+        onClose: () => setModal({ isOpen: false })
       });
       return;
     }
@@ -256,7 +262,7 @@ function BookingTable() {
         isOpen: true,
         text: "Khách cần đặt bàn trước ít nhất 1 tiếng. Vui lòng sửa lại thời gian!",
         type: "error",
-        onConfirm: setModal({ isOpen: false })
+        onClose: () => setModal({ isOpen: false })
       });
       return;
     }
@@ -270,7 +276,7 @@ function BookingTable() {
         isOpen: true,
         text: "Đặt bàn thành công!",
         type: "success",
-        onConfirm: handleOpenModalQuestion,
+        onClose: handleOpenModalQuestion,
       });
 
       seterrorbooking("");
@@ -279,11 +285,12 @@ function BookingTable() {
         date: "",
         time: "",
         phone_number: "",
+        email: "",
         number_of_guests: 1,
         note: "",
       });
     } catch (err) {
-      seterrorbooking('Không thể đặt bàn. Vui lòng thử lại.');
+      seterrorbooking("Không thể đặt bàn. Vui lòng thử lại.");
     }
   };
 
@@ -295,11 +302,14 @@ function BookingTable() {
         isOpen: true,
         text: "Bạn có muốn đăng ký tài khoản để nhận thêm nhiều khuyến mãi không?",
         type: "confirm",
-        onConfirm: () => {
-          navigate("/SignUp"); // Điều hướng đến trang đăng ký
-        },
         onClose: () => {
+          console.log("Close clicked"); 
           setModal({ isOpen: false }); // Đóng modal nếu người dùng từ chối
+        },
+        onConfirm: () => {
+          console.log("Confirm clicked"); 
+          navigate("/SignUp"); // Điều hướng đến trang đăng ký
+          setModal({ isOpen: false }); 
         },
       });
     } else {
@@ -322,19 +332,19 @@ function BookingTable() {
       };
     }
   };
-  
+
   const isValidBookingTime = (time, openTime, closeTime) => {
     const [hours, minutes] = time.split(":").map(Number);
     const [openHours, openMinutes] = openTime.split(":").map(Number);
     const [closeHours, closeMinutes] = closeTime.split(":").map(Number);
-  
+
     const bookingTime = hours * 60 + minutes;
     const openingTime = openHours * 60 + openMinutes;
     const closingTime = closeHours * 60 + closeMinutes;
-  
+
     return bookingTime >= openingTime && bookingTime <= closingTime;
   };
-  
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!restaurantInfo) return <p>No restaurant info available.</p>; // Xử lý nếu dữ liệu trống
@@ -343,7 +353,7 @@ function BookingTable() {
     <div className={style["booking-form-container"]}>
       <h2>Đặt Bàn</h2>
       {loadingbooking && <p>Đang tải...</p>}
-      
+
       <p className={style["opening-hours"]}>
         {bookingInfo.date
           ? `Giờ mở cửa ngày bạn đặt: ${openingHours.open} - ${openingHours.close}`
@@ -360,8 +370,9 @@ function BookingTable() {
             onChange={handlePhoneChange}
             required
           />
-          {errorbooking && <p className={style["errorbooking-message"]}>{errorbooking}</p>}
-
+          {errorbooking && (
+            <p className={style["errorbooking-message"]}>{errorbooking}</p>
+          )}
         </label>
         <label>
           Họ và Tên:
@@ -373,6 +384,17 @@ function BookingTable() {
             required
           />
         </label>
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={bookingInfo.email}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        {error && <p className={style["errorbooking-message"]}>{error}</p>}
         <label>
           Ngày đến:
           <input
@@ -439,7 +461,7 @@ function BookingTable() {
           isOpen={modal.isOpen}
           text={modal.text}
           type={modal.type}
-          onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
+          onClose={modal.onClose}
           onConfirm={modal.onConfirm}
         />
       )}
