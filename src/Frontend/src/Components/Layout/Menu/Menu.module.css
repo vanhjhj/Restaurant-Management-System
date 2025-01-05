@@ -48,7 +48,8 @@
 }
 
 .menu-tab-row {
-  margin-bottom: 1px;
+  margin-bottom: 25px;
+
 }
 
 .menu-tab {
@@ -257,7 +258,7 @@
   line-height: 16px;
   min-height: 30px;
   outline: 0;
-  padding: 6px;
+  padding: 8px 12px;
   text-align: center;
   text-rendering: geometricprecision;
   text-transform: none;
@@ -268,10 +269,20 @@
   transition: all 0.3s ease;
 }
 
+.btn-ctn button.active-btn{
+  color: #fff;
+  background-color: #1a1a1a;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+}
+
 .btn-ctn button:hover {
   color: #fff;
   background-color: #1a1a1a;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+}
+
+.btn-ctn button.next-btn{
+  padding:6px;
 }
 
 .page-num {

@@ -25,6 +25,7 @@ function EmployeeReservation() {
   const [searchStatus, setSearchStatus] = useState("Tất cả");
   const [inputTable, setInputTable] = useState({ id: null, value: "" });
   const [errorMessage, setErrorMessage] = useState();
+  const [errorPos, setErrorPos] = useState();
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
@@ -103,12 +104,13 @@ function EmployeeReservation() {
         setErrorMessage();
     }
 
-    const handleSave = () => {
+    const handleSave = (id) => {
         const hasIdInTablesData = () => {
             return tables.some((table) => table.id == inputTable.value && table.status === 'A');
         };
         const assignTable = async () => {
-            if (!hasIdInTablesData()) {
+          if (!hasIdInTablesData()) {
+            setErrorPos(id);
                 setErrorMessage('Lỗi: Bàn trên không tồn tại hoặc không thể gán.')
                 return;
             }
@@ -184,7 +186,11 @@ function EmployeeReservation() {
 
   const reservationFilered = reservations.filter((r) =>
     filterReservation(r, searchName, searchStatus)
-  );
+  ); 
+
+  const calNumberOfEmptyTable = (t) => {
+    return t.filter((table) => table.status === "A").length;
+  }
 
     return (
         <div className={style['EER-container']}>
@@ -194,18 +200,20 @@ function EmployeeReservation() {
                         <div className={style['row']}>
                             <div className={style['col-lg-12']}>
                                 <div className={style["section-r-title"]}>
-                                    <h2>Danh sách các phiếu đặt</h2>
+                    <div>
+                      <h2>Danh sách các phiếu đặt</h2>
+                    </div>
                                     <div className={style['status-reservation-info']}>
                                         <section className={style['section-reservation-info']}>
                                             <div className={style['my-square'] + ' ' + style['yellow']}></div>
                                             <p>Chờ</p>
                                         </section>
                                         <section className={style['section-reservation-info']}>
-                                            <div className={style['my-square'] + ' ' + style['green'] }></div>
+                                            <div className={style['my-square'] + ' ' + style['blue'] }></div>
                                             <p>Gán</p>
                                         </section>
                                         <section className={style['section-reservation-info']}>
-                                            <div className={style['my-square'] + ' ' + style['blue']}></div>
+                                            <div className={style['my-square'] + ' ' + style['green']}></div>
                                             <p>Xong</p>
                                         </section>
                                         <section className={style['section-reservation-info']}>
@@ -260,7 +268,7 @@ function EmployeeReservation() {
                                         <p>Thời gian: {r.time}</p>
                                         <p>Ghi chú: {r.note}</p>
                                         <div className={style['']}>
-                                                {errorMessage ? <p className={style['error-message']}>{errorMessage}</p> : <p></p>}
+                                                {errorMessage && r.id === errorPos? <p className={style['error-message']}>{errorMessage}</p> : <p></p>}
                                             </div>
                                         <div className={style['input-table-ctn']}>
                                             
@@ -294,12 +302,12 @@ function EmployeeReservation() {
                                                 if (r.status === 'A') {
                                                     handleDoneReservation(r.id, r.table);
                                                 }
-                                            }}>Done</button>
+                                            }}>Xong</button>
                                             <button className={style['status-btn'] + ' ' + style[r.status !== 'D' && r.status !== 'C' ? '' : 'inactive-btn']} onClick={() => {
                                                 if (r.status !== 'D' && r.status !== 'C') {
                                                     handleCancelReservation(r.id);
                                                 }
-                                            }}>Cancel</button>
+                                            }}>Hủy</button>
                                         </div>
                                     
                                     </div>
@@ -314,7 +322,10 @@ function EmployeeReservation() {
                         <div className={style['row']}>
                             <div className={style['col-lg-12']}>
                                 <div className={style["section-title"]}>
-                                    <h2>Danh sách các bàn</h2>
+                    <div>
+                      <h2>Danh sách các bàn</h2>
+                      <p className={[style['empty-number-table']]}>Số lượng bàn trống: {calNumberOfEmptyTable(tables)} / {tables.length}</p>
+                                    </div>
                                     <div className={style['table-status-info']}>
                                         <section className={style['section-status-info']}>
                                             <TableIcon w={64} h={64} c={getTableColor('A')}></TableIcon>    

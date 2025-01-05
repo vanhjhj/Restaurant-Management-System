@@ -107,7 +107,7 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
                                 </div>
                             </div>
                             <div>
-                                <h4>Khuyễn mãi</h4>
+                                <h4>Khuyến mãi</h4>
                                 <div className={style['promotion-table']}>
                                                                     <div className={style['my-row'] + ' ' + style['my-title-row']}>
                                                                         <ul>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import style from '../../Style/CustomerStyle/Review.module.css';
 import { BsFilterLeft } from 'react-icons/bs';
-import {FaArrowLeft, FaArrowRight} from 'react-icons/fa'
+import {FaArrowLeft, FaArrowRight, FaStar} from 'react-icons/fa'
 import QRCodeGenerator from './QRReview';
 import { fetchFeedbacksData, getFeedBackFilter } from '../../API/ReviewAPI';
 import StarDisplay from './StarDisplay';
@@ -16,7 +16,10 @@ function Review({ iID }) {
     const [filterType, setFilterType] = useState('Tất cả');
     const [positive, setPositive] = useState('a');
     const [date, setDate] = useState('a');
-    const totalPages = Math.ceil(feedbacks.length / itemsPerPage);
+    const totalPages = Math.max(
+        1,
+        Math.ceil(feedbacks.length / itemsPerPage)
+      );
     function formatDate(isoString) {
         const date = new Date(isoString); // Chuyển đổi chuỗi ISO thành đối tượng Date
         const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và thêm số 0 nếu cần
@@ -40,6 +43,7 @@ function Review({ iID }) {
 
         setPositive(newPositive);
         fetchFilterData(newPositive, date);
+        setCurrentPage(1);
     };
 
     const handleFilterDateChange = (event) => {
@@ -50,11 +54,11 @@ function Review({ iID }) {
         console.log(selectedValue);
         setDate(selectedValue);
         fetchFilterData(positive, selectedValue);
+        setCurrentPage(1);
     };
     const fetchData = async () => {
             try {
                 const data = await fetchFeedbacksData();
-                console.log(data);
                 setFeedbacks(data);
             }
             catch (error) {
@@ -106,7 +110,7 @@ function Review({ iID }) {
                             className={style['filter-select']}
                         >
                             <option value="Tất cả">Tất cả</option>
-                            <option value="Tích cực">Tích cực</option>
+                            <option value="5"><FaStar size={24} color="#FFD700"></FaStar></option>
                             <option value="Tiêu cực">Tiêu cực</option>
                         </select>
                             <BsFilterLeft size={30} onClick={handleIconClick}></BsFilterLeft>

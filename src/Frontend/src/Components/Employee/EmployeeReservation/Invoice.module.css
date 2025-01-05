@@ -512,3 +512,18 @@
   box-shadow: inset 9px 9px 12px #cccccc, inset -9px -9px 12px #ffffff;
   color: #ff8243;
 }
+
+
+  
+.error-ctn{
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  height: 20px;
+  margin-top:10px;
+}
+
+.error-ctn .error{
+  color: red;
+}
+

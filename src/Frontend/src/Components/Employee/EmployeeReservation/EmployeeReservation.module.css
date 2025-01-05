@@ -292,10 +292,12 @@
 
 .table-info{
     cursor: pointer;
+    margin-top: 40px;
 }
 
-.table-info-ctn{
-    margin-top: 40px;
+.empty-number-table{
+    font-size: 18px;
+    margin-top: 30px;
 }
 
 .table-info-ctn p{
@@ -310,4 +312,4 @@
     border-left: 4px solid red; 
     padding-left: 8px;
   }
-  
+

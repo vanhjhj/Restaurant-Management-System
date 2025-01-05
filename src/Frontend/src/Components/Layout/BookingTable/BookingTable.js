@@ -384,7 +384,7 @@ function BookingTable() {
                 target: { name: "date", value: e.target.value },
               });
             }}
-            min={bookingInfo.date}
+            min={today}
             required
           />
         </label>
