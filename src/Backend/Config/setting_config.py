@@ -1,12 +1,15 @@
 # setting_config.py
 from django.conf import settings
+from django.core.files.storage import default_storage
 import json
 import os
 from copy import deepcopy
+from Restaurant.custom_storage import MediaStorage
 
 class RestaurantSettings:
     _instance = None
     _file_path = os.path.join(settings.BASE_DIR, 'Config', 'restaurant_configs.json')
+    _storage = MediaStorage()
 
     def __new__(cls):
         if cls._instance is None:
@@ -57,3 +60,47 @@ class RestaurantSettings:
 
     def get(self, key, default=None):
         return self._settings.get(key, default)
+    def upload_file(self, file, path_prefix='restaurant-config'):
+        """
+        Upload file lên S3 và trả về đường dẫn
+        
+        Args:
+            file: File từ request.FILES
+            path_prefix: Prefix cho đường dẫn lưu trữ
+            
+        Returns:
+            str: Đường dẫn đầy đủ của file trên S3
+        """
+        if not file:
+            return None
+
+        # Tạo đường dẫn lưu trữ
+        file_extension = os.path.splitext(file.name)[1].lower()
+        storage_path = f'{settings.AWS_MEDIA_LOCATION}/{path_prefix}/{file.name}{file_extension}'
+        
+        # Upload file
+        storage_path = self._storage.save(storage_path, file)
+        
+        # Trả về URL đầy đủ
+        return default_storage.url(storage_path)
+
+    def update_with_files(self, data, files):
+        """
+        Cập nhật settings với file upload
+        
+        Args:
+            data (dict): Data thông thường
+            files (dict): Files từ request.FILES
+        """
+        # Xử lý các file upload trước
+        updated_data = data.copy()
+        
+        for key, file in files.items():
+            if file:
+                # Upload file và lấy URL
+                file_url = self.upload_file(file)
+                # Cập nhật URL vào data
+                updated_data[key] = file_url
+        
+        # Cập nhật settings với data đã xử lý
+        self.update(updated_data)
