@@ -13,5 +13,6 @@
     "onweek_openhour": "10:00",
     "onweek_closehour": "22:00",
     "weekend_openhour": "8:00",
-    "weekend_closehour": "23:30"
+    "weekend_closehour": "23:30",
+    "QR": "https://intro2se.s3.ap-southeast-1.amazonaws.com/media/media/restaurant-config/290408752_3352713691618747_7051325059143917333_n%20-%20Copy_UopQHIy.png.png"
 }
