@@ -106,6 +106,7 @@ function ManageEmployees() {
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
+      setLoading(true);
       try {
         const activeToken = await ensureActiveToken();
         const data = await getEmployee(activeToken, {
@@ -132,7 +133,16 @@ function ManageEmployees() {
   }, [accessToken]);
 
   return (
-    <div className={style["manage-employees"]}>
+    <div
+      className={`${style["manage-employees"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["header"]}>
         <h2>Quản lý nhân viên</h2>
       </div>

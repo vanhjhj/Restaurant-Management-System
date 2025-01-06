@@ -36,6 +36,7 @@ function EditFoodItem() {
 
   useEffect(() => {
     const fetchFoodItem = async () => {
+      setLoading(true);
       try {
         const data = await getFoodItemByID(id);
         setFoodItem({
@@ -51,6 +52,8 @@ function EditFoodItem() {
       } catch (error) {
         console.error("Error fetching food item:", error);
         setError("Không thể tải dữ liệu món ăn.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -204,7 +207,14 @@ function EditFoodItem() {
   };
 
   return (
-    <div className={style["edit-fooditem"]}>
+    <div
+      className={`${style["edit-fooditem"]} ${loading ? style["loading"] : ""}`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2>CHỈNH SỬA MÓN ĂN</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>

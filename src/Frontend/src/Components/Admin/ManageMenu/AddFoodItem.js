@@ -164,7 +164,12 @@ function AddFoodItem() {
   };
 
   return (
-    <div className={style["add-food"]}>
+    <div className={`${style["add-food"]} ${loading ? style["loading"] : ""}`}>
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2>THÊM MÓN ĂN MỚI</h2>
       <div className={style["add-food-container"]}>
         {error && <p style={{ color: "red" }}>{error}</p>}

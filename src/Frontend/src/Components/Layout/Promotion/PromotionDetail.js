@@ -15,9 +15,11 @@ function PromotionDetail() {
   });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadPromotionDetail = async () => {
+      setLoading(true);
       try {
         const data = await fetchPromotionByCode(code);
         if (data) {
@@ -25,6 +27,8 @@ function PromotionDetail() {
         }
       } catch (err) {
         setError(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -40,7 +44,16 @@ function PromotionDetail() {
   };
 
   return (
-    <div className={style["promotion-detail"]}>
+    <div
+      className={`${style["promotion-detail"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2>{promotion.title}</h2>
       <div className={style["promotion-container"]}>
         <div className={style["promotion-image"]}>

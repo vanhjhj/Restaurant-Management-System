@@ -14,6 +14,7 @@ function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     text: "",
@@ -40,11 +41,14 @@ function ManagePromotions() {
 
   useEffect(() => {
     async function getPromotions() {
+      setLoading(true);
       try {
         const data = await fetchPromotions();
         setPromotions(data);
       } catch (error) {
         console.error("Error fetching promotions:", error);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -95,7 +99,16 @@ function ManagePromotions() {
   };
 
   return (
-    <div className={style["manage-Promotions"]}>
+    <div
+      className={`${style["manage-Promotions"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2>QUẢN LÝ ƯU ĐÃI</h2>
       <div className={style["button-container"]}>
         <button

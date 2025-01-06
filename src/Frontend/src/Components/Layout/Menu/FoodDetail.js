@@ -13,9 +13,11 @@ function FoodDetail() {
   });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadFoodDetail = async () => {
+      setLoading(true);
       try {
         const data = await getFoodItemByID(id);
         if (data) {
@@ -23,6 +25,8 @@ function FoodDetail() {
         }
       } catch (err) {
         setError(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -34,7 +38,16 @@ function FoodDetail() {
   };
 
   return (
-    <div className={style["food-detail-container"]}>
+    <div
+      className={`${style["food-detail-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["food-image"]}>
         <img src={food.image} alt={food.name} />
       </div>
@@ -42,7 +55,7 @@ function FoodDetail() {
         <h1 className={style["food-name"]}>{food.name}</h1>
         <hr className={style["divider"]} />
         <p className={style["food-description"]}>{food.description}</p>
-        <hr className={style["divider"]}/>
+        <hr className={style["divider"]} />
         <div className={style["food-price"]}>{formatPrice(food.price)}</div>
       </div>
     </div>

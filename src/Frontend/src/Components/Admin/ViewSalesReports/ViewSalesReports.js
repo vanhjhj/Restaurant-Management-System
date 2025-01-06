@@ -61,8 +61,8 @@ function ViewSalesReports() {
 
   useEffect(() => {
     const fetchInvoices = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const token = await ensureActiveToken();
         let response = await getInvoice(token);
 
@@ -458,7 +458,16 @@ function ViewSalesReports() {
   };
 
   return (
-    <div className={style["viewsalesreport-container"]}>
+    <div
+      className={`${style["viewsalesreport-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2 className={style["viewsalesreport-title"]}>Báo cáo doanh thu</h2>
 
       {/* Nút chọn chế độ xem */}

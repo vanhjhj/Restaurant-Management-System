@@ -49,7 +49,6 @@
 
 .menu-tab-row {
   margin-bottom: 25px;
-
 }
 
 .menu-tab {
@@ -235,8 +234,8 @@
   font-size: 30px;
 }
 
-.btn-ctn{
-  margin-top:20px;
+.btn-ctn {
+  margin-top: 20px;
   margin-bottom: 30px;
   display: flex;
   justify-content: center;
@@ -269,7 +268,7 @@
   transition: all 0.3s ease;
 }
 
-.btn-ctn button.active-btn{
+.btn-ctn button.active-btn {
   color: #fff;
   background-color: #1a1a1a;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
@@ -281,8 +280,8 @@
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
 }
 
-.btn-ctn button.next-btn{
-  padding:6px;
+.btn-ctn button.next-btn {
+  padding: 6px;
 }
 
 .page-num {
@@ -294,23 +293,62 @@
   font-family: "Playfair Display", serif;
 }
 
-.item-description{
+.item-description {
   max-width: 100%;
   height: 70px;
   overflow: hidden;
 }
 
-.scroll-menu-tab{
+.scroll-menu-tab {
   max-width: 600px;
   overflow: hidden;
   scroll-behavior: smooth;
 }
 
-.scroll-menu-tab li{
+.scroll-menu-tab li {
   white-space: nowrap;
 }
 
-.scroll-btn{
+.scroll-btn {
   border: none;
   background-color: transparent;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.menu-container {
+  cursor: auto;
+}
+
+.menu-container.loading {
+  cursor: wait;
 }
