@@ -22,7 +22,6 @@ function BookingTable() {
   const [bookingInfo, setBookingInfo] = useState({
     guest_name: "",
     email: "",
-    email: "",
     date: "",
     time: "",
     phone_number: "",
@@ -105,7 +104,6 @@ function BookingTable() {
         userPhone = response.phone_number;
         userName = response.full_name;
         userEmail = response.email;
-        userEmail = response.email;
 
         // Nếu người dùng có số điện thoại, tự động điền vào form
         if (userPhone) {
@@ -124,7 +122,6 @@ function BookingTable() {
             ...prevInfo,
             guest_name: userName, // Chỉ điền tên
             email: userEmail,
-            email: userEmail,
           }));
         }
       }
@@ -134,8 +131,6 @@ function BookingTable() {
       setBookingInfo((prevInfo) => ({
         ...prevInfo,
         phone_number: "",
-        guest_name: "",
-        email: "",
         guest_name: "",
         email: "",
       }));
@@ -171,7 +166,6 @@ function BookingTable() {
           guest_name: response.guest_name,
           date: today,
           time: "",
-          email: response.email,
           email: response.email,
           phone_number: phone,
           number_of_guests: response.number_of_guests,
@@ -298,7 +292,6 @@ function BookingTable() {
         date: "",
         time: "",
         phone_number: "",
-        email: "",
         email: "",
         number_of_guests: 1,
         note: "",
