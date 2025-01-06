@@ -16,6 +16,7 @@ import { RestaurantContext } from "../../../Config/RestaurantContext";
 function BookingTable() {
   const { restaurantInfo, loading, error, setRestaurantInfo } =
     useContext(RestaurantContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
   const [islogin, setIslogin] = useState(false);
   const [bookingInfo, setBookingInfo] = useState({
@@ -94,6 +95,7 @@ function BookingTable() {
   };
 
   const checkLoginStatus = async () => {
+    setIsLoading(true);
     try {
       const token = await ensureActiveToken();
       const response = await GetInfoCus(UserID, token); // Lấy thông tin người dùng từ API
@@ -132,6 +134,8 @@ function BookingTable() {
         guest_name: "",
         email: "",
       }));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -153,7 +157,7 @@ function BookingTable() {
 
   const fetchBookingData = async (phone, name) => {
     if (!phone) return;
-    setloadingbooking(true);
+    setIsLoading(true);
     try {
       const response = await GetBookingTableByPhone(phone);
       if (response) {
@@ -183,7 +187,7 @@ function BookingTable() {
         guest_name: name,
       }));
     } finally {
-      setloadingbooking(false);
+      setIsLoading(false);
     }
   };
 
@@ -213,6 +217,8 @@ function BookingTable() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setIsLoading(true);
 
     const phoneerrorbooking = validatePhoneNumber(phoneNumber);
     if (phoneerrorbooking) {
@@ -247,7 +253,7 @@ function BookingTable() {
         isOpen: true,
         text: `Vui lòng chọn thời gian đặt bàn trong khung giờ mở cửa: ${open} - ${close}`,
         type: "error",
-        onClose: () => setModal({ isOpen: false })
+        onClose: () => setModal({ isOpen: false }),
       });
       return;
     }
@@ -262,10 +268,11 @@ function BookingTable() {
         isOpen: true,
         text: "Khách cần đặt bàn trước ít nhất 1 tiếng. Vui lòng sửa lại thời gian!",
         type: "error",
-        onClose: () => setModal({ isOpen: false })
+        onClose: () => setModal({ isOpen: false }),
       });
       return;
     }
+
     try {
       const requestData = {
         ...bookingInfo,
@@ -291,6 +298,9 @@ function BookingTable() {
       });
     } catch (err) {
       seterrorbooking("Không thể đặt bàn. Vui lòng thử lại.");
+      seterrorbooking("Không thể đặt bàn. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -303,13 +313,13 @@ function BookingTable() {
         text: "Bạn có muốn đăng ký tài khoản để nhận thêm nhiều khuyến mãi không?",
         type: "confirm",
         onClose: () => {
-          console.log("Close clicked"); 
+          console.log("Close clicked");
           setModal({ isOpen: false }); // Đóng modal nếu người dùng từ chối
         },
         onConfirm: () => {
-          console.log("Confirm clicked"); 
+          console.log("Confirm clicked");
           navigate("/SignUp"); // Điều hướng đến trang đăng ký
-          setModal({ isOpen: false }); 
+          setModal({ isOpen: false });
         },
       });
     } else {
@@ -350,7 +360,17 @@ function BookingTable() {
   if (!restaurantInfo) return <p>No restaurant info available.</p>; // Xử lý nếu dữ liệu trống
 
   return (
-    <div className={style["booking-form-container"]}>
+    <div
+      className={`${style["booking-form-container"]} ${
+        isLoading ? style["loading"] : ""
+      }`}
+    >
+      {isLoading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
+
       <h2>Đặt Bàn</h2>
       {loadingbooking && <p>Đang tải...</p>}
 
@@ -451,9 +471,7 @@ function BookingTable() {
             áp dụng ưu đãi và phục vụ tốt nhất.
           </h3>
         </div>
-        <button type="submit" disabled={loadingbooking}>
-          {loadingbooking ? "Đang xử lý..." : "Đặt bàn"}
-        </button>
+        <button type="submit">Đặt bàn</button>
       </form>
 
       {modal.isOpen && (

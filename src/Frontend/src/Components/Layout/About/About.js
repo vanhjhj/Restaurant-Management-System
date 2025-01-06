@@ -30,6 +30,7 @@ const About = () => {
   const [photoIndex, setPhotoIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [loading, setLoading] = useState(true);
 
   const getActiveImages = () => {
     if (activeTab === "overview") return overviewImages;
@@ -40,6 +41,13 @@ const About = () => {
   // Chuyển đổi mảng ảnh thành định dạng slides cho lightbox
   const getSlides = () => {
     return getActiveImages().map((src) => ({ src }));
+  };
+
+  const handleImageLoad = () => {
+    const imageElements = document.querySelectorAll(".gallery-thumbnail");
+    if (imageElements.length === getActiveImages().length) {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,6 +83,12 @@ const About = () => {
           </button>
         </div>
 
+        {loading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
+
         <div className="gallery-grid">
           {getActiveImages().map((image, index) => (
             <img
@@ -82,6 +96,7 @@ const About = () => {
               src={image}
               alt={`Gallery Image ${index + 1}`}
               className="gallery-thumbnail"
+              onLoad={handleImageLoad} // Đảm bảo gọi handleImageLoad khi ảnh được tải
               onClick={() => {
                 setPhotoIndex(index);
                 setIsOpen(true);
@@ -96,7 +111,7 @@ const About = () => {
           slides={getSlides()}
           index={photoIndex}
           on={{
-            view: ({ index }) => setPhotoIndex(index)
+            view: ({ index }) => setPhotoIndex(index),
           }}
         />
       </div>
