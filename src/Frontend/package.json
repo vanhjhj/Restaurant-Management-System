@@ -12,6 +12,8 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.7",
+    "crypto-js": "^4.2.0",
+    "express": "^4.21.2",
     "gsap": "^3.12.5",
     "jwt-decode": "^4.0.0",
     "qrcode.react": "^4.2.0",
@@ -23,6 +25,7 @@
     "react-parallax": "^3.5.1",
     "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.9.0",
     "swiper": "^11.1.14",
     "web-vitals": "^2.1.4",
     "yet-another-react-lightbox": "^3.21.7"

@@ -154,7 +154,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                     <Link
                       to="/review"
                       className={
-                        location.pathname === "/reservation" ? style.active : ""
+                        location.pathname === "/review" ? style.active : ""
                       }
                     >
                       Đánh giá

@@ -14,6 +14,16 @@
     composes: col-lg-2 from '../../../Style/bootstrap.min.css';
 }
 
+.col-lg-6{
+    composes: col-lg-6 from '../../../Style/bootstrap.min.css';
+}
+
+.my-input-row{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .yellow{
     background-color: rgba(255, 223, 116, 0.7);
 }
@@ -189,7 +199,6 @@
 
 .reservation-info h5{
     text-align: center;
-    border-bottom: 2px solid rgb(204 204 204 / 80%);
     padding: 10px 0px;
 }
 
@@ -292,10 +301,12 @@
 
 .table-info{
     cursor: pointer;
+    margin-top: 40px;
 }
 
-.table-info-ctn{
-    margin-top: 40px;
+.empty-number-table{
+    font-size: 18px;
+    margin-top: 30px;
 }
 
 .table-info-ctn p{
@@ -310,4 +321,28 @@
     border-left: 4px solid red; 
     padding-left: 8px;
   }
-  
+
+.my-note{
+    word-wrap: break-word; /* For old browsers */
+      word-break: break-word; /* For modern browsers */
+      overflow-wrap: break-word; /* For best support */
+}
+
+.reservation-header{
+    display: flex;
+    padding: 0px 10px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    border-bottom: 2px solid rgb(204 204 204 / 80%);
+    margin-bottom:10px;
+}
+
+.reservation-header h5{
+    margin-bottom: 0px;
+}
+
+.edit-reservation{
+    justify-content: center;
+    align-items: center;
+    margin:auto 0px;
+}

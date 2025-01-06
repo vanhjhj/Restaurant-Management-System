@@ -42,7 +42,7 @@ function FoodDetail() {
         <h1 className={style["food-name"]}>{food.name}</h1>
         <hr className={style["divider"]} />
         <p className={style["food-description"]}>{food.description}</p>
-        <hr className={style["divider"]} />
+        <hr className={style["divider"]}/>
         <div className={style["food-price"]}>{formatPrice(food.price)}</div>
       </div>
     </div>

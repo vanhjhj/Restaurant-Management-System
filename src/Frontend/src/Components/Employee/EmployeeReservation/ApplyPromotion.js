@@ -126,15 +126,15 @@ function ApplyPromotion({setShow, setInvoice, invoice}) {
                                                             </div>
                                                         <div></div>
                             <div className={style['promotion-list']}>
-                                <h2>Khuyễn mãi</h2>
-                                <p>Danh sách các khuyễn mãi</p>   
+                                <h2>Khuyến mãi</h2>
+                                <p>Danh sách các khuyến mãi</p>   
                                 <div className={style['promotion-table']}>
                                     <div className={style['my-row'] + ' ' + style['my-title-row']} key='-9999'>
                                         <ul>
                                             <li className={style['my-col-1']}>Mã KH</li>   
-                                            <li className={style['my-col-2']}>Tên khuyễn mãi</li>
+                                            <li className={style['my-col-2']}>Tên khuyến mãi</li>
                                             <li className={style['my-col-3']}>Loại</li>
-                                            <li className={style['my-col-4']}>Ngày kết thúc</li>
+                                            <li className={style['my-col-4']}>Giảm giá (%)</li>
                                             <li className={style['my-col-5']}>Điều kiện</li>
                                         </ul>
                                     </div>
@@ -144,7 +144,7 @@ function ApplyPromotion({setShow, setInvoice, invoice}) {
                                                 <li className={style['my-col-1']}>{item.code}</li>   
                                                 <li className={style['my-col-2']}>{item.title}</li>
                                                 <li className={style['my-col-3']}>{item.type}</li>
-                                                <li className={style['my-col-4']}>{item.enddate}</li>
+                                                <li className={style['my-col-4']}>{item.discount}</li>
                                                 <li className={style['my-col-5']}>{item.min_order}</li>
                                                 <li className={style['add-button']}><label><input type='checkbox' checked={item.isSelected} disabled={handleDisable(item)} onChange={() => handleAddPromotion(item) }></input></label></li>
                                             </ul>

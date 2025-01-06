@@ -15,17 +15,26 @@ export const getFeedBackFilter = async (positive, date) => {
     try {
         let rate = '';
         let isFilter = '?';
-        if (positive === 'a' && date === 'a') {
+        if (positive === '0' && date === 'a') {
             isFilter = '';
         }
-        if (positive === 'a') {
+        if (positive === '0') {
             rate = '';
         }
-        else if (positive === 'p') {
-            rate = 'min_ovrpoint=3.5&'
+        else if (positive === '1') {
+            rate = 'min_ovrpoint=0&max_ovrpoint=1&'
         }
-        else if (positive === 'n'){
-            rate = 'max_ovrpoint=3&'
+        else if (positive === '2'){
+            rate = 'min_ovrpoint=1&max_ovrpoint=2&'
+        }
+        else if (positive === '3') {
+            rate = 'min_ovrpoint=2&max_ovrpoint=3&'
+        }
+        else if (positive === '4') {
+            rate = 'min_ovrpoint=3&max_ovrpoint=4&'
+        }
+        else if (positive === '5') {
+            rate = 'min_ovrpoint=4&max_ovrpoint=5&'
         }
         if (date === 'a') {
             date = '';

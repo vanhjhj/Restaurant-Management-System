@@ -1,15 +1,5 @@
 /* Tổng quan */
 
-.header-over-banner {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.661); /* Màu trắng mờ */
-  backdrop-filter: blur(5px); /* Làm mờ nền */
-  box-shadow: none; /* Không có đổ bóng */
-  z-index: 10; /* Hiển thị header trên banner */
-  transition: 0.3s; /* Hiệu ứng mượt mà khi chuyển */
-}
 
 .about-container {
   font-family: Arial, sans-serif;

@@ -256,27 +256,7 @@ function Menu() {
           </div>
         </div>
         
-        <div className={style['row']}>
-          <div className={style['btn-ctn']}>
-            <button 
-              onClick={() => { setCurrentPage((prev) => Math.max(prev - 1, 1));}}
-              disabled={currentPage === 1}
-              >
-            <FaArrowLeft></FaArrowLeft>
-            </button>
-            <div className={style['page-num']}>
-            <span>
-              Trang {currentPage}/{totalPages}
-            </span>
-        </div>
-            <button
-              onClick={() => {setCurrentPage((prev) => Math.min(prev + 1, totalPages)); }}
-              disabled={currentPage === totalPages}
-            >
-            <FaArrowRight></FaArrowRight>
-            </button>
-          </div>
-        </div>
+        
         <div className={style["menu-list-row"]}>
           <div className={style["row"]}>
             {currentItems.map((item) => (
@@ -299,17 +279,29 @@ function Menu() {
             <button 
               onClick={() => { setCurrentPage((prev) => Math.max(prev - 1, 1));}}
               disabled={currentPage === 1}
+              className={style['next-btn']}
             >
               <FaArrowLeft></FaArrowLeft>
             </button>
             <div className={style['page-num']}>
-            <span>
-              Trang {currentPage}/{totalPages}
-            </span>
+            <div className={style['row']}>
+          <div className={style['btn-ctn']}>
+              {Array.from({ length: totalPages, }, (_, i) => (
+                <button
+                  key={`page-${i + 1}`}
+                  onClick={() => { setCurrentPage(i + 1); }}
+                  className={style[currentPage === i + 1 && 'active-btn']}
+              >
+              {i + 1}
+              </button>
+              ))}
+          </div>
+        </div>
         </div>
             <button
               onClick={() => {setCurrentPage((prev) => Math.min(prev + 1, totalPages)); }}
               disabled={currentPage === totalPages}
+              className={style['next-btn']}
             >
               <FaArrowRight></FaArrowRight>
             </button>

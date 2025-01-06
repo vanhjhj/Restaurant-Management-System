@@ -17,12 +17,13 @@ export const fetchTablesData = async (token) => {
 
 export const fetchReservationData = async (token) => {
   try {
+    let formattedDate;
     const today = new Date();
 
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const formattedDate = `${year}-${month}-${day}`;
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      formattedDate = `${year}-${month}-${day}`;
     const response = await axios.get(
       `${API_BASE_URL}/booking/reservations/?date=${formattedDate}&ordering=status`,
       {
@@ -38,6 +39,86 @@ export const fetchReservationData = async (token) => {
     throw error;
   }
 };
+
+export const fetchDateData = async (token, date) => {
+  try {
+    let formattedDate;
+    if (!date) {
+
+    const today = new Date();
+
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      formattedDate = `${year}-${month}-${day}`;
+    }
+    else {
+      formattedDate = date;
+    }
+    const response = await axios.get(
+      `${API_BASE_URL}/booking/reservations/?date=${formattedDate}&ordering=status`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
+          "Content-Type": "application/json", // Định dạng nội dung JSON
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const getReservationByNumber = async (
+  token,
+  phone_number
+) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/booking/reservations/?phone_number=${phone_number}`,
+      {
+        params: { phone_number },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const patchReservation = async (token, rID,data) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/booking/reservations/${rID}`,
+      {
+        guest_name: data.guest_name,
+        note: data.note,
+        number_of_guests: data.number_of_guests,
+        phone_number: data.phone_number,
+        time: data.time,
+        date: data.date,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Gửi token qua header Authorization
+          "Content-Type": "application/json", // Định dạng nội dung JSON
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export const fetchReservationDataByPhoneNumber = async (
   token,
