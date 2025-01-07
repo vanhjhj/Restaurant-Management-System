@@ -292,22 +292,7 @@ function ManageRestaurantInfo() {
             <p>{restaurantInfo.email}</p>
           )}
         </div>
-        <div className={style["ManageRes-field"]}>
-          <label>Liên kết nhận tiền momo:</label>
-          {editMode ? (
-            <div className={style["ManageRes-input"]}>
-              <input
-                type="text"
-                name="Link_momo"
-                value={updatedInfo.Link_momo || ""}
-                onChange={handleChange}
-              />
-              <AiOutlineEdit size={20} />
-            </div>
-          ) : (
-            <p>{restaurantInfo.Link_momo}</p>
-          )}
-        </div>
+      
         <div className={style["ManageRes-field-image"]}>
           <div>
             <label>Ảnh QR chuyển tiền:</label>

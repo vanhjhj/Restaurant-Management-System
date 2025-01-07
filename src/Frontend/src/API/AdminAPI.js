@@ -260,11 +260,11 @@ export const UpdateResInfo = async (token, restaurantInfor) => {
   const formData = new FormData();
 
   // Xử lý các trường dạng mảng
-  formData.append("name", JSON.stringify(restaurantInfor.name));
-  formData.append("address", JSON.stringify(restaurantInfor.address));
-  formData.append("phone", JSON.stringify(restaurantInfor.phone));
-  formData.append("google_map", JSON.stringify(restaurantInfor.google_map));
-  formData.append("email", JSON.stringify(restaurantInfor.email));
+  formData.append("name", restaurantInfor.name);
+  formData.append("address", restaurantInfor.address);
+  formData.append("phone", restaurantInfor.phone);
+  formData.append("google_map", restaurantInfor.google_map);
+  formData.append("email", restaurantInfor.email);
 
 
   // Xử lý social
