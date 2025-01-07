@@ -95,7 +95,7 @@ function Menu() {
         setMenuTabs(tab);
       } catch (error) {
         setError(error);
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }

@@ -14,7 +14,6 @@ export const FillInfoEmp = async (InfoChange, token) => {
         },
       }
     );
-    console.log(response.data.message); // Thông báo từ API nếu thành công
     return response.data;
   } catch (error) {
     console.error(
@@ -151,7 +150,6 @@ export const getInvoice = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error get Invoices:", error);
@@ -241,12 +239,13 @@ export const DeleteTable = async (id, token) => {
   }
 };
 
-
 //Lấy thông tin nhà hàng
 
 export const GetResInfo = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/config/restaurant-configs/`);
+    const response = await axios.get(
+      `${API_BASE_URL}/config/restaurant-configs/`
+    );
     return response.data;
   } catch (error) {
     console.error("Error get restaurant info:", error);
@@ -258,11 +257,15 @@ export const GetResInfo = async () => {
 
 export const UpdateResInfo = async (token, restaurantInfor) => {
   try {
-    const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`, restaurantInfor, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.patch(
+      `${API_BASE_URL}/config/restaurant-configs/`,
+      restaurantInfor,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error get restaurant info:", error);

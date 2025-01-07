@@ -20,10 +20,10 @@ export const fetchReservationData = async (token) => {
     let formattedDate;
     const today = new Date();
 
-      const day = today.getDate();
-      const month = today.getMonth() + 1;
-      const year = today.getFullYear();
-      formattedDate = `${year}-${month}-${day}`;
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    formattedDate = `${year}-${month}-${day}`;
     const response = await axios.get(
       `${API_BASE_URL}/booking/reservations/?date=${formattedDate}&ordering=status`,
       {
@@ -44,15 +44,13 @@ export const fetchDateData = async (token, date) => {
   try {
     let formattedDate;
     if (!date) {
-
-    const today = new Date();
+      const today = new Date();
 
       const day = today.getDate();
       const month = today.getMonth() + 1;
       const year = today.getFullYear();
       formattedDate = `${year}-${month}-${day}`;
-    }
-    else {
+    } else {
       formattedDate = date;
     }
     const response = await axios.get(
@@ -71,11 +69,7 @@ export const fetchDateData = async (token, date) => {
   }
 };
 
-
-export const getReservationByNumber = async (
-  token,
-  phone_number
-) => {
+export const getReservationByNumber = async (token, phone_number) => {
   try {
     const response = await axios.get(
       `${API_BASE_URL}/booking/reservations/?phone_number=${phone_number}`,
@@ -94,7 +88,7 @@ export const getReservationByNumber = async (
   }
 };
 
-export const patchReservation = async (token, rID,data) => {
+export const patchReservation = async (token, rID, data) => {
   try {
     const response = await axios.patch(
       `${API_BASE_URL}/booking/reservations/${rID}`,
@@ -118,7 +112,7 @@ export const patchReservation = async (token, rID,data) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const fetchReservationDataByPhoneNumber = async (
   token,
@@ -226,7 +220,6 @@ export const createOrder = async (token, tID) => {
         },
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -275,7 +268,6 @@ export const addFood = async (token, oID, fID, q, n) => {
       quantity: q,
       note: n,
     };
-    console.log(myData);
     const response = await axios.post(
       `${API_BASE_URL}/booking/orders/add-item/`,
       myData,
@@ -349,12 +341,12 @@ export const removeItem = async (token, iID) => {
   }
 };
 
-export const checkPhoneNumber = async (token,number) => {
+export const checkPhoneNumber = async (token, number) => {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/auth/account-exists-check/`,
       {
-        phone_number: {number},
+        phone_number: { number },
       },
       {
         headers: {
@@ -365,7 +357,6 @@ export const checkPhoneNumber = async (token,number) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -386,11 +377,9 @@ export const addPromotionToInvoice = async (token, iID, pID) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
-
 
 export const markPaid = async (token, iID) => {
   try {
@@ -406,8 +395,6 @@ export const markPaid = async (token, iID) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
-

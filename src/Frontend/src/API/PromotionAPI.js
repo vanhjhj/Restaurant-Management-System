@@ -43,7 +43,6 @@ export const deletePromotion = async (code, accessToken) => {
     await axios.delete(`${API_BASE_URL}/promotion/promotions/${code}/`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    console.log("Xóa ưu đãi thành công");
   } catch (error) {
     console.error("Lỗi khi xóa ưu đãi:", error.message);
     throw error;

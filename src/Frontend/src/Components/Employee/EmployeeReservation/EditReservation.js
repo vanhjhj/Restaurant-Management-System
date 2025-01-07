@@ -84,7 +84,7 @@ function EditReservation({ setShow, info }) {
       setBookingInfo(data);
       window.location.reload();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

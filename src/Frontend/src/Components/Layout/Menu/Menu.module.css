@@ -344,11 +344,3 @@
     transform: rotate(360deg);
   }
 }
-
-.menu-container {
-  cursor: auto;
-}
-
-.menu-container.loading {
-  cursor: wait;
-}
