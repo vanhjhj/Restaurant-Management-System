@@ -258,6 +258,7 @@ export const GetResInfo = async () => {
 
 export const UpdateResInfo = async (token, restaurantInfor) => {
   try {
+    
     const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`, restaurantInfor, {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -54,26 +54,7 @@ return bytes.toString(CryptoJS.enc.Utf8);
             }
         }
     }  
-
-    if (success) {
-        const navigate = useNavigate();
-
-  useEffect(() => {
-    // Tự động chuyển hướng về trang chủ sau 3 giây
-    const timer = setTimeout(() => {
-      navigate("/");  // Điều hướng về trang chủ
-    }, 3000);
-
-    // Dọn dẹp timer khi component unmount
-    return () => clearTimeout(timer);
-  }, [navigate]);
-        return (
-            <div className={style['my-ctn']}>
-                <h2>Đánh giá của bạn đã được chúng tôi ghi nhận</h2>
-            </div>
-
-        )
-    }
+    
     return (
         <div className={style['review-ctn']}>
             <div className={style['container']}>
