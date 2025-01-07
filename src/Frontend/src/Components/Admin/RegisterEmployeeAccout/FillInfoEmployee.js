@@ -43,7 +43,6 @@ function FillInfoEmployee() {
     type: "", // "confirm" hoặc "success"
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
-  console.log("Location state:", location.state);
   const { email, id, refresh_employee, token_employee } = location.state || {};
   const [accessTokenEmployee, setaccessTokenEmployee] =
     useState(token_employee);

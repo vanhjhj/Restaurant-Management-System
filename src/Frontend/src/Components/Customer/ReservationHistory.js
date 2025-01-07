@@ -53,7 +53,6 @@ function ReservationHistory() {
           activeToken,
           customerData.phone_number
         );
-        console.log("Fetched Reservation Data:", data);
         setReservationData(data);
       } catch (error) {
         console.error("Error fetching reservations:", error.message);

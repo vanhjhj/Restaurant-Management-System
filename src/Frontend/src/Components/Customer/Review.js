@@ -78,7 +78,6 @@ function Review({ iID }) {
   ];
 
   const handleChange = (selectedOption) => {
-    console.log(`Selected: ${selectedOption.value}`);
     const newPositive = selectedOption.value;
     setPositive(newPositive);
     fetchFilterData(newPositive, date);
@@ -90,7 +89,6 @@ function Review({ iID }) {
     if (!selectedValue) {
       selectedValue = "a";
     }
-    console.log(selectedValue);
     setDate(selectedValue);
     fetchFilterData(positive, selectedValue);
     setCurrentPage(1);
@@ -101,7 +99,7 @@ function Review({ iID }) {
       const data = await fetchFeedbacksData();
       setFeedbacks(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -112,7 +110,7 @@ function Review({ iID }) {
       const data = await getFeedBackFilter(p, d);
       setFeedbacks(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
