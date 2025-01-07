@@ -74,7 +74,6 @@ function ManageDepartment() {
       text: "Bạn có chắc chắn muốn xóa bộ phận này không?",
       type: "confirm",
       onConfirm: async () => {
-        console.log("Confirmed delete!");
         setModal({ isOpen: false });
         try {
           const activeToken = await ensureActiveToken();
@@ -106,12 +105,13 @@ function ManageDepartment() {
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
+      setLoading(true);
       try {
         const activeToken = await ensureActiveToken();
         const data = await getDepartments(activeToken, {
           signal: controller.signal,
         });
-        console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
+        console.log("Dữ liệu trả về từ API:", data);
         if (Array.isArray(data)) {
           setDepartments(data);
         } else {
@@ -132,7 +132,16 @@ function ManageDepartment() {
   }, [accessToken]);
 
   return (
-    <div className={style["manage-department"]}>
+    <div
+      className={`${style["manage-department"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["manage-department-container"]}>
         <h2 className={style["manage-department-header"]}>Quản lý bộ phận</h2>
 

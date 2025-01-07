@@ -22,6 +22,7 @@ function ManageTable() {
   const [tables, setTables] = useState([]);
   const [editingTableId, setEditingTableId] = useState(null);
   const [editedSeats, setEditedSeats] = useState({});
+  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     text: "",
@@ -44,11 +45,14 @@ function ManageTable() {
 
   const fetchData = async () => {
     const activeToken = await ensureActiveToken();
+    setLoading(true);
     try {
       const tablesData = await GetTable(activeToken);
       setTables(tablesData);
     } catch (error) {
       console.error("Error fetching table data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,6 +92,7 @@ function ManageTable() {
   };
 
   const handleSaveEdit = async (id) => {
+    setLoading(true);
     try {
       const activeToken = await ensureActiveToken();
       await UpdateTable(id, { number_of_seats: editedSeats[id] }, activeToken);
@@ -106,6 +111,8 @@ function ManageTable() {
         text: "Không thể chỉnh sửa bàn. Vui lòng thử lại sau!",
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,7 +148,16 @@ function ManageTable() {
   };
 
   return (
-    <div className={style["ManageTable-container"]}>
+    <div
+      className={`${style["ManageTable-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       {/* Header Section */}
       <div className={style["header"]}>
         <h2>Quản lý bàn</h2>

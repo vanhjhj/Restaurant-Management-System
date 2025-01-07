@@ -192,7 +192,14 @@ function AddPromotion() {
   };
 
   return (
-    <div className={style["add-promotion"]}>
+    <div
+      className={`${style["add-promotion"]} ${loading ? style["loading"] : ""}`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2>THÊM ƯU ĐÃI MỚI</h2>
       <div className={style["add-promotion-container"]}>
         {error && <p style={{ color: "red" }}>{error}</p>}

@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
-import style from '../../Style/CustomerStyle/Review.module.css';
-import { BsFilterLeft } from 'react-icons/bs';
-import {FaArrowLeft, FaArrowRight, FaStar} from 'react-icons/fa'
-import QRCodeGenerator from './QRReview';
-import Select from 'react-select';
-import { fetchFeedbacksData, getFeedBackFilter } from '../../API/ReviewAPI';
-import StarDisplay from './StarDisplay';
-
+import React, { useEffect, useState, useRef } from "react";
+import style from "../../Style/CustomerStyle/Review.module.css";
+import { BsFilterLeft } from "react-icons/bs";
+import { FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa";
+import QRCodeGenerator from "./QRReview";
+import Select from "react-select";
+import { fetchFeedbacksData, getFeedBackFilter } from "../../API/ReviewAPI";
+import StarDisplay from "./StarDisplay";
 
 function Review({ iID }) {
-    const itemsPerPage = 10; // Số món ăn trên mỗi trang
-    const [currentPage, setCurrentPage] = useState(1);
-    const selectRef = useRef(null);
+  const itemsPerPage = 10; // Số món ăn trên mỗi trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const selectRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
     const [feedbacks, setFeedbacks] = useState([]); 
     const [filterType, setFilterType] = useState('Tất cả');
@@ -51,39 +51,40 @@ function Review({ iID }) {
         setCurrentPage(1);
       };
 
-    const handleFilterDateChange = (event) => {
-        let selectedValue = event.target.value;
-        if (!selectedValue) {
-            selectedValue = 'a';
-        }
-        console.log(selectedValue);
-        setDate(selectedValue);
-        fetchFilterData(positive, selectedValue);
-        setCurrentPage(1);
-    };
-    const fetchData = async () => {
-            try {
-                const data = await fetchFeedbacksData();
-                setFeedbacks(data);
-            }
-            catch (error) {
-                console.log(error);
-            }
+  const handleFilterDateChange = (event) => {
+    let selectedValue = event.target.value;
+    if (!selectedValue) {
+      selectedValue = "a";
     }
+    console.log(selectedValue);
+    setDate(selectedValue);
+    fetchFilterData(positive, selectedValue);
+    setCurrentPage(1);
+  };
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchFeedbacksData();
+      setFeedbacks(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchFilterData = async (p, d) => {
-        try {
-            const data = await getFeedBackFilter(p, d);
-            setFeedbacks(data);
-        }
-        catch (error) {
-            console.log(error);
-        }
-}
-    
-    useEffect(() => {
-        fetchData();
-    }, []);
+  const fetchFilterData = async (p, d) => {
+    try {
+      const data = await getFeedBackFilter(p, d);
+      setFeedbacks(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
     const currentItems = feedbacks.slice(
         (currentPage - 1) * itemsPerPage,

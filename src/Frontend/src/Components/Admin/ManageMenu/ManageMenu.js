@@ -22,6 +22,7 @@ const ManageMenu = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [modal, setModal] = useState({
     isOpen: false,
@@ -32,12 +33,15 @@ const ManageMenu = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoading(true);
       try {
         const data = await getMenuTabs();
         setCategories(data);
         if (data.length > 0) setSelectedCategory(data[0]?.id);
       } catch (error) {
         console.error("Error fetching menu categories:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -46,6 +50,7 @@ const ManageMenu = () => {
 
   useEffect(() => {
     const fetchFoodItems = async () => {
+      setLoading(true);
       try {
         if (selectedCategory) {
           const data = await getFoodItems();
@@ -56,6 +61,8 @@ const ManageMenu = () => {
         }
       } catch (error) {
         console.error("Error fetching food items:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -165,7 +172,16 @@ const ManageMenu = () => {
   };
 
   return (
-    <div className={style["manage-menu-container"]}>
+    <div
+      className={`${style["manage-menu-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["menu-sidebar"]}>
         <h3>Thực đơn hiện tại</h3>
         <h4>Danh sách mục có sẵn</h4>

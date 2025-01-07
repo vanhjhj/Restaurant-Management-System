@@ -23,6 +23,7 @@ function Menu() {
   const itemsPerPage = 12; // Số món ăn trên mỗi trang
   const [currentPage, setCurrentPage] = useState(1);
   const [showArrows, setShowArrows] = useState({ left: false, right: false });
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const targetRef = useRef(null);
@@ -33,7 +34,7 @@ function Menu() {
       const { scrollLeft, scrollWidth, clientWidth } = tabListRef.current;
       setShowArrows({
         left: scrollLeft > 0,
-        right: scrollLeft < scrollWidth - clientWidth
+        right: scrollLeft < scrollWidth - clientWidth,
       });
     }
   };
@@ -85,6 +86,7 @@ function Menu() {
 
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
       try {
         const data = await getFoodItems();
         setFoodItems(data);
@@ -94,6 +96,8 @@ function Menu() {
       } catch (error) {
         setError(error);
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     loadData();
@@ -138,7 +142,17 @@ function Menu() {
   };
 
   return (
-    <div className={style["menu-container"]}>
+    <div
+      className={`${style["menu-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
+
       <div className={style["container"]}>
         <div className={style["title-row"]}>
           <div className={style["row"]}>
@@ -197,7 +211,7 @@ function Menu() {
             </div>
           </div>
         )}
-        <div className={style["menu-tab-row"]} ref={targetRef}> 
+        <div className={style["menu-tab-row"]} ref={targetRef}>
           <div className={style["row"]}>
             <div className={style["col-lg-12"]}>
               <div className={style["menu-tab"]}>
@@ -255,8 +269,7 @@ function Menu() {
             </div>
           </div>
         </div>
-        
-        
+
         <div className={style["menu-list-row"]}>
           <div className={style["row"]}>
             {currentItems.map((item) => (
@@ -274,40 +287,45 @@ function Menu() {
             ))}
           </div>
         </div>
-        <div className={style['row']}>
-          <div className={style['btn-ctn']}>
-            <button 
-              onClick={() => { setCurrentPage((prev) => Math.max(prev - 1, 1));}}
+        <div className={style["row"]}>
+          <div className={style["btn-ctn"]}>
+            <button
+              onClick={() => {
+                setCurrentPage((prev) => Math.max(prev - 1, 1));
+              }}
               disabled={currentPage === 1}
-              className={style['next-btn']}
+              className={style["next-btn"]}
             >
               <FaArrowLeft></FaArrowLeft>
             </button>
-            <div className={style['page-num']}>
-            <div className={style['row']}>
-          <div className={style['btn-ctn']}>
-              {Array.from({ length: totalPages, }, (_, i) => (
-                <button
-                  key={`page-${i + 1}`}
-                  onClick={() => { setCurrentPage(i + 1); }}
-                  className={style[currentPage === i + 1 && 'active-btn']}
-              >
-              {i + 1}
-              </button>
-              ))}
-          </div>
-        </div>
-        </div>
+            <div className={style["page-num"]}>
+              <div className={style["row"]}>
+                <div className={style["btn-ctn"]}>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={`page-${i + 1}`}
+                      onClick={() => {
+                        setCurrentPage(i + 1);
+                      }}
+                      className={style[currentPage === i + 1 && "active-btn"]}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
             <button
-              onClick={() => {setCurrentPage((prev) => Math.min(prev + 1, totalPages)); }}
+              onClick={() => {
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+              }}
               disabled={currentPage === totalPages}
-              className={style['next-btn']}
+              className={style["next-btn"]}
             >
               <FaArrowRight></FaArrowRight>
             </button>
           </div>
         </div>
-        
       </div>
     </div>
   );

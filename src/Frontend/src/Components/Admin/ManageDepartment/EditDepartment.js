@@ -89,7 +89,7 @@ function EditDepartment() {
       name: department.name.trim(),
       salary: String(department.salary),
     };
-
+    setLoading(true);
     try {
       const activeToken = await ensureActiveToken();
       await updateDepartment(id, updatedDepartment, activeToken);
@@ -105,6 +105,8 @@ function EditDepartment() {
         error.response?.data || error.message
       );
       setError("Không thể cập nhật thông tin. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,7 +119,16 @@ function EditDepartment() {
   }
 
   return (
-    <div className={style["edit-department"]}>
+    <div
+      className={`${style["edit-department"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["EditDepartment-container"]}>
         <h2 className={style["header"]}>Sửa Bộ Phận</h2>
         <label htmlFor="department-name">Tên bộ phận:</label>

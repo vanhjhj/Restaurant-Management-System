@@ -36,6 +36,7 @@ function FillInfoEmployee() {
   const [error, setError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     text: "",
@@ -162,16 +163,15 @@ function FillInfoEmployee() {
       department: formData.department,
       phone_number: formData.phone_number,
     };
-
+    setLoading(true);
     try {
       const activeToken = await ensureActiveToken();
-      console.log("Dữ liệu gửi lên API:", sanitizedData);
       await FillInfoEmp(sanitizedData, activeToken);
       setModal({
         isOpen: true,
         text: "Thông tin nhân viên đã được lưu thành công!",
         type: "success",
-        onConfirm: handleCloseModal
+        onConfirm: handleCloseModal,
       });
     } catch (error) {
       console.error(
@@ -181,11 +181,21 @@ function FillInfoEmployee() {
       setError("Không thể cập nhật thông tin. Vui lòng thử lại.");
     } finally {
       setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className={style["fill-info-employee"]}>
+    <div
+      className={`${style["fill-info-employee"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["fill-info-employee-container"]}>
         <h2 className={style["fill-info-employee-header"]}>
           Thông tin nhân viên

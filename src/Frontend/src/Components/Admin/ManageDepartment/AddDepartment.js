@@ -72,7 +72,16 @@ function AddDepartment() {
   };
 
   return (
-    <div className={style["add-department"]}>
+    <div
+      className={`${style["add-department"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["add-department-container"]}>
         <h2 className={style["add-department-header"]}>Thêm bộ phận</h2>
         {error && <p className={style["error-message"]}>{error}</p>}{" "}

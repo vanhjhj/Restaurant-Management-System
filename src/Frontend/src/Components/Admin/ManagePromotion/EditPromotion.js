@@ -37,6 +37,7 @@ function EditPromotion() {
 
   useEffect(() => {
     async function getPromotion() {
+      setLoading(true);
       try {
         const data = await fetchPromotionByCode(code);
         if (data) {
@@ -46,6 +47,8 @@ function EditPromotion() {
       } catch (error) {
         console.error("Error fetching promotion:", error);
         setError("Không thể tải dữ liệu ưu đãi.");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -211,7 +214,16 @@ function EditPromotion() {
   };
 
   return (
-    <div className={style["edit-promotion"]}>
+    <div
+      className={`${style["edit-promotion"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <h2>THÊM ƯU ĐÃI MỚI</h2>
       <div className={style["edit-promotion-container"]}>
         {error && <p style={{ color: "red" }}>{error}</p>}

@@ -3,7 +3,11 @@ import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./EditReservation.module.css";
-import { fetchReservationDataByPhoneNumber, getReservationByNumber, patchReservation } from "../../../API/EE_ReservationAPI";
+import {
+  fetchReservationDataByPhoneNumber,
+  getReservationByNumber,
+  patchReservation,
+} from "../../../API/EE_ReservationAPI";
 import {
     AddBookingTable,
     GetBookingTableByPhone,
@@ -17,29 +21,28 @@ import {
   
 
 function EditReservation({ setShow, info }) {
-     const [bookingInfo, setBookingInfo] = useState(info);
-    const { accessToken, setAccessToken } = useAuth();
-     const now = new Date();
-     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}-${String(now.getDate()).padStart(2, "0")}`;
-    const [rData, setRData] = useState();
-    const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
-    const [islogin, setIslogin] = useState(false);
-    const [errorMessage, setErrorMessage] = useState();
+  const [bookingInfo, setBookingInfo] = useState(info);
+  const { accessToken, setAccessToken } = useAuth();
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(now.getDate()).padStart(2, "0")}`;
+  const [rData, setRData] = useState();
+  const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
+  const [islogin, setIslogin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
 
-           const ensureActiveToken = async () => {
-                let activeToken = accessToken;
-                const refresh = localStorage.getItem("refreshToken");
-                if (!accessToken || isTokenExpired(accessToken)) {
-                  const refreshed = await refreshToken(refresh);
-                  activeToken = refreshed.access;
-                  setAccessToken(activeToken);
-                }
-                return activeToken;
-            };
-            
+  const ensureActiveToken = async () => {
+    let activeToken = accessToken;
+    const refresh = localStorage.getItem("refreshToken");
+    if (!accessToken || isTokenExpired(accessToken)) {
+      const refreshed = await refreshToken(refresh);
+      activeToken = refreshed.access;
+      setAccessToken(activeToken);
+    }
+    return activeToken;
+  };
 
     const validatePhoneNumber = (phone) => {
         if (phone.length === 0) {
@@ -117,26 +120,29 @@ function EditReservation({ setShow, info }) {
           
         }
     }
+  };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setBookingInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
-      };
-    
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setBookingInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
+  };
 
-    return (
-        <div className={style['ctn']}>
-                <div className={style['container']}>
-                    <div className={style['edit-invoice-ctn']}>
-                        <div className={style['row']}>
-                            <div className={style['col-lg-12']}>
-                                <div className={style['close-ctn']}>
-                                    <button className={style["close-modal"]} onClick={() => setShow()}>
-                                        &times;
-                                    </button>
-                                </div>
-                                <div className={style['booking-form-container']}>
-                                    <h2>Thông tin đặt bàn</h2>                   
+  return (
+    <div className={style["ctn"]}>
+      <div className={style["container"]}>
+        <div className={style["edit-invoice-ctn"]}>
+          <div className={style["row"]}>
+            <div className={style["col-lg-12"]}>
+              <div className={style["close-ctn"]}>
+                <button
+                  className={style["close-modal"]}
+                  onClick={() => setShow()}
+                >
+                  &times;
+                </button>
+              </div>
+              <div className={style["booking-form-container"]}>
+                <h2>Thông tin đặt bàn</h2>
 
                                           <form onSubmit={handleSubmit}>
                                             <label>
@@ -234,4 +240,4 @@ function EditReservation({ setShow, info }) {
     
 }
 
-export default EditReservation
+export default EditReservation;
