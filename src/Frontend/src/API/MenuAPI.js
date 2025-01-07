@@ -60,7 +60,6 @@ export const deleteFoodItem = async (id, accessToken) => {
     await axios.delete(`${API_BASE_URL}/menu/menuitems/${id}/`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    console.log("Xóa ưu đãi thành công");
   } catch (error) {
     console.error("Lỗi khi xóa món ăn:", error.message);
     throw error;
@@ -99,8 +98,6 @@ export const updateFoodItem = async (id, menuitem, accessToken) => {
         },
       }
     );
-
-    console.log("Cập nhật thành công:", response.data);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật món ăn:", error.message);

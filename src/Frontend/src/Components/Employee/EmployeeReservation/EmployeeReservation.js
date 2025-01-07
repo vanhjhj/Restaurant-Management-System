@@ -38,7 +38,7 @@ function EmployeeReservation() {
     "0"
   )}-${String(now.getDate()).padStart(2, "0")}`;
 
-  const [filterDate, setFilterDate] = useState();
+  const [filterDate, setFilterDate] = useState(today);
 
   function formatDate(dateString) {
     const [year, month, day] = dateString.split("-");
@@ -106,7 +106,7 @@ const options = [
           isEditing: false,
         }))
       );
-      console.log(reservationsData);
+      setFilterDate(today);
     } catch (error) {
       console.log(error);
     }
@@ -303,7 +303,7 @@ const options = [
               </div>    
               <div className={style['row'] + ' '+ style['my-input-row']}>
                 <div className={style['col-lg-6']}>
-                    <label><input type="date" id="date-input" name="date" className={style['my-input-date']} defaultValue={today} onChange={(e) => setFilterDate(e.target.value)}/></label>
+                    <label><input type="date" id="date-input" name="date" className={style['my-input-date']} value={filterDate} defaultValue={today} onChange={(e) => setFilterDate(e.target.value)}/></label>
                 </div>
                 <div className={style['col-lg-6']}>
                   <div className={style['filter-category']}>

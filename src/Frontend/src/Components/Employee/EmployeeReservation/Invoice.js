@@ -275,6 +275,10 @@ function Invoice({ tableID, setShowInvoice }) {
       setEms('Không thể xuất hóa đơn do còn món ăn chưa phục vụ');
       return;
     }
+    else if (itemsData.length === 0) {
+      setEms('Không thể xuất hóa đơn do chưa có món ăn');
+      return;
+    }
     setEms();
     setIsPrintInvoice(true);
   }

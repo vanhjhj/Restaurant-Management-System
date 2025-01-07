@@ -8,7 +8,7 @@ import SuccessMessage from "./SuccessMessage";
 import InvoicePrintable from "./InvoicePrintable";
 import style from "./PrintInvoice.module.css";
 
-function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice }) {
+function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setIsPrintInvoice }) {
     const { restaurantInfo } = useContext(RestaurantContext);
     const { accessToken, setAccessToken } = useAuth();
     const [success, setSuccess] = useState(false);
@@ -67,7 +67,6 @@ function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice
       const activeToken = await ensureActiveToken();
       await markPaid(activeToken, iID); // API đánh dấu thanh toán
       setSuccess(true); // Hiển thị thông báo thành công
-      setShow(false); // Đóng modal sau khi thanh toán
     } catch (error) {
       setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
     }
@@ -103,7 +102,7 @@ function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoice
           <SuccessMessage
             setShow={setSuccess}
             setShowExInvoice={setShow}
-            setShowInvoice={setShowInvoice}
+            setShowInvoice={setIsPrintInvoice}
           />
         )}
       </div>

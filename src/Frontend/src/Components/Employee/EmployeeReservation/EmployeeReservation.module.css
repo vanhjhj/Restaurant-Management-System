@@ -18,7 +18,14 @@
     composes: col-lg-6 from '../../../Style/bootstrap.min.css';
 }
 
+.my-input-date{
+    border:none;
+    font-size: 18px;
+}
+
+
 .my-input-row{
+    margin-top:10px;
     display: flex;
     justify-content: center;
     align-items: center;

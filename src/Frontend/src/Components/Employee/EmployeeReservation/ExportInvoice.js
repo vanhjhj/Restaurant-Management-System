@@ -172,11 +172,9 @@ function ExportInvoice({ setShow, foodData, invoiceData, pID, iID, setShowInvoic
                                     <button className={style['my-btn']} onClick={() => handlePay()}>Thanh toán</button>
                                     <button className={style['my-btn']} onClick={() => handlePrint()}>In hóa đơn</button>
                                 </div>
-
-                                
                             </div>
-                            {success && <SuccessMessage setShow={setSuccess} setShowExInvoice={setShow} setShowInvoice={setShowInvoice}></SuccessMessage>}
                         </div>
+                        <SuccessMessage setShow={setSuccess} setShowExInvoice={setShow} setShowInvoice={setShowInvoice}></SuccessMessage>
                     </div>
                 </div>
             </div>

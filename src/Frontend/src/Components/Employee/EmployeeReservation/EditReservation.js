@@ -10,7 +10,7 @@ import {
   } from "../../../API/BookingTableApi";
   import { ModalGeneral } from "../../ModalGeneral";
   import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-  import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+  import { faExclamationTriangle, faL } from "@fortawesome/free-solid-svg-icons";
   import { useNavigate } from "react-router-dom";
   import { RestaurantContext } from "../../../Config/RestaurantContext";
   
@@ -43,19 +43,40 @@ function EditReservation({ setShow, info }) {
 
     const validatePhoneNumber = (phone) => {
         if (phone.length === 0) {
-          return "Số điện thoại không được để trống.";
+          return false;
         }
         if (!/^[0-9]+$/.test(phone)) {
-          return "Số điện thoại chỉ được chứa chữ số.";
+          return false;
         }
         if (phone.length !== 10) {
-          return "Số điện thoại phải đủ 10 chữ số.";
+          return false;
         }
         if (!/^0/.test(phone)) {
-          return "Số điện thoại không hợp lệ.";
+          return false;
         }
-        return null; // Hợp lệ
-    };
+        return true; // Hợp lệ
+  };
+  
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+
+    // Gọi hàm kiểm tra số điện thoại
+    const errorbooking = validateEmail(email);
+
+    if (!errorbooking) {
+      setErrorMessage('Email không hợp lệ');
+    }
+    else {
+      setErrorMessage();
+    }
+    setBookingInfo((prevInfo) => ({ ...prevInfo, email: email }));
+  };
     
     const handlePhoneChange = (e) => {
         const phone = e.target.value;
@@ -74,14 +95,26 @@ function EditReservation({ setShow, info }) {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
+      try {
+        if (!validatePhoneNumber(bookingInfo.phone_number)) {
+          setErrorMessage('Số điện thoại không hợp lệ');
+          return;
+        }
+        else if (!validateEmail(bookingInfo.email)) {
+          setErrorMessage('Email không hợp lệ');
+          return;
+        }
             const activeToken = await ensureActiveToken();
-            const data = await patchReservation(activeToken, bookingInfo.id, bookingInfo);
+          const data = await patchReservation(activeToken, bookingInfo.id, bookingInfo);
             setBookingInfo(data);
             window.location.reload();
         }
         catch (error) {
-            console.log(error);
+          console.log(error);
+          if (error.response.data.time) {
+            setErrorMessage("Thời gian phải lớn hơn thời gian hiện tại");
+          }
+          
         }
     }
 
@@ -112,10 +145,10 @@ function EditReservation({ setShow, info }) {
                                                 type="text"
                                                 name="phone_number"
                                                 value={bookingInfo.phone_number}
-                                            onChange={handlePhoneChange}
+                                            onChange={handleInputChange}
                                                 required
                                         />
-                                        {errorMessage ? <p className={style['errorbooking-message']}>{errorMessage}</p> : <p></p>}
+                                        
                                     </label>
                                             
 
@@ -125,6 +158,16 @@ function EditReservation({ setShow, info }) {
                                                 type="text"
                                                 name="guest_name"
                                                 value={bookingInfo.guest_name}
+                                                onChange={handleInputChange}
+                                                required
+                                              />
+                    </label>
+                    <label>
+                                              Email:
+                                              <input
+                                                type="text"
+                                                name="email"
+                                                value={bookingInfo.email}
                                                 onChange={handleInputChange}
                                                 required
                                               />
@@ -173,7 +216,9 @@ function EditReservation({ setShow, info }) {
                                                 onChange={handleInputChange}
                                               />
                                     </label>
-                                   
+                    <div className={style['error-ctn']}>
+                          {errorMessage ? <p className={style['errorbooking-message']}>{errorMessage}</p> : <p></p>}
+                                   </div>
                                             <button type="submit">
                                               Lưu
                                             </button>

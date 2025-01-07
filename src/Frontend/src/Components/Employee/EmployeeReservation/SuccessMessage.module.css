@@ -20,12 +20,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 101; 
+    z-index: 102; 
 }
 
 .export-invoice-ctn{
     width: 30%;
-    height: auto;
+    height: 150px;
     padding: 10px 20px;
     background-color: white;
     overflow: auto;
@@ -56,6 +56,8 @@
   
   .title{
     justify-content: center;
+    align-items: center;
     display: flex;
-    gap:10px
+    gap:10px;
+    height: 100%;
   }

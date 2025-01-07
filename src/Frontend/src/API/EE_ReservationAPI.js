@@ -97,7 +97,7 @@ export const getReservationByNumber = async (
 export const patchReservation = async (token, rID,data) => {
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/booking/reservations/${rID}`,
+      `${API_BASE_URL}/booking/reservations/${rID}/`,
       {
         guest_name: data.guest_name,
         note: data.note,
@@ -226,7 +226,6 @@ export const createOrder = async (token, tID) => {
         },
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -275,7 +274,6 @@ export const addFood = async (token, oID, fID, q, n) => {
       quantity: q,
       note: n,
     };
-    console.log(myData);
     const response = await axios.post(
       `${API_BASE_URL}/booking/orders/add-item/`,
       myData,
@@ -365,7 +363,6 @@ export const checkPhoneNumber = async (token,number) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -386,7 +383,6 @@ export const addPromotionToInvoice = async (token, iID, pID) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -406,7 +402,6 @@ export const markPaid = async (token, iID) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
