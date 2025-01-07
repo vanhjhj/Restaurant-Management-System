@@ -257,16 +257,55 @@ export const GetResInfo = async () => {
 //chỉnh sửa thông tin nhà hàng
 
 export const UpdateResInfo = async (token, restaurantInfor) => {
+  const formData = new FormData();
+
+  // Xử lý các trường dạng mảng
+  restaurantInfor.name.forEach((value) => formData.append("name", value));
+  restaurantInfor.address.forEach((value) => formData.append("address", value));
+  restaurantInfor.phone.forEach((value) => formData.append("phone", value));
+  restaurantInfor.google_map.forEach((value) => formData.append("google_map", value));
+  restaurantInfor.email.forEach((value) => formData.append("email", value));
+
+  // Xử lý social
+  if (Array.isArray(restaurantInfor.social) && restaurantInfor.social.length > 0) {
+    const socialObject = JSON.parse(restaurantInfor.social[0]);
+    formData.append("social", JSON.stringify(socialObject));
+  }
+
+  // Xử lý các trường giờ mở cửa
+  restaurantInfor.onweek_openhour.forEach((value) =>
+    formData.append("onweek_openhour", value)
+  );
+  restaurantInfor.onweek_closehour.forEach((value) =>
+    formData.append("onweek_closehour", value)
+  );
+  restaurantInfor.weekend_openhour.forEach((value) =>
+    formData.append("weekend_openhour", value)
+  );
+  restaurantInfor.weekend_closehour.forEach((value) =>
+    formData.append("weekend_closehour", value)
+  );
+
+  // Xử lý QR (file hoặc URL)
+  if (restaurantInfor.QR[0] instanceof File) {
+    formData.append("QR", restaurantInfor.QR[0]);
+  } else if (typeof restaurantInfor.QR[0] === "string") {
+    formData.append("QR", restaurantInfor.QR[0]); // Gửi URL
+  }
+
   try {
-    const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`, restaurantInfor, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.patch(
+      `${API_BASE_URL}/config/restaurant-configs/`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.error("Error get restaurant info:", error);
+    console.error("Error updating restaurant info:", error);
     throw error;
   }
 };
