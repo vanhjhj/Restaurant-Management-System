@@ -280,9 +280,6 @@ export const UpdateResInfo = async (token, restaurantInfor) => {
         "Content-Type": "application/json", // Đảm bảo gửi JSON
       },
     });
-
-    console.log("JSON response:", jsonResponse.data);
-
     // Nếu có QR thì gửi patch riêng
     if (restaurantInfor.QR) {
       const formData = new FormData();
@@ -292,14 +289,12 @@ export const UpdateResInfo = async (token, restaurantInfor) => {
         formData.append("QR", restaurantInfor.QR); // Gửi URL QR
       }
 
-      const qrResponse = await axios.patch(apiUrl, formData, {
+      await axios.patch(apiUrl, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data", // Đảm bảo gửi FormData
         },
       });
-
-      console.log("QR response:", qrResponse.data);
     }
 
     return jsonResponse.data;
