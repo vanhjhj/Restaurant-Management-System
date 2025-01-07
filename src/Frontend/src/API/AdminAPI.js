@@ -260,11 +260,12 @@ export const UpdateResInfo = async (token, restaurantInfor) => {
   const formData = new FormData();
 
   // Xử lý các trường dạng mảng
-  restaurantInfor.name.forEach((value) => formData.append("name", value));
-  restaurantInfor.address.forEach((value) => formData.append("address", value));
-  restaurantInfor.phone.forEach((value) => formData.append("phone", value));
-  restaurantInfor.google_map.forEach((value) => formData.append("google_map", value));
-  restaurantInfor.email.forEach((value) => formData.append("email", value));
+  formData.append("name", JSON.stringify(restaurantInfor.name));
+  formData.append("address", JSON.stringify(restaurantInfor.address));
+  formData.append("phone", JSON.stringify(restaurantInfor.phone));
+  formData.append("google_map", JSON.stringify(restaurantInfor.google_map));
+  formData.append("email", JSON.stringify(restaurantInfor.email));
+
 
   // Xử lý social
   if (Array.isArray(restaurantInfor.social) && restaurantInfor.social.length > 0) {
@@ -273,18 +274,10 @@ export const UpdateResInfo = async (token, restaurantInfor) => {
   }
 
   // Xử lý các trường giờ mở cửa
-  restaurantInfor.onweek_openhour.forEach((value) =>
-    formData.append("onweek_openhour", value)
-  );
-  restaurantInfor.onweek_closehour.forEach((value) =>
-    formData.append("onweek_closehour", value)
-  );
-  restaurantInfor.weekend_openhour.forEach((value) =>
-    formData.append("weekend_openhour", value)
-  );
-  restaurantInfor.weekend_closehour.forEach((value) =>
-    formData.append("weekend_closehour", value)
-  );
+  formData.append("onweek_openhour", restaurantInfor.onweek_openhour);
+  formData.append("onweek_closehour", restaurantInfor.onweek_closehour);
+  formData.append("weekend_openhour", restaurantInfor.weekend_openhour);
+  formData.append("weekend_closehour", restaurantInfor.weekend_closehour);
 
   // Xử lý QR (file hoặc URL)
   if (restaurantInfor.QR[0] instanceof File) {
