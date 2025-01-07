@@ -5,6 +5,18 @@
 .rating-text-ctn{
 }
 
+.my-ctn{
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-ctn h2{
+  font-size: 40px;
+  font-family:'Playfair Display', serif;
+}
+
 .rating-text-ctn textarea{
     display: block;
     margin:auto;

@@ -20,7 +20,7 @@ import {
   
   
 
-function EditReservation({ setShow, info }) {
+function EditReservation({ setShow, info }){ 
   const [bookingInfo, setBookingInfo] = useState(info);
   const { accessToken, setAccessToken } = useAuth();
   const now = new Date();
@@ -120,7 +120,6 @@ function EditReservation({ setShow, info }) {
           
         }
     }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -237,7 +236,6 @@ function EditReservation({ setShow, info }) {
                 </div>
             </div>
     )
-    
-}
+  }
 
 export default EditReservation;

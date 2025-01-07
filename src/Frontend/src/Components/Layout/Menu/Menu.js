@@ -238,7 +238,7 @@ function Menu() {
                         style[selectedType === 0 ? "active" : ""]
                       }
                     >
-                      All
+                      Tất cả
                     </button>
                   </li>
                   {menuTabs.map((tab) => (

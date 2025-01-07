@@ -214,9 +214,6 @@ function Profile() {
                                 <h6>{personalInfo.full_name}</h6>          
                                 <p>{loginInfo.email}</p>   
                             </div>
-                            <div className={style['member-sale']}>
-                                <h6>This is a section for promotions</h6>
-                            </div>
                         </div>
                     </div>
                     <div className={style['col-lg-8']}>
