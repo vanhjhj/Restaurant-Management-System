@@ -138,7 +138,7 @@
   
   .Invoice-qr-item p {
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 18px;
   }
   
   .Invoice-action-buttons {
@@ -177,8 +177,13 @@
 .Invoice-food-table-container {
     max-height: 250px; /* Điều chỉnh chiều cao tối đa */
     overflow-y: auto; /* Bật thanh cuộn dọc nếu vượt quá chiều cao */
-  }
-  
+}
+.qr-image {
+  width: 200px; /* Chiều rộng QR */
+  height: 200px; /* Chiều cao QR */
+  border: 1px solid #ddd; /* Thêm viền nếu cần */
+  border-radius: 8px; /* Góc bo tròn */
+}  
 @media print {
 .Invoice-food-table-container {
     overflow-y: none; 

@@ -1,9 +1,8 @@
 import React from "react";
-import { QRCodeSVG } from "qrcode.react";
 import QRCodeGenerator from "../../Customer/QRReview";
 import style from "./PrintInvoice.module.css";
 
-const InvoicePrintable = ({ restaurantInfo, foodData, invoiceData, momoQRUrl }) => {
+const InvoicePrintable = ({ restaurantInfo, foodData, invoiceData, QR }) => {
   return (
     <div id="printable-area">
       {/* Thông tin nhà hàng */}
@@ -83,8 +82,12 @@ const InvoicePrintable = ({ restaurantInfo, foodData, invoiceData, momoQRUrl }) 
             <QRCodeGenerator invoiceID={invoiceData?.id} />
           </div>
           <div className={style["Invoice-qr-item"]}>
-            <p>Quét mã để chuyển khoản MoMo</p>
-            <QRCodeSVG value={momoQRUrl} size={120} />
+            <p>Quét mã để chuyển khoản</p>
+            <img
+              src={QR}
+              alt="QR Code chuyển khoản"
+              className={style["qr-image"]}
+            />
           </div>
         </div>
       </footer>

@@ -261,6 +261,7 @@ export const UpdateResInfo = async (token, restaurantInfor) => {
     const response = await axios.patch(`${API_BASE_URL}/config/restaurant-configs/`, restaurantInfor, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
