@@ -237,6 +237,30 @@
     color: cornflowerblue;
 }
 
+.input-table-edit-btn.inactive-btn{
+    color:black;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.input-table-edit-btn.inactive-btn:hover{
+    color:black;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.input-table-erase-btn.inactive-btn{
+    color:black;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.input-table-erase-btn.inactive-btn:hover{
+    color:black;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .input-table-erase-btn{
     background-color:transparent;
     border: none;
@@ -350,6 +374,8 @@
 }
 
 .edit-reservation{
+    border: none;
+    background-color: transparent;
     justify-content: center;
     align-items: center;
     margin:auto 0px;

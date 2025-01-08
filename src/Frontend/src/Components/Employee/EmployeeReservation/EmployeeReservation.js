@@ -256,6 +256,10 @@ function EmployeeReservation() {
   const calNumberOfEmptyTable = (t) => {
     return t.filter((table) => table.status === "A").length;
   }
+  const checkDisableStatus = (status) => {
+    return status !== 'P' && status !== 'A'
+  }
+
     return (
       <div className={style['EER-container']}>
             <div className={style['body-EER']}> 
@@ -326,13 +330,14 @@ function EmployeeReservation() {
                       }
                     >
                       <h5>Mã phiếu đặt: {r.id}</h5>
-                      <div
+                      <button
                         className={style["edit-reservation"]}
                         title='Chỉnh sửa phiếu đặt'
+                        disabled={checkDisableStatus(r.status)}
                         onClick={() => setEditReservation(r)}
                       >
                         <AiOutlineEdit size={20} />
-                      </div>
+                      </button>
                     </div>
                     <p>Tên KH: {r.guest_name}</p>
                     <p>Số điện thoại: {r.phone_number}</p>
@@ -367,7 +372,8 @@ function EmployeeReservation() {
                       )}
                       <div className={style["input-table-btn"]}>
                         <button
-                          className={style["input-table-edit-btn"]}
+                          className={style["input-table-edit-btn"] + ' ' +  style[(r.status === "A" || r.status === "P") ? "" : "inactive-btn"]}
+                          disabled={checkDisableStatus(r.status)}
                           title={r.isEditing ? "Lưu bàn" : "Chỉnh sửa phiếu đặt"}
                           onClick={() =>
                             r.isEditing ? handleSave(r.id) : handleEdit(r.id)
@@ -376,8 +382,9 @@ function EmployeeReservation() {
                           {r.isEditing ? "Lưu" : <AiOutlineEdit size={20} />}
                         </button>
                         <button
-                          className={style["input-table-erase-btn"]}
+                          className={style["input-table-erase-btn"] + ' ' +  style[(r.status === "A" || r.status === "P") ? "" : "inactive-btn"]}
                           title={r.isEditing ? "Hủy chỉnh sửa" : "Xóa bàn"}
+                          disabled={checkDisableStatus(r.status)}
                           onClick={() =>
                             r.isEditing
                               ? handleCancelEdit(r.id)
