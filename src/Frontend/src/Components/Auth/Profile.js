@@ -346,24 +346,24 @@ function Profile() {
                         required
                       />
                     </div>
+                    {account_type === "Employee" && (
+                      <div className={style["info-form"]}>
+                        <label htmlFor="address">Địa chỉ:</label>
+                        <input
+                          id="address"
+                          type="text"
+                          value={personalInfo.address}
+                          onChange={(e) => {
+                            setPersonalInfo({
+                              ...personalInfo,
+                              address: e.target.value,
+                            });
+                            if (error) setError("");
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-              {account_type === "Employee" && (
-                <div className={style["info-form"]}>
-                  <label htmlFor="address">Địa chỉ:</label>
-                  <input
-                    id="address"
-                    type="text"
-                    value={personalInfo.address}
-                    onChange={(e) => {
-                      setPersonalInfo({
-                        ...personalInfo,
-                        address: e.target.value,
-                      });
-                      if (error) setError("");
-                    }}
-                  />
                 </div>
               )}
 
