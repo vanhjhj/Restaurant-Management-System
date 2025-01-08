@@ -262,6 +262,9 @@ class ReservationAssignTableAPIView(generics.UpdateAPIView):
             # table is available
             # in case change table
             if reservation.table:
+                if reservation.status == 'D' or reservation.status == 'C':
+                    return Response({'message': 'Cannot assign table for done or canceled reservation'}, status=status.HTTP_400_BAD_REQUEST)
+
                 reservation.table.status = 'A'
                 reservation.table.save()
 

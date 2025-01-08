@@ -21,7 +21,7 @@ class Reservation(models.Model):
     number_of_guests = models.IntegerField(validators=[MinValueValidator(1)])
     note = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('A', 'Assigned'), ('D', 'Done'), ('C', 'Canceled')], default='P')
-    table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, blank=True, null=True, default=None)
+    table = models.ForeignKey(Table, on_delete=models.SET_NULL, blank=True, null=True, default=None)
 
     def __str__(self):
         return self.guest_name + ' - ' + str(self.date) + ' - ' + str(self.time)
@@ -32,7 +32,7 @@ class Order(models.Model):
     total_discount = models.IntegerField(validators=[MinValueValidator(0)], default=0)
     final_price = models.IntegerField(validators=[MinValueValidator(0)], default=0)
     status = models.CharField(max_length=20, choices=[('P', 'Paid'), ('NP', 'Not Paid')], default='NP')
-    table = models.ForeignKey(Table, related_name='orders', on_delete=models.DO_NOTHING)
+    table = models.ForeignKey(Table, related_name='orders', on_delete=models.SET_NULL, null=True, blank=True)
     promotion = models.ForeignKey(Promotion, related_name='orders', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
