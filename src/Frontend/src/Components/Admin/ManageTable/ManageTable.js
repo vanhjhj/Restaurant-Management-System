@@ -49,6 +49,7 @@ function ManageTable() {
     try {
       const tablesData = await GetTable(activeToken);
       setTables(tablesData);
+      console.log("hi",tablesData);
     } catch (error) {
       console.error("Error fetching table data:", error);
     } finally {
@@ -117,6 +118,16 @@ function ManageTable() {
   };
 
   const handleDeleteTable = async (id) => {
+    const table = tables.find((table) => table.id === id);
+    if (!table || table.status !== "A") {
+      setModal({
+        isOpen: true,
+        text: "Bàn này đang trong quá trình phục vụ không thể xóa!",
+        type: "error",
+      });
+      return;
+    }
+
     setModal({
       isOpen: true,
       text: "Bạn có chắc chắn muốn xóa bàn này không?",
@@ -186,14 +197,14 @@ function ManageTable() {
                   h={64}
                   c={
                     table.status === "A"
-                      ? "green"
+                      ? "#000000"
+                      : table.status === "D"
+                      ? "#28A745"
+                      : table.status === "S"
+                      ? "#007BFF"
                       : table.status === "R"
-                      ? "yellow"
-                      : table.status === "OP"
-                      ? "blue"
-                      : table.status === "OFS"
-                      ? "gray"
-                      : "black"
+                      ? "#FFC107"
+                      : "brown"
                   }
                 />
                 <p>Bàn số: {table.id}</p>
@@ -220,12 +231,12 @@ function ManageTable() {
                   Trạng thái:{" "}
                   {table.status === "A"
                     ? "Trống"
-                    : table.status === "R"
-                    ? "Đang đặt"
-                    : table.status === "OP"
+                    : table.status === "D"
+                    ? "Chờ thanh toán"
+                    : table.status === "S"
                     ? "Đang phục vụ"
-                    : table.status === "OFS"
-                    ? "Hoàn tất"
+                    : table.status === "R"
+                    ? "Bàn được đặt trước"
                     : "Không xác định"}
                 </p>
                 <div className={style["table-actions"]}>
