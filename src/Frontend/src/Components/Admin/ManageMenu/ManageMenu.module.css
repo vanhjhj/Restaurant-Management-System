@@ -68,7 +68,7 @@
 .manage-menu-container .menu-tab {
   display: block;
   width: 70%;
-  margin: 0.5rem 0;
+  margin: 0 0;
   padding: 10px;
   color: #ffffff;
   background-color: #8f8686;
@@ -79,6 +79,7 @@
   font-weight: bold;
   border-radius: 10px;
 }
+
 .manage-menu-container .menu-tab.active {
   background-color: rgb(141, 89, 40);
   color: #ffffff;
@@ -95,6 +96,30 @@
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.manage-menu-container .menu-tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.manage-menu-container .edit-category-button,
+.manage-menu-container .delete-category-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+}
+
+.manage-menu-container .edit-category-button {
+  color: #116169;
+}
+
+.manage-menu-container .delete-category-button {
+  color: #f44336;
 }
 
 /* Main Content */
