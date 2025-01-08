@@ -49,6 +49,7 @@ function ManageTable() {
     try {
       const tablesData = await GetTable(activeToken);
       setTables(tablesData);
+      console.log("hi",tablesData);
     } catch (error) {
       console.error("Error fetching table data:", error);
     } finally {
@@ -117,6 +118,15 @@ function ManageTable() {
   };
 
   const handleDeleteTable = async (id) => {
+    if(tables[id].status!=="A")
+    {
+      setModal({
+        isOpen: true,
+        text: "Bàn này đang trong quá trình phục vụ không thể xóa!",
+        type: "error",
+      });
+      return;
+    }
     setModal({
       isOpen: true,
       text: "Bạn có chắc chắn muốn xóa bàn này không?",
@@ -187,11 +197,11 @@ function ManageTable() {
                   c={
                     table.status === "A"
                       ? "green"
-                      : table.status === "R"
+                      : table.status === "D"
                       ? "yellow"
-                      : table.status === "OP"
+                      : table.status === "S"
                       ? "blue"
-                      : table.status === "OFS"
+                      : table.status === "RS"
                       ? "gray"
                       : "black"
                   }
@@ -220,12 +230,12 @@ function ManageTable() {
                   Trạng thái:{" "}
                   {table.status === "A"
                     ? "Trống"
-                    : table.status === "R"
-                    ? "Đang đặt"
-                    : table.status === "OP"
+                    : table.status === "D"
+                    ? "Chờ thanh toán"
+                    : table.status === "S"
                     ? "Đang phục vụ"
-                    : table.status === "OFS"
-                    ? "Hoàn tất"
+                    : table.status === "RS"
+                    ? "bàn được đặt trước"
                     : "Không xác định"}
                 </p>
                 <div className={style["table-actions"]}>
