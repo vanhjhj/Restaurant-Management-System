@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useNavigate } from 'react';
+import React, { useEffect, useState, useNavigate, useParams } from 'react';
 import style from '../../Style/CustomerStyle/Rating.module.css';
 import { FaStar, FaRegStar, FaStarHalfAlt, FaStarHalf } from 'react-icons/fa';
 import { createFeedBack } from '../../API/ReviewAPI';
@@ -19,8 +19,8 @@ const bytes = CryptoJS.AES.decrypt(base64String, secretKey);
 return bytes.toString(CryptoJS.enc.Utf8);
       };
     const totalStars = 5;
-    const pathParts = window.location.pathname.split('/');
-    const invoiceID = parseInt(decryptData(pathParts[pathParts.length - 1], PRIVATE_KEY), 10); // Lấy phần cuối của URL
+    const { invoice } = useParams();
+    const invoiceID = parseInt(decryptData(invoice , PRIVATE_KEY), 10); // Lấy phần cuối của URL
     const [name, setName] = useState();
     const [ratingServices, setRatingServices] = useState(0);
     const [hoverServices, setHoverServices] = useState(0);

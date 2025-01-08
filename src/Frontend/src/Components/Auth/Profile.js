@@ -31,12 +31,12 @@ function Profile() {
     const { accessToken,setAccessToken } = useAuth();
     const refresh = localStorage.getItem('refreshToken');
     const UserID = localStorage.getItem('userId');
-    const account_type=localStorage.getItem('accountType')
+    const account_type = localStorage.getItem('accountType');
     let email;
 
     const ensureActiveToken = async () => {
         let activeToken = accessToken;
-        if (isTokenExpired(accessToken)) {
+        if (!accessToken || isTokenExpired(accessToken)) {
             const refreshed = await refreshToken(refresh);
             activeToken = refreshed.access;
             setAccessToken(activeToken);
@@ -65,6 +65,12 @@ function Profile() {
             } else if (account_type === 'Employee'){
                 responseCusPromise = GetInfoEmp(UserID, activeToken);
                 responseEmailPromise = GetEmailEmp(UserID, activeToken);
+            }
+            else if (account_type === 'Admin') {
+                const responseEmail = await GetEmailEmp(UserID, activeToken);
+                setLoginInfo({ email: responseEmail.email || "", password: "********" });
+                email = responseEmail.email;
+                return;
             }
             
             const [responseCus, responseEmail] = await Promise.all([
@@ -220,7 +226,7 @@ function Profile() {
                     <div className={style['col-lg-8']}>
                         <div className={style['profile-info']}>
                             <h1>Thông Tin Của Bạn</h1>
-                            <div className={style['row'] + ' ' + style['user-info']}>
+                            {account_type !== "Admin" && <div className={style['row'] + ' ' + style['user-info']}>
                                 <div className={style['col-lg-4']}>
                                     <div className={style['web-info']}>
                                         <h2>Thông tin cá nhân</h2>
@@ -272,7 +278,7 @@ function Profile() {
                                         />
                                     </div>  
                                 </div>
-                            </div>
+                            </div>}
                      
                             
                             <div className={style['row']}>

@@ -204,12 +204,24 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                         <div className={style["user-dropdown"]}>
                           <ul className={style["dropdown-list"]}>
                             {/* Show only the Logout option for admin */}
-                            {userRole === "admin" ? (
-                              <li>
-                                <button onClick={handleLogoutBtn}>
-                                  Đăng xuất
-                                </button>
+                            {userRole === "Admin" ? (
+                              <>
+                                 <li>
+                                  {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
+                                  <Link to="/profile">Thông tin cá nhân</Link>
+                                </li>
+                                <li>
+                                <div className={style["logout-section"]}>
+                                    <button
+                                      onClick={handleLogoutBtn}
+                                      className={style["logout-button"]}
+                                    >
+                                      Đăng xuất
+                                  </button>
+                                </div>
                               </li>
+                              </>
+                              
                             ) : userRole === "Employee" ? (
                               <>
                                 <li>
