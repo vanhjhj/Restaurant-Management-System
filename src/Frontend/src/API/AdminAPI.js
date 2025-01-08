@@ -254,48 +254,49 @@ export const GetResInfo = async () => {
 };
 
 //chỉnh sửa thông tin nhà hàng
-
 export const UpdateResInfo = async (token, restaurantInfor) => {
-  const formData = new FormData();
+  const apiUrl = `${API_BASE_URL}/config/restaurant-configs/`;
 
-  // Xử lý các trường dạng mảng
-  formData.append("name", restaurantInfor.name);
-  formData.append("address", restaurantInfor.address);
-  formData.append("phone", restaurantInfor.phone);
-  formData.append("google_map", restaurantInfor.google_map);
-  formData.append("email", restaurantInfor.email);
-
-
-  // Xử lý social
-  if (Array.isArray(restaurantInfor.social) && restaurantInfor.social.length > 0) {
-    const socialObject = JSON.parse(restaurantInfor.social[0]);
-    formData.append("social", JSON.stringify(socialObject));
-  }
-
-  // Xử lý các trường giờ mở cửa
-  formData.append("onweek_openhour", restaurantInfor.onweek_openhour);
-  formData.append("onweek_closehour", restaurantInfor.onweek_closehour);
-  formData.append("weekend_openhour", restaurantInfor.weekend_openhour);
-  formData.append("weekend_closehour", restaurantInfor.weekend_closehour);
-
-  // Xử lý QR (file hoặc URL)
-  if (restaurantInfor.QR[0] instanceof File) {
-    formData.append("QR", restaurantInfor.QR[0]);
-  } else if (typeof restaurantInfor.QR[0] === "string") {
-    formData.append("QR", restaurantInfor.QR[0]); // Gửi URL
-  }
+  // Gửi JSON data (ngoại trừ QR)
+  const jsonData = {
+    name: restaurantInfor.name,
+    address: restaurantInfor.address,
+    phone: restaurantInfor.phone,
+    google_map: restaurantInfor.google_map,
+    email: restaurantInfor.email,
+    social: restaurantInfor.social,
+    onweek_openhour: restaurantInfor.onweek_openhour,
+    onweek_closehour: restaurantInfor.onweek_closehour,
+    weekend_openhour: restaurantInfor.weekend_openhour,
+    weekend_closehour: restaurantInfor.weekend_closehour,
+  };
 
   try {
-    const response = await axios.patch(
-      `${API_BASE_URL}/config/restaurant-configs/`,
-      formData,
-      {
+    // Gửi JSON trước
+    const jsonResponse = await axios.patch(apiUrl, jsonData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json", // Đảm bảo gửi JSON
+      },
+    });
+    // Nếu có QR thì gửi patch riêng
+    if (restaurantInfor.QR) {
+      const formData = new FormData();
+      if (restaurantInfor.QR instanceof File) {
+        formData.append("QR", restaurantInfor.QR); // Gửi file QR
+      } else if (typeof restaurantInfor.QR === "string") {
+        formData.append("QR", restaurantInfor.QR); // Gửi URL QR
+      }
+
+      await axios.patch(apiUrl, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Đảm bảo gửi FormData
         },
-      }
-    );
-    return response.data;
+      });
+    }
+
+    return jsonResponse.data;
   } catch (error) {
     console.error("Error updating restaurant info:", error);
     throw error;

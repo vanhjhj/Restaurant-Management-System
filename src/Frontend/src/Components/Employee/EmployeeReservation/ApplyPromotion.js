@@ -95,9 +95,9 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
       setInvoice(newInvoice.data);
       setErrorMessage();
       if (choosenPromotion.code === null) {
-        setSuccessMessage("Hủy khuyễn mãi thành công");
+        setSuccessMessage("Hủy khuyến mãi thành công");
       } else {
-        setSuccessMessage("Áp dụng khuyễn mãi thành công");
+        setSuccessMessage("Áp dụng khuyến mãi thành công");
       }
     } catch (error) {
       setSuccessMessage();
