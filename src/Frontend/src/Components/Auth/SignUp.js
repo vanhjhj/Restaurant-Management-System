@@ -161,7 +161,7 @@ function SignUp() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {errors.email && (
-              <p className={style["error-message"]}>{errors.message}</p>
+              <p className={style["error-message"]}>{"Email da ton tai"}</p>
             )}
           </div>
 

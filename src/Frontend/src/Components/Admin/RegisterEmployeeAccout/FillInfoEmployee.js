@@ -86,7 +86,8 @@ function FillInfoEmployee() {
     navigate("/admin-dashboard/manage-employees"); // Điều hướng
   };
 
-  const handleSaveInfo = async () => {
+  const handleSaveInfo = async (e) => {
+    e.preventDefault();
     setIsSubmitting(true);
     setError(null);
     // Lấy ngày hiện tại
@@ -94,17 +95,6 @@ function FillInfoEmployee() {
     today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để chỉ so sánh ngày
 
     // Kiểm tra dữ liệu đầu vào
-    if (!formData.full_name || formData.full_name.trim() === "") {
-      setError("Họ và tên không được để trống.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!formData.date_of_birth) {
-      setError("Ngày sinh không được để trống.");
-      setIsSubmitting(false);
-      return;
-    }
 
     // Kiểm tra tuổi >= 18
     const birthDate = new Date(formData.date_of_birth);
@@ -122,23 +112,6 @@ function FillInfoEmployee() {
 
     if (!formData.gender) {
       setError("Giới tính không được để trống.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!formData.department) {
-      setError("Vui lòng chọn bộ phận.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!formData.start_working_date) {
-      setError("Ngày bắt đầu làm việc không được để trống.");
-      setIsSubmitting(false);
-      return;
-    }
-    if (!formData.phone_number) {
-      setError("Số điện thoại không được để trống.");
       setIsSubmitting(false);
       return;
     }
@@ -203,7 +176,7 @@ function FillInfoEmployee() {
         {error && <p className={style["error-message"]}>{error}</p>}
         <form
           className={style["fill-info-employee-form"]}
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSaveInfo}
         >
           {/* Họ và tên */}
           <div className={style["form-group"]}>
@@ -266,6 +239,7 @@ function FillInfoEmployee() {
               value={formData.phone_number}
               onChange={handleInputChange}
               placeholder="Nhập số điện thoại"
+              required
             />
           </div>
 
@@ -296,16 +270,11 @@ function FillInfoEmployee() {
               value={formData.address}
               onChange={handleInputChange}
               placeholder="Nhập địa chỉ"
+              required
             />
           </div>
 
-          <button
-            className={style["submit-button"]}
-            onClick={handleSaveInfo}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Đang lưu..." : "Lưu Thông Tin"}
-          </button>
+          <button className={style["submit-button"]}>Lưu thông tin</button>
         </form>
 
         {modal.isOpen && (
