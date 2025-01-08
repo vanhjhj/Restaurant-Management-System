@@ -18,7 +18,7 @@ const QRCodeGenerator = ({ invoiceID }) => {
   return urlSafeEncrypted;
   };
   
-  const qrData = `${window.location.origin}/review/rating/${encryptData(invoiceID.toString(), PRIVATE_KEY)}`;
+  const qrData = `${window.location.origin}/review/${encryptData(invoiceID.toString(), PRIVATE_KEY)}`;
 
   return (
     <div className={style['qr-ctn']}>

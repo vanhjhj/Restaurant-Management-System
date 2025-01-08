@@ -353,4 +353,5 @@
     justify-content: center;
     align-items: center;
     margin:auto 0px;
+    cursor: pointer;
 }

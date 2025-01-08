@@ -257,16 +257,16 @@ function EmployeeReservation() {
     return t.filter((table) => table.status === "A").length;
   }
     return (
-        <div className={style['EER-container']}>
+      <div className={style['EER-container']}>
             <div className={style['body-EER']}> 
                 <div className={style['sidebar-container']}>
                     <div className={style['container']}>
                         <div className={style['row']}>
                             <div className={style['col-lg-12']}>
                                 <div className={style["section-r-title"]}>
-                    <div>
-                      <h2>Danh sách các phiếu đặt</h2>
-                    </div>
+                                  <div>
+                                    <h2>Danh sách các phiếu đặt</h2>
+                                  </div>
                                     <div className={style['status-reservation-info']}>
                                         <section className={style['section-reservation-info']}>
                                             <div className={style['my-square'] + ' ' + style['yellow']}></div>
@@ -310,7 +310,6 @@ function EmployeeReservation() {
                 <div className={style['col-lg-6']}>
                   <div className={style['filter-category']}>
                               <Select options={options} onChange={(selectedOption) => setFilterStatus(selectedOption.value)}  defaultValue={options[0]} />
-                          </div>
                 </div>
               </div>
             </div>
@@ -329,6 +328,7 @@ function EmployeeReservation() {
                       <h5>Mã phiếu đặt: {r.id}</h5>
                       <div
                         className={style["edit-reservation"]}
+                        title='Chỉnh sửa phiếu đặt'
                         onClick={() => setEditReservation(r)}
                       >
                         <AiOutlineEdit size={20} />
@@ -368,6 +368,7 @@ function EmployeeReservation() {
                       <div className={style["input-table-btn"]}>
                         <button
                           className={style["input-table-edit-btn"]}
+                          title={r.isEditing ? "Lưu bàn" : "Chỉnh sửa phiếu đặt"}
                           onClick={() =>
                             r.isEditing ? handleSave(r.id) : handleEdit(r.id)
                           }
@@ -376,6 +377,7 @@ function EmployeeReservation() {
                         </button>
                         <button
                           className={style["input-table-erase-btn"]}
+                          title={r.isEditing ? "Hủy chỉnh sửa" : "Xóa bàn"}
                           onClick={() =>
                             r.isEditing
                               ? handleCancelEdit(r.id)
@@ -393,6 +395,7 @@ function EmployeeReservation() {
                           " " +
                           style[r.status === "A" ? "" : "inactive-btn"]
                         }
+                        title='Xong'
                         onClick={() => {
                           if (r.status === "A") {
                             handleDoneReservation(r.id, r.table);
@@ -411,6 +414,7 @@ function EmployeeReservation() {
                               : "inactive-btn"
                           ]
                         }
+                        title='Hủy phiếu đặt'
                         onClick={() => {
                           if (r.status !== "D" && r.status !== "C") {
                             handleCancelReservation(r.id);

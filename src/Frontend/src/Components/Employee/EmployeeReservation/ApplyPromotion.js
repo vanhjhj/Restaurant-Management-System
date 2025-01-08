@@ -17,6 +17,7 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
   const [canSelected, setCanSelected] = useState(true);
   const [errorMessage, setErrorMessage] = useState();
   const [successMessage, setSuccessMessage] = useState();
+  const [phoneNum, setPhoneNum] = useState();
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
@@ -44,8 +45,17 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
   const fetchData = async () => {
     try {
       const data = await fetchValidPromotions();
-      data.map((item) => ({ ...item, isSelected: false }));
-      setPromotionData(sortPromotions(data));
+      let updateData;
+      if (invoice.promotion) {
+        setCanSelected(false);
+        const tempPromotion = {code: invoice.promotion}
+        setChoosenPromotion(tempPromotion);
+        updateData = data.map((item) => ({ ...item, isSelected: item.code === invoice.promotion, }));
+      }
+      else {
+        updateData = data.map((item) => ({ ...item, isSelected: false, }));
+      }
+      setPromotionData(sortPromotions(updateData));
     } catch (error) {
       console.error(error);
     }
@@ -100,6 +110,7 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
         setSuccessMessage("Áp dụng khuyến mãi thành công");
       }
     } catch (error) {
+      console.log(error);
       setSuccessMessage();
       if (error.response.data.status === "error") {
         setErrorMessage("Vui lòng nhập số điện thoại khi sử dụng KMTV");
@@ -109,6 +120,12 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
         setErrorMessage("Số điện thoại không tồn tại");
       } else if (error.response.data.status === "not_meet_requirement") {
         setErrorMessage("Hóa đơn không đủ điều kiện");
+      }
+      else if (error.response.status === 404) {
+        setErrorMessage('Không tìm thấy hóa đơn');
+      }
+      else {
+        setErrorMessage("Có lỗi xảy ra không thể sử dụng khuyễn mãi");
       }
     }
   };
@@ -178,7 +195,7 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
             <div className={style["col-lg-12"]}>
               <div className={style["sdt-input"]}>
                 <label for="sdt">SĐT đăng ký tài khoản:</label>
-                <input type="text" name="sdt" id="sdt"></input>
+                <input type="text" name="sdt" id="sdt" onChange={(e) => setPhoneNum(e.target.value)}></input>
               </div>
             </div>
             <div className={style["col-lg-12"]}>
@@ -197,7 +214,7 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
               <div className={style["btn-ctn"]}>
                 <button
                   className={style["my-btn"]}
-                  onClick={() => handleSavePromotion()}
+                  onClick={() => handleSavePromotion(phoneNum)}
                 >
                   Lưu
                 </button>

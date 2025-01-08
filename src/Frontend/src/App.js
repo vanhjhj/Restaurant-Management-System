@@ -94,7 +94,7 @@ function App() {
             <Route path="/menu" element={<Menu />} />
             <Route path="/menu/:id" element={<FoodDetail />} />
             <Route path="/review" element={<Review />} />
-            <Route path="/review/rating/:invoice" element={<Rating />} />
+            <Route path="/review/:invoice" element={<Rating />} />
             <Route
               path="/reservation"
               element={<BookingTable isLoggedIn={isLoggedIn} />}

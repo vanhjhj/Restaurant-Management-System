@@ -133,22 +133,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       Đặt Bàn
                     </Link>
                   </li>
-                  {(userRole === "Employee" || userRole === "Admin") && (
-                    <>
-                      <li>
-                        <Link
-                          to="/employee-dashboard"
-                          className={
-                            location.pathname.startsWith("/employee-dashboard")
-                              ? style.active
-                              : ""
-                          }
-                        >
-                          Trang Nhân Viên
-                        </Link>
-                      </li>
-                    </>
-                  )}
+                  
                   <li>
                     <Link
                       to="/review"
@@ -173,20 +158,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   </li>
 
                   {/* Điều kiện hiển thị các trang dựa trên userRole */}
-                  {userRole === "Admin" && (
-                    <li>
-                      <Link
-                        to="/admin-dashboard/manage-restaurant-info"
-                        className={
-                          location.pathname.startsWith("/admin-dashboard")
-                            ? style.active
-                            : ""
-                        }
-                      >
-                        Quản Trị
-                      </Link>
-                    </li>
-                  )}
 
                   {userRole === "Customer" && (
                     <li>
@@ -204,8 +175,22 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                           <ul className={style["dropdown-list"]}>
                             {/* Show only the Logout option for admin */}
                             {userRole === "Admin" ? (
-                              <>
-                                 <li>
+                              <>            
+                                <li>
+                                  <Link
+                                    to="/employee-dashboard"
+                                  >
+                                    Trang Nhân Viên
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    to="/admin-dashboard/manage-restaurant-info"
+                                  >
+                                    Quản Trị
+                                  </Link>
+                                </li>
+                                <li>
                                   {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
                                   <Link to="/profile">Thông tin cá nhân</Link>
                                 </li>
@@ -222,7 +207,14 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                               </>
                               
                             ) : userRole === "Employee" ? (
-                              <>
+                                <>
+                                  <li>
+                                  <Link
+                                    to="/employee-dashboard"
+                                  >
+                                    Trang Nhân Viên
+                                  </Link>
+                                </li>
                                 <li>
                                   {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
                                   <Link to="/profile">Thông tin cá nhân</Link>

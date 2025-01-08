@@ -168,6 +168,9 @@
     color: red;
   }
   
+  .error-ctn p{
+    font-size: 18px;
+  }
   
   /* Nút gửi form */
   .booking-form-container button {

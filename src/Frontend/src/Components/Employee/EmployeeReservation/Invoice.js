@@ -15,6 +15,7 @@ import {
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
 import ApplyPromotion from "./ApplyPromotion";
 import PrintInvoice from "./PrintInvoice";
+import { fetchPromotionByCode } from "../../../API/PromotionAPI";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -42,6 +43,7 @@ function Invoice({ tableID, setShowInvoice }) {
   const [ems, setEms] = useState();
   const [isShowPromotion, setIsShowPromotion] = useState(false);
   const [isPrintInvoice, setIsPrintInvoice] = useState(false);
+  const [promotion, setPromotion] = useState();
 
   const handleError = (error, type) => {
     if (error === 400) {
@@ -140,10 +142,29 @@ function Invoice({ tableID, setShowInvoice }) {
           changeQuantity: false,
         }))
       );
+      if (orderData.promotion) {
+        const tempPromotion = await fetchPromotionByCode(orderData.promotion);
+        setPromotion(tempPromotion);
+      }
     } catch (error) {
       setErrorTableMessage(error.response.status);
     }
   };
+
+  const fetchPromotion = async () => {
+    try {
+      if (invoiceData.promotion) {
+        const tempPromotion = await fetchPromotionByCode(invoiceData.promotion);
+        setPromotion(tempPromotion);
+      }
+    } catch (error) {
+      setErrorTableMessage(error.response.status);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromotion();
+  }, [isShowPromotion]);
 
   useEffect(() => {
     fetchData();
@@ -349,6 +370,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                   " " +
                                   style["my-food-col-2"]
                                 }
+                                title="Nhấn vào để thay đổi số lượng"
                                 onClick={() =>
                                   handleEditingQuantity(item.quantity, item.id)
                                 }
@@ -403,6 +425,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                 " " +
                                 style["my-food-col-3"]
                               }
+                              title="Nhấn vào để đánh dấu món ăn đã được phục vụ"
                               onClick={() => handleChangeStatus(item.id)}
                             >
                               {item.status}
@@ -469,6 +492,29 @@ function Invoice({ tableID, setShowInvoice }) {
                     ))}
                   </div>
                 </div>
+                <div>
+                                <h4>Khuyến mãi</h4>
+                                <div className={style["promotion-table"]}>
+                                  <div
+                                    className={style["my-row"] + " " + style["my-title-row"]}
+                                  >
+                                    <ul>
+                                      <li className={style["my-col-1"]}>Mã KH</li>
+                                      <li className={style["my-col-2"]}>Tên khuyến mãi</li>
+                                      <li className={style["my-col-3"]}>Giảm giá (%)</li>
+                                    </ul>
+                                  </div>
+                                  {promotion && (
+                                    <div className={style["my-row"]}>
+                                      <ul>
+                                        <li className={style["my-col-1"]}>{promotion.code}</li>
+                                        <li className={style["my-col-2"]}>{promotion.title}</li>
+                                        <li className={style["my-col-3"]}>{promotion.discount}</li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
                 <div className={style["total-money-ctn"]}>
                   <div className={style["width-50"]}>
                     <div className={style["money-format"]}>

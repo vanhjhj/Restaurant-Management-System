@@ -52,7 +52,7 @@
     align-items: center;
     justify-content: center;
     display: flex;
-    height: 20px;
+    height: 40px;
     margin-top:10px;
   }
   
@@ -65,7 +65,7 @@
   }
   
   .error-ctn p {
-    font-size: 18px;
+    font-size: 22px;
   }
 
   .btn-ctn button{
@@ -103,6 +103,11 @@
     font-size: 18px;
 }  
 
+.error-ctn .success {
+  color: green;
+}
+
 .my-input-name{
-    width: 375px;
+    width: 378px;
+    padding: 5px 10px;
 }

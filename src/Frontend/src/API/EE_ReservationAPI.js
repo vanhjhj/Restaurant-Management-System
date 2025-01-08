@@ -346,7 +346,7 @@ export const checkPhoneNumber = async (token, number) => {
     const response = await axios.post(
       `${API_BASE_URL}/auth/account-exists-check/`,
       {
-        phone_number: { number },
+        phone_number: number,
       },
       {
         headers: {
