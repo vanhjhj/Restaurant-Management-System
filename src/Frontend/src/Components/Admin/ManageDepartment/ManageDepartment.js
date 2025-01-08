@@ -47,7 +47,6 @@ function ManageDepartment() {
     try {
       const activeToken = await ensureActiveToken();
       const data = await getDepartments(activeToken);
-      console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
       if (Array.isArray(data)) {
         setDepartments(data);
       } else {
@@ -111,7 +110,6 @@ function ManageDepartment() {
         const data = await getDepartments(activeToken, {
           signal: controller.signal,
         });
-        console.log("Dữ liệu trả về từ API:", data);
         if (Array.isArray(data)) {
           setDepartments(data);
         } else {

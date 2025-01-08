@@ -9,6 +9,8 @@ import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
 
 function ManageRestaurantInfo() {
+  const [previewQR, setPreviewQR] = useState(null);
+
   const { restaurantInfo, loading, error, setRestaurantInfo } =
     useContext(RestaurantContext); // Sử dụng context
   const [editMode, setEditMode] = useState(false); // Quản lý trạng thái chỉnh sửa
@@ -62,12 +64,41 @@ function ManageRestaurantInfo() {
     }));
   };
 
+  const handleQRUpload = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+    if (!allowedExtensions.exec(file.name)) {
+      alert("Chỉ chấp nhận file ảnh với định dạng jpg, jpeg, hoặc png.");
+      return;
+    }
+
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("Ảnh quá lớn. Vui lòng chọn ảnh dưới 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => setPreviewQR(reader.result);
+    reader.readAsDataURL(file);
+
+    setUpdatedInfo((prev) => ({
+      ...prev,
+      QR: file, // Đưa file vào updatedInfo để gửi lên server
+    }));
+  };
+  
+
   const handleSave = async () => {
     try {
       const activeToken = await ensureActiveToken();
 
       await UpdateResInfo(activeToken, updatedInfo); // Gửi dữ liệu cập nhật đến API
       setRestaurantInfo(updatedInfo); // Cập nhật lại context
+      console.log (updatedInfo);
       setEditMode(false); // Tắt chế độ chỉnh sửa
       setModal({
         isOpen: true,
@@ -251,7 +282,7 @@ function ManageRestaurantInfo() {
             <div className={style["ManageRes-input"]}>
               <input
                 type="text"
-                name="email"
+                name="link_momo"
                 value={updatedInfo.email || ""}
                 onChange={handleChange}
               />
@@ -261,6 +292,33 @@ function ManageRestaurantInfo() {
             <p>{restaurantInfo.email}</p>
           )}
         </div>
+      
+        <div className={style["ManageRes-field-image"]}>
+          <div>
+            <label>Ảnh QR chuyển tiền:</label>
+            {editMode && (
+              <input
+                type="file"
+                name="QR"
+                accept="image/*"
+                onChange={handleQRUpload}
+              />
+            )}
+          </div>
+          {previewQR ? (
+            <img src={previewQR} alt="QR Preview" />
+          ) : (
+            restaurantInfo.QR && (
+              <img
+                src={restaurantInfo.QR}
+                alt="QR Code"
+                className={style["qr-preview"]}
+              />
+            )
+          )}
+        </div>
+
+
 
         <div className={style["ManageRes-field-social"]}>
           <label>Social Links:</label>

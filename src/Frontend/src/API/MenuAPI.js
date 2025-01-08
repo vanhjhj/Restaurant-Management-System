@@ -98,6 +98,7 @@ export const updateFoodItem = async (id, menuitem, accessToken) => {
         },
       }
     );
+
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật món ăn:", error.message);

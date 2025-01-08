@@ -218,8 +218,6 @@ function BookingTable() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsLoading(true);
-
     const phoneerrorbooking = validatePhoneNumber(phoneNumber);
     if (phoneerrorbooking) {
       seterrorbooking(phoneerrorbooking);
@@ -273,6 +271,7 @@ function BookingTable() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const requestData = {
         ...bookingInfo,
@@ -305,7 +304,6 @@ function BookingTable() {
   };
 
   const handleOpenModalQuestion = () => {
-    console.log({ islogin });
     // Đóng modal đầu tiên và mở modal thứ hai nếu cần
     if (islogin === false) {
       setModal({
@@ -313,11 +311,9 @@ function BookingTable() {
         text: "Bạn có muốn đăng ký tài khoản để nhận thêm nhiều khuyến mãi không?",
         type: "confirm",
         onClose: () => {
-          console.log("Close clicked");
           setModal({ isOpen: false }); // Đóng modal nếu người dùng từ chối
         },
         onConfirm: () => {
-          console.log("Confirm clicked");
           navigate("/SignUp"); // Điều hướng đến trang đăng ký
           setModal({ isOpen: false });
         },

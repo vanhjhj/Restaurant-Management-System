@@ -1,4 +1,4 @@
-import React, { useContext, useState ,useRef, useEffect } from "react";
+import React, { useContext, useState ,useRef } from "react";
 import { RestaurantContext } from "../../../Config/RestaurantContext";
 import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
@@ -14,8 +14,7 @@ function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setIsPrintInvo
     const [success, setSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const printRef = useRef();
-    
-  const momoQRUrl = "https://me.momo.vn/WEI5TAs7FJU4u6idCZfmfX" ;
+
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
@@ -84,7 +83,7 @@ function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setIsPrintInvo
             restaurantInfo={restaurantInfo}
             foodData={foodData}
             invoiceData={invoiceData}
-            momoQRUrl={momoQRUrl}
+            QR={restaurantInfo.QR}
           />
         </div>
 

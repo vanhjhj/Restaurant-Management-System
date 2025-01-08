@@ -47,7 +47,7 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
       data.map((item) => ({ ...item, isSelected: false }));
       setPromotionData(sortPromotions(data));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   useEffect(() => {
@@ -58,7 +58,6 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
     if (promotion.isSelected) {
       setChoosenPromotion({ code: null });
       setCanSelected(true);
-      console.log(canSelected);
       setPromotionData((preItem) =>
         preItem.map((i) =>
           i.code === promotion.code ? { ...i, isSelected: false } : i
@@ -67,7 +66,6 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
     } else {
       setChoosenPromotion(promotion);
       setCanSelected(false);
-      console.log(canSelected);
       setPromotionData((preItem) =>
         preItem.map((i) =>
           i.code === promotion.code ? { ...i, isSelected: true } : i
@@ -97,9 +95,9 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
       setInvoice(newInvoice.data);
       setErrorMessage();
       if (choosenPromotion.code === null) {
-        setSuccessMessage("Hủy khuyễn mãi thành công");
+        setSuccessMessage("Hủy khuyến mãi thành công");
       } else {
-        setSuccessMessage("Áp dụng khuyễn mãi thành công");
+        setSuccessMessage("Áp dụng khuyến mãi thành công");
       }
     } catch (error) {
       setSuccessMessage();

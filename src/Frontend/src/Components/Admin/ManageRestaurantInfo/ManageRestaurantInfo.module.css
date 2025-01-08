@@ -290,3 +290,34 @@
     flex-direction: column; /* Đưa các mục xuống dòng khi giao diện hẹp */
   }
 }
+.ManageRes-field-image {
+  display: flex;
+  align-items: flex-start; /* Căn nội dung lên trên cùng */
+  justify-content: space-between; /* Đẩy label và ảnh sang hai bên */
+  gap: 20px; /* Khoảng cách giữa label và ảnh */
+  margin-top: 20px;
+}
+
+.ManageRes-field-image label {
+  font-weight: bold;
+  color: #555;
+  font-size: 18px;
+  flex: 1; /* Chiếm toàn bộ không gian bên trái */
+  text-align: left; /* Căn chữ về bên trái */
+}
+
+.ManageRes-field-image img {
+  max-width: 300px; /* Kích thước tối đa của ảnh */
+  max-height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 0; /* Ảnh có kích thước cố định */
+  margin:auto;
+  margin-top: 10px;
+}
+
+.ManageRes-field-image input[type="file"] {
+  margin-bottom:auto;
+  display: flex; /* Đặt input dưới label */
+}

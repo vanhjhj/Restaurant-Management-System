@@ -53,8 +53,6 @@ function VerifyOtpAccount() {
     setSuccessMessage("");
 
     try {
-      console.log(`Xác minh OTP cho email: ${email}`);
-
       // Gửi yêu cầu xác minh OTP
       let response = await verifyOTP({ email, otp });
       const token_employee = response.access_token;

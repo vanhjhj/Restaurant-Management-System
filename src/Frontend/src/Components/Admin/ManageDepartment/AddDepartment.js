@@ -52,6 +52,10 @@ function AddDepartment() {
   };
 
   const handleAddDepartment = async () => {
+    if (!newDepartment.name || newDepartment.salary <= 0) {
+      setError("Vui lòng nhập thông tin hợp lệ.");
+      return;
+    }
     setLoading(true);
     setError(null); // Xóa lỗi cũ
     try {

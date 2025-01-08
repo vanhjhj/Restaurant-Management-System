@@ -49,7 +49,6 @@ function ManageEmployees() {
     try {
       const activeToken = await ensureActiveToken();
       const data = await getEmployee(activeToken);
-      console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
       if (Array.isArray(data)) {
         setEmployee(data);
       } else {
@@ -112,7 +111,6 @@ function ManageEmployees() {
         const data = await getEmployee(activeToken, {
           signal: controller.signal,
         });
-        console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
         if (Array.isArray(data)) {
           setEmployee(data);
         } else {

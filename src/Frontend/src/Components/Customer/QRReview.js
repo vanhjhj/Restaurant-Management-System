@@ -23,7 +23,7 @@ const QRCodeGenerator = ({ invoiceID }) => {
   return (
     <div className={style['qr-ctn']}>
       <p>Quét mã để đánh giá nhà hàng của chúng tôi</p>
-      <QRCodeSVG value={qrData} size={128} />
+      <QRCodeSVG value={qrData} size={180} />
     </div>
   );
 };

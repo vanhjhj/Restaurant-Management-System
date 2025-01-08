@@ -54,7 +54,7 @@ function Promotion() {
               {error.response ? error.response.data : error.message}
             </p>
           </div>
-        ) : promotions.length === 0 ? (
+        ) : !loading && promotions.length === 0 ? (
           <div className={style["no-promotions-message"]}>
             <p>Oops...Hiện tại chưa có khuyến mãi!</p>
           </div>

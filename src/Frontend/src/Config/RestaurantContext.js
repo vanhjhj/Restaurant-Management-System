@@ -14,7 +14,10 @@ export const RestaurantProvider = ({ children }) => {
     const fetchRestaurantData = async () => {
       try {
         const data = await GetResInfo();
-        setRestaurantInfo(data);
+        setRestaurantInfo((prevInfo) => ({
+          ...prevInfo, // Giữ lại dữ liệu cũ
+          ...data, // Ghi đè hoặc thêm dữ liệu mới
+        }));
       } catch (err) {
         setError("Không thể tải thông tin nhà hàng.");
         console.error(err);

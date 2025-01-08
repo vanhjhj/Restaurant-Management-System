@@ -44,7 +44,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
     }
     try {
       const activeToken = await ensureActiveToken();
-      console.log(accessToken);
       // Gọi API logout
       await logout(refreshTokenValue, activeToken);
 

@@ -9,9 +9,7 @@ export const account_check = async (userData) => {
       `${API_BASE_URL}/auth/account-check/`,
       userData
     );
-    console.log(response.message); // Trả về dữ liệu từ API nếu thành công
   } catch (error) {
-    console.log("User Data:", userData);
     console.error(error.response.data);
     throw error.response.data;
   }
@@ -20,9 +18,10 @@ export const account_check = async (userData) => {
 // Hàm đăng nhập
 export const login = async (credentials) => {
   try {
-    console.log(credentials);
-    const response = await axios.post(`${API_BASE_URL}/auth/token/`, credentials);
-    console.log(response);
+    const response = await axios.post(
+      `${API_BASE_URL}/auth/token/`,
+      credentials
+    );
 
     return response.data; // Trả về access và refresh tokens nếu thành công
   } catch (error) {
@@ -55,7 +54,6 @@ export const sendOrResendOTP = async (emailData) => {
       `${API_BASE_URL}/auth/register-otp/`,
       emailData
     );
-    console.log("sendOrResendOTP try");
     return response.data; // Trả về kết quả nếu thành công
   } catch (error) {
     console.error(
@@ -79,7 +77,6 @@ export const register = async (userData, token) => {
         },
       }
     );
-    console.log(response.data.data); // Thông báo từ API nếu thành công
     return response.data.data;
   } catch (error) {
     console.error(
@@ -96,7 +93,6 @@ export const forgotPassword = async (email) => {
     const response = await axios.post(`${API_BASE_URL}/auth/forgot-password/`, {
       email,
     });
-    console.log("Yêu cầu quên mật khẩu thành công:", response.data.message);
     return response.data;
   } catch (error) {
     console.error(
@@ -121,7 +117,6 @@ export const resetPassword = async (resetData, token) => {
     );
 
     // Trả về dữ liệu nếu thành công
-    console.log("Đặt lại mật khẩu thành công:", response.data.message);
     return response.data;
   } catch (error) {
     // Ghi log lỗi chi tiết
@@ -138,21 +133,19 @@ export const resetPassword = async (resetData, token) => {
 // Hàm refresh token
 export const refreshToken = async (refreshToken) => {
   try {
-      const response = await axios.post(
-          `${API_BASE_URL}/auth/token/refresh/`,
-          {refresh: refreshToken},
-      );
-      // Trả về dữ liệu nếu thành công
-      console.log('lam moi token thanh cong:', response.data.message);
-      return response.data;
+    const response = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
+      refresh: refreshToken,
+    });
+    // Trả về dữ liệu nếu thành công
+    return response.data;
   } catch (error) {
-      // Ghi log lỗi chi tiết
-      console.error(
-          'Lỗi khi lam moi token:',
-          error.response ? error.response.data : error.message
-      );
-      // Ném lỗi với thông báo chi tiết
-      throw error;
+    // Ghi log lỗi chi tiết
+    console.error(
+      "Lỗi khi lam moi token:",
+      error.response ? error.response.data : error.message
+    );
+    // Ném lỗi với thông báo chi tiết
+    throw error;
   }
 };
 
@@ -171,7 +164,6 @@ export const logout = async (refresh_token, token) => {
     );
 
     // Trả về dữ liệu nếu thành công
-    console.log("dang xuat thanh cong:", response.data.message);
     return response.data;
   } catch (error) {
     // Ghi log lỗi chi tiết
