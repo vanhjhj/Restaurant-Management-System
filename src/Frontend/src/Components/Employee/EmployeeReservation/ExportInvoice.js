@@ -234,14 +234,12 @@ function ExportInvoice({
                   </button>
                 </div>
               </div>
-              {success && (
-                <SuccessMessage
-                  setShow={setSuccess}
-                  setShowExInvoice={setShow}
-                  setShowInvoice={setShowInvoice}
-                ></SuccessMessage>
-              )}
             </div>
+            <SuccessMessage
+              setShow={setSuccess}
+              setShowExInvoice={setShow}
+              setShowInvoice={setShowInvoice}
+            ></SuccessMessage>
           </div>
         </div>
       </div>

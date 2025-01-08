@@ -260,9 +260,9 @@
 
 .table-food{
   width: 100%;
-  margin:20px auto 50px auto;
+  margin:20px auto 30px auto;
   padding-right: 16px;
-  height: 300px;
+  height: 200px;
   overflow-y: auto;
 }
 
@@ -527,3 +527,30 @@
   color: red;
 }
 
+.promotion-table{
+  width: 100%;
+  margin:20px auto 20px auto;
+  padding-right: 16px;
+  height: 80px;
+  overflow-y: auto;
+}
+
+.my-col-1{
+  width: 20%;
+}
+
+.my-col-2{
+  width: 60%;
+}
+
+.my-col-3{
+  width: 20%;
+}
+
+.my-col-4{
+  width: 18%;
+}
+
+.my-col-5{
+  width: 25%;
+}

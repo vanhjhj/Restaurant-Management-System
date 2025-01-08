@@ -16,13 +16,37 @@
 .review-info-ctn {
   font-family: "Playfair Display", serif;
 }
-.display-end {
-  justify-content: end;
+.display-end{
+    justify-content: end;
+    align-items: center;
 }
-.filter-ctn {
-  display: flex;
-  justify-content: space-between;
+.filter-ctn{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
+.filter-category{
+    z-index: 101;
+  }
+
+  .page-input-ctn{
+    margin-top: 10px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+  }
+
+  .page-num-top{
+    font-size: 18px;
+    align-items: center;
+    justify-content: left;
+    display: flex;
+    margin-top:10px;
+  }
+
+  .input-page{
+    height:36px;
+  }
 
 .filter-category {
   display: flex;

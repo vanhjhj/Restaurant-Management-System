@@ -91,7 +91,7 @@ export const getReservationByNumber = async (token, phone_number) => {
 export const patchReservation = async (token, rID, data) => {
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/booking/reservations/${rID}`,
+      `${API_BASE_URL}/booking/reservations/${rID}/`,
       {
         guest_name: data.guest_name,
         note: data.note,
@@ -346,7 +346,7 @@ export const checkPhoneNumber = async (token, number) => {
     const response = await axios.post(
       `${API_BASE_URL}/auth/account-exists-check/`,
       {
-        phone_number: { number },
+        phone_number: number,
       },
       {
         headers: {

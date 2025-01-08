@@ -26,6 +26,10 @@ function Review({ iID }) {
     return `${day}-${month}-${year}`; // Trả về chuỗi định dạng dd-mm-yyyy
   }
 
+  const customStyles = {
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Đặt z-index cao cho menu
+  };
+
   const options = [
     {
       value: "0",
@@ -78,6 +82,7 @@ function Review({ iID }) {
   ];
 
   const handleChange = (selectedOption) => {
+    console.log(`Selected: ${selectedOption.value}`);
     const newPositive = selectedOption.value;
     setPositive(newPositive);
     fetchFilterData(newPositive, date);
@@ -129,17 +134,25 @@ function Review({ iID }) {
     }
   };
 
+  const handleChangePage = (value) => {
+    if (value === "") {
+      setCurrentPage(1);
+      return;
+    }
+    if (value < totalPages) {
+      setCurrentPage(value);
+    } else {
+      setCurrentPage(1);
+    }
+  };
+  const preventNegative = (e) => {
+    if (e.key === "-" || e.key === "e" || e.key === ".") {
+      e.preventDefault(); // Ngăn nhập dấu âm hoặc ký tự không hợp lệ
+    }
+  };
+
   return (
-    <div
-      className={`${style["review-info-ctn"]} ${
-        loading ? style["loading"] : ""
-      }`}
-    >
-      {loading && (
-        <div className={style["loading-overlay"]}>
-          <div className={style["spinner"]}></div>
-        </div>
-      )}
+    <div className={style["review-info-ctn"]}>
       <div className={style["container"]}>
         <div className={style["row"]}>
           <div className={style["review-title-ctn"] + " " + style["col-lg-12"]}>
@@ -147,22 +160,44 @@ function Review({ iID }) {
           </div>
         </div>
         <div className={style["row"] + " " + style["display-end"]}>
+          <div className={style["col-lg-6"] + " " + style["page-num-top"]}>
+            <span>
+              Trang {currentPage}/{totalPages}
+            </span>
+          </div>
+          <div className={style["col-lg-3"] + " " + style["page-input-ctn"]}>
+            <label>
+              <input
+                type="number"
+                min={1}
+                onKeyDown={preventNegative}
+                id="date-input"
+                name="date"
+                className={style["input-page"]}
+                placeholder="Nhập số trang..."
+                onChange={(e) => handleChangePage(e.target.value)}
+              ></input>
+            </label>
+          </div>
           <div className={style["col-lg-3"] + " " + style["filter-ctn"]}>
             <div className={style["filter-category"]}>
               <Select
                 options={options}
                 onChange={handleChange}
                 defaultValue={options[0]}
+                styles={customStyles}
               />
             </div>
             <div className={style["filter-date"]}>
-              <input
-                type="date"
-                id="date-input"
-                name="date"
-                className={style["my-input-date"]}
-                onChange={handleFilterDateChange}
-              />
+              <label>
+                <input
+                  type="date"
+                  id="date-input"
+                  name="date"
+                  className={style["my-input-date"]}
+                  onChange={handleFilterDateChange}
+                />
+              </label>
             </div>
           </div>
         </div>
@@ -187,16 +222,18 @@ function Review({ iID }) {
         <div className={style["row"]}>
           <div className={style["btn-ctn"]}>
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => {
+                setCurrentPage((prev) => Math.max(prev - 1, 1));
+              }}
               disabled={currentPage === 1}
             >
               <FaArrowLeft></FaArrowLeft>
             </button>
 
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              onClick={() => {
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+              }}
               disabled={currentPage === totalPages}
             >
               <FaArrowRight></FaArrowRight>

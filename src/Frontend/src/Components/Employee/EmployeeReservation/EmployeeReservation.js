@@ -38,7 +38,7 @@ function EmployeeReservation() {
     "0"
   )}-${String(now.getDate()).padStart(2, "0")}`;
 
-  const [filterDate, setFilterDate] = useState();
+  const [filterDate, setFilterDate] = useState(today);
 
   function formatDate(dateString) {
     const [year, month, day] = dateString.split("-");
@@ -105,6 +105,7 @@ function EmployeeReservation() {
           isEditing: false,
         }))
       );
+      setFilterDate(today);
     } catch (error) {
       console.error(error);
     }
@@ -254,85 +255,61 @@ function EmployeeReservation() {
 
   const calNumberOfEmptyTable = (t) => {
     return t.filter((table) => table.status === "A").length;
-  };
-  return (
-    <div className={style["EER-container"]}>
-      <div className={style["body-EER"]}>
-        <div className={style["sidebar-container"]}>
-          <div className={style["container"]}>
-            <div className={style["row"]}>
-              <div className={style["col-lg-12"]}>
-                <div className={style["section-r-title"]}>
-                  <div>
-                    <h2>Danh sách các phiếu đặt</h2>
-                  </div>
-                  <div className={style["status-reservation-info"]}>
-                    <section className={style["section-reservation-info"]}>
-                      <div
-                        className={style["my-square"] + " " + style["yellow"]}
-                      ></div>
-                      <p>Chờ</p>
-                    </section>
-                    <section className={style["section-reservation-info"]}>
-                      <div
-                        className={style["my-square"] + " " + style["blue"]}
-                      ></div>
-                      <p>Gán</p>
-                    </section>
-                    <section className={style["section-reservation-info"]}>
-                      <div
-                        className={style["my-square"] + " " + style["green"]}
-                      ></div>
-                      <p>Xong</p>
-                    </section>
-                    <section className={style["section-reservation-info"]}>
-                      <div
-                        className={style["my-square"] + " " + style["red"]}
-                      ></div>
-                      <p>Hủy</p>
-                    </section>
-                  </div>
+  }
+    return (
+      <div className={style['EER-container']}>
+            <div className={style['body-EER']}> 
+                <div className={style['sidebar-container']}>
+                    <div className={style['container']}>
+                        <div className={style['row']}>
+                            <div className={style['col-lg-12']}>
+                                <div className={style["section-r-title"]}>
+                                  <div>
+                                    <h2>Danh sách các phiếu đặt</h2>
+                                  </div>
+                                    <div className={style['status-reservation-info']}>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['yellow']}></div>
+                                            <p>Chờ</p>
+                                        </section>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['blue'] }></div>
+                                            <p>Gán</p>
+                                        </section>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['green']}></div>
+                                            <p>Xong</p>
+                                        </section>
+                                        <section className={style['section-reservation-info']}>
+                                            <div className={style['my-square'] + ' ' + style['red']}></div>
+                                            <p>Hủy</p>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={style["search-row"]}>
+                            <div className={style['col-lg-12']}>
+                                <div className={style['search-cus']}>
+                                    <input type='text'  
+                                        placeholder="Tìm theo tên..."
+                                        value={searchName}
+                                        onChange={e => setSearchName(e.target.value)}
+                                        className={style['input-search-cus']} />
+                                    <button type="button" className={style["input-search-btn"]}>
+                                        <i className="fas fa-search"></i>
+                                    </button>
+                                </div>
                 </div>
-              </div>
-            </div>
-            <div className={style["search-row"]}>
-              <div className={style["col-lg-12"]}>
-                <div className={style["search-cus"]}>
-                  <input
-                    type="text"
-                    placeholder="Tìm theo tên..."
-                    value={searchName}
-                    onChange={(e) => setSearchName(e.target.value)}
-                    className={style["input-search-cus"]}
-                  />
-                  <button type="button" className={style["input-search-btn"]}>
-                    <i className="fas fa-search"></i>
-                  </button>
+                
+              </div>    
+              <div className={style['row'] + ' '+ style['my-input-row']}>
+                <div className={style['col-lg-6']}>
+                    <label><input type="date" id="date-input" name="date" className={style['my-input-date']} value={filterDate} defaultValue={today} onChange={(e) => setFilterDate(e.target.value)}/></label>
                 </div>
-              </div>
-            </div>
-            <div className={style["row"] + " " + style["my-input-row"]}>
-              <div className={style["col-lg-6"]}>
-                <label>
-                  <input
-                    type="date"
-                    id="date-input"
-                    name="date"
-                    className={style["my-input-date"]}
-                    defaultValue={today}
-                    onChange={(e) => setFilterDate(e.target.value)}
-                  />
-                </label>
-              </div>
-              <div className={style["col-lg-6"]}>
-                <div className={style["filter-category"]}>
-                  <Select
-                    options={options}
-                    onChange={(selectedOption) =>
-                      setFilterStatus(selectedOption.value)
-                    }
-                    defaultValue={options[0]}
-                  />
+                <div className={style['col-lg-6']}>
+                  <div className={style['filter-category']}>
+                              <Select options={options} onChange={(selectedOption) => setFilterStatus(selectedOption.value)}  defaultValue={options[0]} />
                 </div>
               </div>
             </div>
@@ -351,6 +328,7 @@ function EmployeeReservation() {
                       <h5>Mã phiếu đặt: {r.id}</h5>
                       <div
                         className={style["edit-reservation"]}
+                        title='Chỉnh sửa phiếu đặt'
                         onClick={() => setEditReservation(r)}
                       >
                         <AiOutlineEdit size={20} />
@@ -390,6 +368,7 @@ function EmployeeReservation() {
                       <div className={style["input-table-btn"]}>
                         <button
                           className={style["input-table-edit-btn"]}
+                          title={r.isEditing ? "Lưu bàn" : "Chỉnh sửa phiếu đặt"}
                           onClick={() =>
                             r.isEditing ? handleSave(r.id) : handleEdit(r.id)
                           }
@@ -398,6 +377,7 @@ function EmployeeReservation() {
                         </button>
                         <button
                           className={style["input-table-erase-btn"]}
+                          title={r.isEditing ? "Hủy chỉnh sửa" : "Xóa bàn"}
                           onClick={() =>
                             r.isEditing
                               ? handleCancelEdit(r.id)
@@ -415,6 +395,7 @@ function EmployeeReservation() {
                           " " +
                           style[r.status === "A" ? "" : "inactive-btn"]
                         }
+                        title='Xong'
                         onClick={() => {
                           if (r.status === "A") {
                             handleDoneReservation(r.id, r.table);
@@ -433,6 +414,7 @@ function EmployeeReservation() {
                               : "inactive-btn"
                           ]
                         }
+                        title='Hủy phiếu đặt'
                         onClick={() => {
                           if (r.status !== "D" && r.status !== "C") {
                             handleCancelReservation(r.id);

@@ -1,6 +1,8 @@
 .reservation-detail-container {
   margin-top: 40px;
   text-align: center;
+  margin-bottom: 40px;
+  min-height: calc(100vh - 700px);
 }
 
 .reservation-guest-name {
@@ -42,6 +44,36 @@
 
 .reservation-table tr:hover {
   background-color: #f1f1f1;
+}
+
+.no-reservation-container {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.no-reservation-message {
+  margin-top: 80px;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: "Comic Sans MS", cursive;
+  color: #806f1a;
+}
+
+.reserve-now-button {
+  background-color: #116169;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  opacity: 0.9;
+  font-size: 20px;
+}
+
+.reserve-now-button:hover {
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
 }
 
 .loading-overlay {

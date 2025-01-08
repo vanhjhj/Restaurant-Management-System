@@ -23,6 +23,7 @@
 }
 
 
+
 .ctn{
     position:fixed;
     top: 0;
@@ -60,8 +61,8 @@
   /* Tiêu đề của form */
   .booking-form-container h2 {
     text-align: center;
-    margin-bottom: 40px;
-    font-size: 46px;
+    margin-bottom: 30px;
+    font-size: 44px;
     font-family: "Playfair Display", serif;
     color: #a38900;
     text-transform: uppercase;
@@ -144,6 +145,7 @@
     resize: vertical;
     min-height: 80px;
     grid-column: span 2; /* Textarea chiếm 2 cột */
+
   }
   
   /* Hiệu ứng khi focus */
@@ -151,6 +153,23 @@
   .booking-form-container textarea:focus {
     outline: none;
     border-color: #1d6787;
+  }
+
+  .error-ctn{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    grid-column: span 2;
+    height: 20px;
+    margin-top:10px;
+  }
+  
+  .error-ctn .error{
+    color: red;
+  }
+  
+  .error-ctn p{
+    font-size: 18px;
   }
   
   /* Nút gửi form */
