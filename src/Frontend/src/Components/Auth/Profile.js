@@ -135,9 +135,31 @@ function Profile() {
     }
   };
 
+  const validatePhoneNumber = (phone) => {
+    if (phone.length === 0) {
+      return "Số điện thoại không được để trống.";
+    }
+    if (!/^[0-9]+$/.test(phone)) {
+      return "Số điện thoại chỉ được chứa chữ số.";
+    }
+    if (phone.length !== 10) {
+      return "Số điện thoại phải đủ 10 chữ số.";
+    }
+    if (!/^03/.test(phone)) {
+      return "Số điện thoại phải bắt đầu bằng số 03.";
+    }
+    return null; // Hợp lệ
+  };
+
   const handleSaveChanges = async () => {
     setIsSubmitting(true);
     try {
+      const phoneError = validatePhoneNumber(personalInfo.phone_number);
+      if (phoneError) {
+        setError(phoneError);
+        setIsSubmitting(false);
+        return;
+      }
       const activeToken = await ensureActiveToken();
       if (account_type === "Customer") {
         await ChangeInfoCus(
@@ -326,11 +348,6 @@ function Profile() {
                     </div>
 
                     <div className={style["info-form"]}>
-                      {error && (
-                        <p className={style["error-message"]}>
-                          {"Số Điện thoại không hợp lệ"}
-                        </p>
-                      )}
                       <label htmlFor="phone-number">Số Điện Thoại:</label>
                       <input
                         id="phone-number"
@@ -345,25 +362,28 @@ function Profile() {
                         }}
                         required
                       />
+                      {error && (
+                        <p className={style["error-message"]}>{error}</p>
+                      )}
                     </div>
+                    {account_type === "Employee" && (
+                      <div className={style["info-form"]}>
+                        <label htmlFor="address">Địa chỉ:</label>
+                        <input
+                          id="address"
+                          type="text"
+                          value={personalInfo.address}
+                          onChange={(e) => {
+                            setPersonalInfo({
+                              ...personalInfo,
+                              address: e.target.value,
+                            });
+                            if (error) setError("");
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-              {account_type === "Employee" && (
-                <div className={style["info-form"]}>
-                  <label htmlFor="address">Địa chỉ:</label>
-                  <input
-                    id="address"
-                    type="text"
-                    value={personalInfo.address}
-                    onChange={(e) => {
-                      setPersonalInfo({
-                        ...personalInfo,
-                        address: e.target.value,
-                      });
-                      if (error) setError("");
-                    }}
-                  />
                 </div>
               )}
 
