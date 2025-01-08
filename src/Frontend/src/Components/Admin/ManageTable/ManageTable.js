@@ -118,8 +118,8 @@ function ManageTable() {
   };
 
   const handleDeleteTable = async (id) => {
-    if(tables[id].status!=="A")
-    {
+    const table = tables.find((table) => table.id === id);
+    if (!table || table.status !== "A") {
       setModal({
         isOpen: true,
         text: "Bàn này đang trong quá trình phục vụ không thể xóa!",
@@ -127,6 +127,7 @@ function ManageTable() {
       });
       return;
     }
+
     setModal({
       isOpen: true,
       text: "Bạn có chắc chắn muốn xóa bàn này không?",
@@ -196,14 +197,14 @@ function ManageTable() {
                   h={64}
                   c={
                     table.status === "A"
-                      ? "green"
+                      ? "#000000"
                       : table.status === "D"
-                      ? "yellow"
+                      ? "#28A745"
                       : table.status === "S"
-                      ? "blue"
-                      : table.status === "RS"
-                      ? "gray"
-                      : "black"
+                      ? "#007BFF"
+                      : table.status === "R"
+                      ? "#FFC107"
+                      : "brown"
                   }
                 />
                 <p>Bàn số: {table.id}</p>
@@ -234,8 +235,8 @@ function ManageTable() {
                     ? "Chờ thanh toán"
                     : table.status === "S"
                     ? "Đang phục vụ"
-                    : table.status === "RS"
-                    ? "bàn được đặt trước"
+                    : table.status === "R"
+                    ? "Bàn được đặt trước"
                     : "Không xác định"}
                 </p>
                 <div className={style["table-actions"]}>
