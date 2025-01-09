@@ -108,11 +108,14 @@ function Review({ iID }) {
   };
 
   const fetchFilterData = async (p, d) => {
+    setLoading(true);
     try {
       const data = await getFeedBackFilter(p, d);
       setFeedbacks(data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,7 +152,16 @@ function Review({ iID }) {
   };
 
   return (
-    <div className={style["review-info-ctn"]}>
+    <div
+      className={`${style["review-info-ctn"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["container"]}>
         <div className={style["row"]}>
           <div className={style["review-title-ctn"] + " " + style["col-lg-12"]}>

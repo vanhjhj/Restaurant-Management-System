@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { GetInfoCus } from "../../../API/FixInfoAPI";
+import { GetInfoCus, GetEmailCus } from "../../../API/FixInfoAPI";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import style from "./BookingTable.module.css";
@@ -104,12 +104,13 @@ function BookingTable() {
     setIsLoading(true);
     try {
       const token = await ensureActiveToken();
-      const response = await GetInfoCus(UserID, token); // Lấy thông tin người dùng từ API
+      const responseIn4 = await GetInfoCus(UserID, token); // Lấy thông tin người dùng từ API
+      const responseEmail = await GetEmailCus(UserID, token); // Lấy email người dùng từ API
 
-      if (response) {
-        userPhone = response.phone_number;
-        userName = response.full_name;
-        userEmail = response.email;
+      if (responseIn4 && responseEmail) {
+        userPhone = responseIn4.phone_number;
+        userName = responseIn4.full_name;
+        userEmail = responseEmail.email;
 
         // Nếu người dùng có số điện thoại, tự động điền vào form
         if (userPhone) {
@@ -118,6 +119,7 @@ function BookingTable() {
             ...prevInfo,
             phone_number: userPhone,
             guest_name: userName,
+            email: userEmail,
           }));
 
           // Kiểm tra thông tin đặt bàn qua số điện thoại

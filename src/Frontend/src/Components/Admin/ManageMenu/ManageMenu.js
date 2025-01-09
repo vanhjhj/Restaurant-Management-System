@@ -4,6 +4,8 @@ import {
   getFoodItems,
   createNewMenuTab,
   deleteFoodItem,
+  deleteMenuTab,
+  updateMenuTab,
 } from "../../../API/MenuAPI";
 import style from "./ManageMenu.module.css";
 import { useNavigate } from "react-router-dom";
@@ -165,6 +167,99 @@ const ManageMenu = () => {
     }
   };
 
+  const [editCategoryModal, setEditCategoryModal] = useState({
+    isOpen: false,
+    category: null,
+  });
+
+  const handleEditCategoryClick = (category) => {
+    setEditCategoryModal({ isOpen: true, category });
+  };
+
+  const handleUpdateCategory = async (updatedName) => {
+    try {
+      const activeToken = await ensureActiveToken();
+      await updateMenuTab(
+        editCategoryModal.category.id,
+        { name: updatedName },
+        activeToken
+      );
+
+      setEditCategoryModal({ isOpen: false, category: null });
+
+      // Cập nhật danh sách danh mục và chọn lại mục đó sau khi sửa
+      const updatedCategories = await getMenuTabs();
+      setCategories(updatedCategories);
+
+      // Giữ mục đã sửa được chọn
+      setSelectedCategory(editCategoryModal.category.id);
+
+      setModal({
+        isOpen: true,
+        text: "Chỉnh sửa mục thành công!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Lỗi khi chỉnh sửa mục:", error);
+      setModal({
+        isOpen: true,
+        text: "Chỉnh sửa mục thất bại. Vui lòng thử lại!",
+        type: "error",
+      });
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    // Kiểm tra xem danh mục có món ăn nào không
+    const foodInCategory = foodItems.filter((item) => item.category === id);
+
+    if (foodInCategory.length > 0) {
+      setModal({
+        isOpen: true,
+        text: "Danh mục này không thể xóa vì vẫn còn món ăn.",
+        type: "error",
+      });
+      return;
+    }
+
+    setModal({
+      isOpen: true,
+      text: "Bạn có chắc chắn muốn xóa danh mục này không?",
+      type: "confirm",
+      onConfirm: async () => {
+        setModal({ isOpen: false }); // Đóng modal xác nhận
+        try {
+          const activeToken = await ensureActiveToken();
+          await deleteMenuTab(id, activeToken); // Gọi API để xóa danh mục
+
+          // Cập nhật danh sách danh mục sau khi xóa
+          const updatedCategories = await getMenuTabs();
+          setCategories(updatedCategories);
+
+          // Chọn mục đầu tiên trong danh sách sau khi xóa
+          if (updatedCategories.length > 0) {
+            setSelectedCategory(updatedCategories[0].id);
+          }
+
+          // Hiển thị thông báo thành công
+          setModal({
+            isOpen: true,
+            text: "Xóa danh mục thành công",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Lỗi khi xóa danh mục:", error);
+          // Hiển thị thông báo lỗi
+          setModal({
+            isOpen: true,
+            text: "Có lỗi xảy ra khi xóa danh mục. Vui lòng thử lại.",
+            type: "error",
+          });
+        }
+      },
+    });
+  };
+
   const handleAddFoodClick = () => {
     if (categories.length === 0) {
       setModal({
@@ -200,15 +295,39 @@ const ManageMenu = () => {
         </button>
         {categories.length > 0 ? (
           categories.map((category) => (
-            <button
-              key={category.id}
-              className={`${style["menu-tab"]} ${
-                selectedCategory === category.id ? style["active"] : ""
-              }`}
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              {category.name}
-            </button>
+            <div key={category.id} className={style["menu-tab-container"]}>
+              <button
+                className={`${style["menu-tab"]} ${
+                  selectedCategory === category.id ? style["active"] : ""
+                }`}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                {category.name}
+              </button>
+
+              {selectedCategory === category.id && (
+                <div className={style["category-buttons"]}>
+                  <div className={style["tooltip-container"]}>
+                    <button
+                      className={style["edit-category-button"]}
+                      onClick={() => handleEditCategoryClick(category)}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <span className={style["tooltip"]}>Chỉnh sửa</span>
+                  </div>
+                  <div className={style["tooltip-container"]}>
+                    <button
+                      className={style["delete-category-button"]}
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                    <span className={style["tooltip"]}>Xóa</span>
+                  </div>
+                </div>
+              )}
+            </div>
           ))
         ) : (
           <p className={style["no-menutab-message"]}>
@@ -278,6 +397,42 @@ const ManageMenu = () => {
           onClose={() => setModal({ isOpen: false })}
           onConfirm={modal.onConfirm}
         />
+      )}
+
+      {editCategoryModal.isOpen && (
+        <div className={style["modal-overlay"]}>
+          <div className={style["modal-content"]}>
+            <h3>Chỉnh sửa mục</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const updatedName = e.target.categoryName.value;
+                handleUpdateCategory(updatedName);
+              }}
+            >
+              <input
+                type="text"
+                name="categoryName"
+                defaultValue={editCategoryModal.category.name}
+                required
+              />
+              <div>
+                <button className={style["save-button"]} type="submit">
+                  Lưu
+                </button>
+                <button
+                  className={style["cancel-button"]}
+                  type="button"
+                  onClick={() =>
+                    setEditCategoryModal({ isOpen: false, category: null })
+                  }
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {showNewCategoryForm && (
