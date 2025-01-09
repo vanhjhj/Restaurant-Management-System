@@ -18,6 +18,7 @@ python-dotenv = "*"
 whitenoise = "*"
 django-storages = "*"
 boto3 = "*"
+django = "*"
 
 [dev-packages]
 
