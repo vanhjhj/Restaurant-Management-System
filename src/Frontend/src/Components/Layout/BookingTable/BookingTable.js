@@ -68,8 +68,10 @@ function BookingTable() {
   }, []);
 
   useEffect(() => {
-    checkLoginStatus(); // Kiểm tra trạng thái đăng nhập
-  }, []);
+    if (islogin) {
+      checkLoginStatus();
+    }
+  }, [islogin]);
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
@@ -86,10 +88,10 @@ function BookingTable() {
   const ensureActiveToken = async () => {
     const refresh = localStorage.getItem("refreshToken");
     if (!refresh || isTokenExpired(refresh)) {
-                  navigate('/', { replace: true });
-                  window.location.reload();
-                  throw 'Phiên đăng nhập hết hạn';
-                }
+      navigate("/", { replace: true });
+      window.location.reload();
+      throw "Phiên đăng nhập hết hạn";
+    }
     let activeToken = localStorage.getItem("accessToken");
 
     if (isTokenExpired(activeToken)) {
