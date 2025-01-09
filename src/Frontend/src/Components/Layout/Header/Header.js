@@ -146,7 +146,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                         location.pathname === "/review" ? style.active : ""
                       }
                     >
-                      Đánh giá
+                      Đánh Giá
                     </Link>
                   </li>
                   <li>
