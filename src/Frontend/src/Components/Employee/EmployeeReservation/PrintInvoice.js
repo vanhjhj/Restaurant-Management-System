@@ -66,7 +66,29 @@ function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setIsPrintInvo
     `);
 
     printWindow.document.close(); // Đóng tài liệu mới
-    printWindow.print(); // Kích hoạt lệnh in
+    // Đợi tất cả hình ảnh trong tài liệu được tải
+    const images = printWindow.document.querySelectorAll("img");
+    let imagesLoaded = 0;
+
+    images.forEach((img) => {
+      img.onload = () => {
+        imagesLoaded++;
+        if (imagesLoaded === images.length) {
+          printWindow.print(); // Chỉ in khi tất cả hình ảnh được tải
+        }
+      };
+      img.onerror = () => {
+        console.error("Không thể tải hình ảnh:", img.src);
+        imagesLoaded++;
+        if (imagesLoaded === images.length) {
+          printWindow.print();
+        }
+      };
+    });
+
+    if (images.length === 0) {
+      printWindow.print(); // Nếu không có ảnh, in ngay lập tức
+    }
   };
 
   const handlePay = async () => {
