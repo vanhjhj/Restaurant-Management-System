@@ -10,6 +10,10 @@
   composes: col-lg-12 from "../../../Style/bootstrap.min.css";
 }
 
+.point-input{
+  cursor: pointer;
+}
+
 .ctn {
   position: fixed;
   top: 0;

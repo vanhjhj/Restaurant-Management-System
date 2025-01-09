@@ -174,11 +174,12 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
                       className={
                         style["my-row"] +
                         " " +
-                        style[handleDisable(item) ? "row-inactive" : ""]
+                        style[handleDisable(item) ? "row-inactive" : ""] + ' ' +style['point-input']
                       }
                       key={item.code}
+                      onClick={() => {if(!handleDisable(item)){handleAddPromotion(item) } }}
                     >
-                      <ul>
+                      <ul >
                         <li className={style["my-col-1"]}>{item.code}</li>
                         <li className={style["my-col-2"]}>{item.title}</li>
                         <li className={style["my-col-3"]}>{item.type}</li>
