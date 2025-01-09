@@ -69,9 +69,9 @@ function Invoice({ tableID, setShowInvoice }) {
       maximumFractionDigits: 0,
     })
       .format(number)
-      .replace(/,/g, " ");
+      .replace(/,/g, ".");
 
-    return <p>{formattedNumber} .VNĐ</p>;
+    return <p>{formattedNumber} VND</p>;
   };
 
   const handlePriceMin = (value) => {
@@ -635,7 +635,9 @@ function Invoice({ tableID, setShowInvoice }) {
                         <div className={style["menu-item"]}>
                           <img src={item.image} alt={item.name} />
                           <h3>{item.name}</h3>
-                          <p>{item.price} .VND</p>
+                          <NumberWithSpaces
+                        number={item.price}
+                      ></NumberWithSpaces>
                           <button
                             onClick={() =>
                               handleAddFood(invoiceData.id, item.id)
