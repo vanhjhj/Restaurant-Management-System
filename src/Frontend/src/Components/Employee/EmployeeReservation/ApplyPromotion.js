@@ -9,8 +9,10 @@ import {
   addPromotionToInvoice,
   checkPhoneNumber,
 } from "../../../API/EE_ReservationAPI";
+import { useNavigate } from "react-router-dom";
 
 function ApplyPromotion({ setShow, setInvoice, invoice }) {
+  const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
   const [promotionData, setPromotionData] = useState([{ isSelected: false }]);
   const [choosenPromotion, setChoosenPromotion] = useState({ code: null });
@@ -19,8 +21,14 @@ function ApplyPromotion({ setShow, setInvoice, invoice }) {
   const [successMessage, setSuccessMessage] = useState();
   const [phoneNum, setPhoneNum] = useState();
   const ensureActiveToken = async () => {
-    let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';
+            }
+    let activeToken = accessToken;
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;

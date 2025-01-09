@@ -33,6 +33,12 @@ function AddPromotion() {
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
+    const refresh = localStorage.getItem('refreshToken');
+            if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
     if (isTokenExpired(accessToken)) {
       try {
         const refreshed = await refreshToken(

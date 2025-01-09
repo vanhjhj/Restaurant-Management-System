@@ -40,12 +40,15 @@ function ViewSalesReports() {
   const chartRef = useRef(null);
 
   const ensureActiveToken = async () => {
+
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
       try {
         const refresh = localStorage.getItem("refreshToken");
-        if (!refresh) {
-          throw new Error("Không tìm thấy refreshToken.");
+        if (!refresh || isTokenExpired(refresh)) {
+          navigate('/', { replace: true });
+          window.location.reload();
+          throw 'Phiên đăng nhập hết hạn';
         }
         const refreshed = await refreshToken(refresh);
         activeToken = refreshed.access;

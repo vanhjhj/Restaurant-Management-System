@@ -13,6 +13,11 @@ function FillInfoEmployee() {
   const ensureActiveTokenAdmin = async () => {
     let activeTokenAdmin = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+        if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed1 = await refreshToken(refresh);
       activeTokenAdmin = refreshed1.access;
@@ -48,6 +53,11 @@ function FillInfoEmployee() {
     useState(token_employee);
   // Đảm bảo token hợp lệ
   const ensureActiveToken = async () => {
+    if (!refresh_employee || isTokenExpired(refresh_employee)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';
+            }
     let activeToken = accessTokenEmployee;
     if (!accessTokenEmployee || isTokenExpired(accessTokenEmployee)) {
       const refreshed = await refreshToken(refresh_employee);

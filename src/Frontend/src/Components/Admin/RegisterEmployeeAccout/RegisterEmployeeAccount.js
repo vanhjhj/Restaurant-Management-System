@@ -58,9 +58,15 @@ function RegisterEmployeeAccount() {
   }, []);
 
   const ensureActiveToken = async () => {
+    const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';;
+            }
     let activeToken = accessToken;
     if (isTokenExpired(accessToken)) {
-      const refresh = localStorage.getItem("refreshToken");
+
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;
       setAccessToken(activeToken);
