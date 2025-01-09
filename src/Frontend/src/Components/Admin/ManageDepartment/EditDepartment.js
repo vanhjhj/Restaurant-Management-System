@@ -28,12 +28,12 @@ function EditDepartment() {
   // Đảm bảo token hợp lệ
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
-    const refresh = localStorage.getItem('refreshToken');
-        if (!refresh || isTokenExpired(refresh)) {
-              navigate('/', { replace: true });
-              window.location.reload();
-              throw 'Phiên đăng nhập hết hạn';
-            }
+    const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+      navigate("/", { replace: true });
+      window.location.reload();
+      throw "Phiên đăng nhập hết hạn";
+    }
     if (isTokenExpired(accessToken)) {
       try {
         const refreshed = await refreshToken(
@@ -153,11 +153,12 @@ function EditDepartment() {
           id="salary"
           name="salary"
           className={style["salary-input"]}
-          value={new Intl.NumberFormat("vi-VN").format(department.salary)}
-          onChange={(e) => {
-            const rawValue = e.target.value.replace(/[^\d]/g, ""); // Xóa ký tự không phải số
-            setDepartment({ ...department, salary: rawValue });
-          }}
+          value={department.salary}
+          onChange={handleInputChange}
+          placeholder="Lương"
+          min={0}
+          max={999999999}
+          required
         />
         <div className={style["button-container"]}>
           <button

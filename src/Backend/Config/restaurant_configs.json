@@ -10,9 +10,11 @@
         "youtube": "Restaurant Youtube",
         "chatbox": "https://m.me/555556954303917"
     },
-    "onweek_openhour": "10:00",
+    "onweek_openhour": "10:30",
     "onweek_closehour": "22:00",
     "weekend_openhour": "8:00",
     "weekend_closehour": "23:30",
-    "QR": "https://intro2se.s3.ap-southeast-1.amazonaws.com/media/restaurant-config/QRcode.jpg.jpg"
+    "QR": [
+        "https://intro2se.s3.ap-southeast-1.amazonaws.com/media/restaurant-config/QRcode.jpg.jpg"
+    ]
 }
