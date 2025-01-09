@@ -190,7 +190,8 @@ function EmployeeReservation() {
         setInputTable({ id: null, value: "" });
         setErrorMessage();
       } catch (error) {
-        console.error(error);
+        setErrorPos(id);
+        setErrorMessage("Lỗi: Bàn trên không tồn tại hoặc không thể gán.");
       }
     };
     assignTable();
@@ -204,7 +205,8 @@ function EmployeeReservation() {
       fetchData();
       setInputTable({ id: null, value: "" });
     } catch (error) {
-      console.error(error);
+      setErrorPos(id);
+      setErrorMessage("Lỗi: Không tìm thấy bàn để xóa.");
     }
   };
 
@@ -218,7 +220,8 @@ function EmployeeReservation() {
       setInputTable({ id: null, value: "" });
       setErrorMessage();
     } catch (error) {
-      console.error(error);
+      setErrorPos(id);
+      setErrorMessage("Lỗi: Không tìm thấy phiếu đặt.");
     }
   };
 
@@ -231,7 +234,8 @@ function EmployeeReservation() {
       setInputTable({ id: null, value: "" });
       setErrorMessage();
     } catch (error) {
-      console.error(error);
+      setErrorPos(id);
+      setErrorMessage("Lỗi: Không tìm thấy phiếu đặt.");
     }
   };
 
