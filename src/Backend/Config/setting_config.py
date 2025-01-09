@@ -76,7 +76,7 @@ class RestaurantSettings:
 
         # Tạo đường dẫn lưu trữ
         file_extension = os.path.splitext(file.name)[1].lower()
-        storage_path = f'{settings.AWS_MEDIA_LOCATION}/{path_prefix}/{file.name}{file_extension}'
+        storage_path = f'{path_prefix}/{file.name}{file_extension}'
         
         # Upload file
         storage_path = self._storage.save(storage_path, file)
