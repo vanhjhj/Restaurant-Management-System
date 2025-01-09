@@ -1,43 +1,122 @@
-// src/Components/About.js
-import React from 'react';
-import './About.css';
+import React, { useState, useEffect } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import "./About.css";
 
-function About() {
-    return (
-        <section className="about-sec" id="about">
-            <div className="text-content">
-            <h2>Thương Hiệu</h2>
-                <p>Với hơn 10 năm kinh nghiệm và tọa lạc tại vị trí đắc địa nhất nhì Sài Gòn, chúng tôi tự tin sẽ đem đến cho bạn trải nghiệm tuyệt vời nhất.
+const About = () => {
+  useEffect(() => {
+    const header = document.querySelector("header");
+    if (header) {
+      header.classList.add("header-over-banner");
+    }
 
-                    Phương châm của chúng tôi: Tất cả vì khách hàng.
+    return () => {
+      if (header) {
+        header.classList.remove("header-over-banner");
+      }
+    };
+  }, []);
 
-                    Từ chính mong muốn của khách hàng là được thưởng thức các món ăn trong một không gian thoải mái, lịch sự, sang trọng và ấm cúng, được trải nghiệm những món ăn đặc sản chính thống của Thái với mức giá hợp lý nhất.
+  const imageCount = 41;
+  const images = Array.from({ length: imageCount }, (_, index) => {
+    return `${process.env.PUBLIC_URL}/assets/images/Restaurant/${
+      index + 1
+    }.jpg`;
+  });
 
-                    Sự diễn tả rõ nét ẩm thực Thái Lan thể hiện từ cách trình bày độc đáo các món ăn đến hương vị của từng món.</p>
-                
-                {/* Thông tin địa chỉ có liên kết đến Google Maps */}
-                <div className="location-info">
-                    <img src="/assets/images/locationicon.jpg" alt="location icon" />
-                    <a 
-                        href="https://www.google.com/maps/place/Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc+Khoa+h%E1%BB%8Dc+T%E1%BB%B1+nhi%C3%AAn,+%C4%90HQG-HCM,+C%C6%A1+s%E1%BB%9F+Linh+Trung./@10.8756514,106.796595,17z/data=!3m1!4b1!4m6!3m5!1s0x3174d8a1768e1d03:0x38d3ea53e0581ae0!8m2!3d10.8756461!4d106.7991699!16s%2Fg%2F1tj5hn2m?hl=vi-VN&entry=ttu&g_ep=EgoyMDI0MTEwNi4wIKXMDSoASAFQAw%3D%3D"
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                    >
-                        Địa chỉ: Citrus Royale Restaurant
-                    </a>
-                </div>
+  const overviewImages = images.slice(0, 20);
+  const foodImages = images.slice(20, 41);
 
-                <div className="contact-info">
-                    <img src="/assets/images/phoneicon.jpg" alt="phone icon" />
-                    <span>Liên hệ: 0123456789</span>
-                </div>
-            </div>
-            
-            <div className="image-content">
-                <img src="/assets/images/nhahang.jpg" alt="Restaurant" />
-            </div>
-        </section>
-    );
-}
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+  const [loading, setLoading] = useState(true);
+
+  const getActiveImages = () => {
+    if (activeTab === "overview") return overviewImages;
+    if (activeTab === "food") return foodImages;
+    return images;
+  };
+
+  // Chuyển đổi mảng ảnh thành định dạng slides cho lightbox
+  const getSlides = () => {
+    return getActiveImages().map((src) => ({ src }));
+  };
+
+  const handleImageLoad = () => {
+    const imageElements = document.querySelectorAll(".gallery-thumbnail");
+    if (imageElements.length === getActiveImages().length) {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="about-container">
+      <div className="about-banner">
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/images/Restaurant/Banner.jpg`}
+          alt="About Us Banner"
+          className="banner-image"
+        />
+      </div>
+
+      <div className="gallery-section">
+        <h1>ABOUT US</h1>
+        <div className="gallery-tabs">
+          <button
+            className={`tab ${activeTab === "all" ? "active" : ""}`}
+            onClick={() => setActiveTab("all")}
+          >
+            All photos & videos
+          </button>
+          <button
+            className={`tab ${activeTab === "overview" ? "active" : ""}`}
+            onClick={() => setActiveTab("overview")}
+          >
+            Overviews
+          </button>
+          <button
+            className={`tab ${activeTab === "food" ? "active" : ""}`}
+            onClick={() => setActiveTab("food")}
+          >
+            Food
+          </button>
+        </div>
+
+        {loading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
+
+        <div className="gallery-grid">
+          {getActiveImages().map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Gallery Image ${index + 1}`}
+              className="gallery-thumbnail"
+              onLoad={handleImageLoad} // Đảm bảo gọi handleImageLoad khi ảnh được tải
+              onClick={() => {
+                setPhotoIndex(index);
+                setIsOpen(true);
+              }}
+            />
+          ))}
+        </div>
+
+        <Lightbox
+          open={isOpen}
+          close={() => setIsOpen(false)}
+          slides={getSlides()}
+          index={photoIndex}
+          on={{
+            view: ({ index }) => setPhotoIndex(index),
+          }}
+        />
+      </div>
+    </div>
+  );
+};
 
 export default About;

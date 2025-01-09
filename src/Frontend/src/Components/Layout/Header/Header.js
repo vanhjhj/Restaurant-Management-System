@@ -1,5 +1,5 @@
 // src/components/Header.js
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import style from "./Header.module.css";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,8 +8,12 @@ import { refreshToken, logout } from "../../../API/authAPI";
 import { useAuth } from "../../Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useNavigate } from "react-router-dom";
+import { RestaurantContext } from "../../../Config/RestaurantContext";
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
+  const { restaurantInfo, loading, error, setRestaurantInfo } =
+    useContext(RestaurantContext);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null); // Tham chiếu đến dropdown menu
   const { accessToken, setAccessToken } = useAuth();
@@ -40,7 +44,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
     }
     try {
       const activeToken = await ensureActiveToken();
-      console.log(accessToken);
       // Gọi API logout
       await logout(refreshTokenValue, activeToken);
 
@@ -79,6 +82,10 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
     };
   }, []);
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!restaurantInfo) return <p>No restaurant info available.</p>; // Xử lý nếu dữ liệu trống
+
   return (
     <header className={style["site-header"]}>
       <div className={style["container"]}>
@@ -86,7 +93,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
           <div className={style["col-lg-2"]}>
             <div className={style["header-logo"]}>
               <Link to="/" className={style["logo-text"]}>
-                Citrus Royale
+                {restaurantInfo.name}
               </Link>
             </div>
           </div>
@@ -126,6 +133,17 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       Đặt Bàn
                     </Link>
                   </li>
+                  
+                  <li>
+                    <Link
+                      to="/review"
+                      className={
+                        location.pathname === "/review" ? style.active : ""
+                      }
+                    >
+                      Đánh giá
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       to="/promotion"
@@ -140,36 +158,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                   </li>
 
                   {/* Điều kiện hiển thị các trang dựa trên userRole */}
-                  {userRole === "Admin" && (
-                    <li>
-                      <Link
-                        to="/admin-dashboard"
-                        className={
-                          location.pathname.startsWith("/admin-dashboard")
-                            ? style.active
-                            : ""
-                        }
-                      >
-                        Quản Trị
-                      </Link>
-                    </li>
-                  )}
-                  {userRole === "Employee" && (
-                    <>
-                      <li>
-                        <Link
-                          to="/employee-dashboard"
-                          className={
-                            location.pathname.startsWith("/employee-dashboard")
-                              ? style.active
-                              : ""
-                          }
-                        >
-                          Trang Nhân Viên
-                        </Link>
-                      </li>
-                    </>
-                  )}
+
                   {userRole === "Customer" && (
                     <li>
                       <Link to="/"></Link>
@@ -185,23 +174,61 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                         <div className={style["user-dropdown"]}>
                           <ul className={style["dropdown-list"]}>
                             {/* Show only the Logout option for admin */}
-                            {userRole === "admin" ? (
-                              <li>
-                                <button onClick={handleLogoutBtn}>
-                                  Đăng xuất
-                                </button>
+                            {userRole === "Admin" ? (
+                              <>            
+                                <li>
+                                  <Link
+                                    to="/employee-dashboard"
+                                  >
+                                    Trang Nhân Viên
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    to="/admin-dashboard/manage-restaurant-info"
+                                  >
+                                    Quản Trị
+                                  </Link>
+                                </li>
+                                <li>
+                                  {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
+                                  <Link to="/profile">Thông tin cá nhân</Link>
+                                </li>
+                                <li>
+                                <div className={style["logout-section"]}>
+                                    <button
+                                      onClick={handleLogoutBtn}
+                                      className={style["logout-button"]}
+                                    >
+                                      Đăng xuất
+                                  </button>
+                                </div>
                               </li>
+                              </>
+                              
                             ) : userRole === "Employee" ? (
-                              <>
+                                <>
+                                  <li>
+                                  <Link
+                                    to="/employee-dashboard"
+                                  >
+                                    Trang Nhân Viên
+                                  </Link>
+                                </li>
                                 <li>
                                   {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
                                   <Link to="/profile">Thông tin cá nhân</Link>
                                 </li>
                                 <li>
                                   {" "}
-                                  <button onClick={handleLogoutBtn}>
-                                    Đăng xuất
-                                  </button>
+                                  <div className={style["logout-section"]}>
+                                    <button
+                                      onClick={handleLogoutBtn}
+                                      className={style["logout-button"]}
+                                    >
+                                      Đăng xuất
+                                    </button>
+                                  </div>
                                 </li>
                               </>
                             ) : (
@@ -244,7 +271,7 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                       </li>
                       <li>
                         <Link to="/signup" className={style["signup-btn"]}>
-                          Đăng ký
+                          Đăng Ký
                         </Link>
                       </li>
                     </div>

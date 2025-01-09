@@ -25,13 +25,12 @@ import AddPromotion from "./Components/Admin/ManagePromotion/AddPromotion";
 import EditPromotion from "./Components/Admin/ManagePromotion/EditPromotion";
 import RegisterEmployeeAccount from "./Components/Admin/RegisterEmployeeAccout/RegisterEmployeeAccount";
 import ViewSalesReports from "./Components/Admin/ViewSalesReports/ViewSalesReports";
-import ManageRestaurantInfo from "./Components/Admin/ManagerRestaurantInfo/ManageRestaurantInfo";
+import ManageRestaurantInfo from "./Components/Admin/ManageRestaurantInfo/ManageRestaurantInfo";
 import ReservationHistory from "./Components/Customer/ReservationHistory";
-import AddDepartment from "./Components/Admin/ManagerDepartment/AddDepartment";
-import EditDepartment from "./Components/Admin/ManagerDepartment/EditDepartment";
+import AddDepartment from "./Components/Admin/ManageDepartment/AddDepartment";
+import EditDepartment from "./Components/Admin/ManageDepartment/EditDepartment";
 import FillInfoEmployee from "./Components/Admin/RegisterEmployeeAccout/FillInfoEmployee";
-import ManageDepartment from "./Components/Admin/ManagerDepartment/ManageDepartment";
-import EmployeeDashboard from "./Components/Employee/EmployeeDashboard/EmployeeDashboard";
+import ManageDepartment from "./Components/Admin/ManageDepartment/ManageDepartment";
 import ScrollToTop from "./Style/scrollToTop";
 import "./App.css";
 import { isTokenExpired } from "./utils/tokenHelper.mjs";
@@ -40,10 +39,13 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "./Components/Auth/AuthContext";
 import EmployeeReservation from "./Components/Employee/EmployeeReservation/EmployeeReservation";
 import ManageTable from "./Components/Admin/ManageTable/ManageTable";
-import AddTable from "./Components/Admin/ManageTable/AddTable";
-import EditTable from "./Components/Admin/ManageTable/EditTable";
 import AdminLayout from "./Components/Admin/AdminLayout";
 import VerifyOtpAccount from "./Components/Admin/RegisterEmployeeAccout/VerifyOtpAccount";
+import Review from "./Components/Customer/Review";
+import Rating from "./Components/Customer/Rating";
+import SnowEffect from "./Components/UI/SnowEffect";
+import HotlineIcon from "./Components/UI/HotLineIcon";
+import { RestaurantProvider } from "./Config/RestaurantContext";
 
 library.add(faEye, faEyeSlash);
 
@@ -79,327 +81,299 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-        <Routes>
-          {/* Trang công khai */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/:id" element={<FoodDetail />} />
-          <Route
-            path="/reservation"
-            element={<BookingTable isLoggedIn={isLoggedIn} />}
-          />
-          <Route path="/promotion" element={<Promotion />} />
-          <Route path="/promotion/:code" element={<PromotionDetail />} />
+      <RestaurantProvider>
+        <Router>
+          <ScrollToTop />
+          <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+          <SnowEffect />
+          <HotlineIcon />
+          <Routes>
+            {/* Trang công khai */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/menu/:id" element={<FoodDetail />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/review/:invoice" element={<Rating />} />
+            <Route
+              path="/reservation"
+              element={<BookingTable isLoggedIn={isLoggedIn} />}
+            />
+            <Route path="/promotion" element={<Promotion />} />
+            <Route path="/promotion/:code" element={<PromotionDetail />} />
 
-          {/* Đăng nhập và đăng ký */}
-          <Route
-            path="/login"
-            element={
-              <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />
-            }
-          />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/verify-otp" element={<VerifyOTP />} />
-          <Route path="/forgotpassword" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+            {/* Đăng nhập và đăng ký */}
+            <Route
+              path="/login"
+              element={
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserRole={setUserRole}
+                />
+              }
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/verify-otp" element={<VerifyOTP />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Trang khách hàng */}
-          <Route
-            path="/reservation-history"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Customer"]}
-                userRole={userRole}
-              >
-                <ReservationHistory />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Customer", "Admin", "Employee"]}
-                userRole={userRole}
-              >
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Trang admin */}
-          <Route
-            path="/admin-dashboard"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Admin"]}
-                userRole={userRole}
-              >
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
+            {/* Trang khách hàng */}
             <Route
-              path="manage-restaurant-info"
+              path="/reservation-history"
               element={
                 <ProtectedRoute
                   isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
+                  allowedRoles={["Customer"]}
                   userRole={userRole}
                 >
-                  <ManageRestaurantInfo />
+                  <ReservationHistory />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="manage-employees"
+              path="/profile"
               element={
                 <ProtectedRoute
                   isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
+                  allowedRoles={["Customer", "Admin", "Employee"]}
                   userRole={userRole}
                 >
-                  <ManageEmployees />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="manage-menu"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <ManageMenu />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="add-food"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddFoodItem />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="edit-fooditem/:id"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditFoodItem />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="manage-promotions"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <ManagePromotions />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="add-promotion"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddPromotion />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="edit-promotion/:code"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditPromotion />
+                  <Profile />
                 </ProtectedRoute>
               }
             />
 
+            {/* Trang admin */}
             <Route
-              path="fill-info-Emp"
+              path="/admin-dashboard"
               element={
                 <ProtectedRoute
                   isLoggedIn={isLoggedIn}
                   allowedRoles={["Admin"]}
                   userRole={userRole}
                 >
-                  <FillInfoEmployee />
+                  <AdminLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route
+                path="manage-restaurant-info"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ManageRestaurantInfo />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="manage-employees"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ManageEmployees />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="manage-menu"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ManageMenu />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="add-food"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <AddFoodItem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="edit-fooditem/:id"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <EditFoodItem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="manage-promotions"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ManagePromotions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="add-promotion"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <AddPromotion />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="edit-promotion/:code"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <EditPromotion />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="verify-otp-employee"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <VerifyOtpAccount />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="fill-info-Emp"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <FillInfoEmployee />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="register-employee-account"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <RegisterEmployeeAccount />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="view-sales-reports"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <ViewSalesReports />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="verify-otp-employee"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <VerifyOtpAccount />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="manage-department"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <ManageDepartment />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="register-employee-account"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <RegisterEmployeeAccount />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="view-sales-reports"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ViewSalesReports />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="add-department"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddDepartment />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="manage-department"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ManageDepartment />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="edit-department/:id"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditDepartment />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="add-department"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <AddDepartment />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="manage-table"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <ManageTable />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="edit-department/:id"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <EditDepartment />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="add-table"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <AddTable />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="edit-table/:id"
-              element={
-                <ProtectedRoute
-                  isLoggedIn={isLoggedIn}
-                  allowedRoles={["Admin"]}
-                  userRole={userRole}
-                >
-                  <EditTable />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
+              <Route
+                path="manage-table"
+                element={
+                  <ProtectedRoute
+                    isLoggedIn={isLoggedIn}
+                    allowedRoles={["Admin"]}
+                    userRole={userRole}
+                  >
+                    <ManageTable />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
 
-          {/* Trang nhân viên */}
-          <Route
-            path="/employee-dashboard"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Employee"]}
-                userRole={userRole}
-              >
-                <EmployeeDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/table"
-            element={
-              <ProtectedRoute
-                isLoggedIn={isLoggedIn}
-                allowedRoles={["Employee", "Admin"]}
-                userRole={userRole}
-              >
-                <EmployeeReservation />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-        <Footer />
-      </Router>
+            {/* Trang nhân viên */}
+            <Route
+              path="/employee-dashboard"
+              element={
+                <ProtectedRoute
+                  isLoggedIn={isLoggedIn}
+                  allowedRoles={["Employee", "Admin"]}
+                  userRole={userRole}
+                >
+                  <EmployeeReservation />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+          <Footer />
+        </Router>
+      </RestaurantProvider>
     </AuthProvider>
   );
 }

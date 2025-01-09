@@ -9,21 +9,34 @@ function Promotion() {
   const [promotions, setPromotions] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadPromotions = async () => {
+      setLoading(true);
       try {
         const data = await fetchValidPromotions();
         setPromotions(data);
       } catch (err) {
         setError(err);
+      } finally {
+        setLoading(false);
       }
     };
     loadPromotions();
   }, []);
 
   return (
-    <div className={style["promotions-container"]}>
+    <div
+      className={`${style["promotions-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["content"]}>
         <div className={style["title-row"]}>
           <h1>Khuyến mãi</h1>
@@ -41,7 +54,7 @@ function Promotion() {
               {error.response ? error.response.data : error.message}
             </p>
           </div>
-        ) : promotions.length === 0 ? (
+        ) : !loading && promotions.length === 0 ? (
           <div className={style["no-promotions-message"]}>
             <p>Oops...Hiện tại chưa có khuyến mãi!</p>
           </div>

@@ -6,11 +6,15 @@ import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { useAuth } from "../../../Components/Auth/AuthContext";
 import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { faEdit, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 function ManagePromotions() {
   const [Promotions, setPromotions] = useState([]);
   const navigate = useNavigate();
   const { accessToken, setAccessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     text: "",
@@ -29,7 +33,6 @@ function ManagePromotions() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -38,11 +41,14 @@ function ManagePromotions() {
 
   useEffect(() => {
     async function getPromotions() {
+      setLoading(true);
       try {
         const data = await fetchPromotions();
         setPromotions(data);
       } catch (error) {
         console.error("Error fetching promotions:", error);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -93,8 +99,25 @@ function ManagePromotions() {
   };
 
   return (
-    <div className={style["manage-Promotions"]}>
-      <h2>Quản lý ưu đãi</h2>
+    <div
+      className={`${style["manage-Promotions"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
+      <h2>QUẢN LÝ ƯU ĐÃI</h2>
+      <div className={style["button-container"]}>
+        <button
+          onClick={handleAddDiscount}
+          className={style["add-discount-button"]}
+        >
+          Tạo ưu đãi mới <FontAwesomeIcon icon={faPlus} />
+        </button>
+      </div>
       {/* Kiểm tra nếu không có ưu đãi */}
       {Promotions.length === 0 ? (
         <div className={style["no-promotions"]}>
@@ -109,35 +132,31 @@ function ManagePromotions() {
                 alt={discount.title}
                 className={style["discount-image"]}
               />
-              <h3 className={style["discount-title"]}>{discount.title}</h3>
-              <p className={style["discount-description"]}>
-                {discount.description}
-              </p>
+              <h3 className={style["discount-code"]}>{discount.code}</h3>
               <div className={style["button-group"]}>
-                <button
-                  onClick={() => handleEdit(discount.code)}
-                  className={style["edit-button"]}
-                >
-                  Chỉnh sửa
-                </button>
-                <button
-                  onClick={() => handleDelete(discount.code)}
-                  className={style["delete-button"]}
-                >
-                  Xóa
-                </button>
+                <div className={style["tooltip-container"]}>
+                  <button
+                    onClick={() => handleEdit(discount.code)}
+                    className={style["edit-button"]}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                  <span className={style["tooltip"]}>Chỉnh sửa</span>
+                </div>
+                <div className={style["tooltip-container"]}>
+                  <button
+                    onClick={() => handleDelete(discount.code)}
+                    className={style["delete-button"]}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                  <span className={style["tooltip"]}>Xóa</span>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
-
-      <button
-        onClick={handleAddDiscount}
-        className={style["add-discount-button"]}
-      >
-        Tạo ưu đãi mới +
-      </button>
 
       {modal.isOpen && (
         <ModalGeneral

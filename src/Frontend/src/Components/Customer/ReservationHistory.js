@@ -13,6 +13,7 @@ function ReservationHistory() {
   const { accessToken, setAccessToken } = useAuth();
   const navigate = useNavigate();
   const id = localStorage.getItem("userId");
+  const [loading, setLoading] = useState(false);
 
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
@@ -39,6 +40,7 @@ function ReservationHistory() {
         navigate("/login");
         return;
       }
+      setLoading(true);
 
       try {
         const activeToken = await ensureActiveToken();
@@ -51,11 +53,12 @@ function ReservationHistory() {
           activeToken,
           customerData.phone_number
         );
-        console.log("Fetched Reservation Data:", data);
         setReservationData(data);
       } catch (error) {
         console.error("Error fetching reservations:", error.message);
         setError(error.message || "Failed to fetch reservations");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -76,7 +79,16 @@ function ReservationHistory() {
   };
 
   return (
-    <div className={style["reservation-detail-container"]}>
+    <div
+      className={`${style["reservation-detail-container"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {reservationData.length > 0 ? (

@@ -55,12 +55,41 @@ export const createNewMenuTab = async (category, accessToken) => {
   }
 };
 
+export const deleteMenuTab = async (id, accessToken) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/menu/categories/${id}/`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  } catch (error) {
+    console.error("Lỗi khi xóa mục món ăn:", error.message);
+    throw error;
+  }
+};
+
+export const updateMenuTab = async (id, category, accessToken) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/menu/categories/${id}/`,
+      category,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi sửa mục món ăn:", error.message);
+    throw error;
+  }
+};
+
 export const deleteFoodItem = async (id, accessToken) => {
   try {
     await axios.delete(`${API_BASE_URL}/menu/menuitems/${id}/`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    console.log("Xóa ưu đãi thành công");
   } catch (error) {
     console.error("Lỗi khi xóa món ăn:", error.message);
     throw error;
@@ -100,7 +129,6 @@ export const updateFoodItem = async (id, menuitem, accessToken) => {
       }
     );
 
-    console.log("Cập nhật thành công:", response.data);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật món ăn:", error.message);

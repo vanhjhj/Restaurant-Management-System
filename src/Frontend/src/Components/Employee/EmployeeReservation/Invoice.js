@@ -13,6 +13,9 @@ import {
   updateItemStatus,
 } from "../../../API/EE_ReservationAPI";
 import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
+import ApplyPromotion from "./ApplyPromotion";
+import PrintInvoice from "./PrintInvoice";
+import { fetchPromotionByCode } from "../../../API/PromotionAPI";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -37,11 +40,12 @@ function Invoice({ tableID, setShowInvoice }) {
   const [searchTab, setSearchTab] = useState(0);
   const [errorTableMessage, setErrorTableMessage] = useState();
   const [errorType, setErrorType] = useState();
+  const [ems, setEms] = useState();
+  const [isShowPromotion, setIsShowPromotion] = useState(false);
+  const [isPrintInvoice, setIsPrintInvoice] = useState(false);
+  const [promotion, setPromotion] = useState();
 
   const handleError = (error, type) => {
-    if (error === 404) {
-      return "Không tìm thấy hóa đơn";
-    }
     if (error === 400) {
       if (type === "addItem") {
         return "Không tìm thấy hóa đơn";
@@ -49,16 +53,18 @@ function Invoice({ tableID, setShowInvoice }) {
       if (type === "editItem") {
         return "Chỉnh sửa không hợp lệ";
       }
+      if (type === "delete") {
+        return "Không thể xóa";
+      }
     }
     return "";
   };
-
   const errorMessage = handleError(errorTableMessage, errorType);
 
   const NumberWithSpaces = ({ number }) => {
     const formattedNumber = new Intl.NumberFormat("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     })
       .format(number)
       .replace(/,/g, " ");
@@ -123,8 +129,8 @@ function Invoice({ tableID, setShowInvoice }) {
     }
   };
   const fetchData = async () => {
-    const activeToken = await ensureActiveToken();
     try {
+      const activeToken = await ensureActiveToken();
       const orderData = await fetchOrderData(activeToken, tableID);
       setInvoiceData(orderData);
 
@@ -136,10 +142,29 @@ function Invoice({ tableID, setShowInvoice }) {
           changeQuantity: false,
         }))
       );
+      if (orderData.promotion) {
+        const tempPromotion = await fetchPromotionByCode(orderData.promotion);
+        setPromotion(tempPromotion);
+      }
     } catch (error) {
       setErrorTableMessage(error.response.status);
     }
   };
+
+  const fetchPromotion = async () => {
+    try {
+      if (invoiceData.promotion) {
+        const tempPromotion = await fetchPromotionByCode(invoiceData.promotion);
+        setPromotion(tempPromotion);
+      }
+    } catch (error) {
+      setErrorTableMessage(error.response.status);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromotion();
+  }, [isShowPromotion]);
 
   useEffect(() => {
     fetchData();
@@ -151,7 +176,7 @@ function Invoice({ tableID, setShowInvoice }) {
     try {
       if (errorTableMessage === 404) {
         await createOrder(activeToken, tableID);
-        setErrorTableMessage(0);
+
         const orderData = await fetchOrderData(activeToken, tableID);
         setInvoiceData(orderData);
 
@@ -165,10 +190,15 @@ function Invoice({ tableID, setShowInvoice }) {
             changeQuantity: false,
           }))
         );
+
+        const newData = await fetchOrderData(activeToken, tableID);
+        setInvoiceData(newData);
       } else {
         const tablesData = await addFood(activeToken, oID, fID, 1, "");
         fetchData();
       }
+      setErrorTableMessage();
+      setErrorType();
     } catch (error) {
       setErrorTableMessage(error.response.status);
       setErrorType("addItem");
@@ -183,14 +213,17 @@ function Invoice({ tableID, setShowInvoice }) {
   };
 
   const handleErase = async (itemID, fID) => {
-    const activeToken = await ensureActiveToken();
     try {
+      const activeToken = await ensureActiveToken();
       const result = await removeItem(activeToken, itemID);
       setItemsData((preItem) => preItem.filter((i) => i.id !== itemID));
       const orderData = await fetchOrderData(activeToken, tableID);
       setInvoiceData(orderData);
+      setErrorTableMessage();
+      setErrorType();
     } catch (error) {
       setErrorTableMessage(error.response.status);
+      setErrorType("delete");
     }
   };
 
@@ -228,6 +261,8 @@ function Invoice({ tableID, setShowInvoice }) {
       change === "quantity" ? setQuantity(0) : setNoteData("");
       const orderData = await fetchOrderData(activeToken, tableID);
       setInvoiceData(orderData);
+      setErrorTableMessage();
+      setErrorType();
     } catch (error) {
       setErrorTableMessage(error.response.status);
       setErrorType("editItem");
@@ -253,6 +288,19 @@ function Invoice({ tableID, setShowInvoice }) {
         setErrorTableMessage("Mất kết nối");
       }
     }
+  };
+
+  const handleInvoice = () => {
+    if (itemsData.some((i) => i.status === "P")) {
+      setEms("Không thể xuất hóa đơn do còn món ăn chưa phục vụ");
+      return;
+    }
+    else if (itemsData.length === 0) {
+      setEms('Không thể xuất hóa đơn do chưa có món ăn');
+      return;
+    }
+    setEms();
+    setIsPrintInvoice(true);
   };
 
   return (
@@ -287,10 +335,10 @@ function Invoice({ tableID, setShowInvoice }) {
                       className={style["my-row"] + " " + style["my-title-row"]}
                     >
                       <ul>
-                        <li>Tên món ăn</li>
-                        <li>Số lượng</li>
-                        <li>Trạng thái</li>
-                        <li>Tổng tiền</li>
+                        <li className={style["my-food-col-1"]}>Tên món ăn</li>
+                        <li className={style["my-food-col-2"]}>Số lượng</li>
+                        <li className={style["my-food-col-3"]}>Trạng thái</li>
+                        <li className={style["my-food-col-4"]}>Tổng tiền</li>
                       </ul>
                     </div>
                     {itemsData.map((item) => (
@@ -312,10 +360,17 @@ function Invoice({ tableID, setShowInvoice }) {
                           }
                         >
                           <ul>
-                            <li>{item.menu_item_details.name}</li>
+                            <li className={style["my-food-col-1"]}>
+                              {item.menu_item_details.name}
+                            </li>
                             {!item.changeQuantity ? (
                               <li
-                                className={style["change-quantity"]}
+                                className={
+                                  style["change-quantity"] +
+                                  " " +
+                                  style["my-food-col-2"]
+                                }
+                                title="Nhấn vào để thay đổi số lượng"
                                 onClick={() =>
                                   handleEditingQuantity(item.quantity, item.id)
                                 }
@@ -323,7 +378,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                 {item.quantity}
                               </li>
                             ) : (
-                              <li>
+                              <li className={style["my-food-col-2"]}>
                                 <div className={style["quantity-input-ctn"]}>
                                   <label className={style["quantity-label"]}>
                                     <input
@@ -365,12 +420,21 @@ function Invoice({ tableID, setShowInvoice }) {
                               </li>
                             )}
                             <li
-                              className={style["change-status"]}
+                              className={
+                                style["change-status"] +
+                                " " +
+                                style["my-food-col-3"]
+                              }
+                              title="Nhấn vào để đánh dấu món ăn đã được phục vụ"
                               onClick={() => handleChangeStatus(item.id)}
                             >
                               {item.status}
                             </li>
-                            <li>{item.total}.VND</li>
+                            <li className={style["my-food-col-4"]}>
+                              <NumberWithSpaces
+                                number={item.total}
+                              ></NumberWithSpaces>
+                            </li>
                           </ul>
                           <div className={style["more-content"]}>
                             <p className={style["mc-title"]}>Note: </p>
@@ -413,7 +477,7 @@ function Invoice({ tableID, setShowInvoice }) {
                                     : handleEditing(item.id, item.note)
                                 }
                               >
-                                {item.isEditing ? "Lưu" : "Chỉnh sửa"}
+                                {item.isEditing ? "Lưu" : "Chỉnh sửa ghi chú"}
                               </button>
                               <button
                                 className={style["erase-btn"]}
@@ -428,6 +492,29 @@ function Invoice({ tableID, setShowInvoice }) {
                     ))}
                   </div>
                 </div>
+                <div>
+                                <h4>Khuyến mãi</h4>
+                                <div className={style["promotion-table"]}>
+                                  <div
+                                    className={style["my-row"] + " " + style["my-title-row"]}
+                                  >
+                                    <ul>
+                                      <li className={style["my-col-1"]}>Mã KH</li>
+                                      <li className={style["my-col-2"]}>Tên khuyến mãi</li>
+                                      <li className={style["my-col-3"]}>Giảm giá (%)</li>
+                                    </ul>
+                                  </div>
+                                  {promotion && (
+                                    <div className={style["my-row"]}>
+                                      <ul>
+                                        <li className={style["my-col-1"]}>{promotion.code}</li>
+                                        <li className={style["my-col-2"]}>{promotion.title}</li>
+                                        <li className={style["my-col-3"]}>{promotion.discount}</li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
                 <div className={style["total-money-ctn"]}>
                   <div className={style["width-50"]}>
                     <div className={style["money-format"]}>
@@ -454,10 +541,40 @@ function Invoice({ tableID, setShowInvoice }) {
                     </div>
                   </div>
                 </div>
-                <div className={style["btn-ctn"]}>
-                  <button className={style["edit-btn"]}>Thêm ưu đãi</button>
-                  <button className={style["edit-btn"]}>Xuất hóa đơn</button>
+                <div className={style["error-ctn"]}>
+                  {ems ? <p className={style["error"]}>{ems}</p> : <p></p>}
                 </div>
+                <div className={style["btn-ctn"]}>
+                  <button
+                    className={style["edit-btn"]}
+                    onClick={() => setIsShowPromotion(true)}
+                  >
+                    Thêm ưu đãi
+                  </button>
+                  <button
+                    className={style["edit-btn"]}
+                    onClick={() => handleInvoice(true)}
+                  >
+                    Xuất hóa đơn
+                  </button>
+                </div>
+                {isShowPromotion && (
+                  <ApplyPromotion
+                    setShow={setIsShowPromotion}
+                    setInvoice={setInvoiceData}
+                    invoice={invoiceData}
+                  ></ApplyPromotion>
+                )}
+                {isPrintInvoice && (
+                  <PrintInvoice
+                    setIsPrintInvoice={setShowInvoice}
+                    setShow={setIsPrintInvoice}
+                    foodData={itemsData}
+                    invoiceData={invoiceData}
+                    pID={invoiceData.promotion}
+                    iID={invoiceData.id}
+                  ></PrintInvoice>
+                )}
               </div>
             </div>
             <div className={style["col-lg-6"]}>
@@ -489,7 +606,7 @@ function Invoice({ tableID, setShowInvoice }) {
                         value={searchTab}
                         onChange={(e) => setSearchTab(e.target.value)}
                       >
-                        <option value={0}>All</option>
+                        <option value={0}>Tất cả</option>
                         {menuTabs.map((item) => (
                           <option value={item.id} key={item.id}>
                             {item.name}

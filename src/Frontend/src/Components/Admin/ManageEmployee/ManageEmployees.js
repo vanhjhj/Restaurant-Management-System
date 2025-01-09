@@ -36,7 +36,6 @@ function ManageEmployees() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -50,7 +49,6 @@ function ManageEmployees() {
     try {
       const activeToken = await ensureActiveToken();
       const data = await getEmployee(activeToken);
-      console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
       if (Array.isArray(data)) {
         setEmployee(data);
       } else {
@@ -95,16 +93,24 @@ function ManageEmployees() {
     });
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   // Tự động tải danh sách nhân viên khi component được render
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
+      setLoading(true);
       try {
         const activeToken = await ensureActiveToken();
         const data = await getEmployee(activeToken, {
           signal: controller.signal,
         });
-        console.log("Dữ liệu trả về từ API:", data); // Log kiểm tra dữ liệu
         if (Array.isArray(data)) {
           setEmployee(data);
         } else {
@@ -125,7 +131,16 @@ function ManageEmployees() {
   }, [accessToken]);
 
   return (
-    <div className={style["manage-employees"]}>
+    <div
+      className={`${style["manage-employees"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
+        </div>
+      )}
       <div className={style["header"]}>
         <h2>Quản lý nhân viên</h2>
       </div>
@@ -133,7 +148,7 @@ function ManageEmployees() {
       {loading ? (
         <p>Đang tải dữ liệu...</p>
       ) : employees.length === 0 ? (
-        <div>
+        <div className={style["no-employee"]}>
           <p>Hiện tại chưa có nhân viên nào!</p>
           <div className={style["button-container"]}>
             <button
@@ -147,41 +162,7 @@ function ManageEmployees() {
           </div>
         </div>
       ) : (
-        <>
-          <table className={style["employee-table"]}>
-            <thead>
-              <tr>
-                <th>STT</th>
-                <th>Tên nhân viên</th>
-                <th>Ngày sinh</th>
-                <th>Số điện thoại</th>
-                <th>Địa chỉ</th>
-                <th>Ngày bắt đầu làm việc</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map((emps, id) => (
-                <tr key={emps.account_id}>
-                  <td>{id + 1}</td>
-                  <td>{emps.full_name}</td>
-                  <td>{emps.date_of_birth}</td>
-                  <td>{emps.phone_number}</td>
-                  <td>{emps.address}</td>
-                  <td>{emps.start_working_date}</td>
-                  <td>
-                    <button
-                      className={style["delete-button"]}
-                      onClick={() => handleDeleteEmployee(emps.account_id)}
-                    >
-                      Xóa <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
+        <div className={style["employee-table-container"]}>
           <div className={style["button-container"]}>
             <button
               className={style["manage-employee-button"]}
@@ -192,7 +173,43 @@ function ManageEmployees() {
               Thêm nhân viên mới <FontAwesomeIcon icon={faPlus} />
             </button>
           </div>
-        </>
+          <table className={style["employee-table"]}>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên nhân viên</th>
+                <th>Ngày sinh</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Ngày bắt đầu</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((emps, id) => (
+                <tr key={emps.account_id}>
+                  <td>{id + 1}</td>
+                  <td>{emps.full_name}</td>
+                  <td>{formatDate(emps.date_of_birth)}</td>
+                  <td>{emps.phone_number}</td>
+                  <td>{emps.address}</td>
+                  <td>{formatDate(emps.start_working_date)}</td>
+                  <td>
+                    <div className={style["tooltip-container"]}>
+                      <button
+                        className={style["delete-button"]}
+                        onClick={() => handleDeleteEmployee(emps.account_id)}
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                      <span className={style["tooltip"]}>Xóa</span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
       {modal.isOpen && (
         <ModalGeneral

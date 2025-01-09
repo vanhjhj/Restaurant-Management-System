@@ -1,82 +1,143 @@
 .edit-promotion {
-  max-width: 800px;
-  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 30px auto;
   padding: 30px;
-  border-radius: 8px;
+  max-width: 1000px;
+  background-color: #fff;
+  border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 8px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .edit-promotion h2 {
   text-align: center;
-  font-size: 35px;
-  font-weight: 600;
-  color: #333;
+  font-size: 42px;
+  font-weight: bold;
+  color: #514f00;
   margin-bottom: 30px;
+  letter-spacing: 1px;
 }
 
 .edit-promotion form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.edit-promotion .form-group {
-  flex: 1 1 calc(50% - 20px);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.edit-promotion .form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 8px;
-  margin-top: 6px;
-}
-
-.edit-promotion .form-group input,
-.edit-promotion .form-group select {
-  height: 50px;
-  padding: 0 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  gap: 40px;
   width: 100%;
   box-sizing: border-box;
-  margin-top: 5px;
 }
 
-.edit-promotion .form-group textarea {
-  width: 100%;
-  height: 150px;
-  resize: vertical;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.edit-promotion .image-preview {
-  display: flex;
-  flex-direction: column;
+.edit-promotion .left-side {
+  flex: 0 1 30%;
+  font-size: 18px;
   align-items: center;
 }
 
-.edit-promotion .current-image {
-  max-width: 150px;
+.edit-promotion .middle-side {
+  flex: 0 1 40%;
+}
+
+.edit-promotion .right-side {
+  flex: 0 1 30%;
+}
+
+.edit-promotion .form-group {
   width: 100%;
+}
+
+.edit-promotion .form-group label {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.edit-promotion .form-group input,
+.edit-promotion .form-group select,
+.edit-promotion .form-group textarea {
+  width: 100%;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+}
+
+.edit-promotion .form-group select {
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+
+.edit-promotion .form-group .description-textarea {
+  height: 180px;
+}
+
+.edit-promotion .form-group .title-textarea {
+  height: 70px;
+}
+
+.edit-promotion .image-upload-button {
+  padding: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f8f5f5;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.edit-promotion .image-upload-button:hover {
+  transform: translateY(-2px);
+}
+
+.edit-promotion .form-img img {
+  width: 100%;
+  max-width: 400px;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgb(255, 255, 255);
   object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-promotion .form-img p.placeholder {
+  font-size: 18px;
+  color: #aaa;
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 0;
+}
+
+.edit-promotion .form-img .instructions {
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.edit-promotion .button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.edit-promotion .submit-button,
+.edit-promotion .cancel-button {
+  flex: 1;
+  max-width: 200px;
+  text-align: center;
 }
 
 .edit-promotion .submit-button {
+  display: block;
+  margin: 30px 0 20px auto;
   padding: 14px;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
   color: white;
   background-color: #116169;
@@ -84,10 +145,6 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 20px;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
 }
 
 .edit-promotion .submit-button:hover {
@@ -95,12 +152,52 @@
   transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-  .form-group {
-    flex: 1 1 100%;
-  }
+.edit-promotion .cancel-button {
+  display: block;
+  margin: 30px 0 20px auto;
+  padding: 14px;
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(141, 137, 137);
+  background-color: d3d3d3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-  .submit-button {
-    font-size: 14px;
+.edit-promotion .cancel-button:hover {
+  background-color: #b3b3b3;
+  transform: translateY(-2px);
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

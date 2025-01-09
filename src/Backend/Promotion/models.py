@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from Restaurant.custom_storage import MediaStorage
 
 # Create your models here.
 def validate_discount(value):
@@ -13,7 +14,7 @@ class Promotion(models.Model):
     enddate=models.DateField()
     min_order = models.IntegerField() #min order to apply promotion
     description = models.TextField()
-    image = models.ImageField(upload_to='promotion_img/')
+    image = models.ImageField(storage=MediaStorage(), upload_to='promotion_img/')
     discount = models.IntegerField(validators=[validate_discount])
     type = models.CharField(max_length=10, choices=[('KMTV', 'Khuyen mai thanh vien'), ('KMT', 'Khuyen mai thuong')])
     

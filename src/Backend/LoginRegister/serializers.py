@@ -80,6 +80,9 @@ class EmployeeAccountSerializer(serializers.ModelSerializer):
         elif attrs.get('date_of_birth'):
             date_of_birth = attrs['date_of_birth']
             start_working_date = self.instance.start_working_date
+        else:
+            date_of_birth = self.instance.date_of_birth
+            start_working_date = self.instance.start_working_date
 
         if start_working_date and date_of_birth and start_working_date < date_of_birth:
             raise serializers.ValidationError({'start_working_date': 'Start working date must be after date of birth'})

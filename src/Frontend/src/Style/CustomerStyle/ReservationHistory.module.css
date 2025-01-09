@@ -1,6 +1,8 @@
 .reservation-detail-container {
   margin-top: 40px;
   text-align: center;
+  margin-bottom: 40px;
+  min-height: calc(100vh - 700px);
 }
 
 .reservation-guest-name {
@@ -42,4 +44,65 @@
 
 .reservation-table tr:hover {
   background-color: #f1f1f1;
+}
+
+.no-reservation-container {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.no-reservation-message {
+  margin-top: 80px;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: "Comic Sans MS", cursive;
+  color: #806f1a;
+}
+
+.reserve-now-button {
+  background-color: #116169;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  opacity: 0.9;
+  font-size: 20px;
+}
+
+.reserve-now-button:hover {
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

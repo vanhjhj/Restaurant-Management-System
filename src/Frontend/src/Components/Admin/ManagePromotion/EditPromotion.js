@@ -19,8 +19,8 @@ function EditPromotion() {
     discount: 0,
     startdate: "",
     enddate: "",
-    type: "KMTV", // Loại ưu đãi, mặc định là "KMTV"
-    min_order: 0, // Thêm trường min_order
+    type: "",
+    min_order: 0,
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -33,9 +33,11 @@ function EditPromotion() {
     type: "", // "confirm" hoặc "success"
     onConfirm: null, // Hàm được gọi khi xác nhận
   });
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     async function getPromotion() {
+      setLoading(true);
       try {
         const data = await fetchPromotionByCode(code);
         if (data) {
@@ -45,6 +47,8 @@ function EditPromotion() {
       } catch (error) {
         console.error("Error fetching promotion:", error);
         setError("Không thể tải dữ liệu ưu đãi.");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -64,7 +68,6 @@ function EditPromotion() {
         setAccessToken(activeToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login"); // Điều hướng đến login nếu refresh thất bại
         throw error;
       }
     }
@@ -72,11 +75,59 @@ function EditPromotion() {
   };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setPromotion((prevPromotion) => ({
-      ...prevPromotion,
-      [name]: files ? files[0] : value, // Nếu có file, lấy file, không thì lấy giá trị input
-    }));
+    const { name, files } = e.target;
+
+    if (name === "image" && files.length > 0) {
+      const file = files[0];
+
+      const allowedExtensions = /(\.jpg|\.png)$/i;
+      if (!allowedExtensions.exec(file.name)) {
+        setError("Chỉ chấp nhận file ảnh với định dạng jpg và png.");
+        return;
+      }
+      setError("");
+
+      const maxSize = 2 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setError("Ảnh quá lớn. Vui lòng chọn ảnh dưới 2MB.");
+        return;
+      }
+      setError("");
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result;
+
+        img.onload = () => {
+          const width = img.width;
+          const height = img.height;
+
+          const aspectRatio = width / height;
+
+          if (aspectRatio < 0.5 || aspectRatio > 2) {
+            setError(
+              "Ảnh phải có tỷ lệ chiều rộng/chiều cao trong khoảng 1:2 và 2:1."
+            );
+            return;
+          }
+
+          setError("");
+          setPreviewImage(reader.result);
+        };
+      };
+      reader.readAsDataURL(file);
+
+      setPromotion((prevPromotion) => ({
+        ...prevPromotion,
+        image: file,
+      }));
+    } else if (name !== "image") {
+      setPromotion((prevPromotion) => ({
+        ...prevPromotion,
+        [name]: e.target.value,
+      }));
+    }
   };
 
   const handleCloseModal = () => {
@@ -152,10 +203,8 @@ function EditPromotion() {
         isOpen: true,
         text: "Cập nhật ưu đãi thành công!",
         type: "success",
+        onConfirm: handleCloseModal,
       });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 15000);
     } catch (error) {
       console.error("Lỗi khi cập nhật ưu đãi:", error.message);
       setError("Đã có lỗi xảy ra, vui lòng thử lại.");
@@ -165,120 +214,174 @@ function EditPromotion() {
   };
 
   return (
-    <div className={style["edit-promotion"]}>
-      <h2>Chỉnh sửa ưu đãi</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className={style["form-group"]}>
-          <label htmlFor="type">Loại ưu đãi</label>
-          <select name="type" value={promotion.type} onChange={handleChange}>
-            <option value="KMTV">Khuyến mãi thành viên</option>
-            <option value="KMT">Khuyến mãi thường</option>
-          </select>
+    <div
+      className={`${style["edit-promotion"]} ${
+        loading ? style["loading"] : ""
+      }`}
+    >
+      {loading && (
+        <div className={style["loading-overlay"]}>
+          <div className={style["spinner"]}></div>
         </div>
-        <div className={style["form-group"]}>
-          <label htmlFor="title">Tiêu đề</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={promotion.title}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="startdate">Ngày bắt đầu</label>
-          <input
-            type="date"
-            id="startdate"
-            name="startdate"
-            value={promotion.startdate}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="enddate">Ngày kết thúc</label>
-          <input
-            type="date"
-            id="enddate"
-            name="enddate"
-            value={promotion.enddate}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="discount">Giảm giá(%)</label>
-          <input
-            type="number"
-            id="discount"
-            name="discount"
-            value={promotion.discount}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="min_order">Tổng tiền tối thiểu</label>
-          <input
-            type="number"
-            id="min_order"
-            name="min_order"
-            value={promotion.min_order}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={`${style["form-group"]} ${style.description}`}>
-          <label htmlFor="description">Mô tả</label>
-          <textarea
-            id="description"
-            name="description"
-            value={promotion.description}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className={style["form-group"]}>
-          <label htmlFor="image">Hình ảnh</label>
-          <div className={style["image-preview"]}>
-            {promotion.image && !(promotion.image instanceof File) && (
-              <>
-                <p>Hình ảnh cũ:</p>
-                <img
-                  src={promotion.image}
-                  alt="Current promotion"
-                  className={style["current-image"]}
-                />
-              </>
-            )}
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleChange}
-            />
-          </div>
-          <p style={{ fontSize: "12px", color: "#888" }}>
-            Chọn tệp hình ảnh mới để thay đổi.
-          </p>
-        </div>
-
-        <button type="submit" className={style["submit-button"]}>
-          Cập nhật ưu đãi
-        </button>
-      </form>
-      {modal.isOpen && (
-        <ModalGeneral
-          isOpen={modal.isOpen}
-          text={modal.text}
-          type={modal.type}
-          onClose={handleCloseModal}
-          onConfirm={modal.onConfirm}
-        />
       )}
+      <h2>THÊM ƯU ĐÃI MỚI</h2>
+      <div className={style["edit-promotion-container"]}>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className={style["left-side"]}>
+            <div className={style["form-img"]}>
+              {previewImage ? (
+                <img src={previewImage} alt="Preview" />
+              ) : promotion.image ? (
+                <img src={promotion.image} alt="Preview" />
+              ) : null}
+
+              {!previewImage && promotion.image && (
+                <p className={style["placeholder"]}>Ảnh cũ</p>
+              )}
+
+              <label htmlFor="image" className={style["image-upload-button"]}>
+                Chọn ảnh mới
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  style={{ display: "none" }}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <p className={style["instructions"]}>
+                Dung lượng file tối đa 2MB <br />
+                Định dạng: JPEG, PNG <br />
+                Nên sử dụng hình ảnh có tỉ lệ 1:1 <br />
+                Ảnh cần có tỉ lệ kích thước chiều rộng và chiều cao không quá
+                1:2 và không nhỏ hơn 2:1
+              </p>
+            </div>
+          </div>
+          <div className={style["middle-side"]}>
+            <div className={style["form-group"]}>
+              <label htmlFor="code">Mã ưu đãi</label>
+              <input
+                type="text"
+                id="code"
+                name="code"
+                value={promotion.code}
+                onChange={handleChange}
+                placeholder="Nhập mã ưu đãi"
+              />
+            </div>
+            <div className={style["form-group"]}>
+              <label htmlFor="title">Tiêu đề</label>
+              <textarea
+                className={style["title-textarea"]}
+                id="title"
+                name="title"
+                value={promotion.title}
+                onChange={handleChange}
+                placeholder="Nhập tiêu đề"
+              />
+            </div>
+            <div className={style["form-group"]}>
+              <label htmlFor="description">Mô tả</label>
+              <textarea
+                className={style["description-textarea"]}
+                id="description"
+                name="description"
+                value={promotion.description}
+                onChange={handleChange}
+                placeholder="Nhập mô tả"
+              />
+            </div>
+            <div className={style["form-group"]}>
+              <label htmlFor="type">Loại ưu đãi</label>
+              <select
+                name="type"
+                value={promotion.type}
+                onChange={handleChange}
+              >
+                <option value="">Chọn ưu đãi</option>
+                <option value="KMTV">Khuyến mãi thành viên</option>
+                <option value="KMT">Khuyến mãi thường</option>
+              </select>
+            </div>
+          </div>
+          <div className={style["right-side"]}>
+            <div className={style["form-group"]}>
+              <label htmlFor="discount">Giảm giá (%)</label>
+              <input
+                type="number"
+                id="discount"
+                name="discount"
+                value={promotion.discount}
+                onChange={handleChange}
+                placeholder="Nhập tỷ lệ giảm giá (0-100)"
+                min={1}
+                max={100}
+              />
+            </div>
+
+            <div className={style["form-group"]}>
+              <label htmlFor="min_order">
+                Tổng tiền tối thiểu để được áp dụng ưu đãi
+              </label>
+              <input
+                type="number"
+                id="min_order"
+                name="min_order"
+                value={promotion.min_order}
+                onChange={handleChange}
+                placeholder="Nhập tổng tiền tối thiểu"
+                min={0}
+              />
+            </div>
+
+            <div className={style["form-group"]}>
+              <label htmlFor="startdate">Ngày bắt đầu</label>
+              <input
+                type="date"
+                id="startdate"
+                name="startdate"
+                value={promotion.startdate}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={style["form-group"]}>
+              <label htmlFor="enddate">Ngày kết thúc</label>
+              <input
+                type="date"
+                id="enddate"
+                name="enddate"
+                value={promotion.enddate}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={style["button-container"]}>
+              <button className={style["submit-button"]} type="submit">
+                Cập nhật
+              </button>
+              <button
+                className={style["cancel-button"]}
+                onClick={() => navigate("/admin-dashboard/manage-promotions")}
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        </form>
+        {modal.isOpen && (
+          <ModalGeneral
+            isOpen={modal.isOpen}
+            text={modal.text}
+            type={modal.type}
+            onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
+            onConfirm={modal.onConfirm}
+          />
+        )}
+      </div>
     </div>
   );
 }

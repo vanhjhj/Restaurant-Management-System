@@ -19,7 +19,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ('id', 'guest_name', 'phone_number', 'date', 'time',
+        fields = ('id', 'guest_name', 'phone_number', 'email', 'date', 'time',
                   'number_of_guests', 'note', 'status', 'table')
 
     def to_representation(self, instance):
@@ -60,11 +60,13 @@ class ReservationAssignTableSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all())
+    promotion = serializers.PrimaryKeyRelatedField(
+        queryset=Promotion.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Order
         fields = ('id', 'datetime', 'total_price', 'total_discount',
-                  'final_price', 'status', 'table')
+                  'final_price', 'status', 'table', 'promotion')
         extra_kwargs = {
             'datetime': {'read_only': True},
             'total_price': {'read_only': True},
@@ -103,7 +105,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Feedback
-        fields = ('id', 'order', 'serve_point', 'food_point', 'price_point', 'space_point', 'overall_point', 'comment')
+        fields = ('id', 'order', 'name', 'date', 'serve_point', 'food_point', 'price_point', 'space_point', 'overall_point', 'comment')
         extra_kwargs = {
             'order': {'read_only': True},
             'overall_point': {'read_only': True}

@@ -66,10 +66,8 @@ function ResetPassword() {
                 isOpen: true,
                 text: "Mật khẩu đã được đặt lại thành công!",
                 type: "success",
+                onConfirm: handleCloseModal
               });
-              setTimeout(() => {
-                handleCloseModal();
-            }, 15000);
         } catch (err) {
             setError('Mật Khẩu Không hợp lệ');
         }
@@ -133,7 +131,7 @@ function ResetPassword() {
                     isOpen={modal.isOpen} 
                     text={modal.text} 
                     type={modal.type} 
-                    onClose={handleCloseModal} 
+                    onClose={modal.onConfirm || (() => setModal({ isOpen: false }))}
                     onConfirm={modal.onConfirm}
                 />
             )}

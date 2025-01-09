@@ -1,22 +1,35 @@
 /* Container tổng */
-.manage-department-container {
+.manage-department {
+  margin-top: 30px;
+  font-size: 20px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.department-table-content {
   margin: 100px auto 0 auto;
   max-width: 1200px;
   padding: 20px;
   border-radius: 8px;
-  margin-top: 20px;
+  margin-top: 5px;
   margin-bottom: flex;
 }
-
 /* Tiêu đề */
 .manage-department-header {
+  font-weight: bold;
+  font-size: 42px;
+  color: #514f00;
   text-align: center;
-  font-size: 40px;
-  font-weight: 700;
   letter-spacing: 1px;
-  color: #333;
-  margin-bottom: 50px;
   text-transform: uppercase;
+}
+
+.manage-department .no-department {
+  text-align: left;
+  margin-top: 20px;
+  font-size: 22px;
+  color: #000000;
+  font-style: italic;
+  padding: 15px;
 }
 
 /* Bảng */
@@ -45,64 +58,61 @@
 /* Nút hành động */
 .department-table .edit-button,
 .department-table .delete-button {
-  width: 80px;
+  width: 40px;
   justify-content: center;
   gap: 4px;
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: bold;
+  padding: 8px 2px;
+  font-size: 18px;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .department-table .edit-button {
-  background-color: #ffcc80;
-  color: white;
+  background-color: #fff;
+  color: #116169;
+  margin-right: 0;
 }
 
 .department-table .edit-button:hover {
-  background-color: #ebbb71;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .department-table .delete-button {
-  background-color: #ef9a9a;
-  color: white;
+  background-color: #ffff;
+  color: #f44336;
 }
 
 .department-table .delete-button:hover {
-  background-color: #e57b7b;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 /* Nút thêm bộ phận */
-.button-container {
+.manage-department .button-container {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+  gap: 10px;
+  padding: 20px;
 }
 
 .manage-department-button {
-  padding: 12px 24px;
-  font-size: 18px;
-  font-weight: bold;
+  display: block;
+  padding: 7px 10px;
+  background-color: #116169;
   color: white;
-  background-color: #155e58;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .manage-department-button:hover {
-  background-color: #176e67;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background-color: #1e7f8b;
+  transform: translateY(-2px);
 }
 
 /* Icon */
@@ -110,4 +120,63 @@
   margin-left: 6px;
   font-size: 18px;
   vertical-align: middle;
+}
+
+.manage-department .tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.manage-department .tooltip {
+  visibility: hidden;
+  background-color: black;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  border-radius: 4px;
+  position: absolute;
+  bottom: 125%; /* Hiển thị phía trên */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.manage-department .tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
