@@ -54,7 +54,7 @@ class CheckAccountExistsAPIView(generics.CreateAPIView):
                 'status': 'not_exists',
                 'message': 'Phone number does not exist'
             }
-            return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
         except NumberParseException:
             return Response({'phone_number': 'Invalid phone number'}, status=status.HTTP_400_BAD_REQUEST)

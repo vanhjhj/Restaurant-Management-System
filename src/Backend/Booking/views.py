@@ -451,6 +451,13 @@ class OrderListCreateAPIView(generics.ListCreateAPIView):
 
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
+
+            # check if table is already have a reservation, it mean this table is now reserved, update status of reservation to done
+            if Reservation.objects.filter(table= serializer.validated_data['table'], status='A').exists():
+                reservation = Reservation.objects.get(table= serializer.validated_data['table'], status='A')
+                reservation.status = 'D'
+                reservation.save()
+
             serializer.save()
 
             response = {
