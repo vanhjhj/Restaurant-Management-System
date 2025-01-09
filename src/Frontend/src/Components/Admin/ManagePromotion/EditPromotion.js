@@ -276,6 +276,7 @@ function EditPromotion() {
                 value={promotion.code}
                 onChange={handleChange}
                 placeholder="Nhập mã ưu đãi"
+                readOnly
               />
             </div>
             <div className={style["form-group"]}>
