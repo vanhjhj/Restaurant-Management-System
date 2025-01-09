@@ -20,6 +20,7 @@ import Invoice from "./Invoice";
 import EditReservation from "./EditReservation";
 
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 
 function EmployeeReservation() {
   const { accessToken, setAccessToken } = useAuth();
@@ -32,6 +33,7 @@ function EmployeeReservation() {
   const [errorPos, setErrorPos] = useState();
   const [editReservation, setEditReservation] = useState();
   const [filterStatus, setFilterStatus] = useState("0");
+  const navigate = useNavigate();
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
     2,
@@ -53,8 +55,14 @@ function EmployeeReservation() {
     { value: "D", label: <>Xong</> },
   ];
   const ensureActiveToken = async () => {
-    let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';
+            }
+    let activeToken = accessToken;
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;
@@ -170,8 +178,9 @@ function EmployeeReservation() {
         setErrorMessage("Lỗi: Bàn trên không tồn tại hoặc không thể gán.");
         return;
       }
-      const activeToken = await ensureActiveToken();
+      
       try {
+        const activeToken = await ensureActiveToken();
         const result = await assignTableAPI(
           activeToken,
           inputTable.id,
@@ -188,8 +197,9 @@ function EmployeeReservation() {
   };
 
   const handleEraseTable = async (id) => {
-    const activeToken = await ensureActiveToken();
+
     try {
+      const activeToken = await ensureActiveToken();
       const result = await unsignTableAPI(activeToken, id);
       fetchData();
       setInputTable({ id: null, value: "" });
@@ -199,8 +209,9 @@ function EmployeeReservation() {
   };
 
   const handleDoneReservation = async (id, tID) => {
-    const activeToken = await ensureActiveToken();
+
     try {
+      const activeToken = await ensureActiveToken();
       const result = await markDoneReservationAPI(activeToken, id);
       createOrder(accessToken, tID);
       fetchData();
@@ -212,8 +223,9 @@ function EmployeeReservation() {
   };
 
   const handleCancelReservation = async (id) => {
-    const activeToken = await ensureActiveToken();
+
     try {
+      const activeToken = await ensureActiveToken();
       const result = await markCancelReservationAPI(activeToken, id);
       fetchData();
       setInputTable({ id: null, value: "" });

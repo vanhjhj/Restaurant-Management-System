@@ -35,6 +35,12 @@ function ManageTable() {
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';
+            }
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;
@@ -44,9 +50,10 @@ function ManageTable() {
   };
 
   const fetchData = async () => {
-    const activeToken = await ensureActiveToken();
+
     setLoading(true);
     try {
+      const activeToken = await ensureActiveToken();
       const tablesData = await GetTable(activeToken);
       setTables(tablesData);
       console.log("hi",tablesData);

@@ -30,10 +30,17 @@ function EditReservation({ setShow, info }) {
   const [phoneNumber, setPhoneNumber] = useState(""); // Số điện thoại
   const [islogin, setIslogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+  const navigate = useNavigate();
 
   const ensureActiveToken = async () => {
-    let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';
+            }
+    let activeToken = accessToken;
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;

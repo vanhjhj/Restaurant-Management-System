@@ -24,6 +24,11 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
   const userRole = localStorage.getItem("userRole");
 
   const ensureActiveToken = async () => {
+    if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
     let activeToken = accessToken;
     if (!activeToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
@@ -159,12 +164,6 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
 
                   {/* Điều kiện hiển thị các trang dựa trên userRole */}
 
-                  {userRole === "Customer" && (
-                    <li>
-                      <Link to="/"></Link>
-                    </li>
-                  )}
-
                   {isLoggedIn ? (
                     <li className={style["user-menu"]} ref={menuRef}>
                       <button onClick={toggleMenu} title="user-icon">
@@ -176,21 +175,21 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                             {/* Show only the Logout option for admin */}
                             {userRole === "Admin" ? (
                               <>            
-                                <li>
+                                <li onClick={()=>setIsMenuOpen(false)}>
                                   <Link
                                     to="/employee-dashboard"
                                   >
                                     Trang Nhân Viên
                                   </Link>
                                 </li>
-                                <li>
+                                <li onClick={()=>setIsMenuOpen(false)}>
                                   <Link
                                     to="/admin-dashboard/manage-restaurant-info"
                                   >
                                     Quản Trị
                                   </Link>
                                 </li>
-                                <li>
+                                <li onClick={()=>setIsMenuOpen(false)}>
                                   {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
                                   <Link to="/profile">Thông tin cá nhân</Link>
                                 </li>
@@ -208,14 +207,14 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                               
                             ) : userRole === "Employee" ? (
                                 <>
-                                  <li>
+                                   <li onClick={()=>setIsMenuOpen(false)}>
                                   <Link
                                     to="/employee-dashboard"
                                   >
                                     Trang Nhân Viên
                                   </Link>
                                 </li>
-                                <li>
+                                <li onClick={()=>setIsMenuOpen(false)}>
                                   {/* Nhân viên chỉ có Chỉnh sửa thông tin cá nhân và Đăng xuất */}
                                   <Link to="/profile">Thông tin cá nhân</Link>
                                 </li>
@@ -233,17 +232,17 @@ function Header({ isLoggedIn, setIsLoggedIn }) {
                               </>
                             ) : (
                               <>
-                                <li>
+                                 <li onClick={()=>setIsMenuOpen(false)}>
                                   <Link to="/profile" onClick={closeMenu}>
                                     Thông tin cá nhân
                                   </Link>
                                 </li>
-                                <li>
+                                <li onClick={()=>setIsMenuOpen(false)}>
                                   <Link
                                     to="/reservation-history"
                                     onClick={closeMenu}
                                   >
-                                    Lịch sử mua hàng
+                                    Lịch sử đặt bàn
                                   </Link>
                                 </li>
                                 <li>

@@ -7,17 +7,25 @@ import { markPaid } from "../../../API/EE_ReservationAPI";
 import SuccessMessage from "./SuccessMessage";
 import InvoicePrintable from "./InvoicePrintable";
 import style from "./PrintInvoice.module.css";
+import { useNavigate } from "react-router-dom";
 
 function PrintInvoice({ setShow, foodData, invoiceData, pID, iID, setIsPrintInvoice }) {
     const { restaurantInfo } = useContext(RestaurantContext);
     const { accessToken, setAccessToken } = useAuth();
     const [success, setSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const printRef = useRef();
+  const printRef = useRef();
+  const navigate = useNavigate();
 
   const ensureActiveToken = async () => {
-    let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
+    let activeToken = accessToken;
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;

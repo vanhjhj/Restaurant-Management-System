@@ -84,8 +84,14 @@ function BookingTable() {
   }, []);
 
   const ensureActiveToken = async () => {
-    let activeToken = localStorage.getItem("accessToken");
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
+    let activeToken = localStorage.getItem("accessToken");
+
     if (isTokenExpired(activeToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;

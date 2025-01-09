@@ -65,12 +65,14 @@ function App() {
       if (!refreshToken) {
         localStorage.clear();
         localStorage.setItem("isLoggedIn", false);
+        setIsLoggedIn(false);
         setRefreshAlert(true);
         return;
       }
       if (isTokenExpired(refreshToken)) {
         localStorage.clear();
         localStorage.setItem("isLoggedIn", false);
+        setIsLoggedIn(false);
         setRefreshAlert(true);
         return;
       }

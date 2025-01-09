@@ -7,6 +7,7 @@ import { useAuth } from "../../../Components/Auth/AuthContext";
 import { isTokenExpired } from "../../../utils/tokenHelper.mjs";
 import { refreshToken } from "../../../API/authAPI";
 import { ModalGeneral } from "../../ModalGeneral";
+import { useNavigate } from "react-router-dom";
 
 function ManageRestaurantInfo() {
   const [previewQR, setPreviewQR] = useState(null);
@@ -16,6 +17,7 @@ function ManageRestaurantInfo() {
   const [editMode, setEditMode] = useState(false); // Quản lý trạng thái chỉnh sửa
   const [updatedInfo, setUpdatedInfo] = useState({}); // Thông tin cập nhật
   const { accessToken, setAccessToken } = useAuth();
+  const navigate = useNavigate();
   const [modal, setModal] = useState({
     isOpen: false,
     text: "",
@@ -24,6 +26,12 @@ function ManageRestaurantInfo() {
   });
   const ensureActiveToken = async () => {
     let activeToken = accessToken;
+    const refresh = localStorage.getItem('refreshToken');
+            if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
     if (isTokenExpired(accessToken)) {
       try {
         const refreshed = await refreshToken(

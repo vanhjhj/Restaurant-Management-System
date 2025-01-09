@@ -26,7 +26,7 @@
     align-items: center;
 }
 .filter-category{
-    z-index: 101;
+    z-index: 50;
   }
 
   .page-input-ctn{
@@ -91,7 +91,7 @@
   font-size: 35px;
   margin-top: 30px;
   margin-bottom: 30px;
-  color: #35737d;
+  color: #a38900;
 }
 
 .name-star {

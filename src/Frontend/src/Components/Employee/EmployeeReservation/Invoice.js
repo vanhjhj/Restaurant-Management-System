@@ -16,6 +16,7 @@ import { getFoodItems, getMenuTabs } from "../../../API/MenuAPI";
 import ApplyPromotion from "./ApplyPromotion";
 import PrintInvoice from "./PrintInvoice";
 import { fetchPromotionByCode } from "../../../API/PromotionAPI";
+import { useNavigate } from "react-router-dom";
 
 function Invoice({ tableID, setShowInvoice }) {
   const { accessToken, setAccessToken } = useAuth();
@@ -44,6 +45,7 @@ function Invoice({ tableID, setShowInvoice }) {
   const [isShowPromotion, setIsShowPromotion] = useState(false);
   const [isPrintInvoice, setIsPrintInvoice] = useState(false);
   const [promotion, setPromotion] = useState();
+  const navigate = useNavigate();
 
   const handleError = (error, type) => {
     if (error === 400) {
@@ -107,8 +109,14 @@ function Invoice({ tableID, setShowInvoice }) {
   );
 
   const ensureActiveToken = async () => {
-    let activeToken = accessToken;
     const refresh = localStorage.getItem("refreshToken");
+    if (!refresh || isTokenExpired(refresh)) {
+                  navigate('/', { replace: true });
+                  window.location.reload();
+                  throw 'Phiên đăng nhập hết hạn';
+                }
+    let activeToken = accessToken;
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);
       activeToken = refreshed.access;
@@ -172,8 +180,9 @@ function Invoice({ tableID, setShowInvoice }) {
   }, []);
 
   const handleAddFood = async (oID, fID) => {
-    const activeToken = await ensureActiveToken();
+    
     try {
+      const activeToken = await ensureActiveToken();
       if (errorTableMessage === 404) {
         await createOrder(activeToken, tableID);
 
@@ -243,8 +252,9 @@ function Invoice({ tableID, setShowInvoice }) {
   };
 
   const handleSave = async (itemID, q, note, change) => {
-    const activeToken = await ensureActiveToken();
+    
     try {
+      const activeToken = await ensureActiveToken();
       const result = await updateItem(activeToken, itemID, q, note);
       setItemsData((preItem) =>
         preItem.map((i) =>
@@ -271,14 +281,14 @@ function Invoice({ tableID, setShowInvoice }) {
 
   const handleKeyDown = async (event, itemID, q, note, change) => {
     if (event.key === "Enter") {
-      const activeToken = await ensureActiveToken();
       handleSave(itemID, q, note, change);
     }
   };
 
   const handleChangeStatus = async (itemID) => {
-    const activeToken = await ensureActiveToken();
+    
     try {
+      const activeToken = await ensureActiveToken();
       const result = await updateItemStatus(activeToken, itemID);
       setItemsData((preItem) =>
         preItem.map((i) => (i.id === itemID ? result.data : i))
@@ -321,11 +331,13 @@ function Invoice({ tableID, setShowInvoice }) {
               <div className={style["invoice-info-ctn"]}>
                 <div className={style["invoice-info-title"]}>
                   <h2>Thông tin bàn số: {tableID}</h2>
-                  {errorTableMessage ? (
-                    <p className={style["error-message"]}>{errorMessage}</p>
-                  ) : (
-                    <p></p>
-                  )}
+                  <div className={style['header-error-ctn']}>
+                    {errorTableMessage ? (
+                      <p className={style["error-message"]}>{errorMessage}</p>
+                    ) : (<></>
+                    )}
+                  </div>
+                  
                 </div>
 
                 <div className={style["ordered-food-ctn"]}>
@@ -428,7 +440,7 @@ function Invoice({ tableID, setShowInvoice }) {
                               title="Nhấn vào để đánh dấu món ăn đã được phục vụ"
                               onClick={() => handleChangeStatus(item.id)}
                             >
-                              {item.status}
+                              {item.status === 'P' ? 'Đang chuẩn bị' : 'Đã phục vụ'}
                             </li>
                             <li className={style["my-food-col-4"]}>
                               <NumberWithSpaces

@@ -69,6 +69,11 @@ function Profile() {
   let email;
 
   const ensureActiveToken = async () => {
+    if (!refresh || isTokenExpired(refresh)) {
+              navigate('/', { replace: true });
+              window.location.reload();
+              throw 'Phiên đăng nhập hết hạn';
+            }
     let activeToken = accessToken;
     if (!accessToken || isTokenExpired(accessToken)) {
       const refreshed = await refreshToken(refresh);

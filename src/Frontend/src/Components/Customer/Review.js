@@ -26,9 +26,6 @@ function Review({ iID }) {
     return `${day}-${month}-${year}`; // Trả về chuỗi định dạng dd-mm-yyyy
   }
 
-  const customStyles = {
-    menuPortal: (base) => ({ ...base, zIndex: 9999 }), // Đặt z-index cao cho menu
-  };
 
   const options = [
     {
@@ -197,7 +194,6 @@ function Review({ iID }) {
                 options={options}
                 onChange={handleChange}
                 defaultValue={options[0]}
-                styles={customStyles}
               />
             </div>
             <div className={style["filter-date"]}>
